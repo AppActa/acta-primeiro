@@ -1,2 +1,3 @@
-# back_end_primeiro
-Repositório do Interdisciplinar do primeiro ano que irá conter arquivos relacionados com o back-end do projeto.
+# acta-database-primeiro
+Repositório do primeiro ano dedicado à banco de dados.
+Irá conter códigos em SQL
