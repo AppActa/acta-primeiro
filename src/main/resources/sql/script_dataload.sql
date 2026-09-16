@@ -96,22 +96,6 @@ VALUES ('PDCA melhoria no processo de exportação de carne bovina', '2026-09-15
 INSERT INTO ciclo (nome, dt_inicio, empresa_id)
 VALUES ('PDCA redução de fraudes em transações', '2026-09-18', 5);
 
--- Meta
-INSERT INTO meta (meta, descricao_meta, objetivo, prazo, ciclo_id)
-VALUES ('tensão da energia', 'blablablabla', 'Controlar a oscilação de tensão', '2026-11-30', 1);
-
-INSERT INTO meta (meta, descricao_meta, objetivo, prazo, ciclo_id)
-VALUES ('acidentes de trabalho', 'redução de incidentes registrados na operação', 'Zerar acidentes graves até o fim do ano', '2026-12-20', 2);
-
-INSERT INTO meta (meta, descricao_meta, objetivo, prazo, ciclo_id)
-VALUES ('desperdício de matéria-prima', 'redução de perdas na linha de produção', 'Reduzir desperdício em 20%', '2026-12-10', 3);
-
-INSERT INTO meta (meta, descricao_meta, objetivo, prazo, ciclo_id)
-VALUES ('tempo de processamento de exportação', 'redução do tempo entre abate e liberação para exportação', 'Reduzir tempo de processamento em 25%', '2026-12-15', 4);
-
-INSERT INTO meta (meta, descricao_meta, objetivo, prazo, ciclo_id)
-VALUES ('índice de fraudes em transações', 'redução de transações fraudulentas identificadas na plataforma', 'Reduzir fraudes em 30%', '2026-12-30', 5);
-
 -- Plano de ação
 INSERT INTO plano_acao (nome, descricao, ciclo_id)
 VALUES ('Revisão de tensão', 'Identificar causas da oscilação de tensão na rede', 1);
@@ -143,6 +127,22 @@ VALUES ('Digitalizar documentação de exportação', 'Reduzir tempo de liberaç
 
 INSERT INTO plano_acao5w2h (what, why, "where", "when", who, how, how_much, plano_acao_id)
 VALUES ('Implementar modelo de scoring antifraude', 'Reduzir transações fraudulentas', 'Time de Risco e Compliance', '2026-08-21', 'Thiago Ramos Vieira', 'Machine learning aplicado a padrões de transação', 'R$ 12.000,00', 5);
+
+-- Meta
+INSERT INTO meta (meta, descricao_meta, objetivo, prazo, ciclo_id)
+VALUES ('tensão da energia', 'blablablabla', 'Controlar a oscilação de tensão', '2026-11-30', 1);
+
+INSERT INTO meta (meta, descricao_meta, objetivo, prazo, ciclo_id)
+VALUES ('acidentes de trabalho', 'redução de incidentes registrados na operação', 'Zerar acidentes graves até o fim do ano', '2026-12-20', 2);
+
+INSERT INTO meta (meta, descricao_meta, objetivo, prazo, ciclo_id)
+VALUES ('desperdício de matéria-prima', 'redução de perdas na linha de produção', 'Reduzir desperdício em 20%', '2026-12-10', 3);
+
+INSERT INTO meta (meta, descricao_meta, objetivo, prazo, ciclo_id)
+VALUES ('tempo de processamento de exportação', 'redução do tempo entre abate e liberação para exportação', 'Reduzir tempo de processamento em 25%', '2026-12-15', 4);
+
+INSERT INTO meta (meta, descricao_meta, objetivo, prazo, ciclo_id)
+VALUES ('índice de fraudes em transações', 'redução de transações fraudulentas identificadas na plataforma', 'Reduzir fraudes em 30%', '2026-12-30', 5);
 
 -- Tarefa
 INSERT INTO tarefa (titulo, descricao, dt_entrega, colaborador_id)
