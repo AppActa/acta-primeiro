@@ -4,10 +4,10 @@ import java.util.List;
 
 public interface MetodosCrud<T> {
 
-    int inserir(T t);
-    T buscar(int id);
+    String inserir(T t);
+    T buscar(Long id);
     List<T> buscar();
-    int atualizar(T t);
-    int excluir(int id);
+    String atualizar(T t);
+    String excluir(Long id);
 }
 
