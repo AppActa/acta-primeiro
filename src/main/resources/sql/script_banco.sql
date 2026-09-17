@@ -37,7 +37,7 @@ CREATE TYPE etapas_ciclo_enum AS ENUM ('PLAN', 'DO', 'CHECK', 'ACT');
 
 -- Empresa
 CREATE TABLE IF NOT EXISTS empresa (
-                                       empresa_id SERIAL PRIMARY KEY,
+                                       id_empresa SERIAL PRIMARY KEY,
                                        nome VARCHAR(50) NOT NULL,
                                        setor VARCHAR(30) NOT NULL,
                                        cnpj CHAR(14) UNIQUE NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS empresa (
 
 -- Endereço
 CREATE TABLE IF NOT EXISTS endereco (
-                                        endereco_id SERIAL PRIMARY KEY,
+                                        id_endereco SERIAL PRIMARY KEY,
                                         rua VARCHAR(50) NOT NULL,
                                         bairro VARCHAR(30) NOT NULL,
                                         cidade VARCHAR(30) NOT NULL,
@@ -56,12 +56,12 @@ CREATE TABLE IF NOT EXISTS endereco (
                                         numero VARCHAR(10) NOT NULL,
                                         complemento TEXT,
                                         unidade VARCHAR(30) NOT NULL,
-                                        empresa_id INT NOT NULL REFERENCES empresa(empresa_id) ON DELETE CASCADE
+                                        id_empresa INT NOT NULL REFERENCES empresa(id_empresa) ON DELETE CASCADE
 );
 
 -- Administrador Geral
 CREATE TABLE IF NOT EXISTS administrador_geral (
-                                                   adm_geral_id SERIAL PRIMARY KEY,
+                                                   id_adm_geral SERIAL PRIMARY KEY,
                                                    nome VARCHAR(50) NOT NULL,
                                                    senha VARCHAR(100) NOT NULL,
                                                    email VARCHAR(80) UNIQUE NOT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS administrador_geral (
 
 -- Colaborador
 CREATE TABLE IF NOT EXISTS colaborador (
-                                           colaborador_id SERIAL PRIMARY KEY,
+                                           id_colaborador SERIAL PRIMARY KEY,
                                            nome VARCHAR(50) NOT NULL,
                                            sobrenome VARCHAR(50) NOT NULL,
                                            permissao_gestor BOOLEAN NOT NULL DEFAULT FALSE,
@@ -83,12 +83,12 @@ CREATE TABLE IF NOT EXISTS colaborador (
                                            senha VARCHAR(100) UNIQUE NOT NULL,
                                            telefone CHAR(11) NOT NULL,
                                            cpf CHAR(11) UNIQUE NOT NULL,
-                                           empresa_id INT NOT NULL REFERENCES empresa(empresa_id) ON DELETE CASCADE
+                                           id_empresa INT NOT NULL REFERENCES empresa(id_empresa) ON DELETE CASCADE
 );
 
 -- Projeto
 CREATE TABLE IF NOT EXISTS ciclo (
-                                     ciclo_id SERIAL PRIMARY KEY,
+                                     id_ciclo SERIAL PRIMARY KEY,
                                      nome VARCHAR(100) NOT NULL,
                                      descricao TEXT,
                                      etapa_atual etapas_ciclo_enum NOT NULL DEFAULT 'PLAN',
@@ -96,36 +96,36 @@ CREATE TABLE IF NOT EXISTS ciclo (
                                      dt_fim DATE,
                                      status situacao_enum NOT NULL DEFAULT 'NAO_INICIADO',
                                      criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                                     empresa_id INT NOT NULL REFERENCES empresa(empresa_id) ON DELETE CASCADE,
-                                     responsavel_id INT NOT NULL REFERENCES colaborador(colaborador_id)
+                                     id_empresa INT NOT NULL REFERENCES empresa(id_empresa) ON DELETE CASCADE,
+                                     id_responsavel INT NOT NULL REFERENCES colaborador(id_colaborador)
 );
 
 -- Plano de Ação
 CREATE TABLE IF NOT EXISTS plano_acao (
-                                          plano_acao_id SERIAL PRIMARY KEY,
+                                          id_plano_acao SERIAL PRIMARY KEY,
                                           nome VARCHAR(100) NOT NULL,
                                           descricao TEXT,
                                           status situacao_enum NOT NULL DEFAULT 'NAO_INICIADO',
                                           prioridade prioridade_enum NOT NULL DEFAULT 'MEDIO',
-                                          ciclo_id INT NOT NULL REFERENCES ciclo(ciclo_id),
-                                          criador_id INT NOT NULL REFERENCES colaborador(colaborador_id) ON DELETE RESTRICT
+                                          id_ciclo INT NOT NULL REFERENCES ciclo(id_ciclo),
+                                          id_criador INT NOT NULL REFERENCES colaborador(id_colaborador) ON DELETE RESTRICT
 );
 
 -- 5W2H
 CREATE TABLE IF NOT EXISTS plano_acao5w2h (
-                                              plano_acao_5w2h_id SERIAL PRIMARY KEY,
+                                              id_plano_acao_5w2h SERIAL PRIMARY KEY,
                                               what VARCHAR(50) NOT NULL,
                                               why VARCHAR(50),
                                               "where" VARCHAR(50),
                                               "when" DATE,
-                                              who INT NOT NULL REFERENCES colaborador(colaborador_id) ON DELETE RESTRICT,
+                                              who INT NOT NULL REFERENCES colaborador(id_colaborador) ON DELETE RESTRICT,
                                               how VARCHAR(50),
                                               how_much NUMERIC,
-                                              plano_acao_id INT REFERENCES plano_acao(plano_acao_id) ON DELETE CASCADE
+                                              id_plano_acao INT REFERENCES plano_acao(id_plano_acao) ON DELETE CASCADE
 );
 -- Meta
 CREATE TABLE IF NOT EXISTS meta (
-                                    meta_id SERIAL PRIMARY KEY,
+                                    id_meta SERIAL PRIMARY KEY,
                                     meta VARCHAR(100) NOT NULL,
                                     descricao_meta TEXT,
                                     objetivo VARCHAR(200),
@@ -133,26 +133,26 @@ CREATE TABLE IF NOT EXISTS meta (
                                     prazo DATE NOT NULL,
                                     status status_meta_enum NOT NULL DEFAULT 'REGULAR',
                                     criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                                    ciclo_id INT NOT NULL REFERENCES ciclo(ciclo_id) ON DELETE CASCADE,
-                                    plano_acao_id INT REFERENCES plano_acao(plano_acao_id) ON DELETE SET NULL
+                                    id_ciclo INT NOT NULL REFERENCES ciclo(id_ciclo) ON DELETE CASCADE,
+                                    id_plano_acao INT REFERENCES plano_acao(id_plano_acao) ON DELETE SET NULL
 );
 
 -- Tarefa
 CREATE TABLE IF NOT EXISTS tarefa (
-                                      tarefa_id SERIAL PRIMARY KEY,
+                                      id_tarefa SERIAL PRIMARY KEY,
                                       titulo VARCHAR(100) NOT NULL,
                                       descricao TEXT,
                                       prioridade prioridade_enum NOT NULL DEFAULT 'MEDIO',
                                       dt_entrega DATE,
                                       status situacao_enum NOT NULL DEFAULT 'NAO_INICIADO',
                                       dt_inicio DATE NOT NULL DEFAULT now(),
-                                      colaborador_id INT NOT NULL REFERENCES colaborador(colaborador_id) ON DELETE RESTRICT,
-                                      plano_acao_id  INT NOT NULL REFERENCES plano_acao(plano_acao_id) ON DELETE SET NULL
+                                      id_colaborador INT NOT NULL REFERENCES colaborador(id_colaborador) ON DELETE RESTRICT,
+                                      id_plano_acao  INT NOT NULL REFERENCES plano_acao(id_plano_acao) ON DELETE SET NULL
 );
 
 -- Lições Aprendidas
 CREATE TABLE IF NOT EXISTS licoes_aprendidas (
-                                                 licao_id SERIAL PRIMARY KEY,
+                                                 id_licao SERIAL PRIMARY KEY,
                                                  titulo VARCHAR(100) NOT NULL,
                                                  area VARCHAR(30),
                                                  aprendizado TEXT NOT NULL,
@@ -160,12 +160,12 @@ CREATE TABLE IF NOT EXISTS licoes_aprendidas (
                                                  descricao TEXT,
                                                  fase_origem VARCHAR(8),
                                                  severidade VARCHAR(50),
-                                                 ciclo_id INT REFERENCES ciclo(ciclo_id) ON DELETE CASCADE
+                                                 id_ciclo INT REFERENCES ciclo(id_ciclo) ON DELETE CASCADE
 );
 
 -- Problema
 CREATE TABLE IF NOT EXISTS problema (
-                                        problema_id SERIAL PRIMARY KEY,
+                                        id_problema SERIAL PRIMARY KEY,
                                         titulo VARCHAR(100) NOT NULL,
                                         descricao TEXT NOT NULL,
                                         peso VARCHAR(30),
@@ -173,24 +173,24 @@ CREATE TABLE IF NOT EXISTS problema (
                                         status status_problema_enum NOT NULL DEFAULT 'EM_ANALISE',
                                         origem TEXT,
                                         encontrado_em DATE NOT NULL,
-                                        ciclo_id INT NOT NULL REFERENCES ciclo(ciclo_id) ON DELETE CASCADE,
-                                        plano_acao_id INT REFERENCES plano_acao(plano_acao_id) ON DELETE SET NULL,
-                                        colaborador_id INT REFERENCES colaborador(colaborador_id) ON DELETE SET NULL
+                                        id_ciclo INT NOT NULL REFERENCES ciclo(id_ciclo) ON DELETE CASCADE,
+                                        id_plano_acao INT REFERENCES plano_acao(id_plano_acao) ON DELETE SET NULL,
+                                        id_colaborador INT REFERENCES colaborador(id_colaborador) ON DELETE SET NULL
 );
 
 -- Relacionamentos N:N
 
 CREATE TABLE IF NOT EXISTS ciclo_colaborador (
-                                                 ciclo_id INT NOT NULL REFERENCES ciclo (ciclo_id) ON DELETE CASCADE,
-                                                 colaborador_id INT NOT NULL REFERENCES colaborador (colaborador_id) ON DELETE CASCADE,
-                                                 PRIMARY KEY (ciclo_id, colaborador_id),
+                                                 id_ciclo INT NOT NULL REFERENCES ciclo (id_ciclo) ON DELETE CASCADE,
+                                                 id_colaborador INT NOT NULL REFERENCES colaborador (id_colaborador) ON DELETE CASCADE,
+                                                 PRIMARY KEY (id_ciclo, id_colaborador),
                                                  papel_ciclo VARCHAR(50)
 );
 
 CREATE TABLE IF NOT EXISTS empresa_administrador_geral (
-                                                           empresa_id INT NOT NULL REFERENCES empresa (empresa_id) ON DELETE CASCADE,
-                                                           adm_geral_id INT NOT NULL REFERENCES administrador_geral (adm_geral_id) ON DELETE CASCADE,
-                                                           PRIMARY KEY (empresa_id, adm_geral_id)
+                                                           id_empresa INT NOT NULL REFERENCES empresa (id_empresa) ON DELETE CASCADE,
+                                                           id_adm_geral INT NOT NULL REFERENCES administrador_geral (id_adm_geral) ON DELETE CASCADE,
+                                                           PRIMARY KEY (id_empresa, id_adm_geral)
 );
 
 ALTER TABLE endereco
