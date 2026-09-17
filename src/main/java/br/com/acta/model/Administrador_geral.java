@@ -3,16 +3,25 @@ package br.com.acta.model;
 
 
 public class Administrador_geral {
-
+    //Atributos
     private Integer adm_geral_id;
     private String nome;
     private String senha;
     private String email;
     private String telefone;
 
-    public Administrador_geral() {
+    //construtores
+
+    public Administrador_geral() {}
+
+    public Administrador_geral(String nome, String senha, String email, String telefone) {
+        this.nome = nome;
+        this.senha = senha;
+        this.email = email;
+        this.telefone = telefone;
     }
 
+    //construtor com id para os metodos do doPost (exceto o inserir)
     public Administrador_geral(Integer adm_geral_id, String telefone, String email, String senha, String nome) {
         this.adm_geral_id = adm_geral_id;
         this.telefone = telefone;
@@ -20,6 +29,9 @@ public class Administrador_geral {
         this.senha = senha;
         this.nome = nome;
     }
+
+
+    //Getters e Setters
 
     public Integer getAdm_geral_id() {
         return adm_geral_id;
