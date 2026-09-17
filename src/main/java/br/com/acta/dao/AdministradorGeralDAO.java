@@ -39,7 +39,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     //buscar com id
     @Override
     public AdministradorGeral buscar(Long id) {
-        String sql = "SELECT adm_geral_id,nome,senha,email,telefone FROM administrador_geral WHERE adm_geral_id = ? ";
+        String sql = "SELECT * FROM administrador_geral WHERE adm_geral_id = ? ";
 
         try(Connection conn = Conexao.conectar();
         PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -60,7 +60,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     @Override
     public List<AdministradorGeral> buscar() {
         List<AdministradorGeral> administradoresGerais = new ArrayList<>();
-        String sql = "SELECT adm_geral_id,nome,senha,email,telefone FROM administrador_geral";
+        String sql = "SELECT * FROM administrador_geral";
 
         try(Connection conn = Conexao.conectar();
         Statement stmt = conn.createStatement();
@@ -90,7 +90,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             pstmt.setString(3,administradorGeral.getEmail());
             pstmt.setString(4, administradorGeral.getTelefone());
 
-            pstmt.setInt(5,administradorGeral.getAdm_geral_id());
+            pstmt.setLong(5,administradorGeral.getAdm_geral_id());
 
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
@@ -122,7 +122,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
     private static AdministradorGeral mapearAdministradorGeral(ResultSet rs) throws SQLException {
         AdministradorGeral administradorGeral = new AdministradorGeral();
-        administradorGeral.setAdm_geral_id(rs.getInt("adm_geral_id"));
+        administradorGeral.setAdm_geral_id(rs.getLong("adm_geral_id"));
         administradorGeral.setNome(rs.getString("nome"));
         administradorGeral.setSenha(rs.getString("senha"));
         administradorGeral.setEmail(rs.getString("email"));
