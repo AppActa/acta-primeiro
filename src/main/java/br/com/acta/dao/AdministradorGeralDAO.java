@@ -39,7 +39,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     //buscar com id
     @Override
     public AdministradorGeral buscar(Long id) {
-        String sql = "SELECT * FROM administrador_geral WHERE adm_geral_id = ? ";
+        String sql = "SELECT * FROM administrador_geral WHERE id_adm_geral = ? ";
 
         try(Connection conn = Conexao.conectar();
         PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -80,7 +80,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     //atualizar
     @Override
     public int atualizar(AdministradorGeral administradorGeral) {
-        String sql = "UPDATE administrador_geral SET nome = ?, senha = ?, email = ?, telefone = ? WHERE adm_geral_id = ?";
+        String sql = "UPDATE administrador_geral SET nome = ?, senha = ?, email = ?, telefone = ? WHERE id_adm_geral = ?";
 
         try(Connection conn = Conexao.conectar();
         PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -105,7 +105,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
     @Override
     public int excluir(Long id) {
-        String sql = "DELETE FROM administrador_geral WHERE adm_geral_id = ?";
+        String sql = "DELETE FROM administrador_geral WHERE id_adm_geral = ?";
 
         try(Connection conn = Conexao.conectar();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -122,7 +122,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
     private static AdministradorGeral mapearAdministradorGeral(ResultSet rs) throws SQLException {
         AdministradorGeral administradorGeral = new AdministradorGeral();
-        administradorGeral.setAdm_geral_id(rs.getLong("adm_geral_id"));
+        administradorGeral.setAdm_geral_id(rs.getLong("id_adm_geral"));
         administradorGeral.setNome(rs.getString("nome"));
         administradorGeral.setSenha(rs.getString("senha"));
         administradorGeral.setEmail(rs.getString("email"));

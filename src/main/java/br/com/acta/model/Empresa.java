@@ -3,7 +3,7 @@ package br.com.acta.model;
 public class Empresa {
 
     //Atributos
-    private Long empresa_id;
+    private Long id_empresa;
     private String nome;
     private String setor;
     private String cnpj;
@@ -22,8 +22,8 @@ public class Empresa {
         this.tamanho = tamanho;
     }
 
-    public Empresa(Long empresa_id, String nome, String setor, String cnpj, String status, String tamanho) {
-        this.empresa_id = empresa_id;
+    public Empresa(Long id_empresa, String nome, String setor, String cnpj, String status, String tamanho) {
+        this.id_empresa = id_empresa;
         this.nome = nome;
         this.setor = setor;
         this.cnpj = cnpj;
@@ -35,11 +35,11 @@ public class Empresa {
 
 
     public Long getEmpresa_id() {
-        return empresa_id;
+        return id_empresa;
     }
 
-    public void setEmpresa_id(Long empresa_id) {
-        this.empresa_id = empresa_id;
+    public void setEmpresa_id(Long id_empresa) {
+        this.id_empresa = id_empresa;
     }
 
     public String getNome() {
