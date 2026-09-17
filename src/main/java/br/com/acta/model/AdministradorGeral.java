@@ -4,7 +4,7 @@ package br.com.acta.model;
 
 public class AdministradorGeral {
     //Atributos
-    private Long adm_geral_id;
+    private Long id_adm_geral;
     private String nome;
     private String senha;
     private String email;
@@ -22,8 +22,8 @@ public class AdministradorGeral {
     }
 
     //construtor com id para os metodos do doPost (exceto o inserir)
-    public AdministradorGeral(Long adm_geral_id, String telefone, String email, String senha, String nome) {
-        this.adm_geral_id = adm_geral_id;
+    public AdministradorGeral(Long id_adm_geral, String telefone, String email, String senha, String nome) {
+        this.id_adm_geral = id_adm_geral;
         this.telefone = telefone;
         this.email = email;
         this.senha = senha;
@@ -34,11 +34,11 @@ public class AdministradorGeral {
     //Getters e Setters
 
     public Long getAdm_geral_id() {
-        return adm_geral_id;
+        return id_adm_geral;
     }
 
-    public void setAdm_geral_id(Long adm_geral_id) {
-        this.adm_geral_id = adm_geral_id;
+    public void setAdm_geral_id(Long id_adm_geral) {
+        this.id_adm_geral = id_adm_geral;
     }
 
     public String getTelefone() {
