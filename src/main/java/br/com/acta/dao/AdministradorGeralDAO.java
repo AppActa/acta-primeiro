@@ -17,7 +17,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
     //inserir
     @Override
-    public String inserir(AdministradorGeral administradorGeral) {
+    public int inserir(AdministradorGeral administradorGeral) {
         String sql = "INSERT INTO administrador_geral (nome, senha, email, telefone)  VALUES (?,?,?,?)";
 
         try(Connection conn = Conexao.conectar();
@@ -28,10 +28,10 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             pstmt.setString(3,administradorGeral.getEmail());
             pstmt.setString(4, administradorGeral.getTelefone());
 
-            return pstmt.executeUpdate() > 0 ? "Administrador adicionado!" : "Erro ao adicionar o administrador.";
+            return pstmt.executeUpdate() > 0 ? 1 : 0;
         } catch(ClassNotFoundException | SQLException e){
             e.printStackTrace();
-            return "Erro ao conectar no Banco.";
+            return -1;
         }
 
     }
@@ -79,8 +79,8 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
     //atualizar
     @Override
-    public String atualizar(AdministradorGeral administradorGeral) {
-        String sql = "UPDATE administrador_geral SET nome = ?, senha = ?, email = ?, telefone = ?";
+    public int atualizar(AdministradorGeral administradorGeral) {
+        String sql = "UPDATE administrador_geral SET nome = ?, senha = ?, email = ?, telefone = ? WHERE adm_geral_id = ?";
 
         try(Connection conn = Conexao.conectar();
         PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -90,11 +90,13 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             pstmt.setString(3,administradorGeral.getEmail());
             pstmt.setString(4, administradorGeral.getTelefone());
 
-            if (pstmt.executeUpdate() > 0) return "Administrador atualizado!";
-            else return "Erro ao atualizar administrador.";
+            pstmt.setInt(5,administradorGeral.getAdm_geral_id());
+
+            if (pstmt.executeUpdate() > 0) return 1;
+            else return 0;
 
         } catch(SQLException | ClassNotFoundException e){
-            return "Erro ao conectar no Banco.";
+            return -1;
         }
 
     }
@@ -102,7 +104,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     //excluir
 
     @Override
-    public String excluir(Long id) {
+    public int excluir(Long id) {
         String sql = "DELETE FROM administrador_geral WHERE adm_geral_id = ?";
 
         try(Connection conn = Conexao.conectar();
@@ -110,11 +112,11 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
             pstmt.setLong(1,id);
 
-            if(pstmt.executeUpdate() > 0) return "Administrador excluido.";
-            else return "Erro ao adicionar o Administrador geral.";
+            if(pstmt.executeUpdate() > 0) return 1;
+            else return 0;
 
         } catch(SQLException | ClassNotFoundException e) {
-            return "Erro ao conectar com o Banco.";
+            return -1;
         }
     }
 
