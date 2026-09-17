@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface MetodosCrud<T> {
 
-    int cadrastrar(T t);
+    int inserir(T t);
     T buscar(int id);
     List<T> buscar();
     int atualizar(T t);
