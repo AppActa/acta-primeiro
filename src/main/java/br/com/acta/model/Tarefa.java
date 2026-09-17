@@ -6,14 +6,14 @@ public class Tarefa {
 
     //Atributos
 
-    private Long tarefa_id;
+    private Long id_tarefa;
     private String titulo;
     private String descricao;
     private String prioridade;
     private Date dt_entrega;
     private String status;
     private Date dt_inicio;
-    private Long colaborador_id;
+    private Long id_colaborador;
 
     //Construtor
 
@@ -21,36 +21,36 @@ public class Tarefa {
     public Tarefa() {}
 
     //Para o inserir
-    public Tarefa(String titulo, String descricao, String prioridade, Date dt_entrega, String status, Date dt_inicio, Long colaborador_id) {
+    public Tarefa(String titulo, String descricao, String prioridade, Date dt_entrega, String status, Date dt_inicio, Long id_colaborador) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.prioridade = prioridade;
         this.dt_entrega = dt_entrega;
         this.status = status;
         this.dt_inicio = dt_inicio;
-        this.colaborador_id = colaborador_id;
+        this.id_colaborador = id_colaborador;
     }
 
     //Com id para os demais
-    public Tarefa(Long tarefa_id, String titulo, String descricao, String prioridade, Date dt_entrega, String status, Date dt_inicio, Long colaborador_id) {
-        this.tarefa_id = tarefa_id;
+    public Tarefa(Long id_tarefa, String titulo, String descricao, String prioridade, Date dt_entrega, String status, Date dt_inicio, Long id_colaborador) {
+        this.id_tarefa = id_tarefa;
         this.titulo = titulo;
         this.descricao = descricao;
         this.prioridade = prioridade;
         this.dt_entrega = dt_entrega;
         this.status = status;
         this.dt_inicio = dt_inicio;
-        this.colaborador_id = colaborador_id;
+        this.id_colaborador = id_colaborador;
     }
 
     //Getters e Setters
 
     public Long getTarefa_id() {
-        return tarefa_id;
+        return id_tarefa;
     }
 
-    public void setTarefa_id(Long tarefa_id) {
-        this.tarefa_id = tarefa_id;
+    public void setTarefa_id(Long id_tarefa) {
+        this.id_tarefa = id_tarefa;
     }
 
     public String getTitulo() {
@@ -102,10 +102,10 @@ public class Tarefa {
     }
 
     public Long getColaborador_id() {
-        return colaborador_id;
+        return id_colaborador;
     }
 
-    public void setColaborador_id(Long colaborador_id) {
-        this.colaborador_id = colaborador_id;
+    public void setColaborador_id(Long id_colaborador) {
+        this.id_colaborador = id_colaborador;
     }
 }
