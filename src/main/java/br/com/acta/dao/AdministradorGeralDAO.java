@@ -11,12 +11,12 @@ import java.util.List;
 import br.com.acta.model.AdministradorGeral;
 import br.com.acta.utils.Conexao;
 
-public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
+public class AdministradorGeralDAO  {
 
     //metodos DAO
 
     //inserir
-    @Override
+
     public int inserir(AdministradorGeral administradorGeral) {
         String sql = "INSERT INTO administrador_geral (nome, senha, email, telefone)  VALUES (?,?,?,?)";
 
@@ -37,7 +37,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     }
 
     //buscar com id
-    @Override
+
     public AdministradorGeral buscar(Long id) {
         String sql = "SELECT * FROM administrador_geral WHERE id_adm_geral = ? ";
 
@@ -57,7 +57,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     }
 
     //listar
-    @Override
+
     public List<AdministradorGeral> buscar() {
         List<AdministradorGeral> administradoresGerais = new ArrayList<>();
         String sql = "SELECT * FROM administrador_geral";
@@ -78,7 +78,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     }
 
     //atualizar
-    @Override
+
     public int atualizar(AdministradorGeral administradorGeral) {
         String sql = "UPDATE administrador_geral SET nome = ?, senha = ?, email = ?, telefone = ? WHERE id_adm_geral = ?";
 
@@ -103,7 +103,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
     //excluir
 
-    @Override
+
     public int excluir(Long id) {
         String sql = "DELETE FROM administrador_geral WHERE id_adm_geral = ?";
 
