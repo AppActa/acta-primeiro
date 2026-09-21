@@ -16,6 +16,7 @@ import java.util.List;
 import br.com.acta.model.Empresa;
 import br.com.acta.utils.Conexao;
 public class EmpresaDAO {
+    /*
 
     public int inserir(Empresa empresa) {
 
@@ -75,7 +76,15 @@ public class EmpresaDAO {
 
     }
 
-    public int atualizar(Object o) {
+    public int atualizar(Empresa empresa) {
+        String sql = "UPDATE empresa SET nome = ?, setor = ?, cnpj = ?, status = ?, tamanho = ? WHERE id_empresa = ?";
+
+        try(Connection conn = Conexao.conectar();
+        PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+            pstmt.setString();
+
+        }
         return 0;
     }
 
@@ -89,9 +98,10 @@ public class EmpresaDAO {
         empresa.setNome(rs.getString("nome"));
         empresa.setSetor(rs.getString("setor"));
         empresa.setCnpj(rs.getString("cnpj"));
-        empresa.setStatus(rs.getString("Status"));
+        empresa.setStatus(rs.getString("status"));
         empresa.setTamanho(rs.getString("tamanho"));
 
         return empresa;
     }
+    */
 }
