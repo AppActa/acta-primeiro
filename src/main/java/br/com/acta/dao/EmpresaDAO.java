@@ -14,9 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.acta.model.Empresa;
+import br.com.acta.model.Status;
 import br.com.acta.utils.Conexao;
 public class EmpresaDAO {
-    /*
+
 
     public int inserir(Empresa empresa) {
 
@@ -28,7 +29,7 @@ public class EmpresaDAO {
             pstmt.setString(1,empresa.getNome());
             pstmt.setString(2,empresa.getSetor());
             pstmt.setString(3,empresa.getCnpj());
-            pstmt.setString(4, empresa.getStatus());
+            pstmt.setString(4,String.valueOf(empresa.getStatus()));
             pstmt.setString(5,empresa.getTamanho());
 
             return pstmt.executeUpdate() > 0 ? 1 : 0;
@@ -82,26 +83,49 @@ public class EmpresaDAO {
         try(Connection conn = Conexao.conectar();
         PreparedStatement pstmt = conn.prepareStatement(sql)){
 
-            pstmt.setString();
+            pstmt.setString(1, empresa.getNome());
+            pstmt.setString(2, empresa.getSetor());
+            pstmt.setString(3, empresa.getCnpj());
+            pstmt.setString(4,String.valueOf(empresa.getStatus()));
+            pstmt.setString(5, empresa.getTamanho());
 
+            if (pstmt.executeUpdate() > 0) return 1;
+            else return 0;
+
+        }catch(SQLException | ClassNotFoundException e){
+            e.printStackTrace();
+            return -1;
         }
-        return 0;
+
     }
 
     public int excluir(Long id) {
-        return 0;
+        String sql = "DELETE FROM empresa WHERE id_empresa = ?";
+
+        try(Connection conn = Conexao.conectar();
+        PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setLong(1,id);
+
+            if(pstmt.executeUpdate() > 0) return 1;
+            else return 0;
+
+        }catch(SQLException | ClassNotFoundException e){
+            e.printStackTrace();
+            return -1;
+        }
+
     }
 
     private static Empresa mapearEmpresa(ResultSet rs) throws SQLException {
         Empresa empresa = new Empresa();
-        empresa.setEmpresa_id(rs.getLong("id_empresa"));
+        empresa.setId_empresa(rs.getLong("id_empresa"));
         empresa.setNome(rs.getString("nome"));
         empresa.setSetor(rs.getString("setor"));
         empresa.setCnpj(rs.getString("cnpj"));
-        empresa.setStatus(rs.getString("status"));
+        empresa.setStatus(Status.valueOf(rs.getString("status")));
         empresa.setTamanho(rs.getString("tamanho"));
 
         return empresa;
     }
-    */
+
 }
