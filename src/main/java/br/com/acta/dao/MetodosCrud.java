@@ -1,5 +1,6 @@
 package br.com.acta.dao;
 
+import java.sql.ResultSet;
 import java.util.List;
 
 public interface MetodosCrud<T> {
@@ -9,5 +10,6 @@ public interface MetodosCrud<T> {
     List<T> buscar();
     int atualizar(T t);
     int excluir(Long id);
+    T mapear(ResultSet rs);
 }
 
