@@ -51,7 +51,8 @@
         <dependency>
             <groupId>com.password4j</groupId>
             <artifactId>password4j</artifactId>
-            <version>1.7.2</version>
+            <version>1.8.4</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
