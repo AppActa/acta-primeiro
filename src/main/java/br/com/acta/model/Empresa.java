@@ -7,14 +7,12 @@ public class Empresa {
     private String nome;
     private String setor;
     private String cnpj;
-    private String status;
+    private Status status;
     private String tamanho;
-
-    //Contrutores
 
     public Empresa() {}
 
-    public Empresa(String nome, String setor, String cnpj, String status, String tamanho) {
+    public Empresa(String nome, String setor, String cnpj, Status status, String tamanho) {
         this.nome = nome;
         this.setor = setor;
         this.cnpj = cnpj;
@@ -22,7 +20,7 @@ public class Empresa {
         this.tamanho = tamanho;
     }
 
-    public Empresa(Long id_empresa, String nome, String setor, String cnpj, String status, String tamanho) {
+    public Empresa(Long id_empresa, String nome, String setor, String cnpj, Status status, String tamanho) {
         this.id_empresa = id_empresa;
         this.nome = nome;
         this.setor = setor;
@@ -31,14 +29,11 @@ public class Empresa {
         this.tamanho = tamanho;
     }
 
-    //Getters e Setters
-
-
-    public Long getEmpresa_id() {
+    public Long getId_empresa() {
         return id_empresa;
     }
 
-    public void setEmpresa_id(Long id_empresa) {
+    public void setId_empresa(Long id_empresa) {
         this.id_empresa = id_empresa;
     }
 
@@ -66,11 +61,11 @@ public class Empresa {
         this.cnpj = cnpj;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -82,3 +77,4 @@ public class Empresa {
         this.tamanho = tamanho;
     }
 }
+
