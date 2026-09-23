@@ -48,6 +48,11 @@
             <version>5.2.2</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.password4j</groupId>
+            <artifactId>password4j</artifactId>
+            <version>1.7.2</version>
+        </dependency>
     </dependencies>
 
     <build>
