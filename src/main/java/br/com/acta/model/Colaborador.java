@@ -143,22 +143,4 @@ public class Colaborador {
     public void setId_empresa(Long id_empresa) {
         this.id_empresa = id_empresa;
     }
-
-    @Override
-    public String toString() {
-        return "Colaborador{" +
-                "id_colaborador=" + id_colaborador +
-                ", nome='" + nome + '\'' +
-                ", sobrenome='" + sobrenome + '\'' +
-                ", permissao_gestor=" + permissao_gestor +
-                ", area='" + area + '\'' +
-                ", cargo='" + cargo + '\'' +
-                ", dt_contratacao=" + dt_contratacao +
-                ", email='" + email + '\'' +
-                ", senha='" + senha + '\'' +
-                ", telefone='" + telefone + '\'' +
-                ", cpf='" + cpf + '\'' +
-                ", id_empresa=" + id_empresa +
-                '}';
-    }
 }
