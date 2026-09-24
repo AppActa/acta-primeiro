@@ -13,9 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.sql.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @WebServlet(name = "ColaboradorServlet", value = "/colaborador-servlet")
 public class ColaboradorServlet extends HttpServlet {
