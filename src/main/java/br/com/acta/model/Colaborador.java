@@ -51,4 +51,108 @@ public class Colaborador {
         this.cpf = cpf;
         this.id_empresa = id_empresa;
     }
+
+    public Long getId_empresa() {
+        return id_empresa;
+    }
+
+    public void setId_empresa(Long id_empresa) {
+        this.id_empresa = id_empresa;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Date getDt_contratacao() {
+        return dt_contratacao;
+    }
+
+    public void setDt_contratacao(Date dt_contratacao) {
+        this.dt_contratacao = dt_contratacao;
+    }
+
+    public String getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Boolean getPermissao_gestor() {
+        return permissao_gestor;
+    }
+
+    public void setPermissao_gestor(Boolean permissao_gestor) {
+        this.permissao_gestor = permissao_gestor;
+    }
+
+    public String getSobrenome() {
+        return sobrenome;
+    }
+
+    public void setSobrenome(String sobrenome) {
+        this.sobrenome = sobrenome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Long getId_colaborador() {
+        return id_colaborador;
+    }
+
+    public void setId_colaborador(Long id_colaborador) {
+        this.id_colaborador = id_colaborador;
+    }
 }
