@@ -4,7 +4,7 @@ import br.com.acta.dao.ColaboradorDAO;
 import br.com.acta.dao.EmpresaDAO;
 import br.com.acta.model.Colaborador;
 import br.com.acta.model.Empresa;
-import br.com.acta.model.Status;
+import br.com.acta.enums.Status;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
