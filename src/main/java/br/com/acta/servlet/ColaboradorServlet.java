@@ -4,6 +4,7 @@ import br.com.acta.dao.ColaboradorDAO;
 import br.com.acta.dao.EmpresaDAO;
 import br.com.acta.model.Colaborador;
 import br.com.acta.model.Empresa;
+import br.com.acta.model.Status;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -47,6 +48,8 @@ public class ColaboradorServlet extends HttpServlet {
                 case "excluir":
                     excluir(req, resp);
                     break;
+                case null:
+                    enviarErro(req, resp, "Ação não informada");
                 default:
                     enviarErro(req, resp, "Ação não existente");
             }
@@ -63,6 +66,7 @@ public class ColaboradorServlet extends HttpServlet {
         colaborador.setNome(req.getParameter("nome"));
         colaborador.setSobrenome(req.getParameter("sobrenome"));
         colaborador.setPermissao_gestor(Boolean.parseBoolean(req.getParameter("permissao_gestor")));
+        colaborador.setStatus(Status.valueOf(req.getParameter("status")));
         colaborador.setArea(req.getParameter("area"));
         colaborador.setCargo(req.getParameter("cargo"));
         colaborador.setDt_contratacao(Date.valueOf(req.getParameter("dt_contratacao")));
@@ -110,6 +114,7 @@ public class ColaboradorServlet extends HttpServlet {
         colaborador.setNome(req.getParameter("nome"));
         colaborador.setSobrenome(req.getParameter("sobrenome"));
         colaborador.setPermissao_gestor(Boolean.parseBoolean(req.getParameter("permissao_gestor")));
+        colaborador.setStatus(Status.valueOf(req.getParameter("status")));
         colaborador.setArea(req.getParameter("area"));
         colaborador.setCargo(req.getParameter("cargo"));
         colaborador.setDt_contratacao(Date.valueOf(req.getParameter("dt_contratacao")));
