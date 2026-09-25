@@ -7,6 +7,7 @@ public class Colaborador {
     private String nome;
     private String sobrenome;
     private Boolean permissao_gestor;
+    private Status status;
     private String area;
     private String cargo;
     private Date dt_contratacao;
@@ -19,10 +20,11 @@ public class Colaborador {
     public Colaborador() {
     }
 
-    public Colaborador(String nome, String sobrenome, Boolean permissao_gestor, String area, String cargo, Date dt_contratacao, String email, String senha, String telefone, String cpf, Long id_empresa) {
+    public Colaborador(String nome, String sobrenome, Boolean permissao_gestor, Status status, String area, String cargo, Date dt_contratacao, String email, String senha, String telefone, String cpf, Long id_empresa) {
         this.nome = nome;
         this.sobrenome = sobrenome;
         this.permissao_gestor = permissao_gestor;
+        this.status = status;
         this.area = area;
         this.cargo = cargo;
         this.dt_contratacao = dt_contratacao;
@@ -33,11 +35,12 @@ public class Colaborador {
         this.id_empresa = id_empresa;
     }
 
-    public Colaborador(Long id_colaborador, String nome, String sobrenome, Boolean permissao_gestor, String area, String cargo, Date dt_contratacao, String email, String senha, String telefone, String cpf, Long id_empresa) {
+    public Colaborador(Long id_colaborador, String nome, String sobrenome, Boolean permissao_gestor, Status status, String area, String cargo, Date dt_contratacao, String email, String senha, String telefone, String cpf, Long id_empresa) {
         this.id_colaborador = id_colaborador;
         this.nome = nome;
         this.sobrenome = sobrenome;
         this.permissao_gestor = permissao_gestor;
+        this.status = status;
         this.area = area;
         this.cargo = cargo;
         this.dt_contratacao = dt_contratacao;
@@ -78,6 +81,14 @@ public class Colaborador {
 
     public void setPermissao_gestor(Boolean permissao_gestor) {
         this.permissao_gestor = permissao_gestor;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public String getArea() {
