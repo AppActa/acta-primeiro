@@ -1,6 +1,7 @@
 package br.com.acta.model;
 
 import br.com.acta.enums.Prioridade;
+import br.com.acta.enums.Situacao;
 
 import java.sql.Date;
 
@@ -13,17 +14,14 @@ public class Tarefa {
     private String descricao;
     private Prioridade prioridade;
     private Date dt_entrega;
-    private String status;
+    private Situacao status;
     private Date dt_inicio;
     private Long id_colaborador;
 
-    //Construtor
 
-    //Para o do get
     public Tarefa() {}
 
-    //Para o inserir
-    public Tarefa(String titulo, String descricao, Prioridade prioridade, Date dt_entrega, String status, Date dt_inicio, Long id_colaborador) {
+    public Tarefa(String titulo, String descricao, Prioridade prioridade, Date dt_entrega, Situacao status, Date dt_inicio, Long id_colaborador) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.prioridade = prioridade;
@@ -33,8 +31,7 @@ public class Tarefa {
         this.id_colaborador = id_colaborador;
     }
 
-    //Com id para os demais
-    public Tarefa(Long id_tarefa, String titulo, String descricao, Prioridade prioridade, Date dt_entrega, String status, Date dt_inicio, Long id_colaborador) {
+    public Tarefa(Long id_tarefa, String titulo, String descricao, Prioridade prioridade, Date dt_entrega, Situacao status, Date dt_inicio, Long id_colaborador) {
         this.id_tarefa = id_tarefa;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -45,52 +42,20 @@ public class Tarefa {
         this.id_colaborador = id_colaborador;
     }
 
-    //Getters e Setters
-
-    public Long getTarefa_id() {
+    public Long getId_tarefa() {
         return id_tarefa;
     }
 
-    public void setTarefa_id(Long id_tarefa) {
+    public void setId_tarefa(Long id_tarefa) {
         this.id_tarefa = id_tarefa;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public Long getId_colaborador() {
+        return id_colaborador;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public Prioridade getPrioridade() {return prioridade;}
-
-    public void setPrioridade(Prioridade prioridade) {
-        this.prioridade = prioridade;
-    }
-
-    public Date getDt_entrega() {
-        return dt_entrega;
-    }
-
-    public void setDt_entrega(Date dt_entrega) {
-        this.dt_entrega = dt_entrega;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setId_colaborador(Long id_colaborador) {
+        this.id_colaborador = id_colaborador;
     }
 
     public Date getDt_inicio() {
@@ -101,11 +66,43 @@ public class Tarefa {
         this.dt_inicio = dt_inicio;
     }
 
-    public Long getColaborador_id() {
-        return id_colaborador;
+    public Situacao getStatus() {
+        return status;
     }
 
-    public void setColaborador_id(Long id_colaborador) {
-        this.id_colaborador = id_colaborador;
+    public void setStatus(Situacao status) {
+        this.status = status;
+    }
+
+    public Date getDt_entrega() {
+        return dt_entrega;
+    }
+
+    public void setDt_entrega(Date dt_entrega) {
+        this.dt_entrega = dt_entrega;
+    }
+
+    public Prioridade getPrioridade() {
+        return prioridade;
+    }
+
+    public void setPrioridade(Prioridade prioridade) {
+        this.prioridade = prioridade;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 }
