@@ -1,5 +1,7 @@
 package br.com.acta.model;
 
+import br.com.acta.enums.Prioridade;
+
 import java.sql.Date;
 
 public class Tarefa {
@@ -9,7 +11,7 @@ public class Tarefa {
     private Long id_tarefa;
     private String titulo;
     private String descricao;
-    private String prioridade;
+    private Prioridade prioridade;
     private Date dt_entrega;
     private String status;
     private Date dt_inicio;
@@ -21,7 +23,7 @@ public class Tarefa {
     public Tarefa() {}
 
     //Para o inserir
-    public Tarefa(String titulo, String descricao, String prioridade, Date dt_entrega, String status, Date dt_inicio, Long id_colaborador) {
+    public Tarefa(String titulo, String descricao, Prioridade prioridade, Date dt_entrega, String status, Date dt_inicio, Long id_colaborador) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.prioridade = prioridade;
@@ -32,7 +34,7 @@ public class Tarefa {
     }
 
     //Com id para os demais
-    public Tarefa(Long id_tarefa, String titulo, String descricao, String prioridade, Date dt_entrega, String status, Date dt_inicio, Long id_colaborador) {
+    public Tarefa(Long id_tarefa, String titulo, String descricao, Prioridade prioridade, Date dt_entrega, String status, Date dt_inicio, Long id_colaborador) {
         this.id_tarefa = id_tarefa;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -69,11 +71,9 @@ public class Tarefa {
         this.descricao = descricao;
     }
 
-    public String getPrioridade() {
-        return prioridade;
-    }
+    public Prioridade getPrioridade() {return prioridade;}
 
-    public void setPrioridade(String prioridade) {
+    public void setPrioridade(Prioridade prioridade) {
         this.prioridade = prioridade;
     }
 

@@ -1,5 +1,8 @@
 package br.com.acta.model;
 
+import br.com.acta.enums.EtapaCiclo;
+import br.com.acta.enums.Situacao;
+
 import java.sql.Date;
 import java.time.OffsetDateTime;
 
