@@ -1,7 +1,7 @@
 package br.com.acta.dao;
 
 import br.com.acta.model.Colaborador;
-import br.com.acta.model.Status;
+import br.com.acta.enums.Status;
 import br.com.acta.utils.Conexao;
 
 import java.sql.*;
