@@ -33,6 +33,29 @@ public class EmpresaServlet extends HttpServlet {
         }
     }
 
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
+        String acao = req.getParameter("acao");
+
+        try{
+            switch (acao){
+                case "inserir":
+                    inserir(req,resp);
+                    break;
+                case "atualizar":
+                    atualizar(req,resp);
+                    break;
+                case "excluir":
+                    excluir(req, resp);
+                case null:
+                    enviarErro(req,resp,"Ação não informada.");
+                default:
+                    enviarErro(req,resp,"Ação não existente");
+            }
+        }catch(Exception e){
+            enviarErro(req,resp,"Não foi possível concluir");
+        }
+    }
+
         //CRUD
         private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             Empresa empresa = new Empresa();
