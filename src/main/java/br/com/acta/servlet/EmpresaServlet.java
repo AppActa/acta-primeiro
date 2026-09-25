@@ -25,7 +25,13 @@ public class EmpresaServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
 
+        try{
+            buscar(req,resp);
+        }catch(Exception e){
+            e.printStackTrace();
+            enviarErro(req,resp,"Não foi possível encontrar as empresas.");
         }
+    }
 
         //CRUD
         private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
