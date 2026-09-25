@@ -1,4 +1,4 @@
-package br.com.acta.model;
+package br.com.acta.enums;
 
 public enum Situacao {
     NAO_INICIADO,

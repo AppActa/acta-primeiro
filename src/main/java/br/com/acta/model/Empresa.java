@@ -1,5 +1,8 @@
 package br.com.acta.model;
 
+import br.com.acta.enums.Status;
+import br.com.acta.enums.TamanhoEmpresa;
+
 public class Empresa {
 
     //Atributos
@@ -8,11 +11,11 @@ public class Empresa {
     private String setor;
     private String cnpj;
     private Status status;
-    private String tamanho;
+    private TamanhoEmpresa tamanho;
 
     public Empresa() {}
 
-    public Empresa(String nome, String setor, String cnpj, Status status, String tamanho) {
+    public Empresa(String nome, String setor, String cnpj, Status status, TamanhoEmpresa tamanho) {
         this.nome = nome;
         this.setor = setor;
         this.cnpj = cnpj;
@@ -20,7 +23,7 @@ public class Empresa {
         this.tamanho = tamanho;
     }
 
-    public Empresa(Long id_empresa, String nome, String setor, String cnpj, Status status, String tamanho) {
+    public Empresa(Long id_empresa, String nome, String setor, String cnpj, Status status, TamanhoEmpresa tamanho) {
         this.id_empresa = id_empresa;
         this.nome = nome;
         this.setor = setor;
@@ -69,11 +72,11 @@ public class Empresa {
         this.status = status;
     }
 
-    public String getTamanho() {
+    public TamanhoEmpresa getTamanho() {
         return tamanho;
     }
 
-    public void setTamanho(String tamanho) {
+    public void setTamanho(TamanhoEmpresa tamanho) {
         this.tamanho = tamanho;
     }
 }
