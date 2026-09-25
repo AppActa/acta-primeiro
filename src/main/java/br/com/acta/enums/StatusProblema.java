@@ -1,4 +1,4 @@
-package br.com.acta.model;
+package br.com.acta.enums;
 
 public enum StatusProblema {
     EM_ANALISE,

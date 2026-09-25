@@ -38,4 +38,76 @@ public class LicaoAprendida {
         this.severidade = severidade;
         this.id_ciclo = id_ciclo;
     }
+
+    public Long getId_licao() {
+        return id_licao;
+    }
+
+    public void setId_licao(Long id_licao) {
+        this.id_licao = id_licao;
+    }
+
+    public Long getId_ciclo() {
+        return id_ciclo;
+    }
+
+    public void setId_ciclo(Long id_ciclo) {
+        this.id_ciclo = id_ciclo;
+    }
+
+    public String getSeveridade() {
+        return severidade;
+    }
+
+    public void setSeveridade(String severidade) {
+        this.severidade = severidade;
+    }
+
+    public String getFase_origem() {
+        return fase_origem;
+    }
+
+    public void setFase_origem(String fase_origem) {
+        this.fase_origem = fase_origem;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public String getAprendizado() {
+        return aprendizado;
+    }
+
+    public void setAprendizado(String aprendizado) {
+        this.aprendizado = aprendizado;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
 }
