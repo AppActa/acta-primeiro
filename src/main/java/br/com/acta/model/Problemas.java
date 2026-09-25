@@ -1,6 +1,8 @@
 package br.com.acta.model;
 
 
+import br.com.acta.enums.StatusProblema;
+
 import java.sql.Date;
 
 public class Problemas {
