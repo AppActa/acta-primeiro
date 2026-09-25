@@ -1,6 +1,7 @@
 package br.com.acta.dao;
 
 import br.com.acta.model.Colaborador;
+import br.com.acta.model.Status;
 import br.com.acta.utils.Conexao;
 
 import java.sql.*;
@@ -13,8 +14,8 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
     @Override
     public int inserir(Colaborador colaborador) {
         String sql = """
-                INSERT INTO colaborador (nome, sobrenome, permissao_gestor, area, cargo, dt_contratacao, email, senha, telefone, cpf, id_empresa)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                INSERT INTO colaborador (nome, sobrenome, permissao_gestor, status, area, cargo, dt_contratacao, email, senha, telefone, cpf, id_empresa)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                 """;
 
         try (Connection conn = Conexao.conectar();
@@ -23,14 +24,15 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setString(1, colaborador.getNome());
             pstmt.setString(2, colaborador.getSobrenome());
             pstmt.setBoolean(3, colaborador.getPermissao_gestor());
-            pstmt.setString(4, colaborador.getArea());
-            pstmt.setString(5, colaborador.getCargo());
-            pstmt.setDate(6, colaborador.getDt_contratacao());
-            pstmt.setString(7, colaborador.getEmail());
-            pstmt.setString(8, colaborador.getSenha());
-            pstmt.setString(9, colaborador.getTelefone());
-            pstmt.setString(10, colaborador.getCpf());
-            pstmt.setLong(11, colaborador.getId_empresa());
+            pstmt.setString(4, colaborador.getStatus().name());
+            pstmt.setString(5, colaborador.getArea());
+            pstmt.setString(6, colaborador.getCargo());
+            pstmt.setDate(7, colaborador.getDt_contratacao());
+            pstmt.setString(8, colaborador.getEmail());
+            pstmt.setString(9, colaborador.getSenha());
+            pstmt.setString(10, colaborador.getTelefone());
+            pstmt.setString(11, colaborador.getCpf());
+            pstmt.setLong(12, colaborador.getId_empresa());
 
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
@@ -46,13 +48,13 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         String sql = "SELECT * FROM colaborador WHERE id_colaborador = ?;";
 
         try (Connection conn = Conexao.conectar();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery()) {
 
             pstmt.setLong(1, id);
-            ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                mapearColaborador(rs);
+                return mapearColaborador(rs);
             } return null;
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -81,7 +83,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
     // UPDATE
     @Override
     public int atualizar(Colaborador colaborador) {
-        String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, area = ?, cargo = ?, dt_contratacao = ?, email = ?, senha = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE id_colaborador = ?;";
+        String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, status = ?, area = ?, cargo = ?, dt_contratacao = ?, email = ?, senha = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE id_colaborador = ?;";
 
         try (Connection conn = Conexao.conectar();
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -89,15 +91,16 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setString(1, colaborador.getNome());
             pstmt.setString(2, colaborador.getSobrenome());
             pstmt.setBoolean(3, colaborador.getPermissao_gestor());
-            pstmt.setString(4, colaborador.getArea());
-            pstmt.setString(5, colaborador.getCargo());
-            pstmt.setDate(6, colaborador.getDt_contratacao());
-            pstmt.setString(7, colaborador.getEmail());
-            pstmt.setString(8, colaborador.getSenha());
-            pstmt.setString(9, colaborador.getTelefone());
-            pstmt.setString(10, colaborador.getCpf());
-            pstmt.setLong(11, colaborador.getId_empresa());
-            pstmt.setLong(12, colaborador.getId_colaborador());
+            pstmt.setString(4, colaborador.getStatus().name());
+            pstmt.setString(5, colaborador.getArea());
+            pstmt.setString(6, colaborador.getCargo());
+            pstmt.setDate(7, colaborador.getDt_contratacao());
+            pstmt.setString(8, colaborador.getEmail());
+            pstmt.setString(9, colaborador.getSenha());
+            pstmt.setString(10, colaborador.getTelefone());
+            pstmt.setString(11, colaborador.getCpf());
+            pstmt.setLong(12, colaborador.getId_empresa());
+            pstmt.setLong(13, colaborador.getId_colaborador());
 
             if (pstmt.executeUpdate() > 0) return 1;
             return 0;
@@ -131,6 +134,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         colaborador.setNome(rs.getString("nome"));
         colaborador.setSobrenome(rs.getString("sobrenome"));
         colaborador.setPermissao_gestor(rs.getBoolean("permissao_gestor"));
+        colaborador.setStatus(Status.valueOf(rs.getString("status")));
         colaborador.setArea(rs.getString("area"));
         colaborador.setCargo(rs.getString("cargo"));
         colaborador.setDt_contratacao(rs.getDate("dt_contratacao"));
