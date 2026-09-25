@@ -13,8 +13,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.acta.enums.Status;
 import br.com.acta.model.Empresa;
-import br.com.acta.model.Status;
 import br.com.acta.utils.Conexao;
 public class EmpresaDAO {
 
@@ -29,8 +29,8 @@ public class EmpresaDAO {
             pstmt.setString(1,empresa.getNome());
             pstmt.setString(2,empresa.getSetor());
             pstmt.setString(3,empresa.getCnpj());
-            pstmt.setString(4,String.valueOf(empresa.getStatus()));
-            pstmt.setString(5,empresa.getTamanho());
+            pstmt.setString(4, empresa.getStatus().name());
+            pstmt.setString(5,empresa.getTamanho().name());
 
             return pstmt.executeUpdate() > 0 ? 1 : 0;
 
@@ -83,37 +83,14 @@ public class EmpresaDAO {
         try(Connection conn = Conexao.conectar();
         PreparedStatement pstmt = conn.prepareStatement(sql)){
 
-            pstmt.setString(1, empresa.getNome());
-            pstmt.setString(2, empresa.getSetor());
-            pstmt.setString(3, empresa.getCnpj());
-            pstmt.setString(4,String.valueOf(empresa.getStatus()));
-            pstmt.setString(5, empresa.getTamanho());
+            pstmt.setString();
 
-            if (pstmt.executeUpdate() > 0) return 1;
-            else return 0;
-
-        }catch(SQLException | ClassNotFoundException e){
-            e.printStackTrace();
-            return -1;
         }
-
+        return 0;
     }
 
     public int excluir(Long id) {
-        String sql = "DELETE FROM empresa WHERE id_empresa = ?";
-
-        try(Connection conn = Conexao.conectar();
-        PreparedStatement pstmt = conn.prepareStatement(sql)){
-            pstmt.setLong(1,id);
-
-            if(pstmt.executeUpdate() > 0) return 1;
-            else return 0;
-
-        }catch(SQLException | ClassNotFoundException e){
-            e.printStackTrace();
-            return -1;
-        }
-
+        return 0;
     }
 
     private static Empresa mapearEmpresa(ResultSet rs) throws SQLException {

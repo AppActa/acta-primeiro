@@ -1,4 +1,4 @@
-package br.com.acta.model;
+package br.com.acta.enums;
 
 public enum StatusMeta {
     ABAIXO_ESPERADO,
