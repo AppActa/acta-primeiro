@@ -18,6 +18,8 @@ public class Ciclo {
     private OffsetDateTime criado_em;
     private Long id_empresa;
     private Long id_responsavel;
+    private String nomeEmpresa;
+    private String nomeResponsavel;
 
     public Ciclo() {}
 
@@ -128,4 +130,12 @@ public class Ciclo {
     public void setId_responsavel(Long id_responsavel) {
         this.id_responsavel = id_responsavel;
     }
+
+    public String getNomeEmpresa() {return nomeEmpresa;}
+
+    public void setNomeEmpresa(String nomeEmpresa) {this.nomeEmpresa = nomeEmpresa;}
+
+    public String getNomeResponsavel() {return nomeResponsavel;}
+
+    public void setNomeResponsavel(String nomeResponsavel) {this.nomeResponsavel = nomeResponsavel;}
 }
