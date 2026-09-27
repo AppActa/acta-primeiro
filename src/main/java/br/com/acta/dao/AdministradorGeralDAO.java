@@ -7,18 +7,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
 import br.com.acta.model.AdministradorGeral;
 import br.com.acta.utils.Conexao;
 import br.com.acta.utils.PasswordUtils;
 import com.password4j.Password;
 
-public class AdministradorGeralDAO  {
+public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
     //metodos DAO
 
     //inserir
 
+    @Override
     public int inserir(AdministradorGeral administradorGeral) {
         String sql = "INSERT INTO administrador_geral (nome, senha, email, telefone)  VALUES (?,?,?,?)";
 
@@ -40,6 +40,7 @@ public class AdministradorGeralDAO  {
 
     //buscar com id
 
+    @Override
     public AdministradorGeral buscar(Long id) {
         String sql = "SELECT * FROM administrador_geral WHERE id_adm_geral = ? ";
 
@@ -50,7 +51,7 @@ public class AdministradorGeralDAO  {
             ResultSet rs = pstmt.executeQuery();
 
             if(rs.next()) {
-                mapearAdministradorGeral(rs);
+                return mapearAdministradorGeral(rs);
             }return null;
 
         } catch(SQLException | ClassNotFoundException e){
@@ -60,6 +61,7 @@ public class AdministradorGeralDAO  {
 
     //listar
 
+    @Override
     public List<AdministradorGeral> buscar() {
         List<AdministradorGeral> administradoresGerais = new ArrayList<>();
         String sql = "SELECT * FROM administrador_geral";
@@ -103,6 +105,7 @@ public class AdministradorGeralDAO  {
 
     //atualizar
 
+    @Override
     public int atualizar(AdministradorGeral administradorGeral) {
         String sql = "UPDATE administrador_geral SET nome = ?, email = ?, telefone = ? WHERE id_adm_geral = ?";
 
@@ -158,6 +161,7 @@ public class AdministradorGeralDAO  {
 
     //excluir
 
+    @Override
     public int excluir(Long id) {
         String sql = "DELETE FROM administrador_geral WHERE id_adm_geral = ?";
 

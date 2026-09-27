@@ -3,8 +3,6 @@ package br.com.acta.dao;
 import br.com.acta.model.Colaborador;
 import br.com.acta.enums.Status;
 import br.com.acta.utils.Conexao;
-import br.com.acta.utils.PasswordUtils;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +28,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setString(6, colaborador.getCargo());
             pstmt.setDate(7, colaborador.getDt_contratacao());
             pstmt.setString(8, colaborador.getEmail());
-            pstmt.setString(9, PasswordUtils.hashSenha(colaborador.getSenha()));
+            pstmt.setString(9, colaborador.getSenha());
             pstmt.setString(10, colaborador.getTelefone());
             pstmt.setString(11, colaborador.getCpf());
             pstmt.setLong(12, colaborador.getId_empresa());
