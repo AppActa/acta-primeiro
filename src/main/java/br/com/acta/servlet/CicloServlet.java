@@ -23,7 +23,7 @@ import java.util.List;
 public class CicloServlet extends HttpServlet {
     private static final String PAGINA_CICLO = "/ciclo.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
-    private final CicloDAO DAO = new CicloDAO();
+    private final CicloDAO cicloDAO = new CicloDAO();
     private final EmpresaDAO EMPRESA_DAO = new EmpresaDAO();
     private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
 
@@ -77,7 +77,7 @@ public class CicloServlet extends HttpServlet {
         ciclo.setId_responsavel(Long.parseLong(req.getParameter("id_responsavel")));
         // criado_em não é setado aqui — quem preenche é o banco (now())
 
-        int resultado = DAO.inserir(ciclo);
+        int resultado = cicloDAO.inserir(ciclo);
 
         if (resultado == 1) {
             enviarPaginaCerta(req, resp);
@@ -95,7 +95,7 @@ public class CicloServlet extends HttpServlet {
             return;
         }
 
-        Ciclo ciclo = DAO.buscar(Long.parseLong(id));
+        Ciclo ciclo = cicloDAO.buscar(Long.parseLong(id));
 
         if (ciclo == null) {
             enviarPaginaCerta(req, resp);
@@ -120,16 +120,16 @@ public class CicloServlet extends HttpServlet {
         ciclo.setStatus(Situacao.valueOf(req.getParameter("status")));
         ciclo.setId_empresa(Long.parseLong(req.getParameter("id_empresa")));
         ciclo.setId_responsavel(Long.parseLong(req.getParameter("id_responsavel")));
-        // criado_em também não entra aqui — nunca é atualizado
+        // criado_em também não entra aqui porque o banco faz automatico.
 
-        int resultado = DAO.atualizar(ciclo);
+        int resultado = cicloDAO.atualizar(ciclo);
         if (resultado == 1) enviarPaginaCerta(req, resp);
         else enviarErro(req, resp, "O ciclo não pode ser atualizado");
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Long.parseLong(req.getParameter("id-ciclo"));
-        int resultado = DAO.excluir(id);
+        int resultado = cicloDAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
         else enviarErro(req, resp, "O ciclo não pode ser excluído");
@@ -144,7 +144,7 @@ public class CicloServlet extends HttpServlet {
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Ciclo> ciclos = DAO.buscar();
+        List<Ciclo> ciclos = cicloDAO.buscar();
         preencherNomesFk(ciclos);
 
         req.setAttribute("cicloList", ciclos);
@@ -154,7 +154,7 @@ public class CicloServlet extends HttpServlet {
     private void preencherNomesFk(List<Ciclo> ciclos) {
         for (Ciclo ciclo : ciclos) {
             Empresa empresa = EMPRESA_DAO.buscar(ciclo.getId_empresa());
-            if (empresa != null) ciclo.setNome(empresa.getNome());
+            if (empresa != null) ciclo.setNomeEmpresa(empresa.getNome());
 
             Colaborador responsavel = COLABORADOR_DAO.buscar(ciclo.getId_responsavel());
             if (responsavel != null) ciclo.setNomeResponsavel(responsavel.getNome());
