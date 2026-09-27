@@ -159,7 +159,7 @@ public class ColaboradorServlet extends HttpServlet {
             Empresa empresa = EMPRESA_DAO.buscar(idEmpresa);
 
             if (empresa != null) {
-                colaborador.setNomeEmpresa(empresa.getNome());
+                colaborador.setNome(empresa.getNome());
             }
         }
     }
