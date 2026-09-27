@@ -3,6 +3,8 @@ package br.com.acta.dao;
 import br.com.acta.model.Colaborador;
 import br.com.acta.enums.Status;
 import br.com.acta.utils.Conexao;
+import br.com.acta.utils.PasswordUtils;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +30,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setString(6, colaborador.getCargo());
             pstmt.setDate(7, colaborador.getDt_contratacao());
             pstmt.setString(8, colaborador.getEmail());
-            pstmt.setString(9, colaborador.getSenha());
+            pstmt.setString(9, PasswordUtils.hashSenha(colaborador.getSenha()));
             pstmt.setString(10, colaborador.getTelefone());
             pstmt.setString(11, colaborador.getCpf());
             pstmt.setLong(12, colaborador.getId_empresa());
@@ -95,7 +97,6 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setString(6, colaborador.getCargo());
             pstmt.setDate(7, colaborador.getDt_contratacao());
             pstmt.setString(8, colaborador.getEmail());
-            pstmt.setString(9, colaborador.getSenha());
             pstmt.setString(10, colaborador.getTelefone());
             pstmt.setString(11, colaborador.getCpf());
             pstmt.setLong(12, colaborador.getId_empresa());
@@ -106,6 +107,40 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public int atualizarSenha(String email, String senhaAntiga, String senhaNova){
+        String sqlBuscar = "SELECT senha FROM colaborador WHERE email = ?";
+        String sqlAtualizar = "UPDATE colaborador SET senha = ? WHERE email = ?";
+
+        try (Connection conn = Conexao.conectar()){
+            //buscar hash atual
+            String hashAtual = null;
+            try (PreparedStatement pstmtBuscar = conn.prepareStatement(sqlBuscar)){
+                pstmtBuscar.setString(1, email);
+                ResultSet rs = pstmtBuscar.executeQuery();
+                if (rs.next()) {
+                    hashAtual = rs.getString("senha");
+                }else{
+                    return -1;//usuario não encontrado
+                }
+            }
+
+            //conferir se a antiga senha iguala com o hash salvo
+            if(!PasswordUtils.verificarSenha(senhaAntiga,hashAtual)){
+                return 0;
+            }
+
+            //gera novo hash e atualiza
+            try(PreparedStatement pstmtAtualizar = conn.prepareStatement(sqlAtualizar)){
+                pstmtAtualizar.setString(1, PasswordUtils.hashSenha(senhaNova));
+                pstmtAtualizar.setString(2, email);
+                return pstmtAtualizar.executeUpdate() > 0 ? 1 : 0;
+            }
+        }catch (SQLException | ClassNotFoundException e){
+            e.printStackTrace();
+            return -1;
         }
     }
 
