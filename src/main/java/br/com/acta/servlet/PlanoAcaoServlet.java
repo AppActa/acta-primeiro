@@ -8,7 +8,6 @@ import br.com.acta.enums.Situacao;
 import br.com.acta.model.PlanoAcao;
 import br.com.acta.model.Colaborador;
 import br.com.acta.model.Ciclo;
-import br.com.acta.enums.Status;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,17 +16,51 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.util.List;
 
 @WebServlet(name = "PlanoAcao", value = "/planoAcao-servlet")
-public class PlanoAcaoServlet {
+public class PlanoAcaoServlet extends HttpServlet {
     private static String PAGINA_PLANOACAO = "/planoAcao.jsp";
     private static String PAGINA_ERRO = "/erro.jsp";
     private final PlanoAcaoDAO DAO = new PlanoAcaoDAO();
     private final CicloDAO CICLO_DAO = new CicloDAO();
     private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
 
+    //DoGet e DoPost
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            buscar(req,resp);
+        }catch (Exception e){
+            e.printStackTrace();
+            enviarErro(req, resp, "Não foi encontrar os planos de acao");
+        }
+    }
+
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String acao = req.getParameter("acao");
+
+        try {
+            switch (acao) {
+                case "inserir":
+                    inserir(req,resp);
+                    break;
+                case "atualizar":
+                    atualizar(req, resp);
+                    break;
+                case "excluir":
+                    excluir(req, resp);
+                    break;
+                case null:
+                    enviarErro(req, resp, "Ação não informada");
+                default:
+                    enviarErro(req, resp, "Ação não existente");
+
+            }
+        }catch (Exception e) {
+            enviarErro(req, resp, "Não foi possivel concluir");
+        }
+    }
 
 
     //CRUD
