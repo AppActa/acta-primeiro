@@ -18,6 +18,7 @@ public class Colaborador {
     private String telefone;
     private String cpf;
     private Long id_empresa;
+    private String nomeEmpresa;
 
     public Colaborador() {}
 
@@ -155,4 +156,8 @@ public class Colaborador {
     public void setId_colaborador(Long id_colaborador) {
         this.id_colaborador = id_colaborador;
     }
+
+    public String getNomeEmpresa() {return nomeEmpresa;}
+
+    public void setNomeEmpresa(String nomeEmpresa) {this.nomeEmpresa = nomeEmpresa;}
 }
