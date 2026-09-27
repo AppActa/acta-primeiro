@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import br.com.acta.model.AdministradorGeral;
+import br.com.acta.model.Colaborador;
 import br.com.acta.utils.Conexao;
 import br.com.acta.utils.PasswordUtils;
 import com.password4j.Password;
@@ -186,5 +187,22 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         administradorGeral.setEmail(rs.getString("email"));
         administradorGeral.setTelefone(rs.getString("telefone"));
         return administradorGeral;
+    }
+
+    public AdministradorGeral buscarPorEmail(String email) {
+        String sql = "SELECT * FROM administrador_geral WHERE email = ?";
+
+        try(Connection conn = Conexao.conectar();
+            PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+            pstmt.setString(1,email);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return mapearAdministradorGeral(rs);
+            }return null;
+        }catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
