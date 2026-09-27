@@ -75,12 +75,43 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
 
     @Override
     public int atualizar(PlanoAcao planoAcao) {
-        return 0;
+
+        String sql = "UPDATE plano_acao SET nome = ?, descricao = ?, status = ?, prioridade = ?, id_ciclo = ?, id_criador = ? WHERE id_plano_acao = ?";
+
+        try(Connection conn = Conexao.conectar();
+        PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+            pstmt.setString(1, planoAcao.getNome());
+            pstmt.setString(2, planoAcao.getDescricao());
+            pstmt.setString(3, planoAcao.getStatus().name());
+            pstmt.setString(4, planoAcao.getPrioridade().name());
+            pstmt.setLong(5, planoAcao.getId_ciclo());
+            pstmt.setLong(6, planoAcao.getId_criador());
+            pstmt.setLong(7,planoAcao.getId_plano_acao());
+
+            if (pstmt.executeUpdate() > 0) return 1;
+            return 0;
+        }catch (SQLException | ClassNotFoundException e){
+            return -1;
+        }
     }
 
     @Override
     public int excluir(Long id) {
-        return 0;
+        String sql = "DELETE FROM plano_acao WHERE id_plano_acao = ?";
+
+        try(Connection conn = Conexao.conectar();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1,id);
+
+            if (pstmt.executeUpdate() > 0) return 1;
+            else return 0;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            return -1;
+        }
+
     }
 
 
