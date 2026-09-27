@@ -4,6 +4,7 @@ package br.com.acta.servlet;
 import br.com.acta.dao.AdministradorGeralDAO;
 import br.com.acta.dao.ColaboradorDAO;
 import br.com.acta.dao.EmpresaDAO;
+import br.com.acta.model.AdministradorGeral;
 import br.com.acta.model.Colaborador;
 import br.com.acta.model.Empresa;
 import br.com.acta.enums.Status;
@@ -26,15 +27,28 @@ public class LoginServlet {
     private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
     private final AdministradorGeralDAO ADMINISTRADOR_DAO = new AdministradorGeralDAO();
 
-    private void login(HttpServletRequest req, HttpServletResponse resp) throws SQLException, IOException {
-        String email = req.getParameter("email");
 
-        if (email == null) {
-            enviarErro(req,resp, "Insira o email");
+    private void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String email = req.getParameter("email");
+        String senha = req.getParameter("senha");
+
+        AdministradorGeral administradorGeral = ADMINISTRADOR_DAO.autenticar(email, senha);
+        if (administradorGeral != null) {
+            req.getSession().setAttribute("usuarioLogado", administradorGeral);
+            req.getSession().setAttribute("tipoUsuario", "ADMINISTRADOR_GERAL");
+            resp.sendRedirect(req.getContextPath() + "/home-servlet");
             return;
         }
 
-        Colaborador colaborador
+        Colaborador colaborador = COLABORADOR_DAO.autenticar(email, senha);
+        if (colaborador != null) {
+            req.getSession().setAttribute("usuarioLogado", colaborador);
+            req.getSession().setAttribute("tipoUsuario", "COLABORADOR");
+            resp.sendRedirect(req.getContextPath() + "/home-servlet");
+            return;
+        }
+
+        enviarErro(req, resp, "Email ou senha inválidos");
     }
 
     private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
