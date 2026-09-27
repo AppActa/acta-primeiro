@@ -179,4 +179,21 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         colaborador.setId_empresa(rs.getLong("id_empresa"));
         return colaborador;
     }
+
+    public Colaborador buscarPorEmail(String email) {
+        String sql = "SELECT * FROM colaborador WHERE email = ?";
+
+        try(Connection conn = Conexao.conectar();
+        PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+            pstmt.setString(1,email);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return mapearColaborador(rs);
+            }return null;
+        }catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
