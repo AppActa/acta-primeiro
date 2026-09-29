@@ -22,6 +22,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         String acao = req.getParameter("acao");
 
         try {
@@ -31,9 +32,11 @@ public class LoginServlet extends HttpServlet {
                     break;
                 case null:
                     enviarErro(req, resp, "Ação não informada");
+                    break;
                 default:
                     enviarErro(req, resp, "Ação não existente");
             }
+
         } catch (Exception e) {
             enviarErro(req, resp, "Não foi possível concluir");
         }

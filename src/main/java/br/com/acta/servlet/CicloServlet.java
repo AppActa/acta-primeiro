@@ -39,6 +39,7 @@ public class CicloServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         String acao = req.getParameter("acao");
 
         try {
@@ -54,11 +55,13 @@ public class CicloServlet extends HttpServlet {
                     break;
                 case null:
                     enviarErro(req, resp, "Ação não informada");
+                    break;
                 default:
                     enviarErro(req, resp, "Ação não existente");
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             enviarErro(req, resp, "Não foi possível concluir");
         }
     }
@@ -79,13 +82,8 @@ public class CicloServlet extends HttpServlet {
 
         int resultado = cicloDAO.inserir(ciclo);
 
-        if (resultado == 1) {
-            enviarPaginaCerta(req, resp);
-        } else {
-            preencherNomesFk(List.of(ciclo));
-            req.setAttribute("cicloList", List.of(ciclo));
-            req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
-        }
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "O ciclo não pode ser cadastrado");
     }
 
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -123,6 +121,7 @@ public class CicloServlet extends HttpServlet {
         // criado_em também não entra aqui porque o banco faz automatico.
 
         int resultado = cicloDAO.atualizar(ciclo);
+
         if (resultado == 1) enviarPaginaCerta(req, resp);
         else enviarErro(req, resp, "O ciclo não pode ser atualizado");
     }

@@ -23,74 +23,75 @@ public class EmpresaServlet extends HttpServlet {
     private static final EmpresaDAO DAO = new EmpresaDAO();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
-
-        try{
-            buscar(req,resp);
-        }catch(Exception e){
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            buscar(req, resp);
+        } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req,resp,"Não foi possível encontrar as empresas.");
+            enviarErro(req, resp, "Não foi possível encontrar as empresas.");
         }
     }
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         String acao = req.getParameter("acao");
 
-        try{
-            switch (acao){
+        try {
+            switch (acao) {
                 case "inserir":
-                    inserir(req,resp);
+                    inserir(req, resp);
                     break;
                 case "atualizar":
-                    atualizar(req,resp);
+                    atualizar(req, resp);
                     break;
                 case "excluir":
                     excluir(req, resp);
+                    break;
                 case null:
-                    enviarErro(req,resp,"Ação não informada.");
+                    enviarErro(req, resp, "Ação não informada.");
+                    break;
                 default:
-                    enviarErro(req,resp,"Ação não existente");
+                    enviarErro(req, resp, "Ação não existente");
             }
-        }catch(Exception e){
-            enviarErro(req,resp,"Não foi possível concluir");
+
+        } catch (Exception e) {
+            enviarErro(req, resp, "Não foi possível concluir");
         }
     }
+    private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Empresa empresa = new Empresa();
 
-        //CRUD
-        private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            Empresa empresa = new Empresa();
+        empresa.setNome(req.getParameter("nome"));
+        empresa.setSetor(req.getParameter("setor"));
+        empresa.setCnpj(req.getParameter("cnpj"));
+        empresa.setStatus(Status.valueOf(req.getParameter("status")));
+        empresa.setTamanho(TamanhoEmpresa.valueOf(req.getParameter("tamanho")));
 
-            empresa.setNome(req.getParameter("nome"));
-            empresa.setSetor(req.getParameter("setor"));
-            empresa.setCnpj(req.getParameter("cnpj"));
-            empresa.setStatus(Status.valueOf(req.getParameter("status")));
-            empresa.setTamanho(TamanhoEmpresa.valueOf(req.getParameter("tamanho")));
+        int resultado = DAO.inserir(empresa);
 
-            int resultado = DAO.inserir(empresa);
+        if(resultado == 1) enviarPaginaCerta(req,resp);
+        else enviarErro(req, resp, "A empresa não pode ser cadastrada");
+    }
 
-            if(resultado == 1) enviarPaginaCerta(req,resp);
-            else req.getRequestDispatcher(PAGINA_EMPRESA).forward(req,resp);
-        }
-
-        private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
+    private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
         String id = req.getParameter("id");
 
-        if(id == null){
-            enviarPaginaCerta(req,resp);
+        if (id == null) {
+            enviarPaginaCerta(req, resp);
             return;
         }
 
         Empresa empresa = DAO.buscar(Long.parseLong("id"));
 
-        if(empresa == null){
-            enviarPaginaCerta(req,resp);
+        if (empresa == null) {
+            enviarPaginaCerta(req, resp);
             return;
         }
 
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req,resp);
-        }
+    }
 
-        private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+    private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
         Long id = Long.parseLong(req.getParameter("id-empresa"));
         Empresa empresa = new Empresa();
 
@@ -101,31 +102,31 @@ public class EmpresaServlet extends HttpServlet {
         empresa.setStatus(Status.valueOf(req.getParameter("status")));
         empresa.setTamanho(TamanhoEmpresa.valueOf(req.getParameter("tamanho")));
 
-            int resultado = DAO.atualizar(empresa);
-            if (resultado == 1) enviarPaginaCerta(req, resp);
-            else enviarErro(req, resp, "A empresa não pode ser adicionada");
+        int resultado = DAO.atualizar(empresa);
 
-        }
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "A empresa não pode ser adicionada");
 
-        private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+    }
+
+    private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Long.parseLong(req.getParameter("id-empresa"));
         int resultado = DAO.excluir(id);
 
-        if(resultado == 1) enviarPaginaCerta(req,resp);
-        else enviarErro(req,resp,"A empresa não pode ser excluída");
-        }
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "A empresa não pode ser excluída");
+    }
 
         //UTILITARIOS
-        private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException{
-        req.setAttribute(RequestDispatcher.ERROR_MESSAGE,mensagem);
+    private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException{
+        req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
         req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE,HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         req.getRequestDispatcher(PAGINA_ERRO).forward(req, resp);
-        }
+    }
 
-        private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+    private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Empresa> empresas = DAO.buscar();
-        }
 
-
+    }
 }

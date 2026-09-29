@@ -35,6 +35,7 @@ public class ColaboradorServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         String acao = req.getParameter("acao");
 
         try {
@@ -50,16 +51,19 @@ public class ColaboradorServlet extends HttpServlet {
                     break;
                 case null:
                     enviarErro(req, resp, "Ação não informada");
+                    break;
                 default:
                     enviarErro(req, resp, "Ação não existente");
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             enviarErro(req, resp, "Não foi possível concluir");
         }
     }
 
     // CRUD
+    // Retorno do DAO: 1 = certo, 0 = errado, -1 = erro de conexão com o banco
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Colaborador colaborador = new Colaborador();
 
@@ -78,17 +82,13 @@ public class ColaboradorServlet extends HttpServlet {
 
         int resultado = DAO.inserir(colaborador);
 
-        if (resultado == 1) {
-            enviarPaginaCerta(req, resp);
-        } else {
-            preencherNomesFk(List.of(colaborador));
-            req.setAttribute("colaboradorList", List.of(colaborador));
-            req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
-        }
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "O colaborador não pode ser cadastrado");
     }
 
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
+
         if (id == null) {
             enviarPaginaCerta(req, resp);
             return;
@@ -119,12 +119,12 @@ public class ColaboradorServlet extends HttpServlet {
         colaborador.setCargo(req.getParameter("cargo"));
         colaborador.setDt_contratacao(Date.valueOf(req.getParameter("dt_contratacao")));
         colaborador.setEmail(req.getParameter("email"));
-        colaborador.setSenha(req.getParameter("senha"));
         colaborador.setTelefone(req.getParameter("telefone"));
         colaborador.setCpf(req.getParameter("cpf"));
         colaborador.setId_empresa(Long.parseLong(req.getParameter("id_empresa")));
 
         int resultado = DAO.atualizar(colaborador);
+
         if (resultado == 1) enviarPaginaCerta(req, resp);
         else enviarErro(req, resp, "O colaborador não pode ser atualizado");
     }
@@ -163,6 +163,5 @@ public class ColaboradorServlet extends HttpServlet {
             }
         }
     }
-
 
 }
