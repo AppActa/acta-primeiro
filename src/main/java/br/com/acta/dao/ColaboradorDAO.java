@@ -38,7 +38,11 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return codigoDeErro(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
             return -1;
         }
     }
@@ -49,14 +53,16 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         String sql = "SELECT * FROM colaborador WHERE id_colaborador = ?;";
 
         try (Connection conn = Conexao.conectar();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery()) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, id);
 
-            if (rs.next()) {
-                return mapearColaborador(rs);
-            } return null;
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapearColaborador(rs);
+                }
+                return null;
+            }
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -74,7 +80,8 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
 
             while (rs.next()) {
                 colaboradores.add(mapearColaborador(rs));
-            } return colaboradores;
+            }
+            return colaboradores;
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -83,19 +90,23 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
 
     public Colaborador autenticar(String email, String senha) {
         String sql = "SELECT * FROM colaborador WHERE email = ?";
-        try(Connection conn = Conexao.conectar();
-            PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, email);
-            ResultSet rs = pstmt.executeQuery();
 
-            if (rs.next()) {
-                Colaborador colaborador = mapearColaborador(rs);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Colaborador colaborador = mapearColaborador(rs);
 
-                if (PasswordUtils.verificarSenha(colaborador.getSenha(), senha)) {
-                    return colaborador;
+                    if (PasswordUtils.verificarSenha(senha, colaborador.getSenha())) {
+                        return colaborador;
+                    }
                 }
+                return null;
             }
-            return null;
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -104,10 +115,10 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
     // UPDATE
     @Override
     public int atualizar(Colaborador colaborador) {
-        String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, status = ?, area = ?, cargo = ?, dt_contratacao = ?, email = ?, senha = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE id_colaborador = ?;";
+        String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, status = ?, area = ?, cargo = ?, dt_contratacao = ?, email = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE id_colaborador = ?;";
 
         try (Connection conn = Conexao.conectar();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, colaborador.getNome());
             pstmt.setString(2, colaborador.getSobrenome());
@@ -117,53 +128,65 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setString(6, colaborador.getCargo());
             pstmt.setDate(7, colaborador.getDt_contratacao());
             pstmt.setString(8, colaborador.getEmail());
-            pstmt.setString(10, colaborador.getTelefone());
-            pstmt.setString(11, colaborador.getCpf());
-            pstmt.setLong(12, colaborador.getId_empresa());
-            pstmt.setLong(13, colaborador.getId_colaborador());
+            pstmt.setString(9, colaborador.getTelefone());
+            pstmt.setString(10, colaborador.getCpf());
+            pstmt.setLong(11, colaborador.getId_empresa());
+            pstmt.setLong(12, colaborador.getId_colaborador());
 
             if (pstmt.executeUpdate() > 0) return 1;
             return 0;
 
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public int atualizarSenha(String email, String senhaAntiga, String senhaNova){
-        String sqlBuscar = "SELECT senha FROM colaborador WHERE email = ?";
-        String sqlAtualizar = "UPDATE colaborador SET senha = ? WHERE email = ?";
-
-        try (Connection conn = Conexao.conectar()){
-            //buscar hash atual
-            String hashAtual = null;
-            try (PreparedStatement pstmtBuscar = conn.prepareStatement(sqlBuscar)){
-                pstmtBuscar.setString(1, email);
-                ResultSet rs = pstmtBuscar.executeQuery();
-                if (rs.next()) {
-                    hashAtual = rs.getString("senha");
-                }else{
-                    return -1;//usuario não encontrado
-                }
-            }
-
-            //conferir se a antiga senha iguala com o hash salvo
-            if(!PasswordUtils.verificarSenha(senhaAntiga,hashAtual)){
-                return 0;
-            }
-
-            //gera novo hash e atualiza
-            try(PreparedStatement pstmtAtualizar = conn.prepareStatement(sqlAtualizar)){
-                pstmtAtualizar.setString(1, PasswordUtils.hashSenha(senhaNova));
-                pstmtAtualizar.setString(2, email);
-                return pstmtAtualizar.executeUpdate() > 0 ? 1 : 0;
-            }
-        }catch (SQLException | ClassNotFoundException e){
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return codigoDeErro(e);
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return -1;
         }
     }
 
+    public int atualizarSenha(String email, String senhaAntiga, String senhaNova) {
+        String sqlBuscar = "SELECT senha FROM colaborador WHERE email = ?;";
+        String sqlAtualizar = "UPDATE colaborador SET senha = ? WHERE email = ?;;";
+
+        try (Connection conn = Conexao.conectar()) {
+            // buscar hash atual
+            String hashAtual;
+            try (PreparedStatement pstmtBuscar = conn.prepareStatement(sqlBuscar)) {
+                pstmtBuscar.setString(1, email);
+                try (ResultSet rs = pstmtBuscar.executeQuery()) {
+                    if (rs.next()) {
+                        hashAtual = rs.getString("senha");
+                    } else {
+                        return 0; // usuário não encontrado
+                    }
+                }
+            }
+
+            // conferir se a senha antiga bate com o hash salvo
+            if (!PasswordUtils.verificarSenha(senhaAntiga, hashAtual)) {
+                return 0;
+            }
+
+            // gera novo hash e atualiza
+            try (PreparedStatement pstmtAtualizar = conn.prepareStatement(sqlAtualizar)) {
+                pstmtAtualizar.setString(1, PasswordUtils.hashSenha(senhaNova));
+                pstmtAtualizar.setString(2, email);
+
+                if (pstmtAtualizar.executeUpdate() > 0) return 1;
+                else return 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return codigoDeErro(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    // DELETE
     @Override
     public int excluir(Long id) {
         String sql = "DELETE FROM colaborador WHERE id_colaborador = ?;";
@@ -176,12 +199,25 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
 
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return codigoDeErro(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return -1;
         }
     }
 
+    // SQLState "23xxx" = violação de integridade (e-mail/CPF duplicado, FK, NOT NULL).
+    private static int codigoDeErro(SQLException e) {
+        String state = e.getSQLState();
+        if (state != null && state.startsWith("23")) {
+            return 0;
+        }
+        return -1;
+    }
 
+    // Mapear colaborador para simplificar busca
     private static Colaborador mapearColaborador(ResultSet rs) throws SQLException {
         Colaborador colaborador = new Colaborador();
         colaborador.setId_colaborador(rs.getLong("id_colaborador"));
