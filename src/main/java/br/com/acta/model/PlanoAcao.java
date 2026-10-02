@@ -1,6 +1,6 @@
 package br.com.acta.model;
 
-import br.com.acta.enums.Prioridade;
+import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
 
 import java.sql.Date;
@@ -12,17 +12,17 @@ public class PlanoAcao {
     private String nome;
     private String descricao;
     private Situacao status;
-    private Prioridade prioridade;
+    private Intensidade prioridade;
     private Long id_ciclo;
     private Long id_criador;
     private String nomeCiclo;
-    private String nomeColaborador;
+    private String nomeCriador;
 
     //Construtores
 
     public PlanoAcao() {}
 
-    public PlanoAcao(String nome, String descricao, Situacao status, Prioridade prioridade, Long id_ciclo, Long id_criador) {
+    public PlanoAcao(String nome, String descricao, Situacao status, Intensidade prioridade, Long id_ciclo, Long id_criador) {
         this.nome = nome;
         this.descricao = descricao;
         this.status = status;
@@ -31,7 +31,7 @@ public class PlanoAcao {
         this.id_criador = id_criador;
     }
 
-    public PlanoAcao(Long id_plano_acao, String nome, String descricao, Situacao status, Prioridade prioridade, Long id_ciclo, Long id_criador) {
+    public PlanoAcao(Long id_plano_acao, String nome, String descricao, Situacao status, Intensidade prioridade, Long id_ciclo, Long id_criador) {
         this.id_plano_acao = id_plano_acao;
         this.nome = nome;
         this.descricao = descricao;
@@ -73,11 +73,11 @@ public class PlanoAcao {
         this.status = status;
     }
 
-    public Prioridade getPrioridade() {
+    public Intensidade getPrioridade() {
         return prioridade;
     }
 
-    public void setPrioridade(Prioridade prioridade) {
+    public void setPrioridade(Intensidade prioridade) {
         this.prioridade = prioridade;
     }
 
@@ -101,11 +101,11 @@ public class PlanoAcao {
 
     public void setNomeCiclo(String nomeCiclo) {this.nomeCiclo = nomeCiclo;}
 
-    public String getNomeColaborador() {
-        return nomeColaborador;
+    public String getNomeCriador() {
+        return nomeCriador;
     }
 
-    public void setNomeColaborador(String nomeColaborador) {
-        this.nomeColaborador = nomeColaborador;
+    public void setNomeCriador(String nomeCriador) {
+        this.nomeCriador = nomeCriador;
     }
 }
