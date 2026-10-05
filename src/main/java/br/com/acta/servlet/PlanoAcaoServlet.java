@@ -3,7 +3,7 @@ package br.com.acta.servlet;
 import br.com.acta.dao.CicloDAO;
 import br.com.acta.dao.PlanoAcaoDAO;
 import br.com.acta.dao.ColaboradorDAO;
-import br.com.acta.enums.Prioridade;
+import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
 import br.com.acta.model.PlanoAcao;
 import br.com.acta.model.Colaborador;
@@ -20,8 +20,8 @@ import java.util.List;
 
 @WebServlet(name = "PlanoAcao", value = "/planoAcao-servlet")
 public class PlanoAcaoServlet extends HttpServlet {
-    private static String PAGINA_PLANOACAO = "/planoAcao.jsp";
-    private static String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_PLANOACAO = "/planoAcao.jsp";
+    private static final String PAGINA_ERRO = "/erro.jsp";
     private final PlanoAcaoDAO DAO = new PlanoAcaoDAO();
     private final CicloDAO CICLO_DAO = new CicloDAO();
     private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
@@ -31,7 +31,7 @@ public class PlanoAcaoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             buscar(req,resp);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             enviarErro(req, resp, "Não foi encontrar os planos de acao");
         }
@@ -60,6 +60,7 @@ public class PlanoAcaoServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             enviarErro(req, resp, "Não foi possivel concluir");
         }
     }
@@ -72,7 +73,7 @@ public class PlanoAcaoServlet extends HttpServlet {
         planoAcao.setNome(req.getParameter("nome"));
         planoAcao.setDescricao(req.getParameter("descricao"));
         planoAcao.setStatus(Situacao.valueOf(req.getParameter("status")));
-        planoAcao.setPrioridade(Prioridade.valueOf(req.getParameter("prioridade")));
+        planoAcao.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
         planoAcao.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
         planoAcao.setId_criador(Long.parseLong(req.getParameter("id_criador")));
 
@@ -110,7 +111,7 @@ public class PlanoAcaoServlet extends HttpServlet {
         planoAcao.setNome(req.getParameter("nome"));
         planoAcao.setDescricao(req.getParameter("descricao"));
         planoAcao.setStatus(Situacao.valueOf(req.getParameter("status")));
-        planoAcao.setPrioridade(Prioridade.valueOf(req.getParameter("prioridade")));
+        planoAcao.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
         planoAcao.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
         planoAcao.setId_criador(Long.parseLong(req.getParameter("id_criador")));
 
@@ -150,7 +151,7 @@ public class PlanoAcaoServlet extends HttpServlet {
             if (ciclo != null) planoAcao.setNomeCiclo(ciclo.getNome());
 
             Colaborador criador = COLABORADOR_DAO.buscar(planoAcao.getId_criador());
-            if (criador != null) planoAcao.setNomeColaborador(criador.getNome());
+            if (criador != null) planoAcao.setNomeCriador(criador.getNome());
         }
     }
 
