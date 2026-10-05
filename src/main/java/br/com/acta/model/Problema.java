@@ -1,16 +1,17 @@
 package br.com.acta.model;
 
 
+import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.StatusProblema;
 
 import java.sql.Date;
 
-public class Problemas {
+public class Problema {
 
     private Long id_problema;
     private String titulo;
     private String descricao;
-    private String peso;
+    private Intensidade peso;
     private String solucao;
     private StatusProblema status;
     private String origem;
@@ -18,10 +19,13 @@ public class Problemas {
     private Long id_ciclo;
     private Long id_plano_acao;
     private Long id_colaborador;
+    private String nomeCiclo;
+    private String nomePlanoAcao;
+    private String nomeColaborador;
 
-    public Problemas() {}
+    public Problema() {}
 
-    public Problemas(String titulo, String descricao, String peso, String solucao, StatusProblema status, String origem, Date encontrado_em, Long id_ciclo, Long id_plano_acao, Long id_colaborador) {
+    public Problema(String titulo, String descricao, Intensidade peso, String solucao, StatusProblema status, String origem, Date encontrado_em, Long id_ciclo, Long id_plano_acao, Long id_colaborador) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.peso = peso;
@@ -34,7 +38,7 @@ public class Problemas {
         this.id_colaborador = id_colaborador;
     }
 
-    public Problemas(Long id_problema, String titulo, String descricao, String peso, String solucao, StatusProblema status, String origem, Date encontrado_em, Long id_ciclo, Long id_plano_acao, Long id_colaborador) {
+    public Problema(Long id_problema, String titulo, String descricao,Intensidade peso, String solucao, StatusProblema status, String origem, Date encontrado_em, Long id_ciclo, Long id_plano_acao, Long id_colaborador) {
         this.id_problema = id_problema;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -75,11 +79,11 @@ public class Problemas {
         this.descricao = descricao;
     }
 
-    public String getPeso() {
+    public Intensidade getPeso() {
         return peso;
     }
 
-    public void setPeso(String peso) {
+    public void setPeso(Intensidade peso) {
         this.peso = peso;
     }
 
@@ -137,5 +141,29 @@ public class Problemas {
 
     public void setId_colaborador(Long id_colaborador) {
         this.id_colaborador = id_colaborador;
+    }
+
+    public String getNomeCiclo() {
+        return nomeCiclo;
+    }
+
+    public void setNomeCiclo(String nomeCiclo) {
+        this.nomeCiclo = nomeCiclo;
+    }
+
+    public String getNomePlanoAcao() {
+        return nomePlanoAcao;
+    }
+
+    public void setNomePlanoAcao(String nomePlanoAcao) {
+        this.nomePlanoAcao = nomePlanoAcao;
+    }
+
+    public String getNomeColaborador() {
+        return nomeColaborador;
+    }
+
+    public void setNomeColaborador(String nomeColaborador) {
+        this.nomeColaborador = nomeColaborador;
     }
 }

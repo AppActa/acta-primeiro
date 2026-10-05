@@ -1,26 +1,29 @@
 package br.com.acta.model;
 
+import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.StatusMeta;
 
 import java.sql.Date;
 import java.time.OffsetDateTime;
 
-public class Metas {
+public class Meta {
 
     private Long id_meta;
     private String meta;
     private String descricao_meta;
     private String objetivo;
-    private String prioridade;
+    private Intensidade prioridade;
     private Date prazo;
     private StatusMeta status;
     private OffsetDateTime criando_em;
     private Long id_ciclo;
     private long id_plano_acao;
+    private String nomeCiclo;
+    private String nomePlanoAcao;
 
-    public Metas() {}
+    public Meta() {}
 
-    public Metas(String meta, String descricao_meta, String objetivo, String prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, long id_plano_acao) {
+    public Meta(String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, long id_plano_acao) {
         this.meta = meta;
         this.descricao_meta = descricao_meta;
         this.objetivo = objetivo;
@@ -32,7 +35,7 @@ public class Metas {
         this.id_plano_acao = id_plano_acao;
     }
 
-    public Metas(Long id_meta, String meta, String descricao_meta, String objetivo, String prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, long id_plano_acao) {
+    public Meta(Long id_meta, String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, long id_plano_acao) {
         this.id_meta = id_meta;
         this.meta = meta;
         this.descricao_meta = descricao_meta;
@@ -77,11 +80,11 @@ public class Metas {
         this.objetivo = objetivo;
     }
 
-    public String getPrioridade() {
+    public Intensidade getPrioridade() {
         return prioridade;
     }
 
-    public void setPrioridade(String prioridade) {
+    public void setPrioridade(Intensidade prioridade) {
         this.prioridade = prioridade;
     }
 
@@ -123,5 +126,21 @@ public class Metas {
 
     public void setId_plano_acao(long id_plano_acao) {
         this.id_plano_acao = id_plano_acao;
+    }
+
+    public String getNomeCiclo() {
+        return nomeCiclo;
+    }
+
+    public void setNomeCiclo(String nomeCiclo) {
+        this.nomeCiclo = nomeCiclo;
+    }
+
+    public String getNomePlanoAcao() {
+        return nomePlanoAcao;
+    }
+
+    public void setNomePlanoAcao(String nomePlanoAcao) {
+        this.nomePlanoAcao = nomePlanoAcao;
     }
 }
