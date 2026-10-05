@@ -1,0 +1,74 @@
+@import url('https://googleapis.com');
+
+:root {
+  --teal-dark: #0E7C74;     /* texto/ícones do menu, título */
+  --teal-medium: #4FB3AB;   /* cabeçalho da tabela */
+  --teal-light: #DFF3F1;    /* fundo do item ativo do menu, botão "Filtros" */
+  --teal-solid: #1C9C93;    /* botão "Cadastrar" */
+  --color-text: #1F2A37;
+  --color-text-light: #6B7280;
+  --color-border: #D9E4E2;
+  --color-bg: #EFF3F2;
+  --sidebar-width: 220px;
+  --radius: 10px;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", system-ui, Arial, sans-serif;
+}
+
+body{
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f7f6;
+}
+
+.sidebar{
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    background: #fff;
+    border-right: 3px solid rgba(2, 115, 115, 1);
+    padding: 24px 16px;
+}
+
+.sidebar_logo{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1 10px 10px;
+    width: 28px; 
+    height: 28px;
+}
+
+ul{
+    list-style: none;
+}
+
+.sidebar_nav{
+    align-content:space-between;    
+}
+.sidebar_item{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    margin-bottom: 4px;
+    border-radius: 8px;
+    color: rgba(2, 115, 115, 1);
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;/*medium*/
+}
+.sidebar_item img{
+    width: 20px;
+    height: 20px;
+}
