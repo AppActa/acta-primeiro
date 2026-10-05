@@ -2,7 +2,7 @@ package br.com.acta.dao;
 
 import br.com.acta.model.PlanoAcao;
 import br.com.acta.enums.Situacao;
-import br.com.acta.enums.Prioridade;
+import br.com.acta.enums.Intensidade;
 import br.com.acta.utils.Conexao;
 
 
@@ -145,7 +145,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         planoAcao.setNome(rs.getString("nome"));
         planoAcao.setDescricao(rs.getString("descricao"));
         planoAcao.setStatus(Situacao.valueOf(rs.getString("status")));
-        planoAcao.setPrioridade(Prioridade.valueOf(rs.getString("prioridade")));
+        planoAcao.setPrioridade(Intensidade.valueOf(rs.getString("prioridade")));
         planoAcao.setId_ciclo((rs.getLong("id_ciclo")));
         planoAcao.setId_criador(rs.getLong("id_criador"));
         return planoAcao;
