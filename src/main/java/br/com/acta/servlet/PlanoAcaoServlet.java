@@ -1,13 +1,9 @@
 package br.com.acta.servlet;
 
-import br.com.acta.dao.CicloDAO;
 import br.com.acta.dao.PlanoAcaoDAO;
-import br.com.acta.dao.ColaboradorDAO;
 import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
 import br.com.acta.model.PlanoAcao;
-import br.com.acta.model.Colaborador;
-import br.com.acta.model.Ciclo;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,8 +19,6 @@ public class PlanoAcaoServlet extends HttpServlet {
     private static final String PAGINA_PLANOACAO = "/planoAcao.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final PlanoAcaoDAO DAO = new PlanoAcaoDAO();
-    private final CicloDAO CICLO_DAO = new CicloDAO();
-    private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
 
     //DoGet e DoPost
     @Override
@@ -98,7 +92,6 @@ public class PlanoAcaoServlet extends HttpServlet {
             return;
         }
 
-        preencherNomesFk(List.of(planoAcao));
         req.setAttribute("planoAcao", List.of(planoAcao));
         req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
     }
@@ -138,21 +131,8 @@ public class PlanoAcaoServlet extends HttpServlet {
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<PlanoAcao> planosAcoes = DAO.buscar();
-        preencherNomesFk(planosAcoes);
 
         req.setAttribute("planoAcaoList", planosAcoes);
         req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
     }
-
-    private void preencherNomesFk(List<PlanoAcao> planosAcoes) {
-        for (PlanoAcao planoAcao : planosAcoes) {
-
-            Ciclo ciclo = CICLO_DAO.buscar(planoAcao.getId_ciclo());
-            if (ciclo != null) planoAcao.setNomeCiclo(ciclo.getNome());
-
-            Colaborador criador = COLABORADOR_DAO.buscar(planoAcao.getId_criador());
-            if (criador != null) planoAcao.setNomeCriador(criador.getNome());
-        }
-    }
-
 }
