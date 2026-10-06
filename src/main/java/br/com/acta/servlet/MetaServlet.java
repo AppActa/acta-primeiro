@@ -1,12 +1,8 @@
 package br.com.acta.servlet;
 
 import br.com.acta.dao.MetaDAO;
-import br.com.acta.dao.CicloDAO;
-import br.com.acta.dao.PlanoAcaoDAO;
 import br.com.acta.enums.Intensidade;
 import br.com.acta.model.Meta;
-import br.com.acta.model.Ciclo;
-import br.com.acta.model.PlanoAcao;
 import br.com.acta.enums.StatusMeta;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -24,8 +20,7 @@ public class MetaServlet extends HttpServlet {
     private static final String PAGINA_META = "/meta.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final MetaDAO DAO = new MetaDAO();
-    private final CicloDAO CICLO_DAO = new CicloDAO();
-    private final PlanoAcaoDAO PLANO_ACAO_DAO = new PlanoAcaoDAO();
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -100,7 +95,6 @@ public class MetaServlet extends HttpServlet {
             return;
         }
 
-        preencherNomesFk(List.of(meta));
         req.setAttribute("metaList", List.of(meta));
         req.getRequestDispatcher(PAGINA_META).forward(req, resp);
     }
@@ -143,28 +137,8 @@ public class MetaServlet extends HttpServlet {
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Meta> metas = DAO.buscar();
-        preencherNomesFk(metas);
 
         req.setAttribute("metaList", metas);
         req.getRequestDispatcher(PAGINA_META).forward(req, resp);
     }
-
-    private void preencherNomesFk(List<Meta> metas) {
-        for (Meta meta : metas) {
-            Long idCiclo = meta.getId_ciclo();
-            Ciclo ciclo = CICLO_DAO.buscar(idCiclo);
-
-            if (ciclo != null) {
-                meta.setNomeCiclo(ciclo.getNome());
-            }
-
-            Long idPlanoAcao = meta.getId_plano_acao();
-            PlanoAcao planoAcao = PLANO_ACAO_DAO.buscar(idPlanoAcao);
-
-            if (planoAcao != null) {
-                meta.setNomePlanoAcao(planoAcao.getNome());
-            }
-        }
-    }
-
 }

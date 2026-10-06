@@ -21,7 +21,6 @@ public class ColaboradorServlet extends HttpServlet {
     private static final String PAGINA_COLABORADORES = "/colaborador.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final ColaboradorDAO DAO = new ColaboradorDAO();
-    private final EmpresaDAO EMPRESA_DAO = new EmpresaDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -101,7 +100,6 @@ public class ColaboradorServlet extends HttpServlet {
             return;
         }
 
-        preencherNomesFk(List.of(colaborador));
         req.setAttribute("colaboradorList", List.of(colaborador));
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
@@ -147,21 +145,8 @@ public class ColaboradorServlet extends HttpServlet {
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Colaborador> colaboradores = DAO.buscar();
-        preencherNomesFk(colaboradores);
 
         req.setAttribute("colaboradorList", colaboradores);
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
-
-    private void preencherNomesFk(List<Colaborador> colaboradores) {
-        for (Colaborador colaborador : colaboradores) {
-            Long idEmpresa = colaborador.getId_empresa();
-            Empresa empresa = EMPRESA_DAO.buscar(idEmpresa);
-
-            if (empresa != null) {
-                colaborador.setNomeEmpresa(empresa.getNome());
-            }
-        }
-    }
-
 }
