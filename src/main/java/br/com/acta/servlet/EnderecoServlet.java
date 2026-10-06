@@ -1,8 +1,6 @@
 package br.com.acta.servlet;
 
-import br.com.acta.dao.EmpresaDAO;
 import br.com.acta.dao.EnderecoDAO;
-import br.com.acta.model.Empresa;
 import br.com.acta.model.Endereco;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -19,7 +17,6 @@ public class EnderecoServlet extends HttpServlet {
     private static final String PAGINA_ENDERECO = "/endereco.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final EnderecoDAO DAO = new EnderecoDAO();
-    private final EmpresaDAO EMPRESA_DAO = new EmpresaDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -95,7 +92,6 @@ public class EnderecoServlet extends HttpServlet {
             return;
         }
 
-        preencherNomesFk(List.of(endereco));
         req.setAttribute("enderecoList", List.of(endereco));
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
@@ -139,21 +135,9 @@ public class EnderecoServlet extends HttpServlet {
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Endereco> lista = DAO.buscar();
-        preencherNomesFk(lista);
 
         req.setAttribute("enderecoList", lista);
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
-    }
-
-    private void preencherNomesFk(List<Endereco> lista) {
-        for (Endereco endereco : lista) {
-            Long idEmpresa = endereco.getId_empresa();
-            Empresa empresa = EMPRESA_DAO.buscar(idEmpresa);
-
-            if (empresa != null) {
-                endereco.setNomeEmpresa(empresa.getNome());
-            }
-        }
     }
 
 }

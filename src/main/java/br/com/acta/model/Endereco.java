@@ -11,7 +11,7 @@ public class Endereco {
     private String complemento;
     private String unidade;
     private Long id_empresa;
-    private String nomeEmpresa;
+    private String nome_empresa;
 
     public Endereco() {
     }
@@ -121,11 +121,11 @@ public class Endereco {
         this.id_empresa = id_empresa;
     }
 
-    public String getNomeEmpresa() {
-        return nomeEmpresa;
+    public String getNome_empresa() {
+        return nome_empresa;
     }
 
-    public void setNomeEmpresa(String nomeEmpresa) {
-        this.nomeEmpresa = nomeEmpresa;
+    public void setNome_empresa(String nome_empresa) {
+        this.nome_empresa = nome_empresa;
     }
 }
