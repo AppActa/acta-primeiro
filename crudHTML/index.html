@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="assests/logo_compacta.svg" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
-    <title>ACTA</title>
+    <title>Area Restrita</title>
 </head>
  
 <body>
@@ -134,8 +134,6 @@
                     </table>
                 </div>
  
-            </section>
- 
             <!-- Modal Cadastrar Empresa -->
             <section id="cadastrar-empresa" class="pagina modal-pagina">
  
@@ -146,6 +144,11 @@
                         <h2>Cadastrar empresa</h2>
  
                         <form class="formulario">
+
+                            <div class="campo">
+                                <label for="nome">Nome</label>
+                                <input type="text" id="nome" placeholder="Digite o nome">
+                            </div>
  
                             <div class="campo">
                                 <label for="cnpj">CNPJ</label>
@@ -158,18 +161,8 @@
                             </div>
  
                             <div class="campo">
-                                <label for="nome">Nome</label>
-                                <input type="text" id="nome" placeholder="Digite o nome">
-                            </div>
- 
-                            <div class="campo">
                                 <label for="setor">Setor</label>
                                 <input type="text" id="setor" placeholder="Digite o setor">
-                            </div>
- 
-                            <div class="campo">
-                                <label for="usina">Usina</label>
-                                <input type="text" id="usina" placeholder="Digite a usina">
                             </div>
  
                             <div class="campo">
@@ -198,8 +191,6 @@
             <!-- Modal Editar Empresa -->
             <section id="editar-empresa" class="pagina modal-pagina">
  
-                <h1>Empresas</h1>
- 
                 <div class="modal-fundo">
  
                     <div class="modal">
@@ -227,12 +218,7 @@
                                 <label>Setor</label>
                                 <input type="text" value="Embalagem">
                             </div>
- 
-                            <div class="campo">
-                                <label>Usina</label>
-                                <input type="text" value="Usina 01">
-                            </div>
- 
+
                             <div class="campo">
                                 <label>CEP</label>
                                 <input type="text" value="05690-3">
@@ -259,8 +245,6 @@
             <!-- Modal Excluir Empresa -->
             <section id="excluir-empresa" class="pagina modal-pagina">
  
-                <h1>Empresas</h1>
- 
                 <div class="modal-fundo">
  
                     <div class="modal modal-exclusao">
@@ -278,7 +262,9 @@
                 </div>
  
             </section>
- 
+
+        </section>
+
             <!-- Página Colaborador -->
             <section id="colaborador" class="pagina">
  
