@@ -79,7 +79,7 @@ SELECT
     c.status,
     c.criado_em,
     emp.nome AS nome_empresa,
-    col.nome || ' ' || col.sobrenome AS nome_colaborador
+    col.nome || ' ' || col.sobrenome AS nome_responsavel
 FROM ciclo c
 JOIN empresa emp ON c.id_empresa = emp.id_empresa
 JOIN colaborador col ON c.id_responsavel = col.id_colaborador
