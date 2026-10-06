@@ -2,13 +2,8 @@ package br.com.acta.servlet;
 
 import br.com.acta.dao.ProblemaDAO;
 import br.com.acta.dao.CicloDAO;
-import br.com.acta.dao.PlanoAcaoDAO;
-import br.com.acta.dao.ColaboradorDAO;
 import br.com.acta.enums.Intensidade;
 import br.com.acta.model.Problema;
-import br.com.acta.model.Ciclo;
-import br.com.acta.model.PlanoAcao;
-import br.com.acta.model.Colaborador;
 import br.com.acta.enums.StatusProblema;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -27,8 +22,6 @@ public class ProblemaServlet extends HttpServlet {
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final ProblemaDAO DAO = new ProblemaDAO();
     private final CicloDAO CICLO_DAO = new CicloDAO();
-    private final PlanoAcaoDAO PLANO_ACAO_DAO = new PlanoAcaoDAO();
-    private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -105,7 +98,6 @@ public class ProblemaServlet extends HttpServlet {
             return;
         }
 
-        preencherNomesFk(List.of(problema));
         req.setAttribute("problemaList", List.of(problema));
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
@@ -150,35 +142,8 @@ public class ProblemaServlet extends HttpServlet {
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Problema> problemas = DAO.buscar();
-        preencherNomesFk(problemas);
 
         req.setAttribute("problemaList", problemas);
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
-
-    private void preencherNomesFk(List<Problema> problemas) {
-        for (Problema problema : problemas) {
-            Long idCiclo = problema.getId_ciclo();
-            Ciclo ciclo = CICLO_DAO.buscar(idCiclo);
-
-            if (ciclo != null) {
-                problema.setNomeCiclo(ciclo.getNome());
-            }
-
-            Long idPlanoAcao = problema.getId_plano_acao();
-            PlanoAcao planoAcao = PLANO_ACAO_DAO.buscar(idPlanoAcao);
-
-            if (planoAcao != null) {
-                problema.setNomePlanoAcao(planoAcao.getNome());
-            }
-
-            Long idColaborador = problema.getId_colaborador();
-            Colaborador colaborador = COLABORADOR_DAO.buscar(idColaborador);
-
-            if (colaborador != null) {
-                problema.setNomeColaborador(colaborador.getNome());
-            }
-        }
-    }
-
 }

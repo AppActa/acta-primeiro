@@ -16,12 +16,12 @@ public class LicoesAprendidas {
     private EtapaCiclo fase_origem;
     private Intensidade severidade;
     private Long id_ciclo;
-    private String nomeCiclo;
+    private String nome_ciclo;
 
     public LicoesAprendidas() {
     }
 
-    public LicoesAprendidas(String titulo, String area, String aprendizado, String categoria, String descricao, EtapaCiclo fase_origem, Intensidade severidade, Long id_ciclo, String nomeCiclo) {
+    public LicoesAprendidas(String titulo, String area, String aprendizado, String categoria, String descricao, EtapaCiclo fase_origem, Intensidade severidade, Long id_ciclo, String nome_ciclo) {
         this.titulo = titulo;
         this.area = area;
         this.aprendizado = aprendizado;
@@ -30,10 +30,10 @@ public class LicoesAprendidas {
         this.fase_origem = fase_origem;
         this.severidade = severidade;
         this.id_ciclo = id_ciclo;
-        this.nomeCiclo = nomeCiclo;
+        this.nome_ciclo = nome_ciclo;
     }
 
-    public LicoesAprendidas(Long id_licao, String titulo, String area, String aprendizado, String categoria, String descricao, EtapaCiclo fase_origem, Intensidade severidade, Long id_ciclo, String nomeCiclo) {
+    public LicoesAprendidas(Long id_licao, String titulo, String area, String aprendizado, String categoria, String descricao, EtapaCiclo fase_origem, Intensidade severidade, Long id_ciclo, String nome_ciclo) {
         this.id_licao = id_licao;
         this.titulo = titulo;
         this.area = area;
@@ -43,7 +43,7 @@ public class LicoesAprendidas {
         this.fase_origem = fase_origem;
         this.severidade = severidade;
         this.id_ciclo = id_ciclo;
-        this.nomeCiclo = nomeCiclo;
+        this.nome_ciclo = nome_ciclo;
     }
 
     public Long getId_licao() {
@@ -118,11 +118,11 @@ public class LicoesAprendidas {
         this.id_ciclo = id_ciclo;
     }
 
-    public String getNomeCiclo() {
-        return nomeCiclo;
+    public String getNome_ciclo() {
+        return nome_ciclo;
     }
 
-    public void setNomeCiclo(String nomeCiclo) {
-        this.nomeCiclo = nomeCiclo;
+    public void setNome_ciclo(String nome_ciclo) {
+        this.nome_ciclo = nome_ciclo;
     }
 }

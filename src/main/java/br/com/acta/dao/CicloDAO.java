@@ -46,7 +46,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
 
     @Override
     public Ciclo buscar(Long id) {
-        String sql = "SELECT * FROM ciclo WHERE id_ciclo = ?";
+        String sql = "SELECT * FROM vw_ciclo WHERE id_ciclo = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -68,7 +68,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
     @Override
     public List<Ciclo> buscar() {
         List<Ciclo> ciclos = new ArrayList<>();
-        String sql = "SELECT * FROM ciclo;";
+        String sql = "SELECT * FROM vw_ciclo;";
 
         try (Connection conn = Conexao.conectar();
              Statement stmt = conn.createStatement();
@@ -153,8 +153,8 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         ciclo.setDt_fim(rs.getDate("dt_fim"));
         ciclo.setStatus(Situacao.valueOf(rs.getString("status")));
         ciclo.setCriado_em(rs.getObject("criado_em", OffsetDateTime.class));
-        ciclo.setId_empresa(rs.getLong("id_empresa"));
-        ciclo.setId_responsavel(rs.getLong("id_responsavel"));
+        ciclo.setNome_empresa(rs.getString("nome_empresa"));
+        ciclo.setNome_responsavel(rs.getString("nome_responsavel"));
         return ciclo;
     }
 }
