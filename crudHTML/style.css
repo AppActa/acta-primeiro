@@ -5,7 +5,8 @@
     --cor-texto: #027373;
     --cor-texto-tabela: #EDF0F0;
     --cor-borda: #04BFAD;
-   
+    --cor-perigo: #CA1D1D;
+    --cor-primaria-hover: #025A8A;
 }
  
 * {
@@ -72,14 +73,23 @@ body {
  
 /* Destaque dinâmico na Sidebar para a aba ativa usando CSS :target */
 body:has(#empresas:target) .menu-item[href="#empresas"],
+body:has(#empresas :target) .menu-item[href="#empresas"],
 body:has(#colaborador:target) .menu-item[href="#colaborador"],
+body:has(#colaborador :target) .menu-item[href="#colaborador"],
 body:has(#administrador:target) .menu-item[href="#administrador"],
+body:has(#administrador :target) .menu-item[href="#administrador"],
 body:has(#tarefa:target) .menu-item[href="#tarefa"],
+body:has(#tarefa :target) .menu-item[href="#tarefa"],
 body:has(#plano:target) .menu-item[href="#plano"],
+body:has(#plano :target) .menu-item[href="#plano"],
 body:has(#ciclos:target) .menu-item[href="#ciclos"],
+body:has(#ciclos :target) .menu-item[href="#ciclos"],
 body:has(#licoes:target) .menu-item[href="#licoes"],
+body:has(#licoes :target) .menu-item[href="#licoes"],
 body:has(#metas:target) .menu-item[href="#metas"],
+body:has(#metas :target) .menu-item[href="#metas"],
 body:has(#problemas:target) .menu-item[href="#problemas"],
+body:has(#problemas :target) .menu-item[href="#problemas"],
 body:not(:has(:target)) .menu-item[href="#empresas"] {
     background-color: #cedede;
     color: var(--cor-primaria);
@@ -98,11 +108,12 @@ body:not(:has(:target)) .menu-item[href="#empresas"] {
 .pagina {
     display: none;
 }
- 
-.pagina:target {
+
+.pagina:target,
+.pagina:has(:target){
     display: block;
 }
- 
+
 /* Página padrão (Empresas) quando nenhuma hash está ativa */
 body:not(:has(:target)) #empresas {
     display: block;
@@ -224,6 +235,7 @@ th {
  
 .modal-fundo {
     background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(1px);
     width: 100%;
     height: 100%;
     display: flex;
@@ -241,7 +253,7 @@ th {
 }
  
 .modal h2 {
-    width: 800px;
+    margin-bottom: 15px;
     box-sizing: border-box;
     font-size: 18px;
 }
@@ -271,7 +283,7 @@ th {
  
 .botoes-modal {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 10px;
     margin-top: 15px;
 }
