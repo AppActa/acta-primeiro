@@ -1,0 +1,278 @@
+:root {
+    --cor-primaria: #027373;
+    --cor-fundo: #EDF0F0;
+    --cor-card: #FFFFFF;
+    --cor-texto: #027373;
+    --cor-texto-tabela: #EDF0F0;
+    --cor-borda: #04BFAD;
+   
+}
+ 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Montserrat, sans-serif;
+}
+ 
+body {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+}
+ 
+.sistema {
+    display: flex;
+    min-height: 100vh;
+}
+ 
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: var(--cor-card);
+    border-right: 1px solid var(--cor-borda);
+    display: flex;
+    flex-direction: column;
+}
+ 
+.sidebar-logo {
+    padding: 20px;
+    text-align: center;
+}
+ 
+.sidebar-logo img {
+    max-width: 120px;
+}
+ 
+.menu {
+    display: flex;
+    flex-direction: column;
+}
+ 
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: var(--cor-texto-suave);
+    text-decoration: none;
+    font-size: 14px;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+}
+ 
+.menu-item:hover {
+    background-color: var(--cor-fundo);
+    color: var(--cor-primaria);
+}
+ 
+.menu-item img {
+    width: 20px;
+    height: 20px;
+}
+ 
+/* Destaque dinâmico na Sidebar para a aba ativa usando CSS :target */
+body:has(#empresas:target) .menu-item[href="#empresas"],
+body:has(#colaborador:target) .menu-item[href="#colaborador"],
+body:has(#administrador:target) .menu-item[href="#administrador"],
+body:has(#tarefa:target) .menu-item[href="#tarefa"],
+body:has(#plano:target) .menu-item[href="#plano"],
+body:has(#ciclos:target) .menu-item[href="#ciclos"],
+body:has(#licoes:target) .menu-item[href="#licoes"],
+body:has(#metas:target) .menu-item[href="#metas"],
+body:has(#problemas:target) .menu-item[href="#problemas"],
+body:not(:has(:target)) .menu-item[href="#empresas"] {
+    background-color: #cedede;
+    color: var(--cor-primaria);
+    border-left-color: var(--cor-primaria);
+    font-weight: bold;
+}
+ 
+/* Conteúdo */
+.conteudo {
+    flex: 1;
+    padding: 30px;
+    position: relative;
+}
+ 
+/* Controle de visibilidade das páginas via hash/target */
+.pagina {
+    display: none;
+}
+ 
+.pagina:target {
+    display: block;
+}
+ 
+/* Página padrão (Empresas) quando nenhuma hash está ativa */
+body:not(:has(:target)) #empresas {
+    display: block;
+}
+ 
+.pagina h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--cor-texto);
+}
+ 
+/* Barra de Ações */
+.barra-acoes {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+ 
+.pesquisa {
+    flex: 1;
+}
+ 
+.pesquisa input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    outline: none;
+}
+ 
+.filtro-container select.botao-filtro {
+    padding: 10px 14px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    background-color: var(--cor-card);
+    color: var(--cor-texto);
+    cursor: pointer;
+}
+ 
+.botao {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+ 
+.botao-principal {
+    background-color: var(--cor-primaria);
+    color: #fff;
+}
+ 
+.botao-principal:hover {
+    background-color: var(--cor-primaria-hover);
+}
+ 
+.botao-cancelar {
+    background-color: #E0E0E0;
+    color: var(--cor-texto);
+}
+ 
+.botao-excluir {
+    background-color: var(--cor-perigo);
+    color: #fff;
+}
+ 
+/* Tabela */
+.tabela-container {
+    background-color: var(--cor-card);
+    border-radius: 8px;
+    border: 1px solid var(--cor-borda);
+    overflow: hidden;
+}
+ 
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+ 
+th, td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--cor-borda);
+    font-size: 14px;
+}
+ 
+th {
+    background-color: #F9FAFB;
+    color: var(--cor-texto-suave);
+    font-weight: 600;
+}
+ 
+.icone-acao {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+}
+ 
+.icone-acao img {
+    width: 18px;
+    height: 18px;
+}
+ 
+/* Modais */
+.modal-pagina {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+}
+ 
+.modal-fundo {
+    background: rgba(0, 0, 0, 0.4);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+ 
+.modal {
+    background: var(--cor-card);
+    padding: 25px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+ 
+.modal h2 {
+    width: 800px;
+    box-sizing: border-box;
+    font-size: 18px;
+}
+ 
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+ 
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+ 
+.campo label {
+    font-size: 12px;
+    color: var(--cor-texto-suave);
+}
+ 
+.campo input {
+    padding: 8px 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+ 
+.botoes-modal {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+ 
