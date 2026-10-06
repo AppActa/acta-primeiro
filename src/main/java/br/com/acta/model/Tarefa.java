@@ -1,6 +1,6 @@
 package br.com.acta.model;
 
-import br.com.acta.enums.Prioridade;
+import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
 
 import java.sql.Date;
@@ -12,16 +12,16 @@ public class Tarefa {
     private Long id_tarefa;
     private String titulo;
     private String descricao;
-    private Prioridade prioridade;
+    private Intensidade prioridade;
     private Date dt_entrega;
     private Situacao status;
     private Date dt_inicio;
     private Long id_colaborador;
-
+    private String nomeColaborador;
 
     public Tarefa() {}
 
-    public Tarefa(String titulo, String descricao, Prioridade prioridade, Date dt_entrega, Situacao status, Date dt_inicio, Long id_colaborador) {
+    public Tarefa(String titulo, String descricao, Intensidade prioridade, Date dt_entrega, Situacao status, Date dt_inicio, Long id_colaborador) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.prioridade = prioridade;
@@ -31,7 +31,7 @@ public class Tarefa {
         this.id_colaborador = id_colaborador;
     }
 
-    public Tarefa(Long id_tarefa, String titulo, String descricao, Prioridade prioridade, Date dt_entrega, Situacao status, Date dt_inicio, Long id_colaborador) {
+    public Tarefa(Long id_tarefa, String titulo, String descricao, Intensidade prioridade, Date dt_entrega, Situacao status, Date dt_inicio, Long id_colaborador) {
         this.id_tarefa = id_tarefa;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -82,11 +82,11 @@ public class Tarefa {
         this.dt_entrega = dt_entrega;
     }
 
-    public Prioridade getPrioridade() {
+    public Intensidade getPrioridade() {
         return prioridade;
     }
 
-    public void setPrioridade(Prioridade prioridade) {
+    public void setPrioridade(Intensidade prioridade) {
         this.prioridade = prioridade;
     }
 
@@ -104,5 +104,13 @@ public class Tarefa {
 
     public void setTitulo(String titulo) {
         this.titulo = titulo;
+    }
+
+    public String getNomeColaborador() {
+        return nomeColaborador;
+    }
+
+    public void setNomeColaborador(String nomeColaborador) {
+        this.nomeColaborador = nomeColaborador;
     }
 }

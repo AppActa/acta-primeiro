@@ -1,12 +1,10 @@
 package br.com.acta.servlet;
 
-import br.com.acta.dao.CicloDAO;
-import br.com.acta.dao.EmpresaDAO;
+import br.com.acta.dao.TarefaDAO;
 import br.com.acta.dao.ColaboradorDAO;
-import br.com.acta.model.Ciclo;
-import br.com.acta.model.Empresa;
+import br.com.acta.model.Tarefa;
 import br.com.acta.model.Colaborador;
-import br.com.acta.enums.EtapaCiclo;
+import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -19,12 +17,11 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
-@WebServlet(name = "CicloServlet", value = "/ciclo-servlet")
-public class CicloServlet extends HttpServlet {
-    private static final String PAGINA_CICLO = "/ciclo.jsp";
+@WebServlet(name = "TarefaServlet", value = "/tarefa-servlet")
+public class TarefaServlet extends HttpServlet {
+    private static final String PAGINA_TAREFA = "/tarefa.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
-    private final CicloDAO cicloDAO = new CicloDAO();
-    private final EmpresaDAO EMPRESA_DAO = new EmpresaDAO();
+    private final TarefaDAO DAO = new TarefaDAO();
     private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
 
     @Override
@@ -33,7 +30,7 @@ public class CicloServlet extends HttpServlet {
             buscar(req, resp);
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível encontrar os ciclos");
+            enviarErro(req, resp, "Não foi possível encontrar as tarefas");
         }
     }
 
@@ -67,23 +64,21 @@ public class CicloServlet extends HttpServlet {
     }
 
     // CRUD
+    // Retorno do DAO: 1 = certo, 0 = erro de negócio, -1 = erro de conexão com o banco
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Ciclo ciclo = new Ciclo();
+        Tarefa tarefa = new Tarefa();
 
-        ciclo.setNome(req.getParameter("nome"));
-        ciclo.setDescricao(req.getParameter("descricao"));
-        ciclo.setEtapa_atual(EtapaCiclo.valueOf(req.getParameter("etapa_atual")));
-        ciclo.setDt_inicio(Date.valueOf(req.getParameter("dt_inicio")));
-        ciclo.setDt_fim(Date.valueOf(req.getParameter("dt_fim")));
-        ciclo.setStatus(Situacao.valueOf(req.getParameter("status")));
-        ciclo.setId_empresa(Long.parseLong(req.getParameter("id_empresa")));
-        ciclo.setId_responsavel(Long.parseLong(req.getParameter("id_responsavel")));
-        // criado_em não é setado aqui — quem preenche é o banco (now())
+        tarefa.setTitulo(req.getParameter("titulo"));
+        tarefa.setDescricao(req.getParameter("descricao"));
+        tarefa.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));tarefa.setDt_entrega(Date.valueOf(req.getParameter("dt_entrega")));
+        tarefa.setStatus(Situacao.valueOf(req.getParameter("status")));
+        tarefa.setDt_inicio(Date.valueOf(req.getParameter("dt_inicio")));
+        tarefa.setId_colaborador(Long.parseLong(req.getParameter("id_colaborador")));
 
-        int resultado = cicloDAO.inserir(ciclo);
+        int resultado = DAO.inserir(tarefa);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
-        else enviarErro(req, resp, "O ciclo não pode ser cadastrado");
+        else enviarErro(req, resp, "A tarefa não pode ser cadastrada");
     }
 
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -93,45 +88,43 @@ public class CicloServlet extends HttpServlet {
             return;
         }
 
-        Ciclo ciclo = cicloDAO.buscar(Long.parseLong(id));
+        Tarefa tarefa = DAO.buscar(Long.parseLong(id));
 
-        if (ciclo == null) {
+        if (tarefa == null) {
             enviarPaginaCerta(req, resp);
             return;
         }
 
-        preencherNomesFk(List.of(ciclo));
-        req.setAttribute("cicloList", List.of(ciclo));
-        req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
+        preencherNomesFk(List.of(tarefa));
+        req.setAttribute("tarefaList", List.of(tarefa));
+        req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-ciclo"));
-        Ciclo ciclo = new Ciclo();
+        Long id = Long.parseLong(req.getParameter("id-tarefa"));
+        Tarefa tarefa = new Tarefa();
 
-        ciclo.setId_ciclo(id);
-        ciclo.setNome(req.getParameter("nome"));
-        ciclo.setDescricao(req.getParameter("descricao"));
-        ciclo.setEtapa_atual(EtapaCiclo.valueOf(req.getParameter("etapa_atual")));
-        ciclo.setDt_inicio(Date.valueOf(req.getParameter("dt_inicio")));
-        ciclo.setDt_fim(Date.valueOf(req.getParameter("dt_fim")));
-        ciclo.setStatus(Situacao.valueOf(req.getParameter("status")));
-        ciclo.setId_empresa(Long.parseLong(req.getParameter("id_empresa")));
-        ciclo.setId_responsavel(Long.parseLong(req.getParameter("id_responsavel")));
-        // criado_em também não entra aqui porque o banco faz automatico.
+        tarefa.setId_tarefa(id);
+        tarefa.setTitulo(req.getParameter("titulo"));
+        tarefa.setDescricao(req.getParameter("descricao"));
+        tarefa.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
+        tarefa.setDt_entrega(Date.valueOf(req.getParameter("dt_entrega")));
+        tarefa.setStatus(Situacao.valueOf(req.getParameter("status")));
+        tarefa.setDt_inicio(Date.valueOf(req.getParameter("dt_inicio")));
+        tarefa.setId_colaborador(Long.parseLong(req.getParameter("id_colaborador")));
 
-        int resultado = cicloDAO.atualizar(ciclo);
+        int resultado = DAO.atualizar(tarefa);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
-        else enviarErro(req, resp, "O ciclo não pode ser atualizado");
+        else enviarErro(req, resp, "A tarefa não pode ser atualizada");
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-ciclo"));
-        int resultado = cicloDAO.excluir(id);
+        Long id = Long.parseLong(req.getParameter("id-tarefa"));
+        int resultado = DAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
-        else enviarErro(req, resp, "O ciclo não pode ser excluído");
+        else enviarErro(req, resp, "A tarefa não pode ser excluída");
     }
 
     // UTILITARIOS
@@ -143,20 +136,22 @@ public class CicloServlet extends HttpServlet {
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Ciclo> ciclos = cicloDAO.buscar();
-        preencherNomesFk(ciclos);
+        List<Tarefa> tarefas = DAO.buscar();
+        preencherNomesFk(tarefas);
 
-        req.setAttribute("cicloList", ciclos);
-        req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
+        req.setAttribute("tarefaList", tarefas);
+        req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
 
-    private void preencherNomesFk(List<Ciclo> ciclos) {
-        for (Ciclo ciclo : ciclos) {
-            Empresa empresa = EMPRESA_DAO.buscar(ciclo.getId_empresa());
-            if (empresa != null) ciclo.setNomeEmpresa(empresa.getNome());
+    private void preencherNomesFk(List<Tarefa> tarefas) {
+        for (Tarefa tarefa : tarefas) {
+            Long idColaborador = tarefa.getId_colaborador();
+            Colaborador colaborador = COLABORADOR_DAO.buscar(idColaborador);
 
-            Colaborador responsavel = COLABORADOR_DAO.buscar(ciclo.getId_responsavel());
-            if (responsavel != null) ciclo.setNomeResponsavel(responsavel.getNome());
+            if (colaborador != null) {
+                tarefa.setNomeColaborador(colaborador.getNome());
+            }
         }
     }
+
 }
