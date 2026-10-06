@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assests/logo_compacta.svg" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <title>ACTA</title>
+</head>
+ 
+<body>
+ 
+    <div class="sistema">
+ 
+        <!-- Sidebar / Menu Lateral -->
+        <aside class="sidebar">
+ 
+            <div class="sidebar-logo">
+                <img src="assests/logo_oficial.svg" alt="ACTA">
+            </div>
+ 
+            <nav class="menu">
+ 
+                <a href="#empresas" class="menu-item">
+                    <img src="assests/icone_empresas.svg" alt="">
+                    <span>Empresas</span>
+                </a>
+ 
+                <a href="#colaborador" class="menu-item">
+                    <img src="assests/icone_colaborador.svg" alt="">
+                    <span>Colaborador</span>
+                </a>
+ 
+                <a href="#administrador" class="menu-item">
+                    <img src="assests/icone_administrador.svg" alt="">
+                    <span>Administrador</span>
+                </a>
+ 
+                <a href="#tarefa" class="menu-item">
+                    <img src="assests/icone_tarefa.svg" alt="">
+                    <span>Tarefa</span>
+                </a>
+ 
+                <a href="#plano" class="menu-item">
+                    <img src="assests/icone_plano_de_acao.svg" alt="">
+                    <span>Plano de ação</span>
+                </a>
+ 
+                <a href="#ciclos" class="menu-item">
+                    <img src="assests/icone_ciclos.svg" alt="">
+                    <span>Ciclos</span>
+                </a>
+ 
+                <a href="#licoes" class="menu-item">
+                    <img src="assests/icone_licoes_aprendidas.svg" alt="">
+                    <span>Lições Aprendidas</span>
+                </a>
+ 
+                <a href="#metas" class="menu-item">
+                    <img src="assests/icone_metas.svg" alt="">
+                    <span>Metas</span>
+                </a>
+ 
+                <a href="#problemas" class="menu-item">
+                    <img src="assests/icone_problemas.svg" alt="">
+                    <span>Problemas</span>
+                </a>
+ 
+            </nav>
+ 
+        </aside>
+ 
+        <!-- Conteúdo Principal -->
+        <main class="conteudo">
+ 
+            <!-- Página Empresas (Padrão) -->
+            <section id="empresas" class="pagina">
+ 
+                <h1>Empresas</h1>
+ 
+                <div class="barra-acoes">
+ 
+                    <div class="pesquisa">
+                        <input type="text" placeholder="Pesquisar por empresa">
+                    </div>
+ 
+                    <div class="filtro-container">
+                        <select class="botao botao-filtro">
+                            <option value="">Filtros</option>
+                            <option value="setor">Por Setor</option>
+                            <option value="unidade">Por Unidade</option>
+                        </select>
+                    </div>
+ 
+                    <a href="#cadastrar-empresa" class="botao botao-principal">
+                        Cadastrar
+                    </a>
+ 
+                </div>
+ 
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ver</th>
+                                <th>Excluir</th>
+                                <th>Nome</th>
+                                <th>Setor</th>
+                                <th>Unidade</th>
+                                <th>CNPJ</th>
+                                <th>CEP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a href="#editar-empresa" class="icone-acao">
+                                        <img src="assests/icone_ver.svg" alt="">
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#excluir-empresa" class="icone-acao">
+                                        <img src="assests/icone_excluir.svg" alt="">
+                                    </a>
+                                </td>
+                                <td>Flora Âmbar</td>
+                                <td>Embalagem</td>
+                                <td>Angra</td>
+                                <td>13.425.674/8967-4</td>
+                                <td>05690-3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+ 
+            </section>
+ 
+            <!-- Modal Cadastrar Empresa -->
+            <section id="cadastrar-empresa" class="pagina modal-pagina">
+ 
+                <div class="modal-fundo">
+ 
+                    <div class="modal">
+ 
+                        <h2>Cadastrar empresa</h2>
+ 
+                        <form class="formulario">
+ 
+                            <div class="campo">
+                                <label for="cnpj">CNPJ</label>
+                                <input type="text" id="cnpj" placeholder="Digite o CNPJ">
+                            </div>
+ 
+                            <div class="campo">
+                                <label for="unidade">Unidade</label>
+                                <input type="text" id="unidade" placeholder="Digite a unidade">
+                            </div>
+ 
+                            <div class="campo">
+                                <label for="nome">Nome</label>
+                                <input type="text" id="nome" placeholder="Digite o nome">
+                            </div>
+ 
+                            <div class="campo">
+                                <label for="setor">Setor</label>
+                                <input type="text" id="setor" placeholder="Digite o setor">
+                            </div>
+ 
+                            <div class="campo">
+                                <label for="usina">Usina</label>
+                                <input type="text" id="usina" placeholder="Digite a usina">
+                            </div>
+ 
+                            <div class="campo">
+                                <label for="cep">CEP</label>
+                                <input type="text" id="cep" placeholder="Digite o CEP">
+                            </div>
+ 
+                            <div class="campo">
+                                <label for="matriz">Matriz</label>
+                                <input type="text" id="matriz" placeholder="Digite a matriz">
+                            </div>
+ 
+                            <div class="botoes-modal">
+                                <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
+                                <button type="submit" class="botao botao-principal">Cadastrar</button>
+                            </div>
+ 
+                        </form>
+ 
+                    </div>
+ 
+                </div>
+ 
+            </section>
+ 
+            <!-- Modal Editar Empresa -->
+            <section id="editar-empresa" class="pagina modal-pagina">
+ 
+                <h1>Empresas</h1>
+ 
+                <div class="modal-fundo">
+ 
+                    <div class="modal">
+ 
+                        <h2>Editar empresa</h2>
+ 
+                        <form class="formulario">
+ 
+                            <div class="campo">
+                                <label>CNPJ</label>
+                                <input type="text" value="13.425.674/8967-4">
+                            </div>
+ 
+                            <div class="campo">
+                                <label>Unidade</label>
+                                <input type="text" value="Angra">
+                            </div>
+ 
+                            <div class="campo">
+                                <label>Nome</label>
+                                <input type="text" value="Flora Âmbar">
+                            </div>
+ 
+                            <div class="campo">
+                                <label>Setor</label>
+                                <input type="text" value="Embalagem">
+                            </div>
+ 
+                            <div class="campo">
+                                <label>Usina</label>
+                                <input type="text" value="Usina 01">
+                            </div>
+ 
+                            <div class="campo">
+                                <label>CEP</label>
+                                <input type="text" value="05690-3">
+                            </div>
+ 
+                            <div class="campo">
+                                <label>Matriz</label>
+                                <input type="text" value="Matriz">
+                            </div>
+ 
+                            <div class="botoes-modal">
+                                <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
+                                <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                            </div>
+ 
+                        </form>
+ 
+                    </div>
+ 
+                </div>
+ 
+            </section>
+ 
+            <!-- Modal Excluir Empresa -->
+            <section id="excluir-empresa" class="pagina modal-pagina">
+ 
+                <h1>Empresas</h1>
+ 
+                <div class="modal-fundo">
+ 
+                    <div class="modal modal-exclusao">
+ 
+                        <h2>Excluir empresa</h2>
+                        <p>Tem certeza que deseja excluir esta empresa?</p>
+ 
+                        <div class="botoes-modal">
+                            <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
+                            <button class="botao botao-excluir">Confirmar exclusão</button>
+                        </div>
+ 
+                    </div>
+ 
+                </div>
+ 
+            </section>
+ 
+            <!-- Página Colaborador -->
+            <section id="colaborador" class="pagina">
+ 
+                <h1>Colaborador</h1>
+ 
+                <div class="barra-acoes">
+ 
+                    <div class="pesquisa">
+                        <input type="text" placeholder="Pesquisar por colaborador">
+                    </div>
+ 
+                    <div class="filtro-container">
+                        <select class="botao botao-filtro">
+                            <option value="">Filtros</option>
+                            <option value="cargo">Por Cargo</option>
+                            <option value="nome">Por Nome</option>
+                        </select>
+                    </div>
+ 
+                    <button class="botao botao-principal">
+                        Cadastrar
+                    </button>
+ 
+                </div>
+ 
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ver</th>
+                                <th>Excluir</th>
+                                <th>Nome</th>
+                                <th>Sobrenome</th>
+                                <th>Cargo</th>
+                                <th>Telefone</th>
+                                <th>CPF</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_ver.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_excluir.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>Nome</td>
+                                <td>Sobrenome</td>
+                                <td>Cargo</td>
+                                <td>(00) 00000-0000</td>
+                                <td>000.000.000-00</td>
+                                <td>email@email.com</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+ 
+            </section>
+ 
+            <!-- Página Administrador -->
+            <section id="administrador" class="pagina">
+ 
+                <h1>Administrador</h1>
+ 
+                <div class="barra-acoes">
+ 
+                    <div class="pesquisa">
+                        <input type="text" placeholder="Pesquisar por administrador">
+                    </div>
+ 
+                    <div class="filtro-container">
+                        <select class="botao botao-filtro">
+                            <option value="">Filtros</option>
+                            <option value="nome">Por Nome</option>
+                            <option value="email">Por Email</option>
+                        </select>
+                    </div>
+ 
+                    <button class="botao botao-principal">
+                        Cadastrar
+                    </button>
+ 
+                </div>
+ 
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ver</th>
+                                <th>Excluir</th>
+                                <th>Nome</th>
+                                <th>Sobrenome</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_ver.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_excluir.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>Nome</td>
+                                <td>Sobrenome</td>
+                                <td>email@email.com</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+ 
+            </section>
+ 
+            <!-- Página Tarefa -->
+            <section id="tarefa" class="pagina">
+ 
+                <h1>Tarefa</h1>
+ 
+                <div class="barra-acoes">
+ 
+                    <div class="pesquisa">
+                        <input type="text" placeholder="Pesquisar por tarefa">
+                    </div>
+ 
+                    <div class="filtro-container">
+                        <select class="botao botao-filtro">
+                            <option value="">Filtros</option>
+                            <option value="responsavel">Por Responsável</option>
+                            <option value="prazo">Por Prazo</option>
+                        </select>
+                    </div>
+ 
+                    <button class="botao botao-principal">
+                        Cadastrar
+                    </button>
+ 
+                </div>
+ 
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ver</th>
+                                <th>Excluir</th>
+                                <th>Tarefa</th>
+                                <th>Responsável</th>
+                                <th>Prazo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_ver.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_excluir.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>Nome da tarefa</td>
+                                <td>Responsável</td>
+                                <td>00/00/0000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+ 
+            </section>
+ 
+            <!-- Página Plano de Ação -->
+            <section id="plano" class="pagina">
+ 
+                <h1>Plano de Ação</h1>
+ 
+                <div class="barra-acoes">
+ 
+                    <div class="pesquisa">
+                        <input type="text" placeholder="Pesquisar por plano de ação">
+                    </div>
+ 
+                    <div class="filtro-container">
+                        <select class="botao botao-filtro">
+                            <option value="">Filtros</option>
+                            <option value="status">Por Status</option>
+                            <option value="prazo">Por Prazo</option>
+                        </select>
+                    </div>
+ 
+                    <button class="botao botao-principal">
+                        Cadastrar
+                    </button>
+ 
+                </div>
+ 
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ver</th>
+                                <th>Excluir</th>
+                                <th>Plano</th>
+                                <th>Status</th>
+                                <th>Prazo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_ver.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_excluir.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>Nome do plano</td>
+                                <td>Em andamento</td>
+                                <td>00/00/0000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+ 
+            </section>
+ 
+            <!-- Página Ciclos -->
+            <section id="ciclos" class="pagina">
+ 
+                <h1>Ciclos</h1>
+ 
+                <div class="barra-acoes">
+ 
+                    <div class="pesquisa">
+                        <input type="text" placeholder="Pesquisar por ciclo">
+                    </div>
+ 
+                    <div class="filtro-container">
+                        <select class="botao botao-filtro">
+                            <option value="">Filtros</option>
+                            <option value="inicio">Por Início</option>
+                            <option value="fim">Por Fim</option>
+                        </select>
+                    </div>
+ 
+                    <button class="botao botao-principal">
+                        Cadastrar
+                    </button>
+ 
+                </div>
+ 
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ver</th>
+                                <th>Excluir</th>
+                                <th>Ciclo</th>
+                                <th>Início</th>
+                                <th>Fim</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_ver.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_excluir.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>Ciclo 1</td>
+                                <td>00/00/0000</td>
+                                <td>00/00/0000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+ 
+            </section>
+ 
+            <!-- Página Lições Aprendidas -->
+            <section id="licoes" class="pagina">
+ 
+                <h1>Lições Aprendidas</h1>
+ 
+                <div class="barra-acoes">
+ 
+                    <div class="pesquisa">
+                        <input type="text" placeholder="Pesquisar por lição aprendida">
+                    </div>
+ 
+                    <div class="filtro-container">
+                        <select class="botao botao-filtro">
+                            <option value="">Filtros</option>
+                            <option value="categoria">Por Categoria</option>
+                            <option value="data">Por Data</option>
+                        </select>
+                    </div>
+ 
+                    <button class="botao botao-principal">
+                        Cadastrar
+                    </button>
+ 
+                </div>
+ 
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ver</th>
+                                <th>Excluir</th>
+                                <th>Título</th>
+                                <th>Categoria</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_ver.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_excluir.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>Título da lição</td>
+                                <td>Categoria</td>
+                                <td>00/00/0000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+ 
+            </section>
+ 
+            <!-- Página Metas -->
+            <section id="metas" class="pagina">
+ 
+                <h1>Metas</h1>
+ 
+                <div class="barra-acoes">
+ 
+                    <div class="pesquisa">
+                        <input type="text" placeholder="Pesquisar por meta">
+                    </div>
+ 
+                    <div class="filtro-container">
+                        <select class="botao botao-filtro">
+                            <option value="">Filtros</option>
+                            <option value="status">Por Status</option>
+                            <option value="alvo">Por Alvo</option>
+                        </select>
+                    </div>
+ 
+                    <button class="botao botao-principal">
+                        Cadastrar
+                    </button>
+ 
+                </div>
+ 
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ver</th>
+                                <th>Excluir</th>
+                                <th>Meta</th>
+                                <th>Alvo</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_ver.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_excluir.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>Nome da meta</td>
+                                <td>Meta alvo</td>
+                                <td>Em andamento</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+ 
+            </section>
+ 
+            <!-- Página Problemas -->
+            <section id="problemas" class="pagina">
+ 
+                <h1>Problemas</h1>
+ 
+                <div class="barra-acoes">
+ 
+                    <div class="pesquisa">
+                        <input type="text" placeholder="Pesquisar por problema">
+                    </div>
+ 
+                    <div class="filtro-container">
+                        <select class="botao botao-filtro">
+                            <option value="">Filtros</option>
+                            <option value="gravidade">Por Gravidade</option>
+                            <option value="status">Por Status</option>
+                        </select>
+                    </div>
+ 
+                    <button class="botao botao-principal">
+                        Cadastrar
+                    </button>
+ 
+                </div>
+ 
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ver</th>
+                                <th>Excluir</th>
+                                <th>Problema</th>
+                                <th>Gravidade</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_ver.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="icone-acao">
+                                        <img src="assests/icone_excluir.svg" alt="">
+                                    </button>
+                                </td>
+                                <td>Descrição do problema</td>
+                                <td>Alta</td>
+                                <td>Pendente</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+ 
+            </section>
+ 
+        </main>
+ 
+    </div>
+ 
+</body>
+ 
+</html>
