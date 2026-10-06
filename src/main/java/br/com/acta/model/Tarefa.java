@@ -17,7 +17,7 @@ public class Tarefa {
     private Situacao status;
     private Date dt_inicio;
     private Long id_colaborador;
-    private String nomeColaborador;
+    private String nome_colaborador;
 
     public Tarefa() {}
 
@@ -106,11 +106,11 @@ public class Tarefa {
         this.titulo = titulo;
     }
 
-    public String getNomeColaborador() {
-        return nomeColaborador;
+    public String getNome_colaborador() {
+        return nome_colaborador;
     }
 
-    public void setNomeColaborador(String nomeColaborador) {
-        this.nomeColaborador = nomeColaborador;
+    public void setNome_colaborador(String nome_colaborador) {
+        this.nome_colaborador = nome_colaborador;
     }
 }
