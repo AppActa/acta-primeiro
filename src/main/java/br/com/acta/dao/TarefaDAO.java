@@ -45,7 +45,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
     // READ
     @Override
     public Tarefa buscar(Long id) {
-        String sql = "SELECT * FROM tarefa WHERE id_tarefa = ?;";
+        String sql = "SELECT * FROM vw_tarefa WHERE id_tarefa = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -67,7 +67,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
     @Override
     public List<Tarefa> buscar() {
         List<Tarefa> lista = new ArrayList<>();
-        String sql = "SELECT * FROM tarefa;";
+        String sql = "SELECT * FROM vw_tarefa;";
 
         try (Connection conn = Conexao.conectar();
              Statement stmt = conn.createStatement();
@@ -153,7 +153,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         tarefa.setDt_entrega(rs.getDate("dt_entrega"));
         tarefa.setStatus(Situacao.valueOf(rs.getString("status")));
         tarefa.setDt_inicio(rs.getDate("dt_inicio"));
-        tarefa.setId_colaborador(rs.getLong("id_colaborador"));
+        tarefa.setNome_colaborador(rs.getString("nome_colaborador"));
         return tarefa;
     }
 

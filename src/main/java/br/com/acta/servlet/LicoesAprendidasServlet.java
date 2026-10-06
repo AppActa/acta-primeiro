@@ -1,9 +1,7 @@
 package br.com.acta.servlet;
 
 import br.com.acta.dao.LicoesAprendidasDAO;
-import br.com.acta.dao.CicloDAO;
 import br.com.acta.model.LicoesAprendidas;
-import br.com.acta.model.Ciclo;
 import br.com.acta.enums.EtapaCiclo;
 import br.com.acta.enums.Intensidade;
 import jakarta.servlet.RequestDispatcher;
@@ -21,7 +19,6 @@ public class LicoesAprendidasServlet extends HttpServlet {
     private static final String PAGINA_LICOES_APRENDIDAS = "/licoes-aprendidas.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final LicoesAprendidasDAO DAO = new LicoesAprendidasDAO();
-    private final CicloDAO CICLO_DAO = new CicloDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -96,7 +93,6 @@ public class LicoesAprendidasServlet extends HttpServlet {
             return;
         }
 
-        preencherNomesFk(List.of(licoesAprendidas));
         req.setAttribute("licoesAprendidasList", List.of(licoesAprendidas));
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
@@ -139,21 +135,8 @@ public class LicoesAprendidasServlet extends HttpServlet {
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<LicoesAprendidas> licoesAprendidas = DAO.buscar();
-        preencherNomesFk(licoesAprendidas);
 
         req.setAttribute("licoesAprendidasList", licoesAprendidas);
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
-
-    private void preencherNomesFk(List<LicoesAprendidas> licoesAprendidas) {
-        for (LicoesAprendidas licaoAprendida : licoesAprendidas) {
-            Long idCiclo = licaoAprendida.getId_ciclo();
-            Ciclo ciclo = CICLO_DAO.buscar(idCiclo);
-
-            if (ciclo != null) {
-                licaoAprendida.setNomeCiclo(ciclo.getNome());
-            }
-        }
-    }
-
 }

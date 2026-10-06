@@ -72,7 +72,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
     @Override
     public List<Colaborador> buscar() {
         List<Colaborador> colaboradores = new ArrayList<>();
-        String sql = "SELECT * FROM colaborador;";
+        String sql = "SELECT * FROM vw_colaborador;";
 
         try (Connection conn = Conexao.conectar();
              Statement stmt = conn.createStatement();
@@ -89,7 +89,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
     }
 
     public Colaborador autenticar(String email, String senha) {
-        String sql = "SELECT * FROM colaborador WHERE email = ?";
+        String sql = "SELECT * FROM vw_colaborador WHERE email = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -232,7 +232,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         colaborador.setSenha(rs.getString("senha"));
         colaborador.setTelefone(rs.getString("telefone"));
         colaborador.setCpf(rs.getString("cpf"));
-        colaborador.setId_empresa(rs.getLong("id_empresa"));
+        colaborador.setNome_empresa(rs.getString("nome_empresa"));
         return colaborador;
     }
 

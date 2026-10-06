@@ -46,7 +46,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
     // READ
     @Override
     public LicoesAprendidas buscar(Long id) {
-        String sql = "SELECT * FROM licoes_aprendidas WHERE id_licao = ?;";
+        String sql = "SELECT * FROM vw_licoes_aprendidas WHERE id_licao = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -68,7 +68,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
     @Override
     public List<LicoesAprendidas> buscar() {
         List<LicoesAprendidas> lista = new ArrayList<>();
-        String sql = "SELECT * FROM licoes_aprendidas;";
+        String sql = "SELECT * FROM vw_licoes_aprendidas;";
 
         try (Connection conn = Conexao.conectar();
              Statement stmt = conn.createStatement();
@@ -156,7 +156,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         licoesAprendidas.setDescricao(rs.getString("descricao"));
         licoesAprendidas.setFase_origem(EtapaCiclo.valueOf(rs.getString("fase_origem")));
         licoesAprendidas.setSeveridade(Intensidade.valueOf(rs.getString("severidade")));
-        licoesAprendidas.setId_ciclo(rs.getLong("id_ciclo"));
+        licoesAprendidas.setNome_ciclo(rs.getString("nome_ciclo"));
         return licoesAprendidas;
     }
 

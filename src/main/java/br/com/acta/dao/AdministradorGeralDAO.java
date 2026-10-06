@@ -8,10 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import br.com.acta.model.AdministradorGeral;
-import br.com.acta.model.Colaborador;
 import br.com.acta.utils.Conexao;
 import br.com.acta.utils.PasswordUtils;
-import com.password4j.Password;
 
 public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 

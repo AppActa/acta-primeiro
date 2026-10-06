@@ -1,5 +1,6 @@
 package br.com.acta.dao;
 
+import br.com.acta.enums.Intensidade;
 import br.com.acta.model.Problema;
 import br.com.acta.enums.StatusProblema;
 import br.com.acta.utils.Conexao;
@@ -23,7 +24,7 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
 
             pstmt.setString(1, problema.getTitulo());
             pstmt.setString(2, problema.getDescricao());
-            pstmt.setString(3, problema.getPeso());
+            pstmt.setString(3, problema.getPeso().name());
             pstmt.setString(4, problema.getSolucao());
             pstmt.setString(5, problema.getStatus().name());
             pstmt.setString(6, problema.getOrigem());
@@ -95,7 +96,7 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
 
             pstmt.setString(1, problema.getTitulo());
             pstmt.setString(2, problema.getDescricao());
-            pstmt.setString(3, problema.getPeso());
+            pstmt.setString(3, problema.getPeso().name());
             pstmt.setString(4, problema.getSolucao());
             pstmt.setString(5, problema.getStatus().name());
             pstmt.setString(6, problema.getOrigem());
@@ -154,14 +155,14 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
         problema.setId_problema(rs.getLong("id_problema"));
         problema.setTitulo(rs.getString("titulo"));
         problema.setDescricao(rs.getString("descricao"));
-        problema.setPeso(rs.getString("peso"));
+        problema.setPeso(Intensidade.valueOf(rs.getString("peso")));
         problema.setSolucao(rs.getString("solucao"));
         problema.setStatus(StatusProblema.valueOf(rs.getString("status")));
         problema.setOrigem(rs.getString("origem"));
         problema.setEncontrado_em(rs.getDate("encontrado_em"));
-        problema.setId_ciclo(rs.getLong("id_ciclo"));
-        problema.setId_plano_acao(rs.getLong("id_plano_acao"));
-        problema.setId_colaborador(rs.getLong("id_colaborador"));
+        problema.setNome_ciclo(rs.getString("nome_ciclo"));
+        problema.setNome_plano_acao(rs.getString("nome_plano_acao"));
+        problema.setNome_ciclo(rs.getString("nome_ciclo"));
         return problema;
     }
 

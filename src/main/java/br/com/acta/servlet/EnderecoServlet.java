@@ -1,9 +1,7 @@
 package br.com.acta.servlet;
 
-import br.com.acta.dao.MetaDAO;
-import br.com.acta.enums.Intensidade;
-import br.com.acta.model.Meta;
-import br.com.acta.enums.StatusMeta;
+import br.com.acta.dao.EnderecoDAO;
+import br.com.acta.model.Endereco;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,15 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.util.List;
 
-@WebServlet(name = "MetaServlet", value = "/meta-servlet")
-public class MetaServlet extends HttpServlet {
-    private static final String PAGINA_META = "/meta.jsp";
+@WebServlet(name = "EnderecoServlet", value = "/endereco-servlet")
+public class EnderecoServlet extends HttpServlet {
+    private static final String PAGINA_ENDERECO = "/endereco.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
-    private final MetaDAO DAO = new MetaDAO();
-
+    private final EnderecoDAO DAO = new EnderecoDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -28,7 +24,7 @@ public class MetaServlet extends HttpServlet {
             buscar(req, resp);
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível encontrar as metas");
+            enviarErro(req, resp, "Não foi possível encontrar os enderecos");
         }
     }
 
@@ -64,21 +60,22 @@ public class MetaServlet extends HttpServlet {
     // CRUD
     // Retorno do DAO: 1 = certo, 0 = erro de negócio, -1 = erro de conexão com o banco
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Meta meta = new Meta();
+        Endereco endereco = new Endereco();
 
-        meta.setMeta(req.getParameter("meta"));
-        meta.setDescricao_meta(req.getParameter("descricao_meta"));
-        meta.setObjetivo(req.getParameter("objetivo"));
-        meta.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
-        meta.setPrazo(Date.valueOf(req.getParameter("prazo")));
-        meta.setStatus(StatusMeta.valueOf(req.getParameter("status")));
-        meta.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
-        meta.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
+        endereco.setRua(req.getParameter("rua"));
+        endereco.setBairro(req.getParameter("bairro"));
+        endereco.setCidade(req.getParameter("cidade"));
+        endereco.setEstado(req.getParameter("estado"));
+        endereco.setCep(req.getParameter("cep"));
+        endereco.setNumero(req.getParameter("numero"));
+        endereco.setComplemento(req.getParameter("complemento"));
+        endereco.setUnidade(req.getParameter("unidade"));
+        endereco.setId_empresa(Long.parseLong(req.getParameter("id_empresa")));
 
-        int resultado = DAO.inserir(meta);
+        int resultado = DAO.inserir(endereco);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
-        else enviarErro(req, resp, "A meta não pode ser cadastrada");
+        else enviarErro(req, resp, "O endereco não pode ser cadastrado");
     }
 
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -88,43 +85,44 @@ public class MetaServlet extends HttpServlet {
             return;
         }
 
-        Meta meta = DAO.buscar(Long.parseLong(id));
+        Endereco endereco = DAO.buscar(Long.parseLong(id));
 
-        if (meta == null) {
+        if (endereco == null) {
             enviarPaginaCerta(req, resp);
             return;
         }
 
-        req.setAttribute("metaList", List.of(meta));
-        req.getRequestDispatcher(PAGINA_META).forward(req, resp);
+        req.setAttribute("enderecoList", List.of(endereco));
+        req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-meta"));
-        Meta meta = new Meta();
+        Long id = Long.parseLong(req.getParameter("id-endereco"));
+        Endereco endereco = new Endereco();
 
-        meta.setId_meta(id);
-        meta.setMeta(req.getParameter("meta"));
-        meta.setDescricao_meta(req.getParameter("descricao_meta"));
-        meta.setObjetivo(req.getParameter("objetivo"));
-        meta.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
-        meta.setPrazo(Date.valueOf(req.getParameter("prazo")));
-        meta.setStatus(StatusMeta.valueOf(req.getParameter("status")));
-        meta.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
-        meta.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
+        endereco.setId_endereco(id);
+        endereco.setRua(req.getParameter("rua"));
+        endereco.setBairro(req.getParameter("bairro"));
+        endereco.setCidade(req.getParameter("cidade"));
+        endereco.setEstado(req.getParameter("estado"));
+        endereco.setCep(req.getParameter("cep"));
+        endereco.setNumero(req.getParameter("numero"));
+        endereco.setComplemento(req.getParameter("complemento"));
+        endereco.setUnidade(req.getParameter("unidade"));
+        endereco.setId_empresa(Long.parseLong(req.getParameter("id_empresa")));
 
-        int resultado = DAO.atualizar(meta);
+        int resultado = DAO.atualizar(endereco);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
-        else enviarErro(req, resp, "A meta não pode ser atualizada");
+        else enviarErro(req, resp, "O endereco não pode ser atualizado");
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-meta"));
+        Long id = Long.parseLong(req.getParameter("id-endereco"));
         int resultado = DAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
-        else enviarErro(req, resp, "A meta não pode ser excluída");
+        else enviarErro(req, resp, "O endereco não pode ser excluído");
     }
 
     // UTILITARIOS
@@ -136,9 +134,10 @@ public class MetaServlet extends HttpServlet {
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Meta> metas = DAO.buscar();
+        List<Endereco> lista = DAO.buscar();
 
-        req.setAttribute("metaList", metas);
-        req.getRequestDispatcher(PAGINA_META).forward(req, resp);
+        req.setAttribute("enderecoList", lista);
+        req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
+
 }
