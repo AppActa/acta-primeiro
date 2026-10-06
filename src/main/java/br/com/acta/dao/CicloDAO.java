@@ -14,8 +14,10 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
 
     @Override
     public int inserir(Ciclo ciclo) {
-        String sql = "INSERT INTO ciclo (nome, descricao, etapa_atual, dt_inicio, dt_fim, status, id_empresa, id_responsavel) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = """
+                INSERT INTO ciclo (nome, descricao, etapa_atual, dt_inicio, dt_fim, status, id_empresa, id_responsavel)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+                """;
         // criado_em NÃO entra aqui, o banco preenche sozinho com now()
 
         try (Connection conn = Conexao.conectar();
@@ -30,9 +32,13 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
             pstmt.setLong(7, ciclo.getId_empresa());
             pstmt.setLong(8, ciclo.getId_responsavel());
 
-            return pstmt.executeUpdate() > 0 ? 1 : 0;
+            if (pstmt.executeUpdate() > 0) return 1;
+            else return 0;
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return codigoDeErro(e);
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return -1;
         }
@@ -46,12 +52,13 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setLong(1, id);
-            ResultSet rs = pstmt.executeQuery();
 
-            if (rs.next()) {
-                return mapearCiclo(rs);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapearCiclo(rs);
+                }
+                return null;
             }
-            return null;
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -61,7 +68,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
     @Override
     public List<Ciclo> buscar() {
         List<Ciclo> ciclos = new ArrayList<>();
-        String sql = "SELECT * FROM ciclo";
+        String sql = "SELECT * FROM ciclo;";
 
         try (Connection conn = Conexao.conectar();
              Statement stmt = conn.createStatement();
@@ -79,9 +86,8 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
 
     @Override
     public int atualizar(Ciclo ciclo) {
-        String sql = "UPDATE ciclo SET nome = ?, descricao = ?, etapa_atual = ?, dt_inicio = ?, dt_fim = ?, status = ?, id_empresa = ?, id_responsavel = ? " +
-                "WHERE id_ciclo = ?";
-        //em nunca é atilizado porque o banco passa direto quando entra para data e local;
+        String sql = "UPDATE ciclo SET nome = ?, descricao = ?, etapa_atual = ?, dt_inicio = ?, dt_fim = ?, status = ?, id_empresa = ?, id_responsavel = ? WHERE id_ciclo = ?";
+        //em nunca é atualizado porque o banco passa direto quando entra para data e local;
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -96,11 +102,15 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
             pstmt.setLong(8, ciclo.getId_responsavel());
             pstmt.setLong(9, ciclo.getId_ciclo());
 
-            return pstmt.executeUpdate() > 0 ? 1 : 0;
+            if (pstmt.executeUpdate() > 0) return 1;
+            return 0;
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
+            return codigoDeErro(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return -1;
         }
     }
 
@@ -113,12 +123,24 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
 
             pstmt.setLong(1, id);
 
-            return pstmt.executeUpdate() > 0 ? 1 : 0;
+            if (pstmt.executeUpdate() > 0) return 1;
+            return 0;
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return codigoDeErro(e);
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    private static int codigoDeErro(SQLException e) {
+        String state = e.getSQLState();
+        if (state != null && state.startsWith("23")) {
+            return 0;
+        }
+        return -1;
     }
 
     private static Ciclo mapearCiclo(ResultSet rs) throws SQLException {

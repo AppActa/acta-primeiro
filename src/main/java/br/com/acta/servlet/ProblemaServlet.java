@@ -1,0 +1,184 @@
+package br.com.acta.servlet;
+
+import br.com.acta.dao.ProblemaDAO;
+import br.com.acta.dao.CicloDAO;
+import br.com.acta.dao.PlanoAcaoDAO;
+import br.com.acta.dao.ColaboradorDAO;
+import br.com.acta.enums.Intensidade;
+import br.com.acta.model.Problema;
+import br.com.acta.model.Ciclo;
+import br.com.acta.model.PlanoAcao;
+import br.com.acta.model.Colaborador;
+import br.com.acta.enums.StatusProblema;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.sql.Date;
+import java.util.List;
+
+@WebServlet(name = "ProblemaServlet", value = "/problema-servlet")
+public class ProblemaServlet extends HttpServlet {
+    private static final String PAGINA_PROBLEMA = "/problema.jsp";
+    private static final String PAGINA_ERRO = "/erro.jsp";
+    private final ProblemaDAO DAO = new ProblemaDAO();
+    private final CicloDAO CICLO_DAO = new CicloDAO();
+    private final PlanoAcaoDAO PLANO_ACAO_DAO = new PlanoAcaoDAO();
+    private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            buscar(req, resp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            enviarErro(req, resp, "Não foi possível encontrar o problema");
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        String acao = req.getParameter("acao");
+
+        try {
+            switch (acao) {
+                case "inserir":
+                    inserir(req, resp);
+                    break;
+                case "atualizar":
+                    atualizar(req, resp);
+                    break;
+                case "excluir":
+                    excluir(req, resp);
+                    break;
+                case null:
+                    enviarErro(req, resp, "Ação não informada");
+                    break;
+                default:
+                    enviarErro(req, resp, "Ação não existente");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            enviarErro(req, resp, "Não foi possível concluir");
+        }
+    }
+
+    // CRUD
+    // Retorno do DAO: 1 = certo, 0 = erro de negócio, -1 = erro de conexão com o banco
+    private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Problema problema = new Problema();
+
+        problema.setTitulo(req.getParameter("titulo"));
+        problema.setDescricao(req.getParameter("descricao"));
+        problema.setPeso(Intensidade.valueOf(req.getParameter("peso")));
+        problema.setSolucao(req.getParameter("solucao"));
+        problema.setStatus(StatusProblema.valueOf(req.getParameter("status")));
+        problema.setOrigem(req.getParameter("origem"));
+        problema.setEncontrado_em(Date.valueOf(req.getParameter("encontrado_em")));
+        problema.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
+        problema.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
+        problema.setId_colaborador(Long.parseLong(req.getParameter("id_colaborador")));
+
+        int resultado = DAO.inserir(problema);
+
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "O problema não pode ser cadastrado");
+    }
+
+    private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String id = req.getParameter("id");
+        if (id == null) {
+            enviarPaginaCerta(req, resp);
+            return;
+        }
+
+        Problema problema = DAO.buscar(Long.parseLong(id));
+
+        if (problema == null) {
+            enviarPaginaCerta(req, resp);
+            return;
+        }
+
+        preencherNomesFk(List.of(problema));
+        req.setAttribute("problemaList", List.of(problema));
+        req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
+    }
+
+    private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Long id = Long.parseLong(req.getParameter("id-problema"));
+        Problema problema = new Problema();
+
+        problema.setId_problema(id);
+        problema.setTitulo(req.getParameter("titulo"));
+        problema.setDescricao(req.getParameter("descricao"));
+        problema.setPeso(Intensidade.valueOf(req.getParameter("peso")));
+        problema.setSolucao(req.getParameter("solucao"));
+        problema.setStatus(StatusProblema.valueOf(req.getParameter("status")));
+        problema.setOrigem(req.getParameter("origem"));
+        problema.setEncontrado_em(Date.valueOf(req.getParameter("encontrado_em")));
+        problema.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
+        problema.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
+        problema.setId_colaborador(Long.parseLong(req.getParameter("id_colaborador")));
+
+        int resultado = DAO.atualizar(problema);
+
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "O problema não pode ser atualizado");
+    }
+
+    private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Long id = Long.parseLong(req.getParameter("id-problema"));
+        int resultado = DAO.excluir(id);
+
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "O problema não pode ser excluído");
+    }
+
+    // UTILITARIOS
+    private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
+        req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
+        req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        req.getRequestDispatcher(PAGINA_ERRO).forward(req, resp);
+    }
+
+    private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<Problema> problemas = DAO.buscar();
+        preencherNomesFk(problemas);
+
+        req.setAttribute("problemaList", problemas);
+        req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
+    }
+
+    private void preencherNomesFk(List<Problema> problemas) {
+        for (Problema problema : problemas) {
+            Long idCiclo = problema.getId_ciclo();
+            Ciclo ciclo = CICLO_DAO.buscar(idCiclo);
+
+            if (ciclo != null) {
+                problema.setNomeCiclo(ciclo.getNome());
+            }
+
+            Long idPlanoAcao = problema.getId_plano_acao();
+            PlanoAcao planoAcao = PLANO_ACAO_DAO.buscar(idPlanoAcao);
+
+            if (planoAcao != null) {
+                problema.setNomePlanoAcao(planoAcao.getNome());
+            }
+
+            Long idColaborador = problema.getId_colaborador();
+            Colaborador colaborador = COLABORADOR_DAO.buscar(idColaborador);
+
+            if (colaborador != null) {
+                problema.setNomeColaborador(colaborador.getNome());
+            }
+        }
+    }
+
+}

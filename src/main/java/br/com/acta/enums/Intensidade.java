@@ -1,6 +1,6 @@
 package br.com.acta.enums;
 
-public enum Prioridade {
+public enum Intensidade {
     ALTO,
     MEDIO,
     BAIXO

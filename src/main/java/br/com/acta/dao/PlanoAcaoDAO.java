@@ -2,7 +2,7 @@ package br.com.acta.dao;
 
 import br.com.acta.model.PlanoAcao;
 import br.com.acta.enums.Situacao;
-import br.com.acta.enums.Prioridade;
+import br.com.acta.enums.Intensidade;
 import br.com.acta.utils.Conexao;
 
 
@@ -14,7 +14,10 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
     //INSERT
     @Override
     public int inserir(PlanoAcao planoAcao) {
-        String sql = "INSERT INTO plano_acao (nome,descricao,status,prioridade,id_ciclo,id_criador) VALUES (?,?,?,?,?)";
+        String sql = """
+                INSERT INTO plano_acao (nome, descricao, status, prioridade, id_ciclo, id_criador)
+                VALUES (?, ?, ?, ?, ?, ?);
+                """;
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -29,7 +32,11 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return codigoDeErro(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
             return -1;
         }
     }
@@ -38,34 +45,36 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
     public PlanoAcao buscar(Long id) {
         String sql = "SELECT * FROM plano_acao WHERE id_plano_acao = ?";
 
-        try(Connection conn = Conexao.conectar();
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-        ResultSet rs = pstmt.executeQuery()){
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setLong(1,id);
+            pstmt.setLong(1, id);
 
-            if(rs.next()) {
-                return mapearPlanoAcao(rs);
-            } return null;
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapearPlanoAcao(rs);
+                }
+                return null;
+            }
 
-        }catch(SQLException | ClassNotFoundException e){
-            throw  new RuntimeException(e);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
-
     }
 
     @Override
     public List<PlanoAcao> buscar() {
-        List<PlanoAcao> planosAcoes = new ArrayList<>();
+        List<PlanoAcao> planosAcao = new ArrayList<>();
         String sql = "SELECT * FROM plano_acao";
 
-        try(Connection conn = Conexao.conectar();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql)){
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
-            while(rs.next()) {
-                planosAcoes.add(mapearPlanoAcao(rs));
-            }return planosAcoes;
+            while (rs.next()) {
+                planosAcao.add(mapearPlanoAcao(rs));
+            }
+            return planosAcao;
 
         } catch(SQLException | ClassNotFoundException e ) {
             throw new RuntimeException(e);
@@ -75,11 +84,10 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
 
     @Override
     public int atualizar(PlanoAcao planoAcao) {
-
         String sql = "UPDATE plano_acao SET nome = ?, descricao = ?, status = ?, prioridade = ?, id_ciclo = ?, id_criador = ? WHERE id_plano_acao = ?";
 
-        try(Connection conn = Conexao.conectar();
-        PreparedStatement pstmt = conn.prepareStatement(sql)){
+        try (Connection conn = Conexao.conectar();
+        PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, planoAcao.getNome());
             pstmt.setString(2, planoAcao.getDescricao());
@@ -91,7 +99,12 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
 
             if (pstmt.executeUpdate() > 0) return 1;
             return 0;
-        }catch (SQLException | ClassNotFoundException e){
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return codigoDeErro(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
             return -1;
         }
     }
@@ -100,32 +113,41 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
     public int excluir(Long id) {
         String sql = "DELETE FROM plano_acao WHERE id_plano_acao = ?";
 
-        try(Connection conn = Conexao.conectar();
+        try (Connection conn = Conexao.conectar();
             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setLong(1,id);
+            pstmt.setLong(1, id);
 
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return codigoDeErro(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
             return -1;
         }
 
     }
 
+    private static int codigoDeErro(SQLException e) {
+        String state = e.getSQLState();
+        if (state != null && state.startsWith("23")) {
+            return 0;
+        }
+        return -1;
+    }
 
-    private static PlanoAcao mapearPlanoAcao(ResultSet rs) throws SQLException{
-
+    private static PlanoAcao mapearPlanoAcao(ResultSet rs) throws SQLException {
         PlanoAcao planoAcao = new PlanoAcao();
         planoAcao.setId_plano_acao((rs.getLong("id_plano_acao")));
         planoAcao.setNome(rs.getString("nome"));
         planoAcao.setDescricao(rs.getString("descricao"));
         planoAcao.setStatus(Situacao.valueOf(rs.getString("status")));
-        planoAcao.setPrioridade(Prioridade.valueOf(rs.getString("prioridade")));
+        planoAcao.setPrioridade(Intensidade.valueOf(rs.getString("prioridade")));
         planoAcao.setId_ciclo((rs.getLong("id_ciclo")));
         planoAcao.setId_criador(rs.getLong("id_criador"));
-
         return planoAcao;
     }
 }

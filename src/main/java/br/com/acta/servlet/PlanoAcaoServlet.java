@@ -3,7 +3,7 @@ package br.com.acta.servlet;
 import br.com.acta.dao.CicloDAO;
 import br.com.acta.dao.PlanoAcaoDAO;
 import br.com.acta.dao.ColaboradorDAO;
-import br.com.acta.enums.Prioridade;
+import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
 import br.com.acta.model.PlanoAcao;
 import br.com.acta.model.Colaborador;
@@ -20,8 +20,8 @@ import java.util.List;
 
 @WebServlet(name = "PlanoAcao", value = "/planoAcao-servlet")
 public class PlanoAcaoServlet extends HttpServlet {
-    private static String PAGINA_PLANOACAO = "/planoAcao.jsp";
-    private static String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_PLANOACAO = "/planoAcao.jsp";
+    private static final String PAGINA_ERRO = "/erro.jsp";
     private final PlanoAcaoDAO DAO = new PlanoAcaoDAO();
     private final CicloDAO CICLO_DAO = new CicloDAO();
     private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
@@ -31,19 +31,20 @@ public class PlanoAcaoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             buscar(req,resp);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             enviarErro(req, resp, "Não foi encontrar os planos de acao");
         }
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         String acao = req.getParameter("acao");
 
         try {
             switch (acao) {
                 case "inserir":
-                    inserir(req,resp);
+                    inserir(req, resp);
                     break;
                 case "atualizar":
                     atualizar(req, resp);
@@ -53,11 +54,13 @@ public class PlanoAcaoServlet extends HttpServlet {
                     break;
                 case null:
                     enviarErro(req, resp, "Ação não informada");
+                    break;
                 default:
                     enviarErro(req, resp, "Ação não existente");
-
             }
-        }catch (Exception e) {
+
+        } catch (Exception e) {
+            e.printStackTrace();
             enviarErro(req, resp, "Não foi possivel concluir");
         }
     }
@@ -70,22 +73,17 @@ public class PlanoAcaoServlet extends HttpServlet {
         planoAcao.setNome(req.getParameter("nome"));
         planoAcao.setDescricao(req.getParameter("descricao"));
         planoAcao.setStatus(Situacao.valueOf(req.getParameter("status")));
-        planoAcao.setPrioridade(Prioridade.valueOf(req.getParameter("prioridade")));
+        planoAcao.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
         planoAcao.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
         planoAcao.setId_criador(Long.parseLong(req.getParameter("id_criador")));
 
         int resultado = DAO.inserir(planoAcao);
 
-        if (resultado == 1) {
-            enviarPaginaCerta(req, resp);
-        } else {
-            preencherNomesFk(List.of(planoAcao));
-            req.setAttribute("PlanoAcaoList", List.of(planoAcao));
-            req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
-        }
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "O plano de ação não pode ser cadastrado");
     }
 
-    private void buscar(HttpServletRequest req,HttpServletResponse resp) throws ServletException, IOException {
+    private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
 
         if (id == null) {
@@ -96,7 +94,7 @@ public class PlanoAcaoServlet extends HttpServlet {
         PlanoAcao planoAcao = DAO.buscar(Long.parseLong(id));
 
         if (planoAcao == null) {
-            enviarPaginaCerta(req,resp);
+            enviarPaginaCerta(req, resp);
             return;
         }
 
@@ -113,11 +111,12 @@ public class PlanoAcaoServlet extends HttpServlet {
         planoAcao.setNome(req.getParameter("nome"));
         planoAcao.setDescricao(req.getParameter("descricao"));
         planoAcao.setStatus(Situacao.valueOf(req.getParameter("status")));
-        planoAcao.setPrioridade(Prioridade.valueOf(req.getParameter("prioridade")));
+        planoAcao.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
         planoAcao.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
         planoAcao.setId_criador(Long.parseLong(req.getParameter("id_criador")));
 
         int resultado = DAO.atualizar(planoAcao);
+
         if (resultado == 1) enviarPaginaCerta(req,resp);
         else enviarErro(req,resp,"O plano de ação não pode ser atualizado.");
     }
@@ -131,7 +130,7 @@ public class PlanoAcaoServlet extends HttpServlet {
     }
     //UTILITARIOS
     private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
-        req.setAttribute(RequestDispatcher.ERROR_MESSAGE,mensagem);
+        req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
         req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         req.getRequestDispatcher(PAGINA_ERRO).forward(req, resp);
@@ -145,14 +144,14 @@ public class PlanoAcaoServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
     }
 
-    private void preencherNomesFk(List<PlanoAcao> planosAcoes){
-        for(PlanoAcao planoAcao : planosAcoes){
+    private void preencherNomesFk(List<PlanoAcao> planosAcoes) {
+        for (PlanoAcao planoAcao : planosAcoes) {
 
             Ciclo ciclo = CICLO_DAO.buscar(planoAcao.getId_ciclo());
             if (ciclo != null) planoAcao.setNomeCiclo(ciclo.getNome());
 
             Colaborador criador = COLABORADOR_DAO.buscar(planoAcao.getId_criador());
-            if (criador != null) planoAcao.setNomeColaborador(criador.getNome());
+            if (criador != null) planoAcao.setNomeCriador(criador.getNome());
         }
     }
 
