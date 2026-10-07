@@ -109,9 +109,10 @@
                                 <th>Excluir</th>
                                 <th>Nome</th>
                                 <th>Setor</th>
-                                <th>Unidade</th>
                                 <th>CNPJ</th>
-                                <th>CEP</th>
+                                <th>Unidade</th>
+                                <th>Status</th>
+                                <th>Tamanho</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -126,11 +127,12 @@
                                         <img src="assests/icone_excluir.svg" alt="">
                                     </a>
                                 </td>
-                                <td>Flora Âmbar</td>
-                                <td>Embalagem</td>
-                                <td>Angra</td>
+                                <td>Flora</td>
+                                <td>Cosméticos</td>
                                 <td>13.425.674/8967-4</td>
-                                <td>05690-3</td>
+                                <td>Matriz</td>
+                                <td>Ativo</td>
+                                <td>Grande</td>
                             </tr>
                         </tbody>
                     </table>
@@ -153,6 +155,11 @@
                             </div>
  
                             <div class="campo">
+                                <label for="setor">Setor</label>
+                                <input type="text" id="setor" placeholder="Digite o setor">
+                            </div>
+
+                            <div class="campo">
                                 <label for="cnpj">CNPJ</label>
                                 <input type="text" id="cnpj" placeholder="Digite o CNPJ">
                             </div>
@@ -161,20 +168,22 @@
                                 <label for="unidade">Unidade</label>
                                 <input type="text" id="unidade" placeholder="Digite a unidade">
                             </div>
- 
+
                             <div class="campo">
-                                <label for="setor">Setor</label>
-                                <input type="text" id="setor" placeholder="Digite o setor">
+                                <label for="status">Status</label>
+                                <select name="status" id="status-empresa">
+                                    <option value="empresa-ativa">Ativa</option>
+                                    <option value="empresa-desativa">Desativa</option>
+                                </select>
                             </div>
- 
+
                             <div class="campo">
-                                <label for="cep">CEP</label>
-                                <input type="text" id="cep" placeholder="Digite o CEP">
-                            </div>
- 
-                            <div class="campo">
-                                <label for="matriz">Matriz</label>
-                                <input type="text" id="matriz" placeholder="Digite a matriz">
+                                <label for="tamanho">Tamanho</label>
+                                <select name="tamanho" id="empresa-tamanho">
+                                    <option value="grande">Grande</option>
+                                    <option value="media">Média</option>
+                                    <option value="pequena">Pequena</option>
+                                </select>
                             </div>
  
                             <div class="botoes-modal">
@@ -202,6 +211,16 @@
                         <form class="formulario">
  
                             <div class="campo">
+                                <label>Nome</label>
+                                <input type="text" value="Flora">
+                            </div>
+
+                            <div class="campo">
+                                <label>Setor</label>
+                                <input type="text" value="Embalagem">
+                            </div>
+
+                            <div class="campo">
                                 <label>CNPJ</label>
                                 <input type="text" value="13.425.674/8967-4">
                             </div>
@@ -210,25 +229,22 @@
                                 <label>Unidade</label>
                                 <input type="text" value="Angra">
                             </div>
- 
+
                             <div class="campo">
-                                <label>Nome</label>
-                                <input type="text" value="Flora Âmbar">
-                            </div>
- 
-                            <div class="campo">
-                                <label>Setor</label>
-                                <input type="text" value="Embalagem">
+                                <label for="status">Status</label>
+                                <select name="status" id="status-empresa">
+                                    <option value="empresa-ativa">Ativa</option>
+                                    <option value="empresa-desativa">Desativa</option>
+                                </select>
                             </div>
 
                             <div class="campo">
-                                <label>CEP</label>
-                                <input type="text" value="05690-3">
-                            </div>
- 
-                            <div class="campo">
-                                <label>Matriz</label>
-                                <input type="text" value="Matriz">
+                                <label for="tamanho">Tamanho</label>
+                                <select name="tamanho" id="empresa-tamanho">
+                                    <option value="grande">Grande</option>
+                                    <option value="media">Média</option>
+                                    <option value="pequena">Pequena</option>
+                                </select>
                             </div>
  
                             <div class="botoes-modal">
