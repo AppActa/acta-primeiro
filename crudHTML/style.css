@@ -184,6 +184,18 @@ body:not(:has(:target)) #empresas {
     background-color: var(--cor-perigo);
     color: #fff;
 }
+
+.botao-sair{
+    background-color: var(--cor-perigo);
+    color:#fff;
+}
+
+.header-conteudo{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
  
 /* Tabela */
 .tabela-container {
