@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Map;
 
 import br.com.acta.enums.Status;
 import br.com.acta.enums.TamanhoEmpresa;
@@ -75,8 +76,8 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String sql = "SELECT * FROM empresa";
 
         try (Connection conn = Conexao.conectar();
-        Statement pstmt = conn.createStatement();
-        ResultSet rs = pstmt.executeQuery(sql)) {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()){
                 empresas.add(mapearEmpresa(rs));
@@ -87,6 +88,49 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             throw new RuntimeException(e);
         }
     }
+
+    public List<Empresa> buscaFiltrada(String busca, Status status, TamanhoEmpresa tamanho, String ordem, String direcao) {
+        List<Empresa> empresas = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM empresa WHERE 1=1");
+
+        boolean temBusca = busca != null && !busca.isBlank();
+        boolean temStatus = status != null;
+        boolean temTamanho = tamanho != null;
+
+        String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
+        boolean temOrdem = colunaOrdem != null;
+
+        if (temBusca) sql.append(" AND (nome ILIKE ? OR setor ILIKE ?)");
+        if (temStatus) sql.append(" AND status = ?");
+        if  (temTamanho) sql.append(" AND tamanho = ?");
+        if (temOrdem) {
+            String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
+            sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
+        }
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            if (temBusca) {
+                String termo = "%" + busca.trim() + "%";
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+            }
+            if (temStatus) pstmt.setString(i++, status.name());
+            if (temTamanho) pstmt.setString(i++, tamanho.name());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    empresas.add(mapearEmpresa(rs));
+                }
+            } return empresas;
+
+        } catch(SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public int atualizar(Empresa empresa) {
@@ -154,4 +198,10 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         return empresa;
     }
 
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "nome", "nome",
+            "setor", "setor",
+            "status", "status",
+            "tamanho", "tamanho"
+    );
 }
