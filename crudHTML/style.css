@@ -74,10 +74,10 @@ body {
 /* Destaque dinâmico na Sidebar para a aba ativa usando CSS :target */
 body:has(#empresas:target) .menu-item[href="#empresas"],
 body:has(#empresas :target) .menu-item[href="#empresas"],
+body:has(#endereco:target) .menu-item[href="#endereco"],
+body:has(#endereco :target) .menu-item[href="#endereco"],
 body:has(#colaborador:target) .menu-item[href="#colaborador"],
 body:has(#colaborador :target) .menu-item[href="#colaborador"],
-body:has(#administrador:target) .menu-item[href="#administrador"],
-body:has(#administrador :target) .menu-item[href="#administrador"],
 body:has(#tarefa:target) .menu-item[href="#tarefa"],
 body:has(#tarefa :target) .menu-item[href="#tarefa"],
 body:has(#plano:target) .menu-item[href="#plano"],
@@ -253,6 +253,7 @@ th {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
 }
  
 .modal {
@@ -261,7 +262,19 @@ th {
     border-radius: 8px;
     width: 100%;
     max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal médio (7 a 9 campos): 2 colunas */
+.modal-grande {
+    max-width: 720px;
+}
+
+/* Modal largo (10+ campos, ex: Colaborador): 3 colunas */
+.modal-larga {
+    max-width: 980px;
 }
  
 .modal h2 {
@@ -269,11 +282,46 @@ th {
     box-sizing: border-box;
     font-size: 18px;
 }
+
+.modal-exclusao p {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
  
 .formulario {
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+.modal-grande .formulario,
+.modal-larga .formulario {
+    display: grid;
+    gap: 12px 16px;
+}
+
+.modal-grande .formulario {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.modal-larga .formulario {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Itens que ocupam a linha inteira da grade */
+.modal-grande .campo-largo,
+.modal-grande .grupo-titulo,
+.modal-grande .botoes-modal,
+.modal-larga .campo-largo,
+.modal-larga .grupo-titulo,
+.modal-larga .botoes-modal {
+    grid-column: 1 / -1;
+}
+
+.grupo-titulo {
+    font-size: 14px;
+    padding-top: 8px;
+    border-top: 1px solid var(--cor-borda);
 }
  
 .campo {
@@ -292,10 +340,28 @@ th {
     border: 1px solid var(--cor-borda);
     border-radius: 4px;
 }
+
+.campo select[multiple] {
+    padding: 6px;
+}
+
 .campo input {
     padding: 8px 12px;
     border: 1px solid var(--cor-borda);
     border-radius: 4px;
+}
+
+.campo textarea {
+    padding: 8px 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    outline: 2px solid var(--cor-borda);
 }
  
 .botoes-modal {
@@ -304,4 +370,11 @@ th {
     gap: 10px;
     margin-top: 15px;
 }
- 
+
+/* Telas pequenas: modais voltam para 1 coluna */
+@media (max-width: 760px) {
+    .modal-grande .formulario,
+    .modal-larga .formulario {
+        grid-template-columns: 1fr;
+    }
+}

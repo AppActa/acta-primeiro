@@ -1,761 +1,1690 @@
 <!DOCTYPE html>
 <html lang="pt-br">
- 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="assests/logo_compacta.svg" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
-    <title>Área Restrita</title>
-</head>
- 
-<body>
- 
-    <div class="sistema">
- 
-        <!-- Sidebar / Menu Lateral -->
-        <aside class="sidebar">
- 
-            <div class="sidebar-logo">
-                <img src="assests/logo_oficial.svg" alt="ACTA">
-            </div>
- 
-            <nav class="menu">
- 
-                <a href="#empresas" class="menu-item">
-                    <img src="assests/icone_empresas.svg" alt="">
-                    <span>Empresas</span>
-                </a>
- 
-                <a href="#colaborador" class="menu-item">
-                    <img src="assests/icone_colaborador.svg" alt="">
-                    <span>Colaborador</span>
-                </a>
- 
-                <a href="#administrador" class="menu-item">
-                    <img src="assests/icone_administrador.svg" alt="">
-                    <span>Administrador</span>
-                </a>
- 
-                <a href="#tarefa" class="menu-item">
-                    <img src="assests/icone_tarefa.svg" alt="">
-                    <span>Tarefa</span>
-                </a>
- 
-                <a href="#plano" class="menu-item">
-                    <img src="assests/icone_plano_de_acao.svg" alt="">
-                    <span>Plano de ação</span>
-                </a>
- 
-                <a href="#ciclos" class="menu-item">
-                    <img src="assests/icone_ciclos.svg" alt="">
-                    <span>Ciclos</span>
-                </a>
- 
-                <a href="#licoes" class="menu-item">
-                    <img src="assests/icone_licoes_aprendidas.svg" alt="">
-                    <span>Lições Aprendidas</span>
-                </a>
- 
-                <a href="#metas" class="menu-item">
-                    <img src="assests/icone_metas.svg" alt="">
-                    <span>Metas</span>
-                </a>
- 
-                <a href="#problemas" class="menu-item">
-                    <img src="assests/icone_problemas.svg" alt="">
-                    <span>Problemas</span>
-                </a>
- 
-            </nav>
- 
-        </aside>
- 
-        <!-- Conteúdo Principal -->
-        <main class="conteudo">
-            <!-- Página Empresas (Padrão) -->
-            <section id="empresas" class="pagina">
- 
-                <h1>Empresas</h1>
- 
-                <div class="barra-acoes">
- 
-                    <div class="pesquisa">
-                        <input type="text" placeholder="Pesquisar por empresa">
-                    </div>
- 
-                    <div class="filtro-container">
-                        <select class="botao botao-filtro">
-                            <option value="" disabled selected hidden>Filtros</option>
-                            <option value="todos">Todos</option>
-                            <option value="alfabetica">Por Ordem Alfabética</option>
-                            <option value="setor">Por Setor</option>
-                            <option value="unidade">Por Unidade</option>
-                        </select>
-                    </div>
- 
-                    <a href="#cadastrar-empresa" class="botao botao-principal">
-                        Cadastrar
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="assests/logo_compacta.svg" type="image/x-icon">
+        <link rel="stylesheet" href="style.css">
+        <title>Área Restrita</title>
+    </head>
+    <body>
+        <div class="sistema">
+            <aside class="sidebar">
+                <div class="sidebar-logo">
+                    <img src="assests/logo_oficial.svg" alt="ACTA">
+                </div>
+                <nav class="menu">
+                    <a href="#empresas" class="menu-item">
+                        <img src="assests/icone_empresas.svg" alt="">
+                        <span>Empresas</span>
                     </a>
- 
-                </div>
- 
-                <div class="tabela-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ver</th>
-                                <th>Excluir</th>
-                                <th>Nome</th>
-                                <th>Setor</th>
-                                <th>CNPJ</th>
-                                <th>Unidade</th>
-                                <th>Status</th>
-                                <th>Tamanho</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <a href="#editar-empresa" class="icone-acao">
-                                        <img src="assests/icone_ver.svg" alt="">
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="#excluir-empresa" class="icone-acao">
-                                        <img src="assests/icone_excluir.svg" alt="">
-                                    </a>
-                                </td>
-                                <td>Flora</td>
-                                <td>Cosméticos</td>
-                                <td>13.425.674/8967-4</td>
-                                <td>Matriz</td>
-                                <td>Ativo</td>
-                                <td>Grande</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
- 
-            <!-- Modal Cadastrar Empresa -->
-            <section id="cadastrar-empresa" class="pagina modal-pagina">
- 
-                <div class="modal-fundo">
- 
-                    <div class="modal">
- 
-                        <h2>Cadastrar empresa</h2>
- 
-                        <form class="formulario">
+                    <a href="#endereco" class="menu-item">
+                        <img src="assests/icone_endereco.svg" alt="">
+                        <span>Endereço</span>
+                    </a>
+                    <a href="#colaborador" class="menu-item">
+                        <img src="assests/icone_colaborador.svg" alt="">
+                        <span>Colaborador</span>
+                    </a>
+                    <a href="#tarefa" class="menu-item">
+                        <img src="assests/icone_tarefa.svg" alt="">
+                        <span>Tarefa</span>
+                    </a>
+                    <a href="#plano" class="menu-item">
+                        <img src="assests/icone_plano_de_acao.svg" alt="">
+                        <span>Plano de ação</span>
+                    </a>
+                    <a href="#ciclos" class="menu-item">
+                        <img src="assests/icone_ciclos.svg" alt="">
+                        <span>Ciclos</span>
+                    </a>
+                    <a href="#licoes" class="menu-item">
+                        <img src="assests/icone_licoes_aprendidas.svg" alt="">
+                        <span>Lições Aprendidas</span>
+                    </a>
+                    <a href="#metas" class="menu-item">
+                        <img src="assests/icone_metas.svg" alt="">
+                        <span>Metas</span>
+                    </a>
+                    <a href="#problemas" class="menu-item">
+                        <img src="assests/icone_problemas.svg" alt="">
+                        <span>Problemas</span>
+                    </a>
+                </nav>
+            </aside>
+            <main class="conteudo">
 
-                            <div class="campo">
-                                <label for="nome">Nome</label>
-                                <input type="text" id="nome" placeholder="Digite o nome">
-                            </div>
- 
-                            <div class="campo">
-                                <label for="setor">Setor</label>
-                                <input type="text" id="setor" placeholder="Digite o setor">
-                            </div>
-
-                            <div class="campo">
-                                <label for="cnpj">CNPJ</label>
-                                <input type="text" id="cnpj" placeholder="Digite o CNPJ">
-                            </div>
- 
-                            <div class="campo">
-                                <label for="unidade">Unidade</label>
-                                <input type="text" id="unidade" placeholder="Digite a unidade">
-                            </div>
-
-                            <div class="campo">
-                                <label for="status">Status</label>
-                                <select name="status" id="status-empresa">
-                                    <option value="empresa-ativa">Ativa</option>
-                                    <option value="empresa-desativa">Desativa</option>
-                                </select>
-                            </div>
-
-                            <div class="campo">
-                                <label for="tamanho">Tamanho</label>
-                                <select name="tamanho" id="empresa-tamanho">
-                                    <option value="grande">Grande</option>
-                                    <option value="media">Média</option>
-                                    <option value="pequena">Pequena</option>
-                                </select>
-                            </div>
- 
-                            <div class="botoes-modal">
-                                <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
-                                <button type="submit" class="botao botao-principal">Cadastrar</button>
-                            </div>
- 
-                        </form>
- 
-                    </div>
- 
-                </div>
- 
-            </section>
- 
-            <!-- Modal Editar Empresa -->
-            <section id="editar-empresa" class="pagina modal-pagina">
- 
-                <div class="modal-fundo">
- 
-                    <div class="modal">
- 
-                        <h2>Editar empresa</h2>
- 
-                        <form class="formulario">
- 
-                            <div class="campo">
-                                <label>Nome</label>
-                                <input type="text" value="Flora">
-                            </div>
-
-                            <div class="campo">
-                                <label>Setor</label>
-                                <input type="text" value="Cosméticos">
-                            </div>
-
-                            <div class="campo">
-                                <label>CNPJ</label>
-                                <input type="text" value="13.425.674/8967-4">
-                            </div>
- 
-                            <div class="campo">
-                                <label>Unidade</label>
-                                <input type="text" value="Matriz">
-                            </div>
-
-                            <div class="campo">
-                                <label for="status">Status</label>
-                                <select name="status" id="status-empresa">
-                                    <option value="empresa-ativa">Ativa</option>
-                                    <option value="empresa-desativa">Desativa</option>
-                                </select>
-                            </div>
-
-                            <div class="campo">
-                                <label for="tamanho">Tamanho</label>
-                                <select name="tamanho" id="empresa-tamanho">
-                                    <option value="grande">Grande</option>
-                                    <option value="media">Média</option>
-                                    <option value="pequena">Pequena</option>
-                                </select>
-                            </div>
- 
-                            <div class="botoes-modal">
-                                <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
-                                <button type="submit" class="botao botao-principal">Confirmar edição</button>
-                            </div>
- 
-                        </form>
- 
-                    </div>
- 
-                </div>
- 
-            </section>
- 
-            <!-- Modal Excluir Empresa -->
-            <section id="excluir-empresa" class="pagina modal-pagina">
- 
-                <div class="modal-fundo">
- 
-                    <div class="modal modal-exclusao">
- 
-                        <h2>Excluir empresa</h2>
-                        <p>Tem certeza que deseja excluir esta empresa?</p>
- 
-                        <div class="botoes-modal">
-                            <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
-                            <button class="botao botao-excluir">Confirmar exclusão</button>
+                <!-- Página Empresas -->
+                <section id="empresas" class="pagina">
+                    <h1>Empresas</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por empresa">
                         </div>
- 
+                        <div class="filtro-container">
+                            <select class="botao botao-filtro">
+                                <option value="">Filtros</option>
+                                <option value="todos">Todos</option>
+                                <option value="alfabetica">Por Ordem Alfabética</option>
+                                <option value="setor">Por Setor</option>
+                                <option value="unidade">Por Unidade</option>
+                            </select>
+                        </div>
+                        <a href="#cadastrar-empresa" class="botao botao-principal">Cadastrar</a>
                     </div>
- 
-                </div>
- 
-            </section>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ver</th>
+                                    <th>Excluir</th>
+                                    <th>Nome</th>
+                                    <th>Setor</th>
+                                    <th>CNPJ</th>
+                                    <th>Unidade</th>
+                                    <th>Status</th>
+                                    <th>Tamanho</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#editar-empresa" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#excluir-empresa" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>Flora</td>
+                                    <td>Cosméticos</td>
+                                    <td>13.425.674/8967-4</td>
+                                    <td>Matriz</td>
+                                    <td>Ativo</td>
+                                    <td>Grande</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-        </section>
+                    <section id="cadastrar-empresa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal">
+                                <h2>Cadastrar empresa</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-empresa-nome">Nome</label>
+                                        <input type="text" id="cad-empresa-nome" name="nome" maxlength="50" placeholder="Digite o nome" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-empresa-setor">Setor</label>
+                                        <input type="text" id="cad-empresa-setor" name="setor" maxlength="30" placeholder="Digite o setor" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-empresa-cnpj">CNPJ</label>
+                                        <input type="text" id="cad-empresa-cnpj" name="cnpj" maxlength="14" inputmode="numeric" pattern="\d{14}" placeholder="Somente números (14 dígitos)" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-empresa-unidade">Unidade</label>
+                                        <input type="text" id="cad-empresa-unidade" name="unidade" maxlength="30" placeholder="Digite a unidade" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-empresa-status">Status</label>
+                                        <select id="cad-empresa-status" name="status" required>
+                                            <option value="ATIVA">Ativa</option>
+                                            <option value="INATIVA">Inativa</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-empresa-tamanho">Tamanho</label>
+                                        <select id="cad-empresa-tamanho" name="tamanho" required>
+                                            <option value="GRANDE">Grande</option>
+                                            <option value="MEDIA">Média</option>
+                                            <option value="PEQUENA">Pequena</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
 
-            <!-- Página Colaborador -->
-            <section id="colaborador" class="pagina">
- 
-                <h1>Colaborador</h1>
- 
-                <div class="barra-acoes">
- 
-                    <div class="pesquisa">
-                        <input type="text" placeholder="Pesquisar por colaborador">
+                    <section id="editar-empresa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal">
+                                <h2>Editar empresa</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-empresa-nome">Nome</label>
+                                        <input type="text" id="edi-empresa-nome" name="nome" maxlength="50" placeholder="Digite o nome" value="Flora" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-empresa-setor">Setor</label>
+                                        <input type="text" id="edi-empresa-setor" name="setor" maxlength="30" placeholder="Digite o setor" value="Cosméticos" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-empresa-cnpj">CNPJ</label>
+                                        <input type="text" id="edi-empresa-cnpj" name="cnpj" maxlength="14" inputmode="numeric" pattern="\d{14}" placeholder="Somente números (14 dígitos)" value="13425674896704" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-empresa-unidade">Unidade</label>
+                                        <input type="text" id="edi-empresa-unidade" name="unidade" maxlength="30" placeholder="Digite a unidade" value="Matriz" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-empresa-status">Status</label>
+                                        <select id="edi-empresa-status" name="status" required>
+                                            <option value="ATIVA" selected>Ativa</option>
+                                            <option value="INATIVA">Inativa</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-empresa-tamanho">Tamanho</label>
+                                        <select id="edi-empresa-tamanho" name="tamanho" required>
+                                            <option value="GRANDE" selected>Grande</option>
+                                            <option value="MEDIA">Média</option>
+                                            <option value="PEQUENA">Pequena</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-empresa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir empresa</h2>
+                                <p>Tem certeza que deseja excluir esta empresa?</p>
+                                <div class="botoes-modal">
+                                    <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Página Endereço -->
+                <section id="endereco" class="pagina">
+                    <h1>Endereço</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por endereço">
+                        </div>
+                        <div class="filtro-container">
+                            <select class="botao botao-filtro">
+                                <option value="">Filtros</option>
+                                <option value="cidade">Por Cidade</option>
+                                <option value="estado">Por Estado</option>
+                                <option value="empresa">Por Empresa</option>
+                            </select>
+                        </div>
+                        <a href="#cadastrar-endereco" class="botao botao-principal">Cadastrar</a>
                     </div>
- 
-                    <div class="filtro-container">
-                        <select class="botao botao-filtro">
-                            <option value="">Filtros</option>
-                            <option value="cargo">Por Cargo</option>
-                            <option value="nome">Por Nome</option>
-                        </select>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ver</th>
+                                    <th>Excluir</th>
+                                    <th>Empresa</th>
+                                    <th>Unidade</th>
+                                    <th>Rua</th>
+                                    <th>Número</th>
+                                    <th>Bairro</th>
+                                    <th>Cidade</th>
+                                    <th>Estado</th>
+                                    <th>CEP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#editar-endereco" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#excluir-endereco" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>Flora</td>
+                                    <td>Matriz</td>
+                                    <td>Rua Exemplo</td>
+                                    <td>123</td>
+                                    <td>Centro</td>
+                                    <td>São Paulo</td>
+                                    <td>SP</td>
+                                    <td>00000-000</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
- 
-                    <button class="botao botao-principal">
-                        Cadastrar
-                    </button>
- 
-                </div>
- 
-                <div class="tabela-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ver</th>
-                                <th>Excluir</th>
-                                <th>Nome</th>
-                                <th>Sobrenome</th>
-                                <th>Cargo</th>
-                                <th>Telefone</th>
-                                <th>CPF</th>
-                                <th>Email</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_ver.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_excluir.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>Nome</td>
-                                <td>Sobrenome</td>
-                                <td>Cargo</td>
-                                <td>(00) 00000-0000</td>
-                                <td>000.000.000-00</td>
-                                <td>email@email.com</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
- 
-            </section>
- 
-            <!-- Página Administrador -->
-            <section id="administrador" class="pagina">
- 
-                <h1>Administrador</h1>
- 
-                <div class="barra-acoes">
- 
-                    <div class="pesquisa">
-                        <input type="text" placeholder="Pesquisar por administrador">
+
+                    <section id="cadastrar-endereco" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Cadastrar endereço</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-endereco-id_empresa">Empresa</label>
+                                        <select id="cad-endereco-id_empresa" name="id_empresa" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-unidade">Unidade</label>
+                                        <input type="text" id="cad-endereco-unidade" name="unidade" maxlength="30" placeholder="Digite unidade" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-cep">CEP</label>
+                                        <input type="text" id="cad-endereco-cep" name="cep" maxlength="8" inputmode="numeric" pattern="\d{8}" placeholder="Somente números (8 dígitos)" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-rua">Rua</label>
+                                        <input type="text" id="cad-endereco-rua" name="rua" maxlength="50" placeholder="Digite rua" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-numero">Número</label>
+                                        <input type="text" id="cad-endereco-numero" name="numero" maxlength="10" placeholder="Digite número" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-bairro">Bairro</label>
+                                        <input type="text" id="cad-endereco-bairro" name="bairro" maxlength="30" placeholder="Digite bairro" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-cidade">Cidade</label>
+                                        <input type="text" id="cad-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-estado">Estado (UF)</label>
+                                        <input type="text" id="cad-endereco-estado" name="estado" maxlength="2" pattern="[A-Za-z]{2}" placeholder="Ex: SP" required>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-endereco-complemento">Complemento</label>
+                                        <textarea id="cad-endereco-complemento" name="complemento" rows="3"></textarea>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#endereco" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-endereco" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Editar endereço</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-endereco-id_empresa">Empresa</label>
+                                        <select id="edi-endereco-id_empresa" name="id_empresa" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-unidade">Unidade</label>
+                                        <input type="text" id="edi-endereco-unidade" name="unidade" maxlength="30" placeholder="Digite unidade" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-cep">CEP</label>
+                                        <input type="text" id="edi-endereco-cep" name="cep" maxlength="8" inputmode="numeric" pattern="\d{8}" placeholder="Somente números (8 dígitos)" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-rua">Rua</label>
+                                        <input type="text" id="edi-endereco-rua" name="rua" maxlength="50" placeholder="Digite rua" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-numero">Número</label>
+                                        <input type="text" id="edi-endereco-numero" name="numero" maxlength="10" placeholder="Digite número" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-bairro">Bairro</label>
+                                        <input type="text" id="edi-endereco-bairro" name="bairro" maxlength="30" placeholder="Digite bairro" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-cidade">Cidade</label>
+                                        <input type="text" id="edi-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-estado">Estado (UF)</label>
+                                        <input type="text" id="edi-endereco-estado" name="estado" maxlength="2" pattern="[A-Za-z]{2}" placeholder="Ex: SP" required>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-endereco-complemento">Complemento</label>
+                                        <textarea id="edi-endereco-complemento" name="complemento" rows="3"></textarea>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#endereco" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-endereco" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir endereço</h2>
+                                <p>Tem certeza que deseja excluir este endereço?</p>
+                                <div class="botoes-modal">
+                                    <a href="#endereco" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Página Colaborador -->
+                <section id="colaborador" class="pagina">
+                    <h1>Colaborador</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por colaborador">
+                        </div>
+                        <div class="filtro-container">
+                            <select class="botao botao-filtro">
+                                <option value="">Filtros</option>
+                                <option value="cargo">Por Cargo</option>
+                                <option value="nome">Por Nome</option>
+                            </select>
+                        </div>
+                        <a href="#cadastrar-colaborador" class="botao botao-principal">Cadastrar</a>
                     </div>
- 
-                    <div class="filtro-container">
-                        <select class="botao botao-filtro">
-                            <option value="">Filtros</option>
-                            <option value="nome">Por Nome</option>
-                            <option value="email">Por Email</option>
-                        </select>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ver</th>
+                                    <th>Excluir</th>
+                                    <th>Nome</th>
+                                    <th>Sobrenome</th>
+                                    <th>Cargo</th>
+                                    <th>Telefone</th>
+                                    <th>CPF</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#editar-colaborador" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#excluir-colaborador" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>Nome</td>
+                                    <td>Sobrenome</td>
+                                    <td>Cargo</td>
+                                    <td>(00) 00000-0000</td>
+                                    <td>000.000.000-00</td>
+                                    <td>email@email.com</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
- 
-                    <button class="botao botao-principal">
-                        Cadastrar
-                    </button>
- 
-                </div>
- 
-                <div class="tabela-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ver</th>
-                                <th>Excluir</th>
-                                <th>Nome</th>
-                                <th>Sobrenome</th>
-                                <th>Email</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_ver.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_excluir.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>Nome</td>
-                                <td>Sobrenome</td>
-                                <td>email@email.com</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
- 
-            </section>
- 
-            <!-- Página Tarefa -->
-            <section id="tarefa" class="pagina">
- 
-                <h1>Tarefa</h1>
- 
-                <div class="barra-acoes">
- 
-                    <div class="pesquisa">
-                        <input type="text" placeholder="Pesquisar por tarefa">
+
+                    <section id="cadastrar-colaborador" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-larga">
+                                <h2>Cadastrar colaborador</h2>
+                                <form class="formulario">
+                                    
+                                     <div class="campo">
+                                        <label for="cad-colaborador-email">Email</label>
+                                        <input type="email" id="cad-colaborador-email" name="email" maxlength="80" placeholder="Digite email" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-area">Área</label>
+                                        <input type="text" id="cad-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-cargo">Cargo</label>
+                                        <input type="text" id="cad-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-dt_contratacao">Data de contratação</label>
+                                        <input type="date" id="cad-colaborador-dt_contratacao" name="dt_contratacao" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-status">Status</label>
+                                        <select id="cad-colaborador-status" name="status" required>
+                                            <option value="ATIVA">Ativa</option>
+                                            <option value="INATIVA">Inativa</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-permissao_gestor">Permissão de gestor</label>
+                                        <select id="cad-colaborador-permissao_gestor" name="permissao_gestor" required>
+                                            <option value="false">Não</option>
+                                            <option value="true">Sim</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-id_empresa">Empresa</label>
+                                        <select id="cad-colaborador-id_empresa" name="id_empresa" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#colaborador" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-colaborador" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-larga">
+                                <h2>Editar colaborador</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-colaborador-area">Área</label>
+                                        <input type="text" id="edi-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-cargo">Cargo</label>
+                                        <input type="text" id="edi-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-status">Status</label>
+                                        <select id="edi-colaborador-status" name="status" required>
+                                            <option value="ATIVO">Ativo</option>
+                                            <option value="INATIVO">Inativo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-permissao_gestor">Permissão de gestor</label>
+                                        <select id="edi-colaborador-permissao_gestor" name="permissao_gestor" required>
+                                            <option value="false">Não</option>
+                                            <option value="true">Sim</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-id_empresa">Empresa</label>
+                                        <select id="edi-colaborador-id_empresa" name="id_empresa" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#colaborador" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-colaborador" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir colaborador</h2>
+                                <p>Tem certeza que deseja excluir este colaborador?</p>
+                                <div class="botoes-modal">
+                                    <a href="#colaborador" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Página Tarefa -->
+                <section id="tarefa" class="pagina">
+                    <h1>Tarefa</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por tarefa">
+                        </div>
+                        <div class="filtro-container">
+                            <select class="botao botao-filtro">
+                                <option value="">Filtros</option>
+                                <option value="responsavel">Por Responsável</option>
+                                <option value="prazo">Por Prazo</option>
+                            </select>
+                        </div>
+                        <a href="#cadastrar-tarefa" class="botao botao-principal">Cadastrar</a>
                     </div>
- 
-                    <div class="filtro-container">
-                        <select class="botao botao-filtro">
-                            <option value="">Filtros</option>
-                            <option value="responsavel">Por Responsável</option>
-                            <option value="prazo">Por Prazo</option>
-                        </select>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ver</th>
+                                    <th>Excluir</th>
+                                    <th>Tarefa</th>
+                                    <th>Responsável</th>
+                                    <th>Prazo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#editar-tarefa" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#excluir-tarefa" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>Nome da tarefa</td>
+                                    <td>Responsável</td>
+                                    <td>00/00/0000</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
- 
-                    <button class="botao botao-principal">
-                        Cadastrar
-                    </button>
- 
-                </div>
- 
-                <div class="tabela-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ver</th>
-                                <th>Excluir</th>
-                                <th>Tarefa</th>
-                                <th>Responsável</th>
-                                <th>Prazo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_ver.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_excluir.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>Nome da tarefa</td>
-                                <td>Responsável</td>
-                                <td>00/00/0000</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
- 
-            </section>
- 
-            <!-- Página Plano de Ação -->
-            <section id="plano" class="pagina">
- 
-                <h1>Plano de Ação</h1>
- 
-                <div class="barra-acoes">
- 
-                    <div class="pesquisa">
-                        <input type="text" placeholder="Pesquisar por plano de ação">
+
+                    <section id="cadastrar-tarefa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Cadastrar tarefa</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-tarefa-titulo">Título</label>
+                                        <input type="text" id="cad-tarefa-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-tarefa-descricao">Descrição</label>
+                                        <textarea id="cad-tarefa-descricao" name="descricao" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-tarefa-prioridade">Prioridade</label>
+                                        <select id="cad-tarefa-prioridade" name="prioridade" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-tarefa-status">Status</label>
+                                        <select id="cad-tarefa-status" name="status" required>
+                                            <option value="NAO_INICIADO">Não iniciado</option>
+                                            <option value="INICIADO">Iniciado</option>
+                                            <option value="FINALIZADO">Finalizado</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-tarefa-dt_inicio">Data de início</label>
+                                        <input type="date" id="cad-tarefa-dt_inicio" name="dt_inicio" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-tarefa-dt_entrega">Data de entrega</label>
+                                        <input type="date" id="cad-tarefa-dt_entrega" name="dt_entrega">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-tarefa-id_colaborador">Responsável</label>
+                                        <select id="cad-tarefa-id_colaborador" name="id_colaborador" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-tarefa-id_plano_acao">Plano de ação</label>
+                                        <select id="cad-tarefa-id_plano_acao" name="id_plano_acao" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#tarefa" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-tarefa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Editar tarefa</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-tarefa-titulo">Título</label>
+                                        <input type="text" id="edi-tarefa-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-tarefa-descricao">Descrição</label>
+                                        <textarea id="edi-tarefa-descricao" name="descricao" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-tarefa-prioridade">Prioridade</label>
+                                        <select id="edi-tarefa-prioridade" name="prioridade" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-tarefa-status">Status</label>
+                                        <select id="edi-tarefa-status" name="status" required>
+                                            <option value="NAO_INICIADO">Não iniciado</option>
+                                            <option value="INICIADO">Iniciado</option>
+                                            <option value="FINALIZADO">Finalizado</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-tarefa-dt_inicio">Data de início</label>
+                                        <input type="date" id="edi-tarefa-dt_inicio" name="dt_inicio" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-tarefa-dt_entrega">Data de entrega</label>
+                                        <input type="date" id="edi-tarefa-dt_entrega" name="dt_entrega">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-tarefa-id_colaborador">Responsável</label>
+                                        <select id="edi-tarefa-id_colaborador" name="id_colaborador" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-tarefa-id_plano_acao">Plano de ação</label>
+                                        <select id="edi-tarefa-id_plano_acao" name="id_plano_acao" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#tarefa" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-tarefa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir tarefa</h2>
+                                <p>Tem certeza que deseja excluir esta tarefa?</p>
+                                <div class="botoes-modal">
+                                    <a href="#tarefa" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Página Plano de Ação -->
+                <section id="plano" class="pagina">
+                    <h1>Plano de Ação</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por plano de ação">
+                        </div>
+                        <div class="filtro-container">
+                            <select class="botao botao-filtro">
+                                <option value="">Filtros</option>
+                                <option value="status">Por Status</option>
+                                <option value="prazo">Por Prazo</option>
+                            </select>
+                        </div>
+                        <a href="#cadastrar-plano-de-ação" class="botao botao-principal">Cadastrar</a>
                     </div>
- 
-                    <div class="filtro-container">
-                        <select class="botao botao-filtro">
-                            <option value="">Filtros</option>
-                            <option value="status">Por Status</option>
-                            <option value="prazo">Por Prazo</option>
-                        </select>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ver</th>
+                                    <th>Excluir</th>
+                                    <th>Plano</th>
+                                    <th>Status</th>
+                                    <th>Prazo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#editar-plano-de-ação" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#excluir-plano-de-ação" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>Nome do plano</td>
+                                    <td>Em andamento</td>
+                                    <td>00/00/0000</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
- 
-                    <button class="botao botao-principal">
-                        Cadastrar
-                    </button>
- 
-                </div>
- 
-                <div class="tabela-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ver</th>
-                                <th>Excluir</th>
-                                <th>Plano</th>
-                                <th>Status</th>
-                                <th>Prazo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_ver.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_excluir.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>Nome do plano</td>
-                                <td>Em andamento</td>
-                                <td>00/00/0000</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
- 
-            </section>
- 
-            <!-- Página Ciclos -->
-            <section id="ciclos" class="pagina">
- 
-                <h1>Ciclos</h1>
- 
-                <div class="barra-acoes">
- 
-                    <div class="pesquisa">
-                        <input type="text" placeholder="Pesquisar por ciclo">
+
+                    <section id="cadastrar-plano-de-ação" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-larga">
+                                <h2>Cadastrar plano de ação</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-plano-de-ação-nome">Nome</label>
+                                        <input type="text" id="cad-plano-de-ação-nome" name="nome" maxlength="100" placeholder="Digite nome" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-plano-de-ação-id_ciclo">Ciclo</label>
+                                        <select id="cad-plano-de-ação-id_ciclo" name="id_ciclo" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-plano-de-ação-descricao">Descrição</label>
+                                        <textarea id="cad-plano-de-ação-descricao" name="descricao" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-plano-de-ação-status">Status</label>
+                                        <select id="cad-plano-de-ação-status" name="status" required>
+                                            <option value="NAO_INICIADO">Não iniciado</option>
+                                            <option value="INICIADO">Iniciado</option>
+                                            <option value="FINALIZADO">Finalizado</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-plano-de-ação-prioridade">Prioridade</label>
+                                        <select id="cad-plano-de-ação-prioridade" name="prioridade" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-plano-de-ação-id_criador">Criador</label>
+                                        <select id="cad-plano-de-ação-id_criador" name="id_criador" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <h3 class="grupo-titulo">5W2H</h3>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-plano-de-ação-what">What (O quê)</label>
+                                        <textarea id="cad-plano-de-ação-what" name="what" rows="3" required></textarea>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-plano-de-ação-why">Why (Por quê)</label>
+                                        <textarea id="cad-plano-de-ação-why" name="why" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-plano-de-ação-where">Where (Onde)</label>
+                                        <textarea id="cad-plano-de-ação-where" name="where" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-plano-de-ação-when">When (Quando)</label>
+                                        <input type="date" id="cad-plano-de-ação-when" name="when">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-plano-de-ação-who">Who (Quem)</label>
+                                        <select id="cad-plano-de-ação-who" name="who" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-plano-de-ação-how_much">How much (Quanto custa)</label>
+                                        <input type="number" id="cad-plano-de-ação-how_much" name="how_much" step="0.01" min="0" placeholder="0,00">
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-plano-de-ação-how">How (Como)</label>
+                                        <textarea id="cad-plano-de-ação-how" name="how" rows="3"></textarea>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#plano" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-plano-de-ação" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-larga">
+                                <h2>Editar plano de ação</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-plano-de-ação-nome">Nome</label>
+                                        <input type="text" id="edi-plano-de-ação-nome" name="nome" maxlength="100" placeholder="Digite nome" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-plano-de-ação-id_ciclo">Ciclo</label>
+                                        <select id="edi-plano-de-ação-id_ciclo" name="id_ciclo" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-plano-de-ação-descricao">Descrição</label>
+                                        <textarea id="edi-plano-de-ação-descricao" name="descricao" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-plano-de-ação-status">Status</label>
+                                        <select id="edi-plano-de-ação-status" name="status" required>
+                                            <option value="NAO_INICIADO">Não iniciado</option>
+                                            <option value="INICIADO">Iniciado</option>
+                                            <option value="FINALIZADO">Finalizado</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-plano-de-ação-prioridade">Prioridade</label>
+                                        <select id="edi-plano-de-ação-prioridade" name="prioridade" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-plano-de-ação-id_criador">Criador</label>
+                                        <select id="edi-plano-de-ação-id_criador" name="id_criador" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <h3 class="grupo-titulo">5W2H</h3>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-plano-de-ação-what">What (O quê)</label>
+                                        <textarea id="edi-plano-de-ação-what" name="what" rows="3" required></textarea>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-plano-de-ação-why">Why (Por quê)</label>
+                                        <textarea id="edi-plano-de-ação-why" name="why" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-plano-de-ação-where">Where (Onde)</label>
+                                        <textarea id="edi-plano-de-ação-where" name="where" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-plano-de-ação-when">When (Quando)</label>
+                                        <input type="date" id="edi-plano-de-ação-when" name="when">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-plano-de-ação-who">Who (Quem)</label>
+                                        <select id="edi-plano-de-ação-who" name="who" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-plano-de-ação-how_much">How much (Quanto custa)</label>
+                                        <input type="number" id="edi-plano-de-ação-how_much" name="how_much" step="0.01" min="0" placeholder="0,00">
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-plano-de-ação-how">How (Como)</label>
+                                        <textarea id="edi-plano-de-ação-how" name="how" rows="3"></textarea>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#plano" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-plano-de-ação" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir plano de ação</h2>
+                                <p>Tem certeza que deseja excluir este plano de ação?</p>
+                                <div class="botoes-modal">
+                                    <a href="#plano" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Página Ciclos -->
+                <section id="ciclos" class="pagina">
+                    <h1>Ciclos</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por ciclo">
+                        </div>
+                        <div class="filtro-container">
+                            <select class="botao botao-filtro">
+                                <option value="">Filtros</option>
+                                <option value="inicio">Por Início</option>
+                                <option value="fim">Por Fim</option>
+                            </select>
+                        </div>
+                        <a href="#cadastrar-ciclo" class="botao botao-principal">Cadastrar</a>
                     </div>
- 
-                    <div class="filtro-container">
-                        <select class="botao botao-filtro">
-                            <option value="">Filtros</option>
-                            <option value="inicio">Por Início</option>
-                            <option value="fim">Por Fim</option>
-                        </select>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ver</th>
+                                    <th>Excluir</th>
+                                    <th>Ciclo</th>
+                                    <th>Início</th>
+                                    <th>Fim</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#editar-ciclo" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#excluir-ciclo" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>Ciclo 1</td>
+                                    <td>00/00/0000</td>
+                                    <td>00/00/0000</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
- 
-                    <button class="botao botao-principal">
-                        Cadastrar
-                    </button>
- 
-                </div>
- 
-                <div class="tabela-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ver</th>
-                                <th>Excluir</th>
-                                <th>Ciclo</th>
-                                <th>Início</th>
-                                <th>Fim</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_ver.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_excluir.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>Ciclo 1</td>
-                                <td>00/00/0000</td>
-                                <td>00/00/0000</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
- 
-            </section>
- 
-            <!-- Página Lições Aprendidas -->
-            <section id="licoes" class="pagina">
- 
-                <h1>Lições Aprendidas</h1>
- 
-                <div class="barra-acoes">
- 
-                    <div class="pesquisa">
-                        <input type="text" placeholder="Pesquisar por lição aprendida">
+
+                    <section id="cadastrar-ciclo" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Cadastrar ciclo</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-ciclo-nome">Nome</label>
+                                        <input type="text" id="cad-ciclo-nome" name="nome" maxlength="100" placeholder="Digite nome" required>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-ciclo-descricao">Descrição</label>
+                                        <textarea id="cad-ciclo-descricao" name="descricao" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-ciclo-etapa_atual">Etapa atual</label>
+                                        <select id="cad-ciclo-etapa_atual" name="etapa_atual" required>
+                                            <option value="PLAN">Plan</option>
+                                            <option value="DO">Do</option>
+                                            <option value="CHECK">Check</option>
+                                            <option value="ACT">Act</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-ciclo-status">Status</label>
+                                        <select id="cad-ciclo-status" name="status" required>
+                                            <option value="NAO_INICIADO">Não iniciado</option>
+                                            <option value="INICIADO">Iniciado</option>
+                                            <option value="FINALIZADO">Finalizado</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-ciclo-dt_inicio">Data de início</label>
+                                        <input type="date" id="cad-ciclo-dt_inicio" name="dt_inicio" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-ciclo-dt_fim">Data de fim</label>
+                                        <input type="date" id="cad-ciclo-dt_fim" name="dt_fim">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-ciclo-id_empresa">Empresa</label>
+                                        <select id="cad-ciclo-id_empresa" name="id_empresa" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-ciclo-id_responsavel">Responsável</label>
+                                        <select id="cad-ciclo-id_responsavel" name="id_responsavel" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-ciclo-colaboradores">Colaboradores do ciclo</label>
+                                        <select id="cad-ciclo-colaboradores" name="colaboradores" multiple size="4"></select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#ciclos" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-ciclo" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Editar ciclo</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-ciclo-nome">Nome</label>
+                                        <input type="text" id="edi-ciclo-nome" name="nome" maxlength="100" placeholder="Digite nome" required>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-ciclo-descricao">Descrição</label>
+                                        <textarea id="edi-ciclo-descricao" name="descricao" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-ciclo-etapa_atual">Etapa atual</label>
+                                        <select id="edi-ciclo-etapa_atual" name="etapa_atual" required>
+                                            <option value="PLAN">Plan</option>
+                                            <option value="DO">Do</option>
+                                            <option value="CHECK">Check</option>
+                                            <option value="ACT">Act</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-ciclo-status">Status</label>
+                                        <select id="edi-ciclo-status" name="status" required>
+                                            <option value="NAO_INICIADO">Não iniciado</option>
+                                            <option value="INICIADO">Iniciado</option>
+                                            <option value="FINALIZADO">Finalizado</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-ciclo-dt_inicio">Data de início</label>
+                                        <input type="date" id="edi-ciclo-dt_inicio" name="dt_inicio" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-ciclo-dt_fim">Data de fim</label>
+                                        <input type="date" id="edi-ciclo-dt_fim" name="dt_fim">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-ciclo-id_empresa">Empresa</label>
+                                        <select id="edi-ciclo-id_empresa" name="id_empresa" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-ciclo-id_responsavel">Responsável</label>
+                                        <select id="edi-ciclo-id_responsavel" name="id_responsavel" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-ciclo-colaboradores">Colaboradores do ciclo</label>
+                                        <select id="edi-ciclo-colaboradores" name="colaboradores" multiple size="4"></select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#ciclos" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-ciclo" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir ciclo</h2>
+                                <p>Tem certeza que deseja excluir este ciclo?</p>
+                                <div class="botoes-modal">
+                                    <a href="#ciclos" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Página Lições Aprendidas -->
+                <section id="licoes" class="pagina">
+                    <h1>Lições Aprendidas</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por lição aprendida">
+                        </div>
+                        <div class="filtro-container">
+                            <select class="botao botao-filtro">
+                                <option value="">Filtros</option>
+                                <option value="categoria">Por Categoria</option>
+                                <option value="data">Por Data</option>
+                            </select>
+                        </div>
+                        <a href="#cadastrar-lição-aprendida" class="botao botao-principal">Cadastrar</a>
                     </div>
- 
-                    <div class="filtro-container">
-                        <select class="botao botao-filtro">
-                            <option value="">Filtros</option>
-                            <option value="categoria">Por Categoria</option>
-                            <option value="data">Por Data</option>
-                        </select>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ver</th>
+                                    <th>Excluir</th>
+                                    <th>Título</th>
+                                    <th>Categoria</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#editar-lição-aprendida" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#excluir-lição-aprendida" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>Título da lição</td>
+                                    <td>Categoria</td>
+                                    <td>00/00/0000</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
- 
-                    <button class="botao botao-principal">
-                        Cadastrar
-                    </button>
- 
-                </div>
- 
-                <div class="tabela-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ver</th>
-                                <th>Excluir</th>
-                                <th>Título</th>
-                                <th>Categoria</th>
-                                <th>Data</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_ver.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_excluir.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>Título da lição</td>
-                                <td>Categoria</td>
-                                <td>00/00/0000</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
- 
-            </section>
- 
-            <!-- Página Metas -->
-            <section id="metas" class="pagina">
- 
-                <h1>Metas</h1>
- 
-                <div class="barra-acoes">
- 
-                    <div class="pesquisa">
-                        <input type="text" placeholder="Pesquisar por meta">
+
+                    <section id="cadastrar-lição-aprendida" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Cadastrar lição aprendida</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-titulo">Título</label>
+                                        <input type="text" id="cad-lição-aprendida-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-id_ciclo">Ciclo</label>
+                                        <select id="cad-lição-aprendida-id_ciclo" name="id_ciclo" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-area">Área</label>
+                                        <input type="text" id="cad-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-categoria">Categoria</label>
+                                        <input type="text" id="cad-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-fase_origem">Fase de origem</label>
+                                        <select id="cad-lição-aprendida-fase_origem" name="fase_origem" required>
+                                            <option value="PLAN">Plan</option>
+                                            <option value="DO">Do</option>
+                                            <option value="CHECK">Check</option>
+                                            <option value="ACT">Act</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-severidade">Severidade</label>
+                                        <select id="cad-lição-aprendida-severidade" name="severidade" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-lição-aprendida-aprendizado">Aprendizado</label>
+                                        <textarea id="cad-lição-aprendida-aprendizado" name="aprendizado" rows="3" required></textarea>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-lição-aprendida-descricao">Descrição</label>
+                                        <textarea id="cad-lição-aprendida-descricao" name="descricao" rows="3"></textarea>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#licoes" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-lição-aprendida" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Editar lição aprendida</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-titulo">Título</label>
+                                        <input type="text" id="edi-lição-aprendida-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-id_ciclo">Ciclo</label>
+                                        <select id="edi-lição-aprendida-id_ciclo" name="id_ciclo" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-area">Área</label>
+                                        <input type="text" id="edi-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-categoria">Categoria</label>
+                                        <input type="text" id="edi-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-fase_origem">Fase de origem</label>
+                                        <select id="edi-lição-aprendida-fase_origem" name="fase_origem" required>
+                                            <option value="PLAN">Plan</option>
+                                            <option value="DO">Do</option>
+                                            <option value="CHECK">Check</option>
+                                            <option value="ACT">Act</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-severidade">Severidade</label>
+                                        <select id="edi-lição-aprendida-severidade" name="severidade" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-lição-aprendida-aprendizado">Aprendizado</label>
+                                        <textarea id="edi-lição-aprendida-aprendizado" name="aprendizado" rows="3" required></textarea>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-lição-aprendida-descricao">Descrição</label>
+                                        <textarea id="edi-lição-aprendida-descricao" name="descricao" rows="3"></textarea>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#licoes" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-lição-aprendida" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir lição aprendida</h2>
+                                <p>Tem certeza que deseja excluir esta lição aprendida?</p>
+                                <div class="botoes-modal">
+                                    <a href="#licoes" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Página Metas -->
+                <section id="metas" class="pagina">
+                    <h1>Metas</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por meta">
+                        </div>
+                        <div class="filtro-container">
+                            <select class="botao botao-filtro">
+                                <option value="">Filtros</option>
+                                <option value="status">Por Status</option>
+                                <option value="alvo">Por Alvo</option>
+                            </select>
+                        </div>
+                        <a href="#cadastrar-meta" class="botao botao-principal">Cadastrar</a>
                     </div>
- 
-                    <div class="filtro-container">
-                        <select class="botao botao-filtro">
-                            <option value="">Filtros</option>
-                            <option value="status">Por Status</option>
-                            <option value="alvo">Por Alvo</option>
-                        </select>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ver</th>
+                                    <th>Excluir</th>
+                                    <th>Meta</th>
+                                    <th>Alvo</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#editar-meta" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#excluir-meta" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>Nome da meta</td>
+                                    <td>Meta alvo</td>
+                                    <td>Em andamento</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
- 
-                    <button class="botao botao-principal">
-                        Cadastrar
-                    </button>
- 
-                </div>
- 
-                <div class="tabela-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ver</th>
-                                <th>Excluir</th>
-                                <th>Meta</th>
-                                <th>Alvo</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_ver.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_excluir.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>Nome da meta</td>
-                                <td>Meta alvo</td>
-                                <td>Em andamento</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
- 
-            </section>
- 
-            <!-- Página Problemas -->
-            <section id="problemas" class="pagina">
- 
-                <h1>Problemas</h1>
- 
-                <div class="barra-acoes">
- 
-                    <div class="pesquisa">
-                        <input type="text" placeholder="Pesquisar por problema">
+
+                    <section id="cadastrar-meta" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Cadastrar meta</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-meta-meta">Meta</label>
+                                        <input type="text" id="cad-meta-meta" name="meta" maxlength="100" placeholder="Digite meta" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-meta-objetivo">Objetivo</label>
+                                        <input type="text" id="cad-meta-objetivo" name="objetivo" maxlength="200" placeholder="Digite objetivo">
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-meta-descricao_meta">Descrição</label>
+                                        <textarea id="cad-meta-descricao_meta" name="descricao_meta" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-meta-prioridade">Prioridade</label>
+                                        <select id="cad-meta-prioridade" name="prioridade" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-meta-prazo">Prazo</label>
+                                        <input type="date" id="cad-meta-prazo" name="prazo" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-meta-status">Status</label>
+                                        <select id="cad-meta-status" name="status" required>
+                                            <option value="ABAIXO_DO_ESPERADO">Abaixo do esperado</option>
+                                            <option value="REGULAR">Regular</option>
+                                            <option value="ACIMA_DO_ESPERADO">Acima do esperado</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-meta-id_ciclo">Ciclo</label>
+                                        <select id="cad-meta-id_ciclo" name="id_ciclo" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-meta-id_plano_acao">Plano de ação</label>
+                                        <select id="cad-meta-id_plano_acao" name="id_plano_acao">
+                                            <option value="">Nenhum</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#metas" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-meta" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Editar meta</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-meta-meta">Meta</label>
+                                        <input type="text" id="edi-meta-meta" name="meta" maxlength="100" placeholder="Digite meta" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-meta-objetivo">Objetivo</label>
+                                        <input type="text" id="edi-meta-objetivo" name="objetivo" maxlength="200" placeholder="Digite objetivo">
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-meta-descricao_meta">Descrição</label>
+                                        <textarea id="edi-meta-descricao_meta" name="descricao_meta" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-meta-prioridade">Prioridade</label>
+                                        <select id="edi-meta-prioridade" name="prioridade" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-meta-prazo">Prazo</label>
+                                        <input type="date" id="edi-meta-prazo" name="prazo" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-meta-status">Status</label>
+                                        <select id="edi-meta-status" name="status" required>
+                                            <option value="ABAIXO_DO_ESPERADO">Abaixo do esperado</option>
+                                            <option value="REGULAR">Regular</option>
+                                            <option value="ACIMA_DO_ESPERADO">Acima do esperado</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-meta-id_ciclo">Ciclo</label>
+                                        <select id="edi-meta-id_ciclo" name="id_ciclo" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-meta-id_plano_acao">Plano de ação</label>
+                                        <select id="edi-meta-id_plano_acao" name="id_plano_acao">
+                                            <option value="">Nenhum</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#metas" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-meta" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir meta</h2>
+                                <p>Tem certeza que deseja excluir esta meta?</p>
+                                <div class="botoes-modal">
+                                    <a href="#metas" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Página Problemas -->
+                <section id="problemas" class="pagina">
+                    <h1>Problemas</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por problema">
+                        </div>
+                        <div class="filtro-container">
+                            <select class="botao botao-filtro">
+                                <option value="">Filtros</option>
+                                <option value="gravidade">Por Gravidade</option>
+                                <option value="status">Por Status</option>
+                            </select>
+                        </div>
+                        <a href="#cadastrar-problema" class="botao botao-principal">Cadastrar</a>
                     </div>
- 
-                    <div class="filtro-container">
-                        <select class="botao botao-filtro">
-                            <option value="">Filtros</option>
-                            <option value="gravidade">Por Gravidade</option>
-                            <option value="status">Por Status</option>
-                        </select>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ver</th>
+                                    <th>Excluir</th>
+                                    <th>Problema</th>
+                                    <th>Gravidade</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <a href="#editar-problema" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#excluir-problema" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td>Descrição do problema</td>
+                                    <td>Alta</td>
+                                    <td>Pendente</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
- 
-                    <button class="botao botao-principal">
-                        Cadastrar
-                    </button>
- 
-                </div>
- 
-                <div class="tabela-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Ver</th>
-                                <th>Excluir</th>
-                                <th>Problema</th>
-                                <th>Gravidade</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_ver.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="icone-acao">
-                                        <img src="assests/icone_excluir.svg" alt="">
-                                    </button>
-                                </td>
-                                <td>Descrição do problema</td>
-                                <td>Alta</td>
-                                <td>Pendente</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
- 
-            </section>
- 
-        </main>
- 
-    </div>
- 
-</body>
- 
+
+                    <section id="cadastrar-problema" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-larga">
+                                <h2>Cadastrar problema</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-problema-titulo">Título</label>
+                                        <input type="text" id="cad-problema-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-problema-peso">Gravidade (peso)</label>
+                                        <select id="cad-problema-peso" name="peso" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-problema-status">Status</label>
+                                        <select id="cad-problema-status" name="status" required>
+                                            <option value="EM_ANALISE">Em análise</option>
+                                            <option value="EM_RESOLUCAO">Em resolução</option>
+                                            <option value="RESOLVIDO">Resolvido</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-problema-encontrado_em">Encontrado em</label>
+                                        <input type="date" id="cad-problema-encontrado_em" name="encontrado_em" required>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-problema-descricao">Descrição</label>
+                                        <textarea id="cad-problema-descricao" name="descricao" rows="3" required></textarea>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-problema-origem">Origem</label>
+                                        <textarea id="cad-problema-origem" name="origem" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-problema-solucao">Solução</label>
+                                        <input type="text" id="cad-problema-solucao" name="solucao" maxlength="200" placeholder="Digite solução">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-problema-id_ciclo">Ciclo</label>
+                                        <select id="cad-problema-id_ciclo" name="id_ciclo" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-problema-id_plano_acao">Plano de ação</label>
+                                        <select id="cad-problema-id_plano_acao" name="id_plano_acao">
+                                            <option value="">Nenhum</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-problema-id_colaborador">Colaborador</label>
+                                        <select id="cad-problema-id_colaborador" name="id_colaborador">
+                                            <option value="">Nenhum</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#problemas" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-problema" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-larga">
+                                <h2>Editar problema</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-problema-titulo">Título</label>
+                                        <input type="text" id="edi-problema-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-problema-peso">Gravidade (peso)</label>
+                                        <select id="edi-problema-peso" name="peso" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-problema-status">Status</label>
+                                        <select id="edi-problema-status" name="status" required>
+                                            <option value="EM_ANALISE">Em análise</option>
+                                            <option value="EM_RESOLUCAO">Em resolução</option>
+                                            <option value="RESOLVIDO">Resolvido</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-problema-encontrado_em">Encontrado em</label>
+                                        <input type="date" id="edi-problema-encontrado_em" name="encontrado_em" required>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-problema-descricao">Descrição</label>
+                                        <textarea id="edi-problema-descricao" name="descricao" rows="3" required></textarea>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-problema-origem">Origem</label>
+                                        <textarea id="edi-problema-origem" name="origem" rows="3"></textarea>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-problema-solucao">Solução</label>
+                                        <input type="text" id="edi-problema-solucao" name="solucao" maxlength="200" placeholder="Digite solução">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-problema-id_ciclo">Ciclo</label>
+                                        <select id="edi-problema-id_ciclo" name="id_ciclo" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-problema-id_plano_acao">Plano de ação</label>
+                                        <select id="edi-problema-id_plano_acao" name="id_plano_acao">
+                                            <option value="">Nenhum</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-problema-id_colaborador">Colaborador</label>
+                                        <select id="edi-problema-id_colaborador" name="id_colaborador">
+                                            <option value="">Nenhum</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#problemas" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-problema" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir problema</h2>
+                                <p>Tem certeza que deseja excluir este problema?</p>
+                                <div class="botoes-modal">
+                                    <a href="#problemas" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+            </main>
+        </div>
+    </body>
 </html>
