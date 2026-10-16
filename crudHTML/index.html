@@ -83,6 +83,7 @@
                                     <th>Status</th>
                                     <th>Tamanho</th>
                                     <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
                                     <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
@@ -95,8 +96,13 @@
                                     <td>Ativo</td>
                                     <td>Grande</td>
                                     <td class="coluna-acao">
-                                        <a href="#editar-empresa" class="icone-acao">
+                                        <a href="#ver-empresa" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-empresa" class="icone-acao">
+                                            <img src="assests/icone_editar.svg" alt="">
                                         </a>
                                     </td>
                                     <td class="coluna-acao">
@@ -108,6 +114,43 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="ver-empresa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver">
+                                <div class="modal-topo">
+                                    <h2>Detalhes da empresa</h2>
+                                    <a href="#empresas" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Nome</span>
+                                        <span class="detalhe-valor">Flora</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Setor</span>
+                                        <span class="detalhe-valor">Cosméticos</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">CNPJ</span>
+                                        <span class="detalhe-valor">13.425.674/8967-4</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Unidade</span>
+                                        <span class="detalhe-valor">Matriz</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Status</span>
+                                        <span class="detalhe-valor">Ativa</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Tamanho</span>
+                                        <span class="detalhe-valor">Grande</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="cadastrar-empresa" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -243,6 +286,7 @@
                                     <th>Estado</th>
                                     <th>CEP</th>
                                     <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
                                     <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
@@ -257,8 +301,13 @@
                                     <td>SP</td>
                                     <td>00000-000</td>
                                     <td class="coluna-acao">
-                                        <a href="#editar-endereco" class="icone-acao">
+                                        <a href="#ver-endereco" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-endereco" class="icone-acao">
+                                            <img src="assests/icone_editar.svg" alt="">
                                         </a>
                                     </td>
                                     <td class="coluna-acao">
@@ -270,6 +319,55 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="ver-endereco" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver">
+                                <div class="modal-topo">
+                                    <h2>Detalhes do endereço</h2>
+                                    <a href="#endereco" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Empresa</span>
+                                        <span class="detalhe-valor">Flora</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Unidade</span>
+                                        <span class="detalhe-valor">Matriz</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">CEP</span>
+                                        <span class="detalhe-valor">00000-000</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Rua</span>
+                                        <span class="detalhe-valor">Rua Exemplo</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Número</span>
+                                        <span class="detalhe-valor">123</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Bairro</span>
+                                        <span class="detalhe-valor">Centro</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Cidade</span>
+                                        <span class="detalhe-valor">São Paulo</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Estado</span>
+                                        <span class="detalhe-valor">SP</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Complemento</span>
+                                        <span class="detalhe-valor">Complemento do endereço</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="cadastrar-endereco" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -411,11 +509,14 @@
                                 <tr>
                                     <th>Nome</th>
                                     <th>Sobrenome</th>
+                                    <th>Área</th>
                                     <th>Cargo</th>
                                     <th>Telefone</th>
                                     <th>CPF</th>
                                     <th>Email</th>
+                                    <th>Status</th>
                                     <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
                                     <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
@@ -423,13 +524,20 @@
                                 <tr>
                                     <td>Nome</td>
                                     <td>Sobrenome</td>
+                                    <td>Área</td>
                                     <td>Cargo</td>
                                     <td>(00) 00000-0000</td>
                                     <td>000.000.000-00</td>
                                     <td>email@email.com</td>
+                                    <td>Ativa</td>
+                                    <td class="coluna-acao">
+                                        <a href="#ver-colaborador" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
                                     <td class="coluna-acao">
                                         <a href="#editar-colaborador" class="icone-acao">
-                                            <img src="assests/icone_ver.svg" alt="">
+                                            <img src="assests/icone_editar.svg" alt="">
                                         </a>
                                     </td>
                                     <td class="coluna-acao">
@@ -441,6 +549,63 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="ver-colaborador" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-larga">
+                                <div class="modal-topo">
+                                    <h2>Detalhes do colaborador</h2>
+                                    <a href="#colaborador" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Nome</span>
+                                        <span class="detalhe-valor">Nome</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Sobrenome</span>
+                                        <span class="detalhe-valor">Sobrenome</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Área</span>
+                                        <span class="detalhe-valor">Área</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Cargo</span>
+                                        <span class="detalhe-valor">Cargo</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Data de contratação</span>
+                                        <span class="detalhe-valor">00/00/0000</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Email</span>
+                                        <span class="detalhe-valor">email@email.com</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Telefone</span>
+                                        <span class="detalhe-valor">(00) 00000-0000</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">CPF</span>
+                                        <span class="detalhe-valor">000.000.000-00</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Status</span>
+                                        <span class="detalhe-valor">Ativa</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Permissão de gestor</span>
+                                        <span class="detalhe-valor">Não</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Empresa</span>
+                                        <span class="detalhe-valor">Flora</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="cadastrar-colaborador" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -570,8 +735,13 @@
                                 <tr>
                                     <th>Tarefa</th>
                                     <th>Responsável</th>
+                                    <th>Plano de ação</th>
+                                    <th>Prioridade</th>
+                                    <th>Status</th>
+                                    <th>Início</th>
                                     <th>Prazo</th>
                                     <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
                                     <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
@@ -579,10 +749,19 @@
                                 <tr>
                                     <td>Nome da tarefa</td>
                                     <td>Responsável</td>
+                                    <td>Nome do plano</td>
+                                    <td>Médio</td>
+                                    <td>Iniciado</td>
+                                    <td>00/00/0000</td>
                                     <td>00/00/0000</td>
                                     <td class="coluna-acao">
-                                        <a href="#editar-tarefa" class="icone-acao">
+                                        <a href="#ver-tarefa" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-tarefa" class="icone-acao">
+                                            <img src="assests/icone_editar.svg" alt="">
                                         </a>
                                     </td>
                                     <td class="coluna-acao">
@@ -594,6 +773,51 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="ver-tarefa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver">
+                                <div class="modal-topo">
+                                    <h2>Detalhes da tarefa</h2>
+                                    <a href="#tarefa" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Título</span>
+                                        <span class="detalhe-valor">Nome da tarefa</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Responsável</span>
+                                        <span class="detalhe-valor">Responsável</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Plano de ação</span>
+                                        <span class="detalhe-valor">Nome do plano</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Prioridade</span>
+                                        <span class="detalhe-valor">Médio</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Status</span>
+                                        <span class="detalhe-valor">Iniciado</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Data de início</span>
+                                        <span class="detalhe-valor">00/00/0000</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Data de entrega</span>
+                                        <span class="detalhe-valor">00/00/0000</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Descrição</span>
+                                        <span class="detalhe-valor">Descrição da tarefa</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="cadastrar-tarefa" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -746,20 +970,32 @@
                             <thead>
                                 <tr>
                                     <th>Plano</th>
+                                    <th>Ciclo</th>
+                                    <th>Criador</th>
+                                    <th>Prioridade</th>
                                     <th>Status</th>
                                     <th>Prazo</th>
                                     <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
                                     <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>Nome do plano</td>
+                                    <td>Ciclo 1</td>
+                                    <td>Responsável</td>
+                                    <td>Médio</td>
                                     <td>Em andamento</td>
                                     <td>00/00/0000</td>
                                     <td class="coluna-acao">
-                                        <a href="#editar-plano-de-ação" class="icone-acao">
+                                        <a href="#ver-plano-de-ação" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-plano-de-ação" class="icone-acao">
+                                            <img src="assests/icone_editar.svg" alt="">
                                         </a>
                                     </td>
                                     <td class="coluna-acao">
@@ -771,6 +1007,71 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="ver-plano-de-ação" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-larga">
+                                <div class="modal-topo">
+                                    <h2>Detalhes do plano de ação</h2>
+                                    <a href="#plano" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Nome</span>
+                                        <span class="detalhe-valor">Nome do plano</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Ciclo</span>
+                                        <span class="detalhe-valor">Ciclo 1</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Criador</span>
+                                        <span class="detalhe-valor">Responsável</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Status</span>
+                                        <span class="detalhe-valor">Iniciado</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Prioridade</span>
+                                        <span class="detalhe-valor">Médio</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Prazo (When)</span>
+                                        <span class="detalhe-valor">00/00/0000</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Descrição</span>
+                                        <span class="detalhe-valor">Descrição do plano</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">What (O quê)</span>
+                                        <span class="detalhe-valor">O que será feito</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Why (Por quê)</span>
+                                        <span class="detalhe-valor">Por que será feito</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Where (Onde)</span>
+                                        <span class="detalhe-valor">Onde será feito</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Who (Quem)</span>
+                                        <span class="detalhe-valor">Responsável</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">How much (Quanto custa)</span>
+                                        <span class="detalhe-valor">R$ 0,00</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">How (Como)</span>
+                                        <span class="detalhe-valor">Como será feito</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="cadastrar-plano-de-ação" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -969,20 +1270,34 @@
                             <thead>
                                 <tr>
                                     <th>Ciclo</th>
+                                    <th>Empresa</th>
+                                    <th>Responsável</th>
+                                    <th>Etapa</th>
+                                    <th>Status</th>
                                     <th>Início</th>
                                     <th>Fim</th>
                                     <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
                                     <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>Ciclo 1</td>
+                                    <td>Flora</td>
+                                    <td>Responsável</td>
+                                    <td>Plan</td>
+                                    <td>Iniciado</td>
                                     <td>00/00/0000</td>
                                     <td>00/00/0000</td>
                                     <td class="coluna-acao">
-                                        <a href="#editar-ciclo" class="icone-acao">
+                                        <a href="#ver-ciclo" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-ciclo" class="icone-acao">
+                                            <img src="assests/icone_editar.svg" alt="">
                                         </a>
                                     </td>
                                     <td class="coluna-acao">
@@ -994,6 +1309,55 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="ver-ciclo" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver">
+                                <div class="modal-topo">
+                                    <h2>Detalhes do ciclo</h2>
+                                    <a href="#ciclos" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Nome</span>
+                                        <span class="detalhe-valor">Ciclo 1</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Empresa</span>
+                                        <span class="detalhe-valor">Flora</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Responsável</span>
+                                        <span class="detalhe-valor">Responsável</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Etapa atual</span>
+                                        <span class="detalhe-valor">Plan</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Status</span>
+                                        <span class="detalhe-valor">Iniciado</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Data de início</span>
+                                        <span class="detalhe-valor">00/00/0000</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Data de fim</span>
+                                        <span class="detalhe-valor">00/00/0000</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Colaboradores do ciclo</span>
+                                        <span class="detalhe-valor">Nome, Nome</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Descrição</span>
+                                        <span class="detalhe-valor">Descrição do ciclo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="cadastrar-ciclo" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -1157,8 +1521,13 @@
                                 <tr>
                                     <th>Título</th>
                                     <th>Categoria</th>
+                                    <th>Área</th>
+                                    <th>Ciclo</th>
+                                    <th>Fase de origem</th>
+                                    <th>Severidade</th>
                                     <th>Data</th>
                                     <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
                                     <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
@@ -1166,10 +1535,19 @@
                                 <tr>
                                     <td>Título da lição</td>
                                     <td>Categoria</td>
+                                    <td>Área</td>
+                                    <td>Ciclo 1</td>
+                                    <td>Plan</td>
+                                    <td>Médio</td>
                                     <td>00/00/0000</td>
                                     <td class="coluna-acao">
-                                        <a href="#editar-lição-aprendida" class="icone-acao">
+                                        <a href="#ver-lição-aprendida" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-lição-aprendida" class="icone-acao">
+                                            <img src="assests/icone_editar.svg" alt="">
                                         </a>
                                     </td>
                                     <td class="coluna-acao">
@@ -1181,6 +1559,55 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="ver-lição-aprendida" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver">
+                                <div class="modal-topo">
+                                    <h2>Detalhes da lição aprendida</h2>
+                                    <a href="#licoes" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Título</span>
+                                        <span class="detalhe-valor">Título da lição</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Ciclo</span>
+                                        <span class="detalhe-valor">Ciclo 1</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Área</span>
+                                        <span class="detalhe-valor">Área</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Categoria</span>
+                                        <span class="detalhe-valor">Categoria</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Fase de origem</span>
+                                        <span class="detalhe-valor">Plan</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Severidade</span>
+                                        <span class="detalhe-valor">Médio</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Data</span>
+                                        <span class="detalhe-valor">00/00/0000</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Aprendizado</span>
+                                        <span class="detalhe-valor">Aprendizado obtido</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Descrição</span>
+                                        <span class="detalhe-valor">Descrição da lição</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="cadastrar-lição-aprendida" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -1332,8 +1759,12 @@
                                 <tr>
                                     <th>Meta</th>
                                     <th>Alvo</th>
+                                    <th>Ciclo</th>
+                                    <th>Prioridade</th>
+                                    <th>Prazo</th>
                                     <th>Status</th>
                                     <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
                                     <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
@@ -1341,10 +1772,18 @@
                                 <tr>
                                     <td>Nome da meta</td>
                                     <td>Meta alvo</td>
-                                    <td>Em andamento</td>
+                                    <td>Ciclo 1</td>
+                                    <td>Médio</td>
+                                    <td>00/00/0000</td>
+                                    <td>Regular</td>
+                                    <td class="coluna-acao">
+                                        <a href="#ver-meta" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
                                     <td class="coluna-acao">
                                         <a href="#editar-meta" class="icone-acao">
-                                            <img src="assests/icone_ver.svg" alt="">
+                                            <img src="assests/icone_editar.svg" alt="">
                                         </a>
                                     </td>
                                     <td class="coluna-acao">
@@ -1356,6 +1795,51 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="ver-meta" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver">
+                                <div class="modal-topo">
+                                    <h2>Detalhes da meta</h2>
+                                    <a href="#metas" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Meta</span>
+                                        <span class="detalhe-valor">Nome da meta</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Objetivo (alvo)</span>
+                                        <span class="detalhe-valor">Meta alvo</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Ciclo</span>
+                                        <span class="detalhe-valor">Ciclo 1</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Plano de ação</span>
+                                        <span class="detalhe-valor">Nome do plano</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Prioridade</span>
+                                        <span class="detalhe-valor">Médio</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Prazo</span>
+                                        <span class="detalhe-valor">00/00/0000</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Status</span>
+                                        <span class="detalhe-valor">Regular</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Descrição</span>
+                                        <span class="detalhe-valor">Descrição da meta</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="cadastrar-meta" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -1510,7 +1994,11 @@
                                     <th>Problema</th>
                                     <th>Gravidade</th>
                                     <th>Status</th>
+                                    <th>Ciclo</th>
+                                    <th>Colaborador</th>
+                                    <th>Encontrado em</th>
                                     <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
                                     <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
@@ -1518,10 +2006,18 @@
                                 <tr>
                                     <td>Nome do problema</td>
                                     <td>Alta</td>
-                                    <td>Pendente</td>
+                                    <td>Em análise</td>
+                                    <td>Ciclo 1</td>
+                                    <td>Nome</td>
+                                    <td>00/00/0000</td>
+                                    <td class="coluna-acao">
+                                        <a href="#ver-problema" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
                                     <td class="coluna-acao">
                                         <a href="#editar-problema" class="icone-acao">
-                                            <img src="assests/icone_ver.svg" alt="">
+                                            <img src="assests/icone_editar.svg" alt="">
                                         </a>
                                     </td>
                                     <td class="coluna-acao">
@@ -1533,6 +2029,59 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="ver-problema" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-larga">
+                                <div class="modal-topo">
+                                    <h2>Detalhes do problema</h2>
+                                    <a href="#problemas" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Título</span>
+                                        <span class="detalhe-valor">Nome do problema</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Gravidade (peso)</span>
+                                        <span class="detalhe-valor">Alta</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Status</span>
+                                        <span class="detalhe-valor">Em análise</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Encontrado em</span>
+                                        <span class="detalhe-valor">00/00/0000</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Ciclo</span>
+                                        <span class="detalhe-valor">Ciclo 1</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Plano de ação</span>
+                                        <span class="detalhe-valor">Nome do plano</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Colaborador</span>
+                                        <span class="detalhe-valor">Nome</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Solução</span>
+                                        <span class="detalhe-valor">Solução proposta</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Descrição</span>
+                                        <span class="detalhe-valor">Descrição do problema</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Origem</span>
+                                        <span class="detalhe-valor">Origem do problema</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="cadastrar-problema" class="pagina modal-pagina">
                         <div class="modal-fundo">

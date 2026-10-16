@@ -239,7 +239,7 @@ th {
 th.coluna-acao,
 td.coluna-acao {
     text-align: center;
-    width: 80px;
+    width: 70px;
 }
 
 .coluna-acao .icone-acao {
@@ -289,6 +289,65 @@ td.coluna-acao {
     max-width: 980px;
 }
  
+/* Modal de visualização (Ver) */
+.modal-ver .modal-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.modal-ver .modal-topo h2 {
+    margin-bottom: 0;
+}
+
+.modal-fechar {
+    font-size: 28px;
+    line-height: 1;
+    padding: 0 8px;
+    border-radius: 4px;
+    color: var(--cor-texto);
+    text-decoration: none;
+}
+
+.modal-fechar:hover {
+    background-color: var(--cor-fundo);
+    color: var(--cor-perigo);
+}
+
+.detalhes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 16px;
+}
+
+.modal-larga .detalhes {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.detalhe {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--cor-fundo);
+}
+
+.detalhe-largo {
+    grid-column: 1 / -1;
+}
+
+.detalhe-label {
+    font-size: 12px;
+    color: var(--cor-texto-suave);
+}
+
+.detalhe-valor {
+    font-size: 14px;
+    color: var(--cor-texto);
+    word-break: break-word;
+}
+
 .modal h2 {
     margin-bottom: 15px;
     box-sizing: border-box;
@@ -386,7 +445,9 @@ td.coluna-acao {
 /* Telas pequenas: modais voltam para 1 coluna */
 @media (max-width: 760px) {
     .modal-grande .formulario,
-    .modal-larga .formulario {
+    .modal-larga .formulario,
+    .detalhes,
+    .modal-larga .detalhes {
         grid-template-columns: 1fr;
     }
 }
