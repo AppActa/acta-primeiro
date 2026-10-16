@@ -96,6 +96,7 @@ public class EmpresaServlet extends HttpServlet {
 
     private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String busca = req.getParameter("busca");
+        String setor = req.getParameter("setor");
         String statusParam = req.getParameter("status");
         String tamanhoParam = req.getParameter("tamanho");
         String ordem = req.getParameter("ordem");
@@ -105,13 +106,12 @@ public class EmpresaServlet extends HttpServlet {
         if (statusParam != null && !statusParam.isBlank()) {
             status = Status.valueOf(statusParam);
         }
-
         TamanhoEmpresa tamanho = null;
         if (tamanhoParam != null && !tamanhoParam.isBlank()) {
             tamanho = TamanhoEmpresa.valueOf(tamanhoParam);
         }
 
-        List<Empresa> empresas = DAO.buscaFiltrada(busca, status, tamanho, ordem, direcao);
+        List<Empresa> empresas = DAO.buscaFiltrada(busca, setor, status, tamanho, ordem, direcao);
         req.setAttribute("empresaList", empresas);
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req,resp);
     }
