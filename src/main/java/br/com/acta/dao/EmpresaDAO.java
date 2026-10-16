@@ -17,6 +17,9 @@ import br.com.acta.enums.Status;
 import br.com.acta.enums.TamanhoEmpresa;
 import br.com.acta.model.Empresa;
 import br.com.acta.utils.Conexao;
+
+import javax.xml.transform.Result;
+
 public class EmpresaDAO implements MetodosCrud<Empresa> {
 
     //INSERT
@@ -132,6 +135,23 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         }
     }
 
+    public List<String> buscarSetor() {
+        List<String> setores = new ArrayList<>();
+        String sql = "SELECT DISTINCT setor FROM empresa ORDER BY setor;";
+
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                setores.add(rs.getString("setor"));
+            }
+            return setores;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public int atualizar(Empresa empresa) {
@@ -205,4 +225,24 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             "status", "status",
             "tamanho", "tamanho"
     );
+
+    public String buscarSetorExistente(String setor) {
+        String sql = "SELECT setor FROM empresa WHERE LOWER(setor) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, setor);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs. next()) {
+                    return rs.getString("setor");
+                }
+                return null;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
