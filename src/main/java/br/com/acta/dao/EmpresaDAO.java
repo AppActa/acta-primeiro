@@ -89,18 +89,19 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         }
     }
 
-    public List<Empresa> buscaFiltrada(String busca, Status status, TamanhoEmpresa tamanho, String ordem, String direcao) {
+    public List<Empresa> buscaFiltrada(String busca, String setor, Status status, TamanhoEmpresa tamanho, String ordem, String direcao) {
         List<Empresa> empresas = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM empresa WHERE 1=1");
 
         boolean temBusca = busca != null && !busca.isBlank();
+        boolean temSetor = setor != null && !busca.isBlank();
         boolean temStatus = status != null;
         boolean temTamanho = tamanho != null;
-
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
-        if (temBusca) sql.append(" AND (nome ILIKE ? OR setor ILIKE ?)");
+        if (temBusca) sql.append(" AND nome ILIKE ?");
+        if (temSetor) sql.append(" AND setor ILIKE ?");
         if (temStatus) sql.append(" AND status = ?");
         if  (temTamanho) sql.append(" AND tamanho = ?");
         if (temOrdem) {
