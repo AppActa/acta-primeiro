@@ -76,34 +76,34 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Ver</th>
-                                    <th>Excluir</th>
                                     <th>Nome</th>
                                     <th>Setor</th>
                                     <th>CNPJ</th>
                                     <th>Unidade</th>
                                     <th>Status</th>
                                     <th>Tamanho</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>
-                                        <a href="#editar-empresa" class="icone-acao">
-                                            <img src="assests/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a href="#excluir-empresa" class="icone-acao">
-                                            <img src="assests/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
                                     <td>Flora</td>
                                     <td>Cosméticos</td>
                                     <td>13.425.674/8967-4</td>
                                     <td>Matriz</td>
                                     <td>Ativo</td>
                                     <td>Grande</td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-empresa" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#excluir-empresa" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -234,8 +234,6 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Ver</th>
-                                    <th>Excluir</th>
                                     <th>Empresa</th>
                                     <th>Unidade</th>
                                     <th>Rua</th>
@@ -244,20 +242,12 @@
                                     <th>Cidade</th>
                                     <th>Estado</th>
                                     <th>CEP</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>
-                                        <a href="#editar-endereco" class="icone-acao">
-                                            <img src="assests/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a href="#excluir-endereco" class="icone-acao">
-                                            <img src="assests/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
                                     <td>Flora</td>
                                     <td>Matriz</td>
                                     <td>Rua Exemplo</td>
@@ -266,6 +256,16 @@
                                     <td>São Paulo</td>
                                     <td>SP</td>
                                     <td>00000-000</td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-endereco" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#excluir-endereco" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -409,34 +409,34 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Ver</th>
-                                    <th>Excluir</th>
                                     <th>Nome</th>
                                     <th>Sobrenome</th>
                                     <th>Cargo</th>
                                     <th>Telefone</th>
                                     <th>CPF</th>
                                     <th>Email</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>
-                                        <a href="#editar-colaborador" class="icone-acao">
-                                            <img src="assests/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a href="#excluir-colaborador" class="icone-acao">
-                                            <img src="assests/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
                                     <td>Nome</td>
                                     <td>Sobrenome</td>
                                     <td>Cargo</td>
                                     <td>(00) 00000-0000</td>
                                     <td>000.000.000-00</td>
                                     <td>email@email.com</td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-colaborador" class="icone-acao">
+                                            <img src="assests/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#excluir-colaborador" class="icone-acao">
+                                            <img src="assests/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -447,8 +447,7 @@
                             <div class="modal modal-larga">
                                 <h2>Cadastrar colaborador</h2>
                                 <form class="formulario">
-                                    
-                                     <div class="campo">
+                                    <div class="campo">
                                         <label for="cad-colaborador-email">Email</label>
                                         <input type="email" id="cad-colaborador-email" name="email" maxlength="80" placeholder="Digite email" required>
                                     </div>
@@ -569,28 +568,28 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Ver</th>
-                                    <th>Excluir</th>
                                     <th>Tarefa</th>
                                     <th>Responsável</th>
                                     <th>Prazo</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>
+                                    <td>Nome da tarefa</td>
+                                    <td>Responsável</td>
+                                    <td>00/00/0000</td>
+                                    <td class="coluna-acao">
                                         <a href="#editar-tarefa" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>
+                                    <td class="coluna-acao">
                                         <a href="#excluir-tarefa" class="icone-acao">
                                             <img src="assests/icone_excluir.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>Nome da tarefa</td>
-                                    <td>Responsável</td>
-                                    <td>00/00/0000</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -746,28 +745,28 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Ver</th>
-                                    <th>Excluir</th>
                                     <th>Plano</th>
                                     <th>Status</th>
                                     <th>Prazo</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>
+                                    <td>Nome do plano</td>
+                                    <td>Em andamento</td>
+                                    <td>00/00/0000</td>
+                                    <td class="coluna-acao">
                                         <a href="#editar-plano-de-ação" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>
+                                    <td class="coluna-acao">
                                         <a href="#excluir-plano-de-ação" class="icone-acao">
                                             <img src="assests/icone_excluir.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>Nome do plano</td>
-                                    <td>Em andamento</td>
-                                    <td>00/00/0000</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -969,28 +968,28 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Ver</th>
-                                    <th>Excluir</th>
                                     <th>Ciclo</th>
                                     <th>Início</th>
                                     <th>Fim</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>
+                                    <td>Ciclo 1</td>
+                                    <td>00/00/0000</td>
+                                    <td>00/00/0000</td>
+                                    <td class="coluna-acao">
                                         <a href="#editar-ciclo" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>
+                                    <td class="coluna-acao">
                                         <a href="#excluir-ciclo" class="icone-acao">
                                             <img src="assests/icone_excluir.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>Ciclo 1</td>
-                                    <td>00/00/0000</td>
-                                    <td>00/00/0000</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1156,28 +1155,28 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Ver</th>
-                                    <th>Excluir</th>
                                     <th>Título</th>
                                     <th>Categoria</th>
                                     <th>Data</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>
+                                    <td>Título da lição</td>
+                                    <td>Categoria</td>
+                                    <td>00/00/0000</td>
+                                    <td class="coluna-acao">
                                         <a href="#editar-lição-aprendida" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>
+                                    <td class="coluna-acao">
                                         <a href="#excluir-lição-aprendida" class="icone-acao">
                                             <img src="assests/icone_excluir.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>Título da lição</td>
-                                    <td>Categoria</td>
-                                    <td>00/00/0000</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1331,28 +1330,28 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Ver</th>
-                                    <th>Excluir</th>
                                     <th>Meta</th>
                                     <th>Alvo</th>
                                     <th>Status</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>
+                                    <td>Nome da meta</td>
+                                    <td>Meta alvo</td>
+                                    <td>Em andamento</td>
+                                    <td class="coluna-acao">
                                         <a href="#editar-meta" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>
+                                    <td class="coluna-acao">
                                         <a href="#excluir-meta" class="icone-acao">
                                             <img src="assests/icone_excluir.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>Nome da meta</td>
-                                    <td>Meta alvo</td>
-                                    <td>Em andamento</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1508,28 +1507,28 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Ver</th>
-                                    <th>Excluir</th>
                                     <th>Problema</th>
                                     <th>Gravidade</th>
                                     <th>Status</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>
+                                    <td>Nome do problema</td>
+                                    <td>Alta</td>
+                                    <td>Pendente</td>
+                                    <td class="coluna-acao">
                                         <a href="#editar-problema" class="icone-acao">
                                             <img src="assests/icone_ver.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>
+                                    <td class="coluna-acao">
                                         <a href="#excluir-problema" class="icone-acao">
                                             <img src="assests/icone_excluir.svg" alt="">
                                         </a>
                                     </td>
-                                    <td>Descrição do problema</td>
-                                    <td>Alta</td>
-                                    <td>Pendente</td>
                                 </tr>
                             </tbody>
                         </table>

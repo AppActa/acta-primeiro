@@ -234,6 +234,18 @@ th {
     width: 18px;
     height: 18px;
 }
+
+/* Colunas de ação (Ver / Excluir): ícone centralizado sob o título */
+th.coluna-acao,
+td.coluna-acao {
+    text-align: center;
+    width: 80px;
+}
+
+.coluna-acao .icone-acao {
+    display: inline-flex;
+    justify-content: center;
+}
  
 /* Modais */
 .modal-pagina {
