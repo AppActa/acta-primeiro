@@ -53,11 +53,6 @@ body {
     max-width: 140px;
 }
 
-.sidebar-logo .botao-sair {
-    padding: 6px 14px;
-    font-size: 13px;
-}
- 
 .menu {
     display: flex;
     flex-direction: column;
@@ -105,6 +100,8 @@ body:has(#metas :target) .menu-item[href="#metas"],
 body:has(#problemas:target) .menu-item[href="#problemas"],
 body:has(#problemas :target) .menu-item[href="#problemas"],
 body:has(#perfil-administrador:target) .menu-item[href="#empresas"],
+body:has(#editar-perfil:target) .menu-item[href="#empresas"],
+body:has(#alterar-senha:target) .menu-item[href="#empresas"],
 body:not(:has(:target)) .menu-item[href="#empresas"] {
     background-color: #cedede;
     color: var(--cor-primaria);
@@ -113,13 +110,21 @@ body:not(:has(:target)) .menu-item[href="#empresas"] {
 }
  
 /* Perfil do administrador (parte inferior da sidebar) */
-.perfil-admin {
+.perfil-barra {
     margin-top: auto;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px 20px;
     border-top: 1px solid var(--cor-borda);
+    padding-right: 14px;
+}
+
+.perfil-admin {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 12px 16px 20px;
     text-decoration: none;
     color: var(--cor-texto);
     transition: background-color 0.2s ease;
@@ -187,7 +192,9 @@ body:not(:has(:target)) .menu-item[href="#empresas"] {
 
 /* Página padrão (Empresas) quando nenhuma hash está ativa */
 body:not(:has(:target)) #empresas,
-body:has(#perfil-administrador:target) #empresas {
+body:has(#perfil-administrador:target) #empresas,
+body:has(#editar-perfil:target) #empresas,
+body:has(#alterar-senha:target) #empresas {
     display: block;
 }
  
@@ -257,13 +264,31 @@ body:has(#perfil-administrador:target) #empresas {
     color: #fff;
 }
 
-.botao-sair{
-    background-color: var(--cor-perigo);
-    color:#fff;
+.botao-sair {
+    background-color: transparent;
+    color: var(--cor-texto);
+    border: 1px solid var(--cor-texto);
+    padding: 4px 10px;
+    font-size: 12px;
+    flex-shrink: 0;
 }
 
 .botao-sair:hover {
-    opacity: 0.85;
+    background-color: var(--cor-fundo);
+}
+
+.botao-secundario {
+    background-color: transparent;
+    color: var(--cor-primaria);
+    border: 1px solid var(--cor-primaria);
+}
+
+.botao-secundario:hover {
+    background-color: var(--cor-fundo);
+}
+
+.botao-senha {
+    align-self: flex-start;
 }
 
 .header-conteudo{
