@@ -33,6 +33,11 @@ body {
     border-right: 1px solid var(--cor-borda);
     display: flex;
     flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    align-self: flex-start;
+    overflow-y: auto;
 }
  
 .sidebar-logo {
@@ -99,6 +104,7 @@ body:has(#metas:target) .menu-item[href="#metas"],
 body:has(#metas :target) .menu-item[href="#metas"],
 body:has(#problemas:target) .menu-item[href="#problemas"],
 body:has(#problemas :target) .menu-item[href="#problemas"],
+body:has(#perfil-administrador:target) .menu-item[href="#empresas"],
 body:not(:has(:target)) .menu-item[href="#empresas"] {
     background-color: #cedede;
     color: var(--cor-primaria);
@@ -106,6 +112,62 @@ body:not(:has(:target)) .menu-item[href="#empresas"] {
     font-weight: bold;
 }
  
+/* Perfil do administrador (parte inferior da sidebar) */
+.perfil-admin {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--cor-borda);
+    text-decoration: none;
+    color: var(--cor-texto);
+    transition: background-color 0.2s ease;
+}
+
+.perfil-admin:hover {
+    background-color: var(--cor-fundo);
+}
+
+.perfil-foto {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--cor-borda);
+}
+
+.perfil-foto img,
+.perfil-foto-grande img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.perfil-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.perfil-nome {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.perfil-email {
+    font-size: 11px;
+    opacity: 0.75;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* Conteúdo */
 .conteudo {
     flex: 1;
@@ -124,7 +186,8 @@ body:not(:has(:target)) .menu-item[href="#empresas"] {
 }
 
 /* Página padrão (Empresas) quando nenhuma hash está ativa */
-body:not(:has(:target)) #empresas {
+body:not(:has(:target)) #empresas,
+body:has(#perfil-administrador:target) #empresas {
     display: block;
 }
  
@@ -359,6 +422,66 @@ td.coluna-acao {
     font-size: 14px;
     color: var(--cor-texto);
     word-break: break-word;
+}
+
+/* Modal de perfil do administrador */
+.modal-perfil {
+    max-width: 420px;
+}
+
+.perfil-modal-conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.perfil-foto-grande {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--cor-borda);
+    margin-bottom: 8px;
+}
+
+.perfil-modal-nome {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.perfil-modal-email {
+    font-size: 14px;
+    opacity: 0.75;
+}
+
+.perfil-empresas {
+    width: 100%;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--cor-borda);
+    text-align: left;
+}
+
+.perfil-empresas h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.lista-empresas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+}
+
+.lista-empresas li {
+    background-color: #cedede;
+    color: var(--cor-primaria);
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 999px;
 }
 
 .modal h2 {
