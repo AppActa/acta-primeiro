@@ -6,7 +6,7 @@ import br.com.acta.utils.Conexao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map; // NOVO
+import java.util.Map;
 
 public class EnderecoDAO implements MetodosCrud<Endereco> {
 
