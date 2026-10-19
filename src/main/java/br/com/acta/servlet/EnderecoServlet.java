@@ -84,7 +84,7 @@ public class EnderecoServlet extends HttpServlet {
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
-            enviarPaginaCerta(req, resp);
+            buscaFiltrada(req, resp);
             return;
         }
 
@@ -97,6 +97,19 @@ public class EnderecoServlet extends HttpServlet {
 
         preencherNomesFk(List.of(endereco));
         req.setAttribute("enderecoList", List.of(endereco));
+        req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
+    }
+
+    private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String busca = req.getParameter("busca");
+        String estado = req.getParameter("estado");
+        String cidade = req.getParameter("cidade");
+        String ordem = req.getParameter("ordem");
+        String direcao = req.getParameter("direcao");
+
+        List<Endereco> lista = DAO.buscaFiltrada(busca, estado, cidade, ordem, direcao);
+
+        req.setAttribute("enderecoList", lista);
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
 
