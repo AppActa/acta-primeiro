@@ -6,6 +6,7 @@ import br.com.acta.utils.Conexao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map; // NOVO
 
 public class EnderecoDAO implements MetodosCrud<Endereco> {
 
@@ -75,6 +76,51 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
 
             while (rs.next()) {
                 lista.add(mapearEndereco(rs));
+            }
+            return lista;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Endereco> buscaFiltrada(String busca, String estado, String cidade, String ordem, String direcao) {
+        List<Endereco> lista = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM vw_endereco WHERE 1=1");
+
+        boolean temBusca = busca != null && !busca.isBlank();
+        boolean temEstado = estado != null && !estado.isBlank();
+        boolean temCidade = cidade != null && !cidade.isBlank();
+
+        String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
+        boolean temOrdem = colunaOrdem != null;
+
+        if (temBusca) sql.append(" AND (rua ILIKE ? OR bairro ILIKE ? OR cep ILIKE ? OR nome_empresa ILIKE ?)");
+        if (temEstado) sql.append(" AND estado = ?");
+        if (temCidade) sql.append(" AND cidade = ?");
+        if (temOrdem) {
+            String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
+            sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
+        }
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            if (temBusca) {
+                String termo = "%" + busca.trim() + "%";
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+            }
+            if (temEstado) pstmt.setString(i++, estado);
+            if (temCidade) pstmt.setString(i++, cidade.trim());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearEndereco(rs));
+                }
             }
             return lista;
 
@@ -160,5 +206,14 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         endereco.setId_empresa(rs.getLong("id_empresa"));
         return endereco;
     }
+
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "rua", "rua",
+            "bairro", "bairro",
+            "cidade", "cidade",
+            "estado", "estado",
+            "cep", "cep",
+            "empresa", "nome_empresa"
+    );
 
 }
