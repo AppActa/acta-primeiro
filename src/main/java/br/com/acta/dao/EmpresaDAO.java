@@ -11,11 +11,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Map;
 
 import br.com.acta.enums.Status;
 import br.com.acta.enums.TamanhoEmpresa;
 import br.com.acta.model.Empresa;
 import br.com.acta.utils.Conexao;
+
+import javax.xml.transform.Result;
+
 public class EmpresaDAO implements MetodosCrud<Empresa> {
 
     //INSERT
@@ -75,8 +79,8 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String sql = "SELECT * FROM empresa";
 
         try (Connection conn = Conexao.conectar();
-        Statement pstmt = conn.createStatement();
-        ResultSet rs = pstmt.executeQuery(sql)) {
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()){
                 empresas.add(mapearEmpresa(rs));
@@ -84,6 +88,67 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             return empresas;
 
         } catch(SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Empresa> buscaFiltrada(String busca, String setor, Status status, TamanhoEmpresa tamanho, String ordem, String direcao) {
+        List<Empresa> empresas = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM empresa WHERE 1=1");
+
+        boolean temBusca = busca != null && !busca.isBlank();
+        boolean temSetor = setor != null && !busca.isBlank();
+        boolean temStatus = status != null;
+        boolean temTamanho = tamanho != null;
+        String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
+        boolean temOrdem = colunaOrdem != null;
+
+        if (temBusca) sql.append(" AND nome ILIKE ?");
+        if (temSetor) sql.append(" AND setor ILIKE ?");
+        if (temStatus) sql.append(" AND status = ?");
+        if  (temTamanho) sql.append(" AND tamanho = ?");
+        if (temOrdem) {
+            String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
+            sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
+        }
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            if (temBusca) {
+                String termo = "%" + busca.trim() + "%";
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+            }
+            if (temStatus) pstmt.setString(i++, status.name());
+            if (temTamanho) pstmt.setString(i++, tamanho.name());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    empresas.add(mapearEmpresa(rs));
+                }
+            } return empresas;
+
+        } catch(SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> buscarSetor() {
+        List<String> setores = new ArrayList<>();
+        String sql = "SELECT DISTINCT setor FROM empresa ORDER BY setor;";
+
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                setores.add(rs.getString("setor"));
+            }
+            return setores;
+
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -154,4 +219,30 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         return empresa;
     }
 
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "nome", "nome",
+            "setor", "setor",
+            "status", "status",
+            "tamanho", "tamanho"
+    );
+
+    public String buscarSetorExistente(String setor) {
+        String sql = "SELECT setor FROM empresa WHERE LOWER(setor) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, setor);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs. next()) {
+                    return rs.getString("setor");
+                }
+                return null;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

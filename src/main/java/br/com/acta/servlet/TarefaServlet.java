@@ -1,9 +1,7 @@
 package br.com.acta.servlet;
 
 import br.com.acta.dao.TarefaDAO;
-import br.com.acta.dao.ColaboradorDAO;
 import br.com.acta.model.Tarefa;
-import br.com.acta.model.Colaborador;
 import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
 import jakarta.servlet.RequestDispatcher;
@@ -22,7 +20,6 @@ public class TarefaServlet extends HttpServlet {
     private static final String PAGINA_TAREFA = "/tarefa.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final TarefaDAO DAO = new TarefaDAO();
-    private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -95,7 +92,6 @@ public class TarefaServlet extends HttpServlet {
             return;
         }
 
-        preencherNomesFk(List.of(tarefa));
         req.setAttribute("tarefaList", List.of(tarefa));
         req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
@@ -137,21 +133,8 @@ public class TarefaServlet extends HttpServlet {
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Tarefa> tarefas = DAO.buscar();
-        preencherNomesFk(tarefas);
 
         req.setAttribute("tarefaList", tarefas);
         req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
-
-    private void preencherNomesFk(List<Tarefa> tarefas) {
-        for (Tarefa tarefa : tarefas) {
-            Long idColaborador = tarefa.getId_colaborador();
-            Colaborador colaborador = COLABORADOR_DAO.buscar(idColaborador);
-
-            if (colaborador != null) {
-                tarefa.setNomeColaborador(colaborador.getNome());
-            }
-        }
-    }
-
 }

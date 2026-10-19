@@ -18,8 +18,8 @@ public class Meta {
     private OffsetDateTime criando_em;
     private Long id_ciclo;
     private long id_plano_acao;
-    private String nomeCiclo;
-    private String nomePlanoAcao;
+    private String nome_ciclo;
+    private String nome_plano_acao;
 
     public Meta() {}
 
@@ -128,19 +128,19 @@ public class Meta {
         this.id_plano_acao = id_plano_acao;
     }
 
-    public String getNomeCiclo() {
-        return nomeCiclo;
+    public String getNome_ciclo() {
+        return nome_ciclo;
     }
 
-    public void setNomeCiclo(String nomeCiclo) {
-        this.nomeCiclo = nomeCiclo;
+    public void setNome_ciclo(String nome_ciclo) {
+        this.nome_ciclo = nome_ciclo;
     }
 
-    public String getNomePlanoAcao() {
-        return nomePlanoAcao;
+    public String getNome_plano_acao() {
+        return nome_plano_acao;
     }
 
-    public void setNomePlanoAcao(String nomePlanoAcao) {
-        this.nomePlanoAcao = nomePlanoAcao;
+    public void setNome_plano_acao(String nome_plano_acao) {
+        this.nome_plano_acao = nome_plano_acao;
     }
 }

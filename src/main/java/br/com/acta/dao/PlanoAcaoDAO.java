@@ -43,7 +43,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
 
     @Override
     public PlanoAcao buscar(Long id) {
-        String sql = "SELECT * FROM plano_acao WHERE id_plano_acao = ?";
+        String sql = "SELECT * FROM vw_plano_acao WHERE id_plano_acao = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -65,7 +65,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
     @Override
     public List<PlanoAcao> buscar() {
         List<PlanoAcao> planosAcao = new ArrayList<>();
-        String sql = "SELECT * FROM plano_acao";
+        String sql = "SELECT * FROM vw_plano_acao";
 
         try (Connection conn = Conexao.conectar();
              Statement stmt = conn.createStatement();
@@ -146,8 +146,8 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         planoAcao.setDescricao(rs.getString("descricao"));
         planoAcao.setStatus(Situacao.valueOf(rs.getString("status")));
         planoAcao.setPrioridade(Intensidade.valueOf(rs.getString("prioridade")));
-        planoAcao.setId_ciclo((rs.getLong("id_ciclo")));
-        planoAcao.setId_criador(rs.getLong("id_criador"));
+        planoAcao.setNome_ciclo(rs.getString("nome_ciclo"));
+        planoAcao.setNome_criador(rs.getString("nome_criador"));
         return planoAcao;
     }
 }

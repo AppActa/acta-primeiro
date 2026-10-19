@@ -1,11 +1,7 @@
 package br.com.acta.servlet;
 
 import br.com.acta.dao.CicloDAO;
-import br.com.acta.dao.EmpresaDAO;
-import br.com.acta.dao.ColaboradorDAO;
 import br.com.acta.model.Ciclo;
-import br.com.acta.model.Empresa;
-import br.com.acta.model.Colaborador;
 import br.com.acta.enums.EtapaCiclo;
 import br.com.acta.enums.Situacao;
 import jakarta.servlet.RequestDispatcher;
@@ -24,8 +20,6 @@ public class CicloServlet extends HttpServlet {
     private static final String PAGINA_CICLO = "/ciclo.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final CicloDAO cicloDAO = new CicloDAO();
-    private final EmpresaDAO EMPRESA_DAO = new EmpresaDAO();
-    private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -100,7 +94,6 @@ public class CicloServlet extends HttpServlet {
             return;
         }
 
-        preencherNomesFk(List.of(ciclo));
         req.setAttribute("cicloList", List.of(ciclo));
         req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
     }
@@ -144,19 +137,8 @@ public class CicloServlet extends HttpServlet {
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Ciclo> ciclos = cicloDAO.buscar();
-        preencherNomesFk(ciclos);
 
         req.setAttribute("cicloList", ciclos);
         req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
-    }
-
-    private void preencherNomesFk(List<Ciclo> ciclos) {
-        for (Ciclo ciclo : ciclos) {
-            Empresa empresa = EMPRESA_DAO.buscar(ciclo.getId_empresa());
-            if (empresa != null) ciclo.setNomeEmpresa(empresa.getNome());
-
-            Colaborador responsavel = COLABORADOR_DAO.buscar(ciclo.getId_responsavel());
-            if (responsavel != null) ciclo.setNomeResponsavel(responsavel.getNome());
-        }
     }
 }

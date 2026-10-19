@@ -15,8 +15,8 @@ public class PlanoAcao {
     private Intensidade prioridade;
     private Long id_ciclo;
     private Long id_criador;
-    private String nomeCiclo;
-    private String nomeCriador;
+    private String nome_ciclo;
+    private String nome_criador;
 
     //Construtores
 
@@ -97,15 +97,15 @@ public class PlanoAcao {
         this.id_criador = id_criador;
     }
 
-    public String getNomeCiclo() {return nomeCiclo;}
+    public String getNome_ciclo() {return nome_ciclo;}
 
-    public void setNomeCiclo(String nomeCiclo) {this.nomeCiclo = nomeCiclo;}
+    public void setNome_ciclo(String nome_ciclo) {this.nome_ciclo = nome_ciclo;}
 
-    public String getNomeCriador() {
-        return nomeCriador;
+    public String getNome_criador() {
+        return nome_criador;
     }
 
-    public void setNomeCriador(String nomeCriador) {
-        this.nomeCriador = nomeCriador;
+    public void setNome_criador(String nome_criador) {
+        this.nome_criador = nome_criador;
     }
 }

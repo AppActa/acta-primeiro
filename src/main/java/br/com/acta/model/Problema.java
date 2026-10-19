@@ -19,9 +19,9 @@ public class Problema {
     private Long id_ciclo;
     private Long id_plano_acao;
     private Long id_colaborador;
-    private String nomeCiclo;
-    private String nomePlanoAcao;
-    private String nomeColaborador;
+    private String nome_ciclo;
+    private String nome_plano_acao;
+    private String nome_colaborador;
 
     public Problema() {}
 
@@ -143,27 +143,27 @@ public class Problema {
         this.id_colaborador = id_colaborador;
     }
 
-    public String getNomeCiclo() {
-        return nomeCiclo;
+    public String getNome_ciclo() {
+        return nome_ciclo;
     }
 
-    public void setNomeCiclo(String nomeCiclo) {
-        this.nomeCiclo = nomeCiclo;
+    public void setNome_ciclo(String nome_ciclo) {
+        this.nome_ciclo = nome_ciclo;
     }
 
-    public String getNomePlanoAcao() {
-        return nomePlanoAcao;
+    public String getNome_plano_acao() {
+        return nome_plano_acao;
     }
 
-    public void setNomePlanoAcao(String nomePlanoAcao) {
-        this.nomePlanoAcao = nomePlanoAcao;
+    public void setNome_plano_acao(String nome_plano_acao) {
+        this.nome_plano_acao = nome_plano_acao;
     }
 
-    public String getNomeColaborador() {
-        return nomeColaborador;
+    public String getNome_colaborador() {
+        return nome_colaborador;
     }
 
-    public void setNomeColaborador(String nomeColaborador) {
-        this.nomeColaborador = nomeColaborador;
+    public void setNome_colaborador(String nome_colaborador) {
+        this.nome_colaborador = nome_colaborador;
     }
 }
