@@ -8,6 +8,7 @@ import br.com.acta.utils.PasswordUtils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ColaboradorDAO implements MetodosCrud<Colaborador> {
 
@@ -50,7 +51,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
     // READ
     @Override
     public Colaborador buscar(Long id) {
-        String sql = "SELECT * FROM colaborador WHERE id_colaborador = ?;";
+        String sql = "SELECT * FROM vw_colaborador WHERE id_colaborador = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -88,26 +89,72 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
-    public Colaborador autenticar(String email, String senha) {
-        String sql = "SELECT * FROM vw_colaborador WHERE email = ?";
+    public List<Colaborador> buscaFiltrada(String busca, Status status, String area, Boolean permissaoGestor, Date dataInicial, Date dataFinal, String ordem, String direcao) {
+        List<Colaborador> colaboradores = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM vw_colaborador WHERE 1=1");
+
+        boolean temBusca = busca != null && !busca.isBlank();
+        boolean temStatus = status != null;
+        boolean temArea = area != null && !area.isBlank();
+        boolean temGestor = permissaoGestor != null;
+        boolean temDataInicial = dataInicial != null;
+        boolean temDataFinal = dataFinal != null;
+
+        String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
+        boolean temOrdem = colunaOrdem != null;
+
+        if (temBusca) sql.append(" AND (nome ILIKE ? OR sobrenome ILIKE ? OR email ILIKE ?)");
+        if (temStatus) sql.append(" AND status = ?");
+        if (temArea) sql.append(" AND area = ?");
+        if (temGestor) sql.append(" AND permissao_gestor = ?");
+        if (temDataInicial) sql.append(" AND dt_contratacao >= ?");
+        if (temDataFinal) sql.append(" AND dt_contratacao <= ?");
+        if (temOrdem) {
+            String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
+            sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
+        }
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
-            pstmt.setString(1, email);
+            int i = 1;
+            if (temBusca) {
+                String termo = "%" + busca.trim() + "%";
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+            }
+            if (temStatus) pstmt.setString(i++, status.name());
+            if (temArea) pstmt.setString(i++, area);
+            if (temGestor) pstmt.setBoolean(i++, permissaoGestor);
+            if (temDataInicial) pstmt.setDate(i++, dataInicial);
+            if (temDataFinal) pstmt.setDate(i++, dataFinal);
 
             try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    Colaborador colaborador = mapearColaborador(rs);
-
-                    if (PasswordUtils.verificarSenha(senha, colaborador.getSenha())) {
-                        return colaborador;
-                    }
+                while (rs.next()) {
+                    colaboradores.add(mapearColaborador(rs));
                 }
-                return null;
-            }
+            } return colaboradores;
 
-        } catch (Exception e) {
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> buscarAreas() {
+        List<String> areas = new ArrayList<>();
+        String sql = "SELECT DISTINCT area FROM colaborador ORDER BY area;";
+
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                areas.add(rs.getString("area"));
+            }
+            return areas;
+
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -145,47 +192,6 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
-    public int atualizarSenha(String email, String senhaAntiga, String senhaNova) {
-        String sqlBuscar = "SELECT senha FROM colaborador WHERE email = ?;";
-        String sqlAtualizar = "UPDATE colaborador SET senha = ? WHERE email = ?;;";
-
-        try (Connection conn = Conexao.conectar()) {
-            // buscar hash atual
-            String hashAtual;
-            try (PreparedStatement pstmtBuscar = conn.prepareStatement(sqlBuscar)) {
-                pstmtBuscar.setString(1, email);
-                try (ResultSet rs = pstmtBuscar.executeQuery()) {
-                    if (rs.next()) {
-                        hashAtual = rs.getString("senha");
-                    } else {
-                        return 0; // usuário não encontrado
-                    }
-                }
-            }
-
-            // conferir se a senha antiga bate com o hash salvo
-            if (!PasswordUtils.verificarSenha(senhaAntiga, hashAtual)) {
-                return 0;
-            }
-
-            // gera novo hash e atualiza
-            try (PreparedStatement pstmtAtualizar = conn.prepareStatement(sqlAtualizar)) {
-                pstmtAtualizar.setString(1, PasswordUtils.hashSenha(senhaNova));
-                pstmtAtualizar.setString(2, email);
-
-                if (pstmtAtualizar.executeUpdate() > 0) return 1;
-                else return 0;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
     // DELETE
     @Override
     public int excluir(Long id) {
@@ -207,6 +213,74 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             return -1;
         }
     }
+
+    // PASSWORD
+    public Colaborador autenticar(String email, String senha) {
+        String sql = "SELECT * FROM vw_colaborador WHERE email = ?";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, email);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Colaborador colaborador = mapearColaborador(rs);
+
+                    if (PasswordUtils.verificarSenha(senha, colaborador.getSenha())) {
+                        return colaborador;
+                    }
+                }
+                return null;
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int atualizarSenha(String email, String senhaAntiga, String senhaNova) {
+        String sqlBuscar = "SELECT senha FROM colaborador WHERE email = ?;";
+        String sqlAtualizar = "UPDATE colaborador SET senha = ? WHERE email = ?;;";
+
+        try (Connection conn = Conexao.conectar()) {
+            // Buscar hash atual
+            String hashAtual;
+            try (PreparedStatement pstmtBuscar = conn.prepareStatement(sqlBuscar)) {
+                pstmtBuscar.setString(1, email);
+                try (ResultSet rs = pstmtBuscar.executeQuery()) {
+                    if (rs.next()) {
+                        hashAtual = rs.getString("senha");
+                    } else {
+                        return 0; // Usuário não encontrado
+                    }
+                }
+            }
+
+            // Conferir se a senha antiga bate com o hash salvo
+            if (!PasswordUtils.verificarSenha(senhaAntiga, hashAtual)) {
+                return 0;
+            }
+
+            // Gera novo hash e atualiza
+            try (PreparedStatement pstmtAtualizar = conn.prepareStatement(sqlAtualizar)) {
+                pstmtAtualizar.setString(1, PasswordUtils.hashSenha(senhaNova));
+                pstmtAtualizar.setString(2, email);
+
+                if (pstmtAtualizar.executeUpdate() > 0) return 1;
+                else return 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return codigoDeErro(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    // UTILITÁRIOS
 
     // SQLState "23xxx" = violação de integridade (e-mail/CPF duplicado, FK, NOT NULL).
     private static int codigoDeErro(SQLException e) {
@@ -236,4 +310,37 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         return colaborador;
     }
 
+    // Whitelist de ordenação
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "nome", "nome",
+            "sobrenome", "sobrenome",
+            "email", "email",
+            "area", "area",
+            "cargo", "cargo",
+            "status", "status",
+            "gestor", "permissao_gestor",
+            "data", "dt_contratacao",
+            "empresa", "nome_empresa"
+    );
+
+    // Identifica áreas repetidas
+    public String buscarAreaExistente(String area) {
+        String sql = "SELECT area FROM colaborador WHERE LOWER(area) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, area);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("area");
+                }
+                return null;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
