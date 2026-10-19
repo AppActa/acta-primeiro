@@ -82,7 +82,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
-            enviarPaginaCerta(req, resp);
+            buscaFiltrada(req, resp); // ALTERADO (antes: enviarPaginaCerta(req, resp);)
             return;
         }
 
@@ -94,6 +94,27 @@ public class LicoesAprendidasServlet extends HttpServlet {
         }
 
         req.setAttribute("licoesAprendidasList", List.of(licoesAprendidas));
+        req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
+    }
+
+    private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String busca = req.getParameter("busca");
+        String faseParam = req.getParameter("fase");
+        String severidadeParam = req.getParameter("severidade");
+        String area = req.getParameter("area");
+        String categoria = req.getParameter("categoria");
+        String ordem = req.getParameter("ordem");
+        String direcao = req.getParameter("direcao");
+
+        EtapaCiclo fase = null;
+        if (faseParam != null && !faseParam.isBlank()) fase = EtapaCiclo.valueOf(faseParam);
+
+        Intensidade severidade = null;
+        if (severidadeParam != null && !severidadeParam.isBlank()) severidade = Intensidade.valueOf(severidadeParam);
+
+        List<LicoesAprendidas> licoesAprendidas = DAO.buscaFiltrada(busca, fase, severidade, area, categoria, ordem, direcao);
+
+        req.setAttribute("licoesAprendidasList", licoesAprendidas);
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
