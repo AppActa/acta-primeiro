@@ -1,9 +1,7 @@
 package br.com.acta.servlet;
 
 import br.com.acta.dao.ColaboradorDAO;
-import br.com.acta.dao.EmpresaDAO;
 import br.com.acta.model.Colaborador;
-import br.com.acta.model.Empresa;
 import br.com.acta.enums.Status;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -70,7 +68,7 @@ public class ColaboradorServlet extends HttpServlet {
         colaborador.setSobrenome(req.getParameter("sobrenome"));
         colaborador.setPermissao_gestor(Boolean.parseBoolean(req.getParameter("permissao_gestor")));
         colaborador.setStatus(Status.valueOf(req.getParameter("status")));
-        colaborador.setArea(req.getParameter("area"));
+        colaborador.setArea(normalizarArea(req.getParameter("area")));
         colaborador.setCargo(req.getParameter("cargo"));
         colaborador.setDt_contratacao(Date.valueOf(req.getParameter("dt_contratacao")));
         colaborador.setEmail(req.getParameter("email"));
@@ -88,8 +86,8 @@ public class ColaboradorServlet extends HttpServlet {
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
 
-        if (id == null) {
-            enviarPaginaCerta(req, resp);
+        if (id == null || id.isBlank()) {
+            buscaFiltrada(req, resp);
             return;
         }
 
@@ -101,6 +99,45 @@ public class ColaboradorServlet extends HttpServlet {
         }
 
         req.setAttribute("colaboradorList", List.of(colaborador));
+        req.setAttribute("areaList", DAO.buscarAreas());
+        req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
+    }
+
+    private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String busca = req.getParameter("busca");
+        String statusParam = req.getParameter("status");
+        String area = req.getParameter("area");
+        String gestorParam = req.getParameter("gestor");
+        String dataInicialParam = req.getParameter("dataInicial");
+        String dataFinalParam = req.getParameter("dataFinal");
+        String ordem = req.getParameter("ordem");
+        String direcao = req.getParameter("direcao");
+
+        Status status = null;
+        if (statusParam != null && !statusParam.isBlank()) {
+            status = Status.valueOf(statusParam);
+        }
+
+        Boolean permissaoGestor = null;
+        if (gestorParam != null && !gestorParam.isBlank()) {
+            permissaoGestor = Boolean.parseBoolean(gestorParam);
+        }
+
+        Date dataInicial = null;
+        if (dataInicialParam != null && !dataInicialParam.isBlank()) {
+            dataInicial = Date.valueOf(dataInicialParam);
+        }
+
+        Date dataFinal = null;
+        if (dataFinalParam != null && !dataFinalParam.isBlank()) {
+            dataFinal = Date.valueOf(dataFinalParam);
+        }
+
+        List<Colaborador> colaboradores = DAO.buscaFiltrada(busca, status, area, permissaoGestor,
+                dataInicial, dataFinal, ordem, direcao);
+
+        req.setAttribute("colaboradorList", colaboradores);
+        req.setAttribute("areaList", DAO.buscarAreas());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 
@@ -113,7 +150,7 @@ public class ColaboradorServlet extends HttpServlet {
         colaborador.setSobrenome(req.getParameter("sobrenome"));
         colaborador.setPermissao_gestor(Boolean.parseBoolean(req.getParameter("permissao_gestor")));
         colaborador.setStatus(Status.valueOf(req.getParameter("status")));
-        colaborador.setArea(req.getParameter("area"));
+        colaborador.setArea(normalizarArea(req.getParameter("area")));
         colaborador.setCargo(req.getParameter("cargo"));
         colaborador.setDt_contratacao(Date.valueOf(req.getParameter("dt_contratacao")));
         colaborador.setEmail(req.getParameter("email"));
@@ -136,6 +173,12 @@ public class ColaboradorServlet extends HttpServlet {
     }
 
     // UTILITARIOS
+    private String normalizarArea(String area) {
+        String limpa = area.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarAreaExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
     private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
         req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
         req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -147,6 +190,7 @@ public class ColaboradorServlet extends HttpServlet {
         List<Colaborador> colaboradores = DAO.buscar();
 
         req.setAttribute("colaboradorList", colaboradores);
+        req.setAttribute("areaList", DAO.buscarAreas());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 }
