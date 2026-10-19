@@ -46,7 +46,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
     // READ
     @Override
     public Endereco buscar(Long id) {
-        String sql = "SELECT * FROM endereco WHERE id_endereco = ?;";
+        String sql = "SELECT * FROM vw_endereco WHERE id_endereco = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -68,7 +68,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
     @Override
     public List<Endereco> buscar() {
         List<Endereco> lista = new ArrayList<>();
-        String sql = "SELECT * FROM endereco;";
+        String sql = "SELECT * FROM vw_endereco;";
 
         try (Connection conn = Conexao.conectar();
              Statement stmt = conn.createStatement();
@@ -203,7 +203,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         endereco.setNumero(rs.getString("numero"));
         endereco.setComplemento(rs.getString("complemento"));
         endereco.setUnidade(rs.getString("unidade"));
-        endereco.setId_empresa(rs.getLong("id_empresa"));
+        endereco.setNome_empresa(rs.getString("nome_empresa"));
         return endereco;
     }
 
