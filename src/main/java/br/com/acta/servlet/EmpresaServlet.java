@@ -64,7 +64,7 @@ public class EmpresaServlet extends HttpServlet {
         Empresa empresa = new Empresa();
 
         empresa.setNome(req.getParameter("nome"));
-        empresa.setSetor(req.getParameter("setor"));
+        empresa.setSetor(normalizarSetor(req.getParameter("setor")));
         empresa.setCnpj(req.getParameter("cnpj"));
         empresa.setStatus(Status.valueOf(req.getParameter("status")));
         empresa.setTamanho(TamanhoEmpresa.valueOf(req.getParameter("tamanho")));
@@ -91,6 +91,7 @@ public class EmpresaServlet extends HttpServlet {
         }
 
         req.setAttribute("empresaList", List.of(empresa));
+        req.setAttribute("setorList", DAO.buscarSetor());
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req,resp);
     }
 
@@ -113,6 +114,7 @@ public class EmpresaServlet extends HttpServlet {
 
         List<Empresa> empresas = DAO.buscaFiltrada(busca, setor, status, tamanho, ordem, direcao);
         req.setAttribute("empresaList", empresas);
+        req.setAttribute("setorList", DAO.buscarSetor());
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req,resp);
     }
 
@@ -122,7 +124,7 @@ public class EmpresaServlet extends HttpServlet {
 
         empresa.setId_empresa(id);
         empresa.setNome(req.getParameter("nome"));
-        empresa.setSetor(req.getParameter("setor"));
+        empresa.setSetor(normalizarSetor(req.getParameter("setor")));
         empresa.setCnpj(req.getParameter("cnpj"));
         empresa.setStatus(Status.valueOf(req.getParameter("status")));
         empresa.setTamanho(TamanhoEmpresa.valueOf(req.getParameter("tamanho")));
@@ -142,7 +144,13 @@ public class EmpresaServlet extends HttpServlet {
         else enviarErro(req, resp, "A empresa não pode ser excluída");
     }
 
-        //UTILITARIOS
+    //UTILITARIOS
+    private String normalizarSetor(String setor) {
+        String limpa = setor.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarSetorExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
     private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
         req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
         req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE,HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -154,6 +162,7 @@ public class EmpresaServlet extends HttpServlet {
         List<Empresa> empresas = DAO.buscar();
 
         req.setAttribute("empresaList", empresas);
+        req.setAttribute("setorList", DAO.buscarSetor());
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req, resp);
     }
 }
