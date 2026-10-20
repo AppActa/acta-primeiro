@@ -15,7 +15,7 @@ public class Meta {
     private Intensidade prioridade;
     private Date prazo;
     private StatusMeta status;
-    private OffsetDateTime criando_em;
+    private OffsetDateTime criado_em;
     private Long id_ciclo;
     private long id_plano_acao;
     private String nome_ciclo;
@@ -23,19 +23,19 @@ public class Meta {
 
     public Meta() {}
 
-    public Meta(String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, long id_plano_acao) {
+    public Meta(String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criado_em, Long id_ciclo, long id_plano_acao) {
         this.meta = meta;
         this.descricao_meta = descricao_meta;
         this.objetivo = objetivo;
         this.prioridade = prioridade;
         this.prazo = prazo;
         this.status = status;
-        this.criando_em = criando_em;
+        this.criado_em = criado_em;
         this.id_ciclo = id_ciclo;
         this.id_plano_acao = id_plano_acao;
     }
 
-    public Meta(Long id_meta, String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, long id_plano_acao) {
+    public Meta(Long id_meta, String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criado_em, Long id_ciclo, long id_plano_acao) {
         this.id_meta = id_meta;
         this.meta = meta;
         this.descricao_meta = descricao_meta;
@@ -43,7 +43,7 @@ public class Meta {
         this.prioridade = prioridade;
         this.prazo = prazo;
         this.status = status;
-        this.criando_em = criando_em;
+        this.criado_em = criado_em;
         this.id_ciclo = id_ciclo;
         this.id_plano_acao = id_plano_acao;
     }
@@ -104,12 +104,12 @@ public class Meta {
         this.status = status;
     }
 
-    public OffsetDateTime getCriando_em() {
-        return criando_em;
+    public OffsetDateTime getCriado_em() {
+        return criado_em;
     }
 
-    public void setCriando_em(OffsetDateTime criando_em) {
-        this.criando_em = criando_em;
+    public void setCriado_em(OffsetDateTime criado_em) {
+        this.criado_em = criado_em;
     }
 
     public Long getId_ciclo() {
