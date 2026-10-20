@@ -10,17 +10,46 @@
 <body>
     <main class="login-pagina">
         <div class="login-cartao">
+            <!-- Coluna da esquerda -->
             <aside class="login-visual">
                 <img src="assests/logo_compacta_escura.svg" alt="" class="login-logo">
                 <p class="login-slogan">
-                    Acta, seu app de PDCA
+                    ACTA, seu app de PDCA
                     <strong>
                         O ciclo de melhoria começa aqui!
                     </strong>
                 </p>
             </aside>
-            <section class="login-area">
 
+            <!-- Coluna da direita -->
+            <section class="login-area">
+                <h1>Login</h1>
+                <p class="login-descricao"> 
+                    Junte-se ao ACTA e dê início a um novo ciclo em sua carreira por meio da metodologia PDCA
+                </p>
+
+                <form class="login-form" method="post" action="#">
+                    <div class="login-campo">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" name="email" maxlength="80" autocomplete="email" required>
+                    </div>
+
+                    <div class="login-campo">
+                        <label for="login-senha">Senha</label>
+                        <input type="password" id="login-senha" class="senha" maxlength="100" autocomplete="current-password" required>
+                    </div>
+                    
+                    <button type="submit" class="login-botao">Concluído</button>
+                </form>
+
+                <div class="login-divisor"><span>ou</span></div>
+
+                <a href="#" class="login-google">
+                    <img src="assests/logo_google.svg" alt="">
+                    Continuar com Google
+                </a>
+
+                <a href="#" class="login-esqueceu">Esqueceu sua senha?</a>
             </section>
         </div>
     </main>
