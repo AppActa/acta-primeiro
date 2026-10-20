@@ -83,7 +83,7 @@ public class CicloServlet extends HttpServlet {
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
-            enviarPaginaCerta(req, resp);
+            buscaFiltrada(req, resp);
             return;
         }
 
@@ -95,6 +95,33 @@ public class CicloServlet extends HttpServlet {
         }
 
         req.setAttribute("cicloList", List.of(ciclo));
+        req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
+    }
+
+    private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String busca = req.getParameter("busca");
+        String etapaParam = req.getParameter("etapa");
+        String statusParam = req.getParameter("status");
+        String dataInicialParam = req.getParameter("dataInicial");
+        String dataFinalParam = req.getParameter("dataFinal");
+        String ordem = req.getParameter("ordem");
+        String direcao = req.getParameter("direcao");
+
+        EtapaCiclo etapa = null;
+        if (etapaParam != null && !etapaParam.isBlank()) etapa = EtapaCiclo.valueOf(etapaParam);
+
+        Situacao status = null;
+        if (statusParam != null && !statusParam.isBlank()) status = Situacao.valueOf(statusParam);
+
+        Date dataInicial = null;
+        if (dataInicialParam != null && !dataInicialParam.isBlank()) dataInicial = Date.valueOf(dataInicialParam);
+
+        Date dataFinal = null;
+        if (dataFinalParam != null && !dataFinalParam.isBlank()) dataFinal = Date.valueOf(dataFinalParam);
+
+        List<Ciclo> ciclos = cicloDAO.buscaFiltrada(busca, etapa, status, dataInicial, dataFinal, ordem, direcao);
+
+        req.setAttribute("cicloList", ciclos);
         req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
     }
 
