@@ -8,6 +8,7 @@ import br.com.acta.utils.Conexao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
 
@@ -76,6 +77,56 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
 
             while (rs.next()) {
                 lista.add(mapearLicoesAprendidas(rs));
+            }
+            return lista;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<LicoesAprendidas> buscaFiltrada(String busca, EtapaCiclo fase, Intensidade severidade, String area, String categoria, String ordem, String direcao) {
+        List<LicoesAprendidas> lista = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM vw_licoes_aprendidas WHERE 1=1");
+
+        boolean temBusca = busca != null && !busca.isBlank();
+        boolean temFase = fase != null;
+        boolean temSeveridade = severidade != null;
+        boolean temArea = area != null && !area.isBlank();
+        boolean temCategoria = categoria != null && !categoria.isBlank();
+
+        String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
+        boolean temOrdem = colunaOrdem != null;
+
+        if (temBusca) sql.append(" AND (titulo ILIKE ? OR aprendizado ILIKE ? OR nome_ciclo ILIKE ?)");
+        if (temFase) sql.append(" AND fase_origem = ?");
+        if (temSeveridade) sql.append(" AND severidade = ?");
+        if (temArea) sql.append(" AND area = ?");
+        if (temCategoria) sql.append(" AND categoria = ?");
+        if (temOrdem) {
+            String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
+            sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
+        }
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            if (temBusca) {
+                String termo = "%" + busca.trim() + "%";
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+            }
+            if (temFase) pstmt.setString(i++, fase.name());
+            if (temSeveridade) pstmt.setString(i++, severidade.name());
+            if (temArea) pstmt.setString(i++, area.trim());
+            if (temCategoria) pstmt.setString(i++, categoria.trim());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearLicoesAprendidas(rs));
+                }
             }
             return lista;
 
@@ -159,5 +210,14 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         licoesAprendidas.setNome_ciclo(rs.getString("nome_ciclo"));
         return licoesAprendidas;
     }
+
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "titulo", "titulo",
+            "area", "area",
+            "categoria", "categoria",
+            "fase", "fase_origem",
+            "severidade", "severidade",
+            "ciclo", "nome_ciclo"
+    );
 
 }
