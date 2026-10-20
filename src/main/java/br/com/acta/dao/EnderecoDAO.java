@@ -67,7 +67,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
 
     @Override
     public List<Endereco> buscar() {
-        List<Endereco> lista = new ArrayList<>();
+        List<Endereco> enderecos = new ArrayList<>();
         String sql = "SELECT * FROM vw_endereco;";
 
         try (Connection conn = Conexao.conectar();
@@ -75,9 +75,9 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                lista.add(mapearEndereco(rs));
+                enderecos.add(mapearEndereco(rs));
             }
-            return lista;
+            return enderecos;
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -85,7 +85,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
     }
 
     public List<Endereco> buscaFiltrada(String busca, String estado, String cidade, String ordem, String direcao) {
-        List<Endereco> lista = new ArrayList<>();
+        List<Endereco> enderecos = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_endereco WHERE 1=1");
 
         boolean temBusca = busca != null && !busca.isBlank();
@@ -119,10 +119,10 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    lista.add(mapearEndereco(rs));
+                    enderecos.add(mapearEndereco(rs));
                 }
             }
-            return lista;
+            return enderecos;
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
