@@ -102,7 +102,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         StringBuilder sql = new StringBuilder("SELECT * FROM empresa WHERE 1=1");
 
         boolean temBusca = busca != null && !busca.isBlank();
-        boolean temSetor = setor != null && !busca.isBlank();
+        boolean temSetor = setor != null && !setor.isBlank();
         boolean temStatus = status != null;
         boolean temTamanho = tamanho != null;
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
