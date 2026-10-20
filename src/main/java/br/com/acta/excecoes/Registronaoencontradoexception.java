@@ -2,9 +2,9 @@ package br.com.acta.excecoes;
 
 // Quando não indentifica o que procurar no banco
 
-public class Registronaoencontradoexception extends RuntimeException {
+public class RegistroNaoEncontradoException extends RuntimeException {
 
-    public Registronaoencontradoexception(String mensagem){
+    public RegistroNaoEncontradoException(String mensagem){
         super(mensagem);
     }
 }
