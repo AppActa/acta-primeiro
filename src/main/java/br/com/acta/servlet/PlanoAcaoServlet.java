@@ -81,7 +81,7 @@ public class PlanoAcaoServlet extends HttpServlet {
         String id = req.getParameter("id");
 
         if (id == null) {
-            enviarPaginaCerta(req, resp);
+            buscaFiltrada(req, resp);
             return;
         }
 
@@ -93,6 +93,25 @@ public class PlanoAcaoServlet extends HttpServlet {
         }
 
         req.setAttribute("planoAcao", List.of(planoAcao));
+        req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
+    }
+
+    private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String busca = req.getParameter("busca");
+        String statusParam = req.getParameter("status");
+        String prioridadeParam = req.getParameter("prioridade");
+        String ordem = req.getParameter("ordem");
+        String direcao = req.getParameter("direcao");
+
+        Situacao status = null;
+        if (statusParam != null && !statusParam.isBlank()) status = Situacao.valueOf(statusParam);
+
+        Intensidade prioridade = null;
+        if (prioridadeParam != null && !prioridadeParam.isBlank()) prioridade = Intensidade.valueOf(prioridadeParam);
+
+        List<PlanoAcao> planosAcoes = DAO.buscaFiltrada(busca, status, prioridade, ordem, direcao);
+
+        req.setAttribute("planoAcaoList", planosAcoes);
         req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
     }
 
