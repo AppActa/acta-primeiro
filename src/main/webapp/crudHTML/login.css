@@ -255,7 +255,7 @@ body {
     color: var(--cor-primaria);
 }
 
-/* para telas pequenas: só o formulário, para não precisar de scroll -*/
+/* só o formulário, para não precisar de scroll em telas pequenas -*/
 @media (max-width: 800px) {
     .login-cartao {
         grid-template-columns: 1fr;
@@ -263,7 +263,6 @@ body {
         max-height: 100%;
     }
 
-    /* Sem espaço para as duas partes: fica só o formulário */
     .login-visual {
         display: none;
     }
