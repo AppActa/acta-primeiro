@@ -9,7 +9,7 @@ import java.sql.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map; // NOVO
+import java.util.Map;
 
 public class CicloDAO implements MetodosCrud<Ciclo> {
 
@@ -85,7 +85,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         }
     }
 
-    public List<Ciclo> buscaFiltrada(String busca, EtapaCiclo etapa, Situacao status, Date dataInicial, Date dataFinal, String ordem, String direcao) {
+    public List<Ciclo> buscaFiltrada(String busca, EtapaCiclo etapa, Situacao status, Date dataInicial, Date dataFinal, Date criadoDe, Date criadoAte, String ordem, String direcao) {
         List<Ciclo> ciclos = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_ciclo WHERE 1=1");
 
@@ -94,6 +94,8 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         boolean temStatus = status != null;
         boolean temDataInicial = dataInicial != null;
         boolean temDataFinal = dataFinal != null;
+        boolean temCriadoDe = criadoDe != null;
+        boolean temCriadoAte = criadoAte != null;
 
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
@@ -103,6 +105,8 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         if (temStatus) sql.append(" AND status = ?");
         if (temDataInicial) sql.append(" AND dt_inicio >= ?");
         if (temDataFinal) sql.append(" AND dt_inicio <= ?");
+        if (temCriadoDe) sql.append(" AND criado_em >= ?::date");
+        if (temCriadoAte) sql.append(" AND criado_em < (?::date + 1)");
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
             sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
@@ -122,6 +126,8 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
             if (temStatus) pstmt.setString(i++, status.name());
             if (temDataInicial) pstmt.setDate(i++, dataInicial);
             if (temDataFinal) pstmt.setDate(i++, dataFinal);
+            if (temCriadoDe) pstmt.setDate(i++, criadoDe);
+            if (temCriadoAte) pstmt.setDate(i++, criadoAte);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -215,6 +221,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
             "status", "status",
             "inicio", "dt_inicio",
             "fim", "dt_fim",
+            "criado", "criado_em",
             "empresa", "nome_empresa",
             "responsavel", "nome_responsavel"
     );
