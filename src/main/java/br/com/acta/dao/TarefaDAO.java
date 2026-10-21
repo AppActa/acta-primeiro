@@ -8,6 +8,7 @@ import br.com.acta.utils.Conexao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class TarefaDAO implements MetodosCrud<Tarefa> {
 
@@ -75,6 +76,55 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
 
             while (rs.next()) {
                 lista.add(mapearTarefa(rs));
+            }
+            return lista;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Tarefa> buscaFiltrada(String busca, Intensidade prioridade, Situacao status, Date dataInicial, Date dataFinal, String ordem, String direcao) {
+        List<Tarefa> lista = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM vw_tarefa WHERE 1=1");
+
+        boolean temBusca = busca != null && !busca.isBlank();
+        boolean temPrioridade = prioridade != null;
+        boolean temStatus = status != null;
+        boolean temDataInicial = dataInicial != null;
+        boolean temDataFinal = dataFinal != null;
+
+        String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
+        boolean temOrdem = colunaOrdem != null;
+
+        if (temBusca) sql.append(" AND (titulo ILIKE ? OR nome_colaborador ILIKE ?)");
+        if (temPrioridade) sql.append(" AND prioridade = ?");
+        if (temStatus) sql.append(" AND status = ?");
+        if (temDataInicial) sql.append(" AND dt_entrega >= ?");
+        if (temDataFinal) sql.append(" AND dt_entrega <= ?");
+        if (temOrdem) {
+            String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
+            sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
+        }
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            if (temBusca) {
+                String termo = "%" + busca.trim() + "%";
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+            }
+            if (temPrioridade) pstmt.setString(i++, prioridade.name());
+            if (temStatus) pstmt.setString(i++, status.name());
+            if (temDataInicial) pstmt.setDate(i++, dataInicial);
+            if (temDataFinal) pstmt.setDate(i++, dataFinal);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearTarefa(rs));
+                }
             }
             return lista;
 
@@ -156,5 +206,14 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         tarefa.setNome_colaborador(rs.getString("nome_colaborador"));
         return tarefa;
     }
+
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "titulo", "titulo",
+            "prioridade", "prioridade",
+            "entrega", "dt_entrega",
+            "status", "status",
+            "inicio", "dt_inicio",
+            "colaborador", "nome_colaborador"
+    );
 
 }
