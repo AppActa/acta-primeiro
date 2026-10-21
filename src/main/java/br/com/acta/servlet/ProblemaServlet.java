@@ -87,7 +87,7 @@ public class ProblemaServlet extends HttpServlet {
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
-            enviarPaginaCerta(req, resp);
+            buscaFiltrada(req, resp);
             return;
         }
 
@@ -99,6 +99,34 @@ public class ProblemaServlet extends HttpServlet {
         }
 
         req.setAttribute("problemaList", List.of(problema));
+        req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
+    }
+
+    private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String busca = req.getParameter("busca");
+        String pesoParam = req.getParameter("peso");
+        String statusParam = req.getParameter("status");
+        String origem = req.getParameter("origem");
+        String dataInicialParam = req.getParameter("dataInicial");
+        String dataFinalParam = req.getParameter("dataFinal");
+        String ordem = req.getParameter("ordem");
+        String direcao = req.getParameter("direcao");
+
+        Intensidade peso = null;
+        if (pesoParam != null && !pesoParam.isBlank()) peso = Intensidade.valueOf(pesoParam);
+
+        StatusProblema status = null;
+        if (statusParam != null && !statusParam.isBlank()) status = StatusProblema.valueOf(statusParam);
+
+        Date dataInicial = null;
+        if (dataInicialParam != null && !dataInicialParam.isBlank()) dataInicial = Date.valueOf(dataInicialParam);
+
+        Date dataFinal = null;
+        if (dataFinalParam != null && !dataFinalParam.isBlank()) dataFinal = Date.valueOf(dataFinalParam);
+
+        List<Problema> problemas = DAO.buscaFiltrada(busca, peso, status, origem, dataInicial, dataFinal, ordem, direcao);
+
+        req.setAttribute("problemaList", problemas);
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
 
