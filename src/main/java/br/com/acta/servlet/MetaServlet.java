@@ -84,7 +84,7 @@ public class MetaServlet extends HttpServlet {
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
-            enviarPaginaCerta(req, resp);
+            buscaFiltrada(req, resp);
             return;
         }
 
@@ -96,6 +96,41 @@ public class MetaServlet extends HttpServlet {
         }
 
         req.setAttribute("metaList", List.of(meta));
+        req.getRequestDispatcher(PAGINA_META).forward(req, resp);
+    }
+
+    private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String busca = req.getParameter("busca");
+        String prioridadeParam = req.getParameter("prioridade");
+        String statusParam = req.getParameter("status");
+        String dataInicialParam = req.getParameter("dataInicial");
+        String dataFinalParam = req.getParameter("dataFinal");
+        String criadoDeParam = req.getParameter("criadoDe");
+        String criadoAteParam = req.getParameter("criadoAte");
+        String ordem = req.getParameter("ordem");
+        String direcao = req.getParameter("direcao");
+
+        Intensidade prioridade = null;
+        if (prioridadeParam != null && !prioridadeParam.isBlank()) prioridade = Intensidade.valueOf(prioridadeParam);
+
+        StatusMeta status = null;
+        if (statusParam != null && !statusParam.isBlank()) status = StatusMeta.valueOf(statusParam);
+
+        Date dataInicial = null;
+        if (dataInicialParam != null && !dataInicialParam.isBlank()) dataInicial = Date.valueOf(dataInicialParam);
+
+        Date dataFinal = null;
+        if (dataFinalParam != null && !dataFinalParam.isBlank()) dataFinal = Date.valueOf(dataFinalParam);
+
+        Date criadoDe = null;
+        if (criadoDeParam != null && !criadoDeParam.isBlank()) criadoDe = Date.valueOf(criadoDeParam);
+
+        Date criadoAte = null;
+        if (criadoAteParam != null && !criadoAteParam.isBlank()) criadoAte = Date.valueOf(criadoAteParam);
+
+        List<Meta> metas = DAO.buscaFiltrada(busca, prioridade, status, dataInicial, dataFinal, criadoDe, criadoAte, ordem, direcao);
+
+        req.setAttribute("metaList", metas);
         req.getRequestDispatcher(PAGINA_META).forward(req, resp);
     }
 

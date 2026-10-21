@@ -103,7 +103,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
-        if (temBusca) sql.append(" AND (nome ILIKE ? OR sobrenome ILIKE ? OR email ILIKE ?)");
+        if (temBusca) sql.append(" AND (nome ILIKE ? OR sobrenome ILIKE ? OR CONCAT_WS(' ', nome, sobrenome) OR email ILIKE ?)");
         if (temStatus) sql.append(" AND status = ?");
         if (temArea) sql.append(" AND area = ?");
         if (temGestor) sql.append(" AND permissao_gestor = ?");
@@ -120,6 +120,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
+                pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);

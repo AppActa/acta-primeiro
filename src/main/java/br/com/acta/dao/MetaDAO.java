@@ -9,6 +9,7 @@ import java.sql.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MetaDAO implements MetodosCrud<Meta> {
 
@@ -68,7 +69,7 @@ public class MetaDAO implements MetodosCrud<Meta> {
 
     @Override
     public List<Meta> buscar() {
-        List<Meta> lista = new ArrayList<>();
+        List<Meta> metas = new ArrayList<>();
         String sql = "SELECT * FROM vw_meta;";
 
         try (Connection conn = Conexao.conectar();
@@ -76,9 +77,66 @@ public class MetaDAO implements MetodosCrud<Meta> {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                lista.add(mapearMeta(rs));
+                metas.add(mapearMeta(rs));
             }
-            return lista;
+            return metas;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Meta> buscaFiltrada(String busca, Intensidade prioridade, StatusMeta status, Date dataInicial, Date dataFinal, Date criadoDe, Date criadoAte, String ordem, String direcao) {
+        List<Meta> metas = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM vw_meta WHERE 1=1");
+
+        boolean temBusca = busca != null && !busca.isBlank();
+        boolean temPrioridade = prioridade != null;
+        boolean temStatus = status != null;
+        boolean temDataInicial = dataInicial != null;
+        boolean temDataFinal = dataFinal != null;
+        boolean temCriadoDe = criadoDe != null;
+        boolean temCriadoAte = criadoAte != null;
+
+        String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
+        boolean temOrdem = colunaOrdem != null;
+
+        if (temBusca) sql.append(" AND (meta ILIKE ? OR objetivo ILIKE ? OR nome_ciclo ILIKE ? or nome_plano_acao ILIKE ?)");
+        if (temPrioridade) sql.append(" AND prioridade = ?");
+        if (temStatus) sql.append(" AND status = ?");
+        if (temDataInicial) sql.append(" AND prazo >= ?");
+        if (temDataFinal) sql.append(" AND prazo <= ?");
+        if (temCriadoDe) sql.append(" AND criado_em >= ?::date");
+        if (temCriadoAte) sql.append(" AND criado_em < (?::date + 1)");
+        if (temOrdem) {
+            String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
+            sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
+        }
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            if (temBusca) {
+                String termo = "%" + busca.trim() + "%";
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+            }
+            if (temPrioridade) pstmt.setString(i++, prioridade.name());
+            if (temStatus) pstmt.setString(i++, status.name());
+            if (temDataInicial) pstmt.setDate(i++, dataInicial);
+            if (temDataFinal) pstmt.setDate(i++, dataFinal);
+            if (temCriadoDe) pstmt.setDate(i++, criadoDe);
+            if (temCriadoAte) pstmt.setDate(i++, criadoAte);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    metas.add(mapearMeta(rs));
+                }
+            }
+            return metas;
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -161,5 +219,15 @@ public class MetaDAO implements MetodosCrud<Meta> {
         meta.setNome_plano_acao(rs.getString("nome_plano_acao"));
         return meta;
     }
+
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "meta", "meta",
+            "prioridade", "prioridade",
+            "prazo", "prazo",
+            "status", "status",
+            "criado", "criando_em",
+            "ciclo", "nome_ciclo",
+            "plano", "nome_plano_acao"
+    );
 
 }
