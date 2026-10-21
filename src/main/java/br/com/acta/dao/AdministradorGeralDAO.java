@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import br.com.acta.model.AdministradorGeral;
 import br.com.acta.utils.Conexao;
 import br.com.acta.utils.PasswordUtils;
@@ -47,7 +48,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     //buscar com id
     @Override
     public AdministradorGeral buscar(Long id) {
-        String sql = "SELECT * FROM administrador_geral WHERE id_adm_geral = ?;";
+        String sql = "SELECT id_adm_geral, nome, email, telefone FROM administrador_geral WHERE id_adm_geral = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -70,7 +71,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     @Override
     public List<AdministradorGeral> buscar() {
         List<AdministradorGeral> administradoresGerais = new ArrayList<>();
-        String sql = "SELECT * FROM administrador_geral;";
+        String sql = "SELECT id_adm_geral, nome, email, telefone FROM administrador_geral;";
 
         try (Connection conn = Conexao.conectar();
              Statement stmt = conn.createStatement();
@@ -85,6 +86,44 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public List<AdministradorGeral> buscaFiltrada(String busca, String ordem, String direcao) {
+        List<AdministradorGeral> administradoresGerais = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM administrador_geral WHERE 1=1");
+
+        boolean temBusca = busca != null && !busca.isBlank();
+
+        String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
+        boolean temOrdem = colunaOrdem != null;
+
+        if (temBusca) sql.append(" AND (nome ILIKE ? OR email ILIKE ? OR telefone ILIKE ?)");
+        if (temOrdem) {
+            String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
+            sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
+        }
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            if (temBusca) {
+                String termo = "%" + busca.trim() + "%";
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+            }
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    administradoresGerais.add(mapearAdministradorGeral(rs));
+                }
+            }
+            return administradoresGerais;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //autenticacao
@@ -218,5 +257,10 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         return administradorGeral;
     }
 
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "nome", "nome",
+            "email", "email",
+            "telefone", "telefone"
+    );
 
 }
