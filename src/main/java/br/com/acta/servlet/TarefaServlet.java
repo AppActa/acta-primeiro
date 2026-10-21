@@ -81,7 +81,7 @@ public class TarefaServlet extends HttpServlet {
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
-            enviarPaginaCerta(req, resp);
+            buscaFiltrada(req, resp);
             return;
         }
 
@@ -93,6 +93,33 @@ public class TarefaServlet extends HttpServlet {
         }
 
         req.setAttribute("tarefaList", List.of(tarefa));
+        req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
+    }
+
+    private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String busca = req.getParameter("busca");
+        String prioridadeParam = req.getParameter("prioridade");
+        String statusParam = req.getParameter("status");
+        String dataInicialParam = req.getParameter("dataInicial");
+        String dataFinalParam = req.getParameter("dataFinal");
+        String ordem = req.getParameter("ordem");
+        String direcao = req.getParameter("direcao");
+
+        Intensidade prioridade = null;
+        if (prioridadeParam != null && !prioridadeParam.isBlank()) prioridade = Intensidade.valueOf(prioridadeParam);
+
+        Situacao status = null;
+        if (statusParam != null && !statusParam.isBlank()) status = Situacao.valueOf(statusParam);
+
+        Date dataInicial = null;
+        if (dataInicialParam != null && !dataInicialParam.isBlank()) dataInicial = Date.valueOf(dataInicialParam);
+
+        Date dataFinal = null;
+        if (dataFinalParam != null && !dataFinalParam.isBlank()) dataFinal = Date.valueOf(dataFinalParam);
+
+        List<Tarefa> tarefas = DAO.buscaFiltrada(busca, prioridade, status, dataInicial, dataFinal, ordem, direcao);
+
+        req.setAttribute("tarefaList", tarefas);
         req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
 
