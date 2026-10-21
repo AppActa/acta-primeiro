@@ -68,7 +68,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
 
     @Override
     public List<LicoesAprendidas> buscar() {
-        List<LicoesAprendidas> lista = new ArrayList<>();
+        List<LicoesAprendidas> licoesAprendidas = new ArrayList<>();
         String sql = "SELECT * FROM vw_licoes_aprendidas;";
 
         try (Connection conn = Conexao.conectar();
@@ -76,9 +76,9 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                lista.add(mapearLicoesAprendidas(rs));
+                licoesAprendidas.add(mapearLicoesAprendidas(rs));
             }
-            return lista;
+            return licoesAprendidas;
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -86,7 +86,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
     }
 
     public List<LicoesAprendidas> buscaFiltrada(String busca, EtapaCiclo fase, Intensidade severidade, String area, String categoria, String ordem, String direcao) {
-        List<LicoesAprendidas> lista = new ArrayList<>();
+        List<LicoesAprendidas> licoesAprendidas = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_licoes_aprendidas WHERE 1=1");
 
         boolean temBusca = busca != null && !busca.isBlank();
@@ -125,10 +125,10 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    lista.add(mapearLicoesAprendidas(rs));
+                    licoesAprendidas.add(mapearLicoesAprendidas(rs));
                 }
             }
-            return lista;
+            return licoesAprendidas;
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);

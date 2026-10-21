@@ -8,6 +8,7 @@ import br.com.acta.utils.Conexao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ProblemaDAO implements MetodosCrud<Problema> {
 
@@ -78,6 +79,60 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
 
             while (rs.next()) {
                 lista.add(mapearProblema(rs));
+            }
+            return lista;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Problema> buscaFiltrada(String busca, Intensidade peso, StatusProblema status, String origem, Date dataInicial, Date dataFinal, String ordem, String direcao) {
+        List<Problema> lista = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM vw_problema WHERE 1=1");
+
+        boolean temBusca = busca != null && !busca.isBlank();
+        boolean temPeso = peso != null;
+        boolean temStatus = status != null;
+        boolean temOrigem = origem != null && !origem.isBlank();
+        boolean temDataInicial = dataInicial != null;
+        boolean temDataFinal = dataFinal != null;
+
+        String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
+        boolean temOrdem = colunaOrdem != null;
+
+        if (temBusca) sql.append(" AND (titulo ILIKE ? OR nome_ciclo ILIKE ? OR nome_plano_acao ILIKE ? OR nome_colaborador ILIKE ?)");
+        if (temPeso) sql.append(" AND peso = ?");
+        if (temStatus) sql.append(" AND status = ?");
+        if (temOrigem) sql.append(" AND origem = ?");
+        if (temDataInicial) sql.append(" AND encontrado_em >= ?");
+        if (temDataFinal) sql.append(" AND encontrado_em <= ?");
+        if (temOrdem) {
+            String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
+            sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
+        }
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+
+            int i = 1;
+            if (temBusca) {
+                String termo = "%" + busca.trim() + "%";
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+            }
+            if (temPeso) pstmt.setString(i++, peso.name());
+            if (temStatus) pstmt.setString(i++, status.name());
+            if (temOrigem) pstmt.setString(i++, origem.trim());
+            if (temDataInicial) pstmt.setDate(i++, dataInicial);
+            if (temDataFinal) pstmt.setDate(i++, dataFinal);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearProblema(rs));
+                }
             }
             return lista;
 
@@ -166,4 +221,13 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
         return problema;
     }
 
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "titulo", "titulo",
+            "peso", "peso",
+            "status", "status",
+            "origem", "origem",
+            "data", "encontrado_em",
+            "ciclo", "nome_ciclo",
+            "plano", "nome_plano_acao"
+    );
 }

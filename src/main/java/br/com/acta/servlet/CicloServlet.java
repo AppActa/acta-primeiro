@@ -104,6 +104,8 @@ public class CicloServlet extends HttpServlet {
         String statusParam = req.getParameter("status");
         String dataInicialParam = req.getParameter("dataInicial");
         String dataFinalParam = req.getParameter("dataFinal");
+        String criadoDeParam = req.getParameter("criadoDe");
+        String criadoAteParam = req.getParameter("criadoAte");
         String ordem = req.getParameter("ordem");
         String direcao = req.getParameter("direcao");
 
@@ -119,7 +121,13 @@ public class CicloServlet extends HttpServlet {
         Date dataFinal = null;
         if (dataFinalParam != null && !dataFinalParam.isBlank()) dataFinal = Date.valueOf(dataFinalParam);
 
-        List<Ciclo> ciclos = cicloDAO.buscaFiltrada(busca, etapa, status, dataInicial, dataFinal, ordem, direcao);
+        Date criadoDe = null;
+        if (criadoDeParam != null && !criadoDeParam.isBlank()) criadoDe = Date.valueOf(criadoDeParam);
+
+        Date criadoAte = null;
+        if (criadoAteParam != null && !criadoAteParam.isBlank()) criadoAte = Date.valueOf(criadoAteParam);
+
+        List<Ciclo> ciclos = cicloDAO.buscaFiltrada(busca, etapa, status, dataInicial, dataFinal, criadoDe, criadoAte, ordem, direcao);
 
         req.setAttribute("cicloList", ciclos);
         req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
