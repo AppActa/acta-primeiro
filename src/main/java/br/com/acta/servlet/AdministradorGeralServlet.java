@@ -84,7 +84,7 @@ public class AdministradorGeralServlet extends HttpServlet {
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
-            enviarPaginaCerta(req, resp);
+            buscaFiltrada(req, resp);
             return;
         }
 
@@ -96,6 +96,17 @@ public class AdministradorGeralServlet extends HttpServlet {
         }
 
         req.setAttribute("administradorGeralList", List.of(administradorGeral));
+        req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
+    }
+
+    private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String busca = req.getParameter("busca");
+        String ordem = req.getParameter("ordem");
+        String direcao = req.getParameter("direcao");
+
+        List<AdministradorGeral> administradoresGerais = DAO.buscaFiltrada(busca, ordem, direcao);
+
+        req.setAttribute("administradorGeralList", administradoresGerais);
         req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
     }
 
