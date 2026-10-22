@@ -1,8 +1,9 @@
 package br.com.acta.excecoes;
 
-    /*
-    erro de dados errados
-    */
+/**
+ * Dado de entrada inválido (campo vazio, formato errado...).
+ * O servlet transforma em HTTP 400.
+ */
 
 public class ValidacaoException extends RuntimeException{
 

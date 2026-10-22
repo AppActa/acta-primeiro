@@ -1,6 +1,9 @@
 package br.com.acta.excecoes;
 
-// Quando não indentifica o que procurar no banco
+/**
+ * Registro procurado não existe (buscar, atualizar ou excluir com id inexistente).
+ * O servlet transforma em HTTP 404.
+ */
 
 public class RegistroNaoEncontradoException extends RuntimeException {
 

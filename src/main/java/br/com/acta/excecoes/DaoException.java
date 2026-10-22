@@ -1,11 +1,13 @@
 package br.com.acta.excecoes;
 
-//Erro ao acessar o banco; Substitui o RuntimeException(e) genérico
-//Nos dao, guarda a causa original, vira http 500.
+/**
+ * Erro ao acessar o banco (SQL, driver ou conexão).
+ * Guarda a causa original. O servlet transforma em HTTP 500.
+ */
 
 public class DaoException extends RuntimeException{
 
     public DaoException(String mensagem, Throwable causa){
-        super(mensagem);
+        super(mensagem,causa);
     }
 }
