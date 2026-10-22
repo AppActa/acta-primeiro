@@ -219,10 +219,18 @@ public class EmpresaServlet extends HttpServlet {
     ) throws ServletException, IOException {
 
         resp.setStatus(status);
-
         req.setAttribute("mensagemErro", mensagem);
 
-        enviarPaginaCerta(req, resp);
+        // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
+        try {
+            req.setAttribute("empresaList", DAO.buscar());
+            req.setAttribute("setorList", DAO.buscarSetor());
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+            req.setAttribute("empresaList", List.of());
+            req.setAttribute("setorList", List.of());
+        }
+        req.getRequestDispatcher(PAGINA_EMPRESA).forward(req, resp);
     }
 
     private void enviarErro(

@@ -154,7 +154,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             return setores;
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados",e);
         }
     }
 
@@ -196,7 +196,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
 
         } catch (ClassNotFoundException e) {
             throw new DaoException(
-                    "Driver do banco não encontrado.", e
+                    "Erro ao conectar no banco de dados", e
             );
         }
     }
@@ -267,7 +267,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.",e);
         }
     }
 }
