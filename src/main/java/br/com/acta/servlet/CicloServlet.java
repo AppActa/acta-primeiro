@@ -4,7 +4,11 @@ import br.com.acta.dao.CicloDAO;
 import br.com.acta.model.Ciclo;
 import br.com.acta.enums.EtapaCiclo;
 import br.com.acta.enums.Situacao;
-import jakarta.servlet.RequestDispatcher;
+import br.com.acta.excecoes.DaoException;
+import br.com.acta.excecoes.DuplicidadeException;
+import br.com.acta.excecoes.IntegridadeReferencialException;
+import br.com.acta.excecoes.RegistroNaoEncontradoException;
+import br.com.acta.excecoes.ValidacaoException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,41 +26,92 @@ public class CicloServlet extends HttpServlet {
     private final CicloDAO cicloDAO = new CicloDAO();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         try {
             buscar(req, resp);
+
+        } catch (RegistroNaoEncontradoException e) {
+            enviarErro(req, resp, e.getMessage(),
+                    HttpServletResponse.SC_NOT_FOUND);
+
+        } catch (ValidacaoException | IllegalArgumentException e) {
+            enviarErro(req, resp, "Parâmetro de consulta inválido.",
+                    HttpServletResponse.SC_BAD_REQUEST);
+
+        } catch (DaoException e) {
+            e.printStackTrace();
+            enviarErro(req, resp, "Erro ao consultar o banco de dados.",
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível encontrar os ciclos");
+            enviarErro(req, resp, "Não foi possível encontrar os ciclos.",
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
         req.setCharacterEncoding("UTF-8");
         String acao = req.getParameter("acao");
 
         try {
+            if (acao == null) {
+                enviarErro(req, resp, "Ação não informada.",
+                        HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+
             switch (acao) {
                 case "inserir":
                     inserir(req, resp);
                     break;
+
                 case "atualizar":
                     atualizar(req, resp);
                     break;
+
                 case "excluir":
                     excluir(req, resp);
                     break;
-                case null:
-                    enviarErro(req, resp, "Ação não informada");
-                    break;
+
                 default:
-                    enviarErro(req, resp, "Ação não existente");
+                    enviarErro(req, resp, "Ação não existente.",
+                            HttpServletResponse.SC_BAD_REQUEST);
             }
+
+        } catch (ValidacaoException e) {
+            enviarErro(req, resp, e.getMessage(),
+                    HttpServletResponse.SC_BAD_REQUEST);
+
+        } catch (RegistroNaoEncontradoException e) {
+            enviarErro(req, resp, e.getMessage(),
+                    HttpServletResponse.SC_NOT_FOUND);
+
+        } catch (DuplicidadeException e) {
+            enviarErro(req, resp, e.getMessage(),
+                    HttpServletResponse.SC_CONFLICT);
+
+        } catch (IntegridadeReferencialException e) {
+            enviarErro(req, resp, e.getMessage(),
+                    HttpServletResponse.SC_CONFLICT);
+
+        } catch (IllegalArgumentException e) {
+            enviarErro(req, resp, "Parâmetro inválido.",
+                    HttpServletResponse.SC_BAD_REQUEST);
+
+        } catch (DaoException e) {
+            e.printStackTrace();
+            enviarErro(req, resp, "Erro interno ao acessar o banco de dados.",
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível concluir");
+            enviarErro(req, resp, "Não foi possível concluir a operação.",
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -90,8 +145,7 @@ public class CicloServlet extends HttpServlet {
         Ciclo ciclo = cicloDAO.buscar(Long.parseLong(id));
 
         if (ciclo == null) {
-            enviarPaginaCerta(req, resp);
-            return;
+            throw new RegistroNaoEncontradoException("Registro de ciclo não encontrado.");
         }
 
         req.setAttribute("cicloList", List.of(ciclo));
@@ -163,11 +217,36 @@ public class CicloServlet extends HttpServlet {
     }
 
     // UTILITARIOS
-    private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
-        req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
-        req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        req.getRequestDispatcher(PAGINA_ERRO).forward(req, resp);
+    private void enviarErro(
+            HttpServletRequest req,
+            HttpServletResponse resp,
+            String mensagem,
+            int status
+    ) throws ServletException, IOException {
+
+        resp.setStatus(status);
+        req.setAttribute("mensagemErro", mensagem);
+
+        // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
+        try {
+            List<Ciclo> ciclos = cicloDAO.buscar();
+
+            req.setAttribute("cicloList", ciclos);
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+            req.setAttribute("cicloList", List.of());
+        }
+        req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
+    }
+
+    private void enviarErro(
+            HttpServletRequest req,
+            HttpServletResponse resp,
+            String mensagem
+    ) throws ServletException, IOException {
+
+        enviarErro(req, resp, mensagem,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
