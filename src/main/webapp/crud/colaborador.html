@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
+        <link rel="stylesheet" href="../assets/css/crud.css">
+        <title>Área Restrita</title>
+    </head>
+    <body>
+        <div class="sistema">
+            <aside class="sidebar">
+                <div class="sidebar-logo">
+                    <img src="../assets/images/logo_oficial.svg" alt="ACTA">
+                </div>
+                <nav class="menu">
+                    <a href="empresas.html" class="menu-item">
+                        <img src="../assets/images/icone_empresas.svg" alt="">
+                        <span>Empresas</span>
+                    </a>
+                    <a href="endereco.html" class="menu-item">
+                        <img src="../assets/images/icone_endereco.svg" alt="">
+                        <span>Endereço</span>
+                    </a>
+                    <a href="colaborador.html" class="menu-item ativo">
+                        <img src="../assets/images/icone_colaborador.svg" alt="">
+                        <span>Colaborador</span>
+                    </a>
+                    <a href="tarefa.html" class="menu-item">
+                        <img src="../assets/images/icone_tarefa.svg" alt="">
+                        <span>Tarefa</span>
+                    </a>
+                    <a href="plano.html" class="menu-item">
+                        <img src="../assets/images/icone_plano_de_acao.svg" alt="">
+                        <span>Plano de ação</span>
+                    </a>
+                    <a href="ciclos.html" class="menu-item">
+                        <img src="../assets/images/icone_ciclos.svg" alt="">
+                        <span>Ciclos</span>
+                    </a>
+                    <a href="licoes.html" class="menu-item">
+                        <img src="../assets/images/icone_licoes_aprendidas.svg" alt="">
+                        <span>Lições Aprendidas</span>
+                    </a>
+                    <a href="metas.html" class="menu-item">
+                        <img src="../assets/images/icone_metas.svg" alt="">
+                        <span>Metas</span>
+                    </a>
+                    <a href="problemas.html" class="menu-item">
+                        <img src="../assets/images/icone_problemas.svg" alt="">
+                        <span>Problemas</span>
+                    </a>
+                </nav>
+                <div class="perfil-barra">
+                    <a href="#perfil-administrador" class="perfil-admin">
+                        <div class="perfil-foto">
+                            <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
+                        </div>
+                        <div class="perfil-info">
+                            <span class="perfil-nome">Nome Sobrenome</span>
+                            <span class="perfil-email">email@email.com</span>
+                        </div>
+                    </a>
+                    <a href="#" class="botao botao-sair">Sair</a>
+                </div>
+            </aside>
+            <main class="conteudo">
+
+                <!-- Página Colaborador -->
+                <section id="colaborador" class="pagina">
+                    <h1>Colaborador</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por colaborador">
+                        </div>
+                        <div class="filtro-container">
+                            <select class="botao botao-filtro">
+                                <option value="">Filtros</option>
+                                <option value="cargo">Por Cargo</option>
+                                <option value="nome">Por Nome</option>
+                            </select>
+                        </div>
+                        <a href="#cadastrar-colaborador" class="botao botao-principal">Cadastrar</a>
+                    </div>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Sobrenome</th>
+                                    <th>Área</th>
+                                    <th>Cargo</th>
+                                    <th>Telefone</th>
+                                    <th>CPF</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
+                                    <th class="coluna-acao">Excluir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Nome</td>
+                                    <td>Sobrenome</td>
+                                    <td>Área</td>
+                                    <td>Cargo</td>
+                                    <td>(00) 00000-0000</td>
+                                    <td>000.000.000-00</td>
+                                    <td>email@email.com</td>
+                                    <td>Ativa</td>
+                                    <td class="coluna-acao">
+                                        <a href="#ver-colaborador" class="icone-acao">
+                                            <img src="../assets/images/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-colaborador" class="icone-acao">
+                                            <img src="../assets/images/icone_editar.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#excluir-colaborador" class="icone-acao">
+                                            <img src="../assets/images/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <section id="ver-colaborador" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-larga">
+                                <div class="modal-topo">
+                                    <h2>Detalhes do colaborador</h2>
+                                    <a href="#colaborador" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Nome</span>
+                                        <span class="detalhe-valor">Nome</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Sobrenome</span>
+                                        <span class="detalhe-valor">Sobrenome</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Área</span>
+                                        <span class="detalhe-valor">Área</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Cargo</span>
+                                        <span class="detalhe-valor">Cargo</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Data de contratação</span>
+                                        <span class="detalhe-valor">00/00/0000</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Email</span>
+                                        <span class="detalhe-valor">email@email.com</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Telefone</span>
+                                        <span class="detalhe-valor">(00) 00000-0000</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">CPF</span>
+                                        <span class="detalhe-valor">000.000.000-00</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Status</span>
+                                        <span class="detalhe-valor">Ativa</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Permissão de gestor</span>
+                                        <span class="detalhe-valor">Não</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Empresa</span>
+                                        <span class="detalhe-valor">Flora</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="cadastrar-colaborador" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-larga">
+                                <h2>Cadastrar colaborador</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-colaborador-email">Email</label>
+                                        <input type="email" id="cad-colaborador-email" name="email" maxlength="80" placeholder="Digite email" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-area">Área</label>
+                                        <input type="text" id="cad-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-cargo">Cargo</label>
+                                        <input type="text" id="cad-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-dt_contratacao">Data de contratação</label>
+                                        <input type="date" id="cad-colaborador-dt_contratacao" name="dt_contratacao" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-status">Status</label>
+                                        <select id="cad-colaborador-status" name="status" required>
+                                            <option value="ATIVA">Ativa</option>
+                                            <option value="INATIVA">Inativa</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-permissao_gestor">Permissão de gestor</label>
+                                        <select id="cad-colaborador-permissao_gestor" name="permissao_gestor" required>
+                                            <option value="false">Não</option>
+                                            <option value="true">Sim</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-id_empresa">Empresa</label>
+                                        <select id="cad-colaborador-id_empresa" name="id_empresa" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#colaborador" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-colaborador" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-larga">
+                                <h2>Editar colaborador</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-colaborador-area">Área</label>
+                                        <input type="text" id="edi-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-cargo">Cargo</label>
+                                        <input type="text" id="edi-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-status">Status</label>
+                                        <select id="edi-colaborador-status" name="status" required>
+                                            <option value="ATIVO">Ativo</option>
+                                            <option value="INATIVO">Inativo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-permissao_gestor">Permissão de gestor</label>
+                                        <select id="edi-colaborador-permissao_gestor" name="permissao_gestor" required>
+                                            <option value="false">Não</option>
+                                            <option value="true">Sim</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-id_empresa">Empresa</label>
+                                        <select id="edi-colaborador-id_empresa" name="id_empresa" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#colaborador" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-colaborador" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir colaborador</h2>
+                                <p>Tem certeza que deseja excluir este colaborador?</p>
+                                <div class="botoes-modal">
+                                    <a href="#colaborador" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Modal Perfil do Administrador -->
+                <section id="perfil-administrador" class="pagina modal-pagina">
+                    <div class="modal-fundo">
+                        <div class="modal modal-ver modal-perfil">
+                            <div class="modal-topo">
+                                <h2>Meu perfil</h2>
+                                <a href="#colaborador" class="modal-fechar" aria-label="Fechar">&times;</a>
+                            </div>
+                            <div class="perfil-modal-conteudo">
+                                <div class="perfil-foto-grande">
+                                    <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
+                                </div>
+                                <span class="perfil-modal-nome">Nome Sobrenome</span>
+                                <span class="perfil-modal-email">email@email.com</span>
+                                <div class="perfil-empresas">
+                                    <h3>Empresas que administra</h3>
+                                    <ul class="lista-empresas">
+                                        <li>Flora</li>
+                                    </ul>
+                                </div>
+                                <div class="botoes-modal">
+                                    <a href="#editar-perfil" class="botao botao-principal">Editar perfil</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Modal Editar Perfil do Administrador -->
+                <section id="editar-perfil" class="pagina modal-pagina">
+                    <div class="modal-fundo">
+                        <div class="modal modal-grande">
+                            <h2>Editar perfil</h2>
+                            <form class="formulario">
+                                <div class="campo">
+                                    <label for="edi-perfil-nome">Nome</label>
+                                    <input type="text" id="edi-perfil-nome" name="nome" maxlength="50" placeholder="Digite nome" required>
+                                </div>
+                                <div class="campo">
+                                    <label for="edi-perfil-email">Email</label>
+                                    <input type="email" id="edi-perfil-email" name="email" maxlength="80" placeholder="Digite o novo email" required>
+                                </div>
+                                <div class="campo">
+                                    <label for="edi-perfil-telefone">Telefone</label>
+                                    <input type="tel" id="edi-perfil-telefone" name="telefone" maxlength="11" inputmode="numeric" pattern="\d{11}" placeholder="DDD + número" required>
+                                </div>
+                                <div class="campo">
+                                    <label>Senha</label>
+                                    <a href="#alterar-senha" class="botao botao-secundario botao-senha">Alterar senha</a>
+                                </div>
+                                <div class="campo campo-largo">
+                                    <label for="edi-perfil-empresas">Quais empresas administra?</label>
+                                    <select id="edi-perfil-empresas" name="empresas" multiple size="4"></select>
+                                </div>
+                                <div class="botoes-modal">
+                                    <a href="#perfil-administrador" class="botao botao-cancelar">Cancelar</a>
+                                    <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Modal Alterar Senha -->
+                <section id="alterar-senha" class="pagina modal-pagina">
+                    <div class="modal-fundo">
+                        <div class="modal">
+                            <h2>Alterar senha</h2>
+                            <form class="formulario">
+                                <div class="campo">
+                                    <label for="alt-senha-antiga">Senha antiga</label>
+                                    <input type="password" id="alt-senha-antiga" name="senha_antiga" maxlength="100" autocomplete="current-password" placeholder="Digite a senha antiga" required>
+                                </div>
+                                <div class="campo">
+                                    <label for="alt-senha-nova">Nova senha</label>
+                                    <input type="password" id="alt-senha-nova" name="senha_nova" maxlength="100" autocomplete="new-password" placeholder="Digite a nova senha" required>
+                                </div>
+                                <div class="campo">
+                                    <label for="alt-senha-confirmar">Confirmar nova senha</label>
+                                    <input type="password" id="alt-senha-confirmar" name="senha_confirmar" maxlength="100" autocomplete="new-password" required>
+                                </div>
+                                <div class="botoes-modal">
+                                    <a href="#editar-perfil" class="botao botao-cancelar">Cancelar</a>
+                                    <button type="submit" class="botao botao-principal">Confirmar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </body>
+</html>
