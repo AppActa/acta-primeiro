@@ -196,7 +196,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
 
         } catch (ClassNotFoundException e) {
             throw new DaoException(
-                    "Erro ao conectar no banco de dados", e
+                    "Erro ao conectar no banco de dados.", e
             );
         }
     }
