@@ -144,7 +144,8 @@ body:not(:has(:target)) .menu-item[href="#empresas"] {
 }
 
 .perfil-foto img,
-.perfil-foto-grande img {
+.perfil-foto-grande img,
+.perfil-foto-edicao img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -289,6 +290,17 @@ body:has(#alterar-senha:target) #empresas {
 
 .botao-senha {
     align-self: flex-start;
+}
+
+/* Botão "Filtros" da barra de ações (abre o modal de filtros) */
+.botao-filtro {
+    background-color: var(--cor-card);
+    color: var(--cor-texto);
+    border: 1px solid var(--cor-borda);
+}
+
+.botao-filtro:hover {
+    background-color: var(--cor-fundo);
 }
 
 .header-conteudo{
@@ -509,6 +521,111 @@ td.coluna-acao {
     border-radius: 999px;
 }
 
+/* Troca de foto no modal de editar perfil */
+.foto-editar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.perfil-foto-edicao {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--cor-borda);
+}
+
+.campo input[type="file"] {
+    flex: 1;
+    min-width: 0;
+    padding: 6px;
+    font-size: 13px;
+}
+
+.campo input[type="file"]::file-selector-button {
+    margin-right: 12px;
+    padding: 6px 12px;
+    border: 1px solid var(--cor-primaria);
+    border-radius: 6px;
+    background-color: transparent;
+    color: var(--cor-primaria);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.campo input[type="file"]::file-selector-button:hover {
+    background-color: var(--cor-fundo);
+}
+
+/* Modal de filtros */
+.modal-filtros {
+    max-width: 420px;
+}
+
+.rotulo-campo {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: var(--cor-texto-suave);
+}
+
+.grupo-radio {
+    display: flex;
+    gap: 10px;
+}
+
+.opcao-radio {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--cor-texto);
+    cursor: pointer;
+}
+
+.opcao-radio input {
+    accent-color: var(--cor-primaria);
+}
+
+.opcao-radio:has(input:checked) {
+    background-color: #cedede;
+    font-weight: 600;
+}
+
+.grupo-checkbox {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.opcao-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--cor-texto);
+    cursor: pointer;
+}
+
+.opcao-check input {
+    accent-color: var(--cor-primaria);
+}
+
+.opcao-check:has(input:checked) {
+    background-color: #cedede;
+    font-weight: 600;
+}
+
 .modal h2 {
     margin-bottom: 15px;
     box-sizing: border-box;
@@ -609,6 +726,14 @@ td.coluna-acao {
     .modal-larga .formulario,
     .detalhes,
     .modal-larga .detalhes {
+        grid-template-columns: 1fr;
+    }
+
+    .grupo-radio {
+        flex-direction: column;
+    }
+
+    .grupo-checkbox {
         grid-template-columns: 1fr;
     }
 }

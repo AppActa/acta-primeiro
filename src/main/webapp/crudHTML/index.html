@@ -74,13 +74,7 @@
                             <input type="text" placeholder="Pesquisar por empresa">
                         </div>
                         <div class="filtro-container">
-                            <select class="botao botao-filtro">
-                                <option value="">Filtros</option>
-                                <option value="todos">Todos</option>
-                                <option value="alfabetica">Por Ordem Alfabética</option>
-                                <option value="setor">Por Setor</option>
-                                <option value="unidade">Por Unidade</option>
-                            </select>
+                            <a href="#filtros-empresas" class="botao botao-filtro">Filtros</a>
                         </div>
                         <a href="#cadastrar-empresa" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -126,6 +120,64 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="filtros-empresas" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#empresas" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#empresas">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="nome">
+                                                Nome
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="setor">
+                                                Setor
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="cnpj">
+                                                CNPJ
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="unidade">
+                                                Unidade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="status">
+                                                Status
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="tamanho">
+                                                Tamanho
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="ver-empresa" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -276,12 +328,7 @@
                             <input type="text" placeholder="Pesquisar por endereço">
                         </div>
                         <div class="filtro-container">
-                            <select class="botao botao-filtro">
-                                <option value="">Filtros</option>
-                                <option value="cidade">Por Cidade</option>
-                                <option value="estado">Por Estado</option>
-                                <option value="empresa">Por Empresa</option>
-                            </select>
+                            <a href="#filtros-endereco" class="botao botao-filtro">Filtros</a>
                         </div>
                         <a href="#cadastrar-endereco" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -331,6 +378,72 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="filtros-endereco" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#endereco" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#endereco">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="empresa">
+                                                Empresa
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="unidade">
+                                                Unidade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="rua">
+                                                Rua
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="numero">
+                                                Número
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="bairro">
+                                                Bairro
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="cidade">
+                                                Cidade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="estado">
+                                                Estado
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="cep">
+                                                CEP
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="ver-endereco" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -507,11 +620,7 @@
                             <input type="text" placeholder="Pesquisar por colaborador">
                         </div>
                         <div class="filtro-container">
-                            <select class="botao botao-filtro">
-                                <option value="">Filtros</option>
-                                <option value="cargo">Por Cargo</option>
-                                <option value="nome">Por Nome</option>
-                            </select>
+                            <a href="#filtros-colaborador" class="botao botao-filtro">Filtros</a>
                         </div>
                         <a href="#cadastrar-colaborador" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -561,6 +670,72 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="filtros-colaborador" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#colaborador" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#colaborador">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="nome">
+                                                Nome
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="sobrenome">
+                                                Sobrenome
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="area">
+                                                Área
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="cargo">
+                                                Cargo
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="telefone">
+                                                Telefone
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="cpf">
+                                                CPF
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="email">
+                                                Email
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="status">
+                                                Status
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="ver-colaborador" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -733,11 +908,7 @@
                             <input type="text" placeholder="Pesquisar por tarefa">
                         </div>
                         <div class="filtro-container">
-                            <select class="botao botao-filtro">
-                                <option value="">Filtros</option>
-                                <option value="responsavel">Por Responsável</option>
-                                <option value="prazo">Por Prazo</option>
-                            </select>
+                            <a href="#filtros-tarefa" class="botao botao-filtro">Filtros</a>
                         </div>
                         <a href="#cadastrar-tarefa" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -785,6 +956,68 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="filtros-tarefa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#tarefa" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#tarefa">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="titulo">
+                                                Tarefa
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="responsavel">
+                                                Responsável
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="plano_acao">
+                                                Plano de ação
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="prioridade">
+                                                Prioridade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="status">
+                                                Status
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="dt_inicio">
+                                                Início
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="dt_entrega">
+                                                Prazo
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="ver-tarefa" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -969,11 +1202,7 @@
                             <input type="text" placeholder="Pesquisar por plano de ação">
                         </div>
                         <div class="filtro-container">
-                            <select class="botao botao-filtro">
-                                <option value="">Filtros</option>
-                                <option value="status">Por Status</option>
-                                <option value="prazo">Por Prazo</option>
-                            </select>
+                            <a href="#filtros-plano" class="botao botao-filtro">Filtros</a>
                         </div>
                         <a href="#cadastrar-plano-de-ação" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -1019,6 +1248,64 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="filtros-plano" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#plano" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#plano">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="nome">
+                                                Plano
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="ciclo">
+                                                Ciclo
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="criador">
+                                                Criador
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="prioridade">
+                                                Prioridade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="status">
+                                                Status
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="prazo">
+                                                Prazo
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="ver-plano-de-ação" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -1269,11 +1556,7 @@
                             <input type="text" placeholder="Pesquisar por ciclo">
                         </div>
                         <div class="filtro-container">
-                            <select class="botao botao-filtro">
-                                <option value="">Filtros</option>
-                                <option value="inicio">Por Início</option>
-                                <option value="fim">Por Fim</option>
-                            </select>
+                            <a href="#filtros-ciclos" class="botao botao-filtro">Filtros</a>
                         </div>
                         <a href="#cadastrar-ciclo" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -1321,6 +1604,68 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="filtros-ciclos" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#ciclos" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#ciclos">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="nome">
+                                                Ciclo
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="empresa">
+                                                Empresa
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="responsavel">
+                                                Responsável
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="etapa_atual">
+                                                Etapa
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="status">
+                                                Status
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="dt_inicio">
+                                                Início
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="dt_fim">
+                                                Fim
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="ver-ciclo" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -1519,11 +1864,7 @@
                             <input type="text" placeholder="Pesquisar por lição aprendida">
                         </div>
                         <div class="filtro-container">
-                            <select class="botao botao-filtro">
-                                <option value="">Filtros</option>
-                                <option value="categoria">Por Categoria</option>
-                                <option value="data">Por Data</option>
-                            </select>
+                            <a href="#filtros-licoes" class="botao botao-filtro">Filtros</a>
                         </div>
                         <a href="#cadastrar-lição-aprendida" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -1571,6 +1912,68 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="filtros-licoes" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#licoes" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#licoes">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="titulo">
+                                                Título
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="categoria">
+                                                Categoria
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="area">
+                                                Área
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="ciclo">
+                                                Ciclo
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="fase_origem">
+                                                Fase de origem
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="severidade">
+                                                Severidade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="data">
+                                                Data
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="ver-lição-aprendida" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -1757,11 +2160,7 @@
                             <input type="text" placeholder="Pesquisar por meta">
                         </div>
                         <div class="filtro-container">
-                            <select class="botao botao-filtro">
-                                <option value="">Filtros</option>
-                                <option value="status">Por Status</option>
-                                <option value="alvo">Por Alvo</option>
-                            </select>
+                            <a href="#filtros-metas" class="botao botao-filtro">Filtros</a>
                         </div>
                         <a href="#cadastrar-meta" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -1807,6 +2206,64 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="filtros-metas" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#metas" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#metas">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="meta">
+                                                Meta
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="objetivo">
+                                                Alvo
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="ciclo">
+                                                Ciclo
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="prioridade">
+                                                Prioridade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="prazo">
+                                                Prazo
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="status">
+                                                Status
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="ver-meta" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -1991,11 +2448,7 @@
                             <input type="text" placeholder="Pesquisar por problema">
                         </div>
                         <div class="filtro-container">
-                            <select class="botao botao-filtro">
-                                <option value="">Filtros</option>
-                                <option value="gravidade">Por Gravidade</option>
-                                <option value="status">Por Status</option>
-                            </select>
+                            <a href="#filtros-problemas" class="botao botao-filtro">Filtros</a>
                         </div>
                         <a href="#cadastrar-problema" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -2041,6 +2494,64 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="filtros-problemas" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#problemas" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#problemas">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="titulo">
+                                                Problema
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="peso">
+                                                Gravidade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="status">
+                                                Status
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="ciclo">
+                                                Ciclo
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="colaborador">
+                                                Colaborador
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="encontrado_em">
+                                                Encontrado em
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="ver-problema" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -2278,7 +2789,16 @@
                     <div class="modal-fundo">
                         <div class="modal modal-grande">
                             <h2>Editar perfil</h2>
-                            <form class="formulario">
+                            <form class="formulario" enctype="multipart/form-data">
+                                <div class="campo campo-largo">
+                                    <label for="edi-perfil-foto">Foto de perfil</label>
+                                    <div class="foto-editar">
+                                        <div class="perfil-foto-edicao">
+                                            <img src="assests/foto_perfil.svg" alt="Foto de perfil atual">
+                                        </div>
+                                        <input type="file" id="edi-perfil-foto" name="foto" accept="image/png, image/jpeg, image/webp">
+                                    </div>
+                                </div>
                                 <div class="campo">
                                     <label for="edi-perfil-nome">Nome</label>
                                     <input type="text" id="edi-perfil-nome" name="nome" maxlength="50" placeholder="Digite nome" required>
