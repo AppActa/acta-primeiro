@@ -3,6 +3,10 @@ package br.com.acta.dao;
 import br.com.acta.model.PlanoAcao;
 import br.com.acta.enums.Situacao;
 import br.com.acta.enums.Intensidade;
+import br.com.acta.excecoes.DaoException;
+import br.com.acta.excecoes.DuplicidadeException;
+import br.com.acta.excecoes.IntegridadeReferencialException;
+import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.utils.Conexao;
 
 
@@ -34,11 +38,17 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
             else return 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException("Já existe um registro de plano de ação com esses dados.", e);
+            }
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException("Existe uma referência inválida no cadastro.", e);
+            }
+            throw new DaoException("Erro ao cadastrar plano de ação.", e);
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -59,7 +69,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -78,7 +88,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
             return planosAcao;
 
         } catch(SQLException | ClassNotFoundException e ) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
 
     }
@@ -123,7 +133,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
             return planosAcao;
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -143,14 +153,31 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
             pstmt.setLong(7,planoAcao.getId_plano_acao());
 
             if (pstmt.executeUpdate() > 0) return 1;
-            return 0;
+
+            throw new RegistroNaoEncontradoException("Registro de plano de ação não encontrado para atualização.");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException(
+                        "Já existe um registro de plano de ação com esses dados.", e
+                );
+            }
+
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Referência inválida na atualização.", e
+                );
+            }
+
+            throw new DaoException(
+                    "Erro ao atualizar plano de ação.", e
+            );
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException(
+                    "Erro ao conectar no banco de dados.", e
+            );
         }
     }
 
@@ -164,25 +191,27 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
             pstmt.setLong(1, id);
 
             if (pstmt.executeUpdate() > 0) return 1;
-            else return 0;
+            throw new RegistroNaoEncontradoException("Registro de plano de ação não encontrado para exclusão.");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Não é possível excluir o registro de plano de ação porque existem registros vinculados.", e
+                );
+            }
+
+            throw new DaoException(
+                    "Erro ao excluir plano de ação.", e
+            );
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException(
+                    "Erro ao conectar no banco de dados.", e
+            );
         }
 
     }
 
-    private static int codigoDeErro(SQLException e) {
-        String state = e.getSQLState();
-        if (state != null && state.startsWith("23")) {
-            return 0;
-        }
-        return -1;
-    }
 
     private static PlanoAcao mapearPlanoAcao(ResultSet rs) throws SQLException {
         PlanoAcao planoAcao = new PlanoAcao();
