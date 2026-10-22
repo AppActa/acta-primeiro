@@ -103,7 +103,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
-        if (temBusca) sql.append(" AND nome ILIKE ?");
+        if (temBusca) sql.append(" AND (nome ILIKE ? OR cnpj ILIKE ?)");
         if (temSetor) sql.append(" AND setor ILIKE ?");
         if (temStatus) sql.append(" AND status = ?");
         if  (temTamanho) sql.append(" AND tamanho = ?");
