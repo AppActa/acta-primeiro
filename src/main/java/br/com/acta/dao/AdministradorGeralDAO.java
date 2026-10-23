@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import br.com.acta.model.AdministradorGeral;
+import br.com.acta.excecoes.DaoException;
+import br.com.acta.excecoes.DuplicidadeException;
+import br.com.acta.excecoes.IntegridadeReferencialException;
+import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.utils.Conexao;
 import br.com.acta.utils.PasswordUtils;
 
@@ -36,11 +40,17 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             else return 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException("Já existe um registro de administrador com esses dados.", e);
+            }
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException("Existe uma referência inválida no cadastro.", e);
+            }
+            throw new DaoException("Erro ao cadastrar administrador.", e);
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
 
     }
@@ -63,7 +73,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -83,7 +93,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             return administradoresGerais;
 
         } catch(SQLException | ClassNotFoundException e){
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
 
     }
@@ -122,7 +132,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             return administradoresGerais;
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -147,7 +157,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             }
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -165,14 +175,31 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             pstmt.setLong(4,administradorGeral.getAdm_geral_id());
 
             if (pstmt.executeUpdate() > 0) return 1;
-            else return 0;
+
+            throw new RegistroNaoEncontradoException("Registro de administrador não encontrado para atualização.");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException(
+                        "Já existe um registro de administrador com esses dados.", e
+                );
+            }
+
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Referência inválida na atualização.", e
+                );
+            }
+
+            throw new DaoException(
+                    "Erro ao atualizar administrador.", e
+            );
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException(
+                    "Erro ao conectar no banco de dados.", e
+            );
         }
     }
 
@@ -209,11 +236,27 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException(
+                        "Já existe um registro de administrador com esses dados.", e
+                );
+            }
+
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Referência inválida na atualização.", e
+                );
+            }
+
+            throw new DaoException(
+                    "Erro ao atualizar a senha do administrador.", e
+            );
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException(
+                    "Erro ao conectar no banco de dados.", e
+            );
         }
     }
 
@@ -227,25 +270,27 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
             pstmt.setLong(1, id);
 
-            if(pstmt.executeUpdate() > 0) return 1;
-            else return 0;
+            if (pstmt.executeUpdate() > 0) return 1;
+            throw new RegistroNaoEncontradoException("Registro de administrador não encontrado para exclusão.");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Não é possível excluir o registro de administrador porque existem registros vinculados.", e
+                );
+            }
+
+            throw new DaoException(
+                    "Erro ao excluir administrador.", e
+            );
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException(
+                    "Driver do banco não encontrado.", e
+            );
         }
     }
 
-    private static int codigoDeErro(SQLException e) {
-        String state = e.getSQLState();
-        if (state != null && state.startsWith("23")) {
-            return 0;
-        }
-        return -1;
-    }
 
     private static AdministradorGeral mapearAdministradorGeral(ResultSet rs) throws SQLException {
         AdministradorGeral administradorGeral = new AdministradorGeral();
