@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="assests/logo_compacta.svg" type="image/x-icon">
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="assets/css/login.css">
     <title>Login</title>
 </head>
 <body>
     <main class="login-pagina">
         <div class="login-sair">
-            <img src="assests/icone_voltar.svg" alt="">
+            <img src="assets/images/icone_voltar.svg" alt="">
             <a href="#">Voltar</a>
         </div>
 
         <div class="login-cartao">
             <!-- Coluna da esquerda -->
             <aside class="login-visual">
-                <img src="assests/logo_compacta_escura.svg" alt="" class="login-logo">
+                <img src="assets/images/logo_compacta_escura.svg" alt="" class="login-logo">
                 <p class="login-slogan">
                     ACTA, seu app de PDCA
                     <strong>
@@ -50,13 +50,38 @@
                 <div class="login-divisor"><span>ou</span></div>
 
                 <a href="#" class="login-google">
-                    <img src="assests/logo_google.svg" alt="">
+                    <img src="assets/images/logo_google.svg" alt="">
                     Continuar com Google
                 </a>
 
-                <a href="#" class="login-esqueceu">Esqueceu sua senha?</a>
+                <a href="#modal-esqueceu-senha" class="login-esqueceu">Esqueceu sua senha?</a>
             </section>
         </div>
+
+        <!-- Modal "Esqueceu sua senha?" (abre pelo link acima; fecha clicando fora da caixa) -->
+        <section id="modal-esqueceu-senha" class="modal-esqueceu-senha">
+            <a href="#" class="modal-esqueceu-fundo" aria-label="Fechar"></a>
+
+            <div class="modal-esqueceu-caixa">
+                <div class="modal-esqueceu-conteudo">
+                    <div class="modal-titulo">
+                        <h1>Esqueceu sua senha?</h1>
+                        <p class="esqueceu-senha-descricao">Recupere por endereço de email</p>
+                    </div>
+
+                    <!-- Tire o atributo "hidden" (ou faça o Servlet tirar) para mostrar o erro -->
+                    <p class="login-erro" hidden>email inválido/incorreto*</p>
+
+                    <form class="login-form" method="post" action="#">
+                        <div class="login-campo">
+                            <label for="esqueceu-email">Email</label>
+                            <input type="email" id="esqueceu-email" name="email" maxlength="80" autocomplete="email" required>
+                        </div>
+                        <button type="submit" class="login-botao">Concluído</button>
+                    </form>
+                </div>
+            </div>
+        </section>
     </main>
 </body>
 </html>
