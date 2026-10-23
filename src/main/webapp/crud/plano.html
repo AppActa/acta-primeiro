@@ -61,7 +61,7 @@
                             <span class="perfil-email">email@email.com</span>
                         </div>
                     </a>
-                    <a href="#" class="botao botao-sair">Sair</a>
+                    <a href="../login.html" class="botao botao-sair">Sair</a>
                 </div>
             </aside>
             <main class="conteudo">
@@ -74,11 +74,7 @@
                             <input type="text" placeholder="Pesquisar por plano de ação">
                         </div>
                         <div class="filtro-container">
-                            <select class="botao botao-filtro">
-                                <option value="">Filtros</option>
-                                <option value="status">Por Status</option>
-                                <option value="prazo">Por Prazo</option>
-                            </select>
+                            <a href="#filtros-plano" class="botao botao-filtro">Filtros</a>
                         </div>
                         <a href="#cadastrar-plano-de-ação" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -124,6 +120,64 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <section id="filtros-plano" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#plano" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#plano">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="nome">
+                                                Plano
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="ciclo">
+                                                Ciclo
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="criador">
+                                                Criador
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="prioridade">
+                                                Prioridade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="status">
+                                                Status
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="prazo">
+                                                Prazo
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
 
                     <section id="ver-plano-de-ação" class="pagina modal-pagina">
                         <div class="modal-fundo">
