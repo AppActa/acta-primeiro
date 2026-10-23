@@ -209,8 +209,21 @@ public class EmpresaServlet extends HttpServlet {
         return existente != null ? existente : limpa;
     }
 
+    // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
+    // Assume 500 (erro grave), então o usuário é levado para a página de erro.
+    private void enviarErro(
+            HttpServletRequest req,
+            HttpServletResponse resp,
+            String mensagem
+    ) throws ServletException, IOException {
 
+        enviarErro(req, resp, mensagem,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
 
+    // SOBRECARGA 2 (4 parâmetros): quem realmente trata o erro. O destino depende do status:
+    //  - 404 (registro não encontrado) e 500 (erro de banco/inesperado): vai para a página de erro (/erro.jsp)
+    //  - 400 (dado inválido) e 409 (duplicado/em uso): volta para a tela da entidade, mostrando a mensagem
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -219,6 +232,17 @@ public class EmpresaServlet extends HttpServlet {
     ) throws ServletException, IOException {
 
         resp.setStatus(status);
+
+        // Erros graves: página de erro (não consulta o banco, então funciona mesmo com ele fora do ar)
+        if (status == HttpServletResponse.SC_NOT_FOUND
+                || status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+            req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
+            req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, status);
+            req.getRequestDispatcher(PAGINA_ERRO).forward(req, resp);
+            return;
+        }
+
+        // Erros do usuário: volta para a tela com a mensagem
         req.setAttribute("mensagemErro", mensagem);
 
         // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
@@ -232,17 +256,6 @@ public class EmpresaServlet extends HttpServlet {
         }
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req, resp);
     }
-
-    private void enviarErro(
-            HttpServletRequest req,
-            HttpServletResponse resp,
-            String mensagem
-    ) throws ServletException, IOException {
-
-        enviarErro(req, resp, mensagem,
-                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    }
-
 
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
