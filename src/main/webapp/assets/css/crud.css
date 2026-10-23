@@ -612,3 +612,17 @@ td.coluna-acao {
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== Ajustes para páginas separadas (uma página HTML por tela) ===== */
+/* A seção principal de cada página fica sempre visível; os modais continuam via :target */
+.conteudo > .pagina:not(.modal-pagina) {
+    display: block;
+}
+
+/* Destaque do item atual do menu (cada página marca o seu link com a classe "ativo") */
+.menu-item.ativo {
+    background-color: #cedede;
+    color: var(--cor-primaria);
+    border-left-color: var(--cor-primaria);
+    font-weight: bold;
+}
