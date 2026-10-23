@@ -196,6 +196,20 @@ public class PlanoAcaoServlet extends HttpServlet {
         else enviarErro(req, resp, "O plano de ação não pode ser excluído");
     }
     //UTILITARIOS
+    // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
+    // Assume 500 (erro grave), então o usuário é levado para a página de erro.
+    private void enviarErro(
+            HttpServletRequest req,
+            HttpServletResponse resp,
+            String mensagem
+    ) throws ServletException, IOException {
+
+        enviarErro(req, resp, mensagem,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+    // SOBRECARGA 2 (4 parâmetros): quem realmente trata o erro. O destino depende do status:
+    //  - 404 (registro não encontrado) e 500 (erro de banco/inesperado): vai para a página de erro (/erro.jsp)
+    //  - 400 (dado inválido) e 409 (duplicado/em uso): volta para a tela da entidade, mostrando a mensagem
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -216,16 +230,6 @@ public class PlanoAcaoServlet extends HttpServlet {
             req.setAttribute("planoAcaoList", List.of());
         }
         req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
-    }
-
-    private void enviarErro(
-            HttpServletRequest req,
-            HttpServletResponse resp,
-            String mensagem
-    ) throws ServletException, IOException {
-
-        enviarErro(req, resp, mensagem,
-                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
