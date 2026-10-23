@@ -4,7 +4,11 @@ import br.com.acta.dao.PlanoAcaoDAO;
 import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
 import br.com.acta.model.PlanoAcao;
-import jakarta.servlet.RequestDispatcher;
+import br.com.acta.excecoes.DaoException;
+import br.com.acta.excecoes.DuplicidadeException;
+import br.com.acta.excecoes.IntegridadeReferencialException;
+import br.com.acta.excecoes.RegistroNaoEncontradoException;
+import br.com.acta.excecoes.ValidacaoException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,40 +26,92 @@ public class PlanoAcaoServlet extends HttpServlet {
 
     //DoGet e DoPost
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         try {
-            buscar(req,resp);
+            buscar(req, resp);
+
+        } catch (RegistroNaoEncontradoException e) {
+            enviarErro(req, resp, e.getMessage(),
+                    HttpServletResponse.SC_NOT_FOUND);
+
+        } catch (ValidacaoException | IllegalArgumentException e) {
+            enviarErro(req, resp, "Parâmetro de consulta inválido.",
+                    HttpServletResponse.SC_BAD_REQUEST);
+
+        } catch (DaoException e) {
+            e.printStackTrace();
+            enviarErro(req, resp, "Erro ao consultar o banco de dados.",
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi encontrar os planos de acao");
+            enviarErro(req, resp, "Não foi possível encontrar os planos de ação.",
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
         req.setCharacterEncoding("UTF-8");
         String acao = req.getParameter("acao");
 
         try {
+            if (acao == null) {
+                enviarErro(req, resp, "Ação não informada.",
+                        HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+
             switch (acao) {
                 case "inserir":
                     inserir(req, resp);
                     break;
+
                 case "atualizar":
                     atualizar(req, resp);
                     break;
+
                 case "excluir":
                     excluir(req, resp);
                     break;
-                case null:
-                    enviarErro(req, resp, "Ação não informada");
-                    break;
+
                 default:
-                    enviarErro(req, resp, "Ação não existente");
+                    enviarErro(req, resp, "Ação não existente.",
+                            HttpServletResponse.SC_BAD_REQUEST);
             }
+
+        } catch (ValidacaoException e) {
+            enviarErro(req, resp, e.getMessage(),
+                    HttpServletResponse.SC_BAD_REQUEST);
+
+        } catch (RegistroNaoEncontradoException e) {
+            enviarErro(req, resp, e.getMessage(),
+                    HttpServletResponse.SC_NOT_FOUND);
+
+        } catch (DuplicidadeException e) {
+            enviarErro(req, resp, e.getMessage(),
+                    HttpServletResponse.SC_CONFLICT);
+
+        } catch (IntegridadeReferencialException e) {
+            enviarErro(req, resp, e.getMessage(),
+                    HttpServletResponse.SC_CONFLICT);
+
+        } catch (IllegalArgumentException e) {
+            enviarErro(req, resp, "Parâmetro inválido.",
+                    HttpServletResponse.SC_BAD_REQUEST);
+
+        } catch (DaoException e) {
+            e.printStackTrace();
+            enviarErro(req, resp, "Erro interno ao acessar o banco de dados.",
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possivel concluir");
+            enviarErro(req, resp, "Não foi possível concluir a operação.",
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -88,11 +144,10 @@ public class PlanoAcaoServlet extends HttpServlet {
         PlanoAcao planoAcao = DAO.buscar(Long.parseLong(id));
 
         if (planoAcao == null) {
-            enviarPaginaCerta(req, resp);
-            return;
+            throw new RegistroNaoEncontradoException("Registro de plano de ação não encontrado.");
         }
 
-        req.setAttribute("planoAcao", List.of(planoAcao));
+        req.setAttribute("planoAcaoList", List.of(planoAcao));
         req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
     }
 
@@ -141,11 +196,40 @@ public class PlanoAcaoServlet extends HttpServlet {
         else enviarErro(req, resp, "O plano de ação não pode ser excluído");
     }
     //UTILITARIOS
-    private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
-        req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
-        req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        req.getRequestDispatcher(PAGINA_ERRO).forward(req, resp);
+    // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
+    // Assume 500 (erro grave), então o usuário é levado para a página de erro.
+    private void enviarErro(
+            HttpServletRequest req,
+            HttpServletResponse resp,
+            String mensagem
+    ) throws ServletException, IOException {
+
+        enviarErro(req, resp, mensagem,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+    // SOBRECARGA 2 (4 parâmetros): quem realmente trata o erro. O destino depende do status:
+    //  - 404 (registro não encontrado) e 500 (erro de banco/inesperado): vai para a página de erro (/erro.jsp)
+    //  - 400 (dado inválido) e 409 (duplicado/em uso): volta para a tela da entidade, mostrando a mensagem
+    private void enviarErro(
+            HttpServletRequest req,
+            HttpServletResponse resp,
+            String mensagem,
+            int status
+    ) throws ServletException, IOException {
+
+        resp.setStatus(status);
+        req.setAttribute("mensagemErro", mensagem);
+
+        // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
+        try {
+            List<PlanoAcao> planosAcoes = DAO.buscar();
+
+            req.setAttribute("planoAcaoList", planosAcoes);
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+            req.setAttribute("planoAcaoList", List.of());
+        }
+        req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

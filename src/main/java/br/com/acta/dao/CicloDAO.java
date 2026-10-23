@@ -3,6 +3,10 @@ package br.com.acta.dao;
 import br.com.acta.model.Ciclo;
 import br.com.acta.enums.EtapaCiclo;
 import br.com.acta.enums.Situacao;
+import br.com.acta.excecoes.DaoException;
+import br.com.acta.excecoes.DuplicidadeException;
+import br.com.acta.excecoes.IntegridadeReferencialException;
+import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.utils.Conexao;
 
 import java.sql.*;
@@ -37,11 +41,17 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
             else return 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException("Já existe um registro de ciclo com esses dados.", e);
+            }
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException("Existe uma referência inválida no cadastro.", e);
+            }
+            throw new DaoException("Erro ao cadastrar ciclo.", e);
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException("Driver do banco de dados não encontrado.", e);
         }
     }
 
@@ -62,7 +72,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -81,7 +91,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
             return ciclos;
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -137,7 +147,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
             return ciclos;
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -160,14 +170,31 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
             pstmt.setLong(9, ciclo.getId_ciclo());
 
             if (pstmt.executeUpdate() > 0) return 1;
-            return 0;
+
+            throw new RegistroNaoEncontradoException("Registro de ciclo não encontrado para atualização.");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException(
+                        "Já existe um registro de ciclo com esses dados.", e
+                );
+            }
+
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Referência inválida na atualização.", e
+                );
+            }
+
+            throw new DaoException(
+                    "Erro ao atualizar ciclo.", e
+            );
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException(
+                    "Erro ao conectar no banco de dados.", e
+            );
         }
     }
 
@@ -181,24 +208,26 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
             pstmt.setLong(1, id);
 
             if (pstmt.executeUpdate() > 0) return 1;
-            return 0;
+            throw new RegistroNaoEncontradoException("Registro de ciclo não encontrado para exclusão.");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Não é possível excluir o registro de ciclo porque existem registros vinculados.", e
+                );
+            }
+
+            throw new DaoException(
+                    "Erro ao excluir ciclo.", e
+            );
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException(
+                    "Erro ao conectar no banco de dados.", e
+            );
         }
     }
 
-    private static int codigoDeErro(SQLException e) {
-        String state = e.getSQLState();
-        if (state != null && state.startsWith("23")) {
-            return 0;
-        }
-        return -1;
-    }
 
     private static Ciclo mapearCiclo(ResultSet rs) throws SQLException {
         Ciclo ciclo = new Ciclo();
