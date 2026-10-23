@@ -74,11 +74,7 @@
                             <input type="text" placeholder="Pesquisar por colaborador">
                         </div>
                         <div class="filtro-container">
-                            <select class="botao botao-filtro">
-                                <option value="">Filtros</option>
-                                <option value="cargo">Por Cargo</option>
-                                <option value="nome">Por Nome</option>
-                            </select>
+                            <a href="#filtros-colaborador" class="botao botao-filtro">Filtros</a>
                         </div>
                         <a href="#cadastrar-colaborador" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -129,6 +125,72 @@
                         </table>
                     </div>
 
+                    <section id="filtros-colaborador" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#colaborador" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#colaborador">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="nome">
+                                                Nome
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="sobrenome">
+                                                Sobrenome
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="area">
+                                                Área
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="cargo">
+                                                Cargo
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="telefone">
+                                                Telefone
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="cpf">
+                                                CPF
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="email">
+                                                Email
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="status">
+                                                Status
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+                    
                     <section id="ver-colaborador" class="pagina modal-pagina">
                         <div class="modal-fundo">
                             <div class="modal modal-ver modal-larga">
