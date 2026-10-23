@@ -218,8 +218,8 @@ public class MetaServlet extends HttpServlet {
     }
 
     // UTILITARIOS
-
-
+    // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
+    // Assume 500 (erro grave), então o usuário é levado para a página de erro.
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
