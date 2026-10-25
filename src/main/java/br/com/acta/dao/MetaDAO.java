@@ -35,7 +35,7 @@ public class MetaDAO implements MetodosCrud<Meta> {
             pstmt.setDate(5, meta.getPrazo());
             pstmt.setString(6, meta.getStatus().name());
             pstmt.setLong(7, meta.getId_ciclo());
-            pstmt.setLong(8, meta.getId_plano_acao());
+            pstmt.setObject(8, meta.getId_plano_acao());
 
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
@@ -168,7 +168,7 @@ public class MetaDAO implements MetodosCrud<Meta> {
             pstmt.setDate(5, meta.getPrazo());
             pstmt.setString(6, meta.getStatus().name());
             pstmt.setLong(7, meta.getId_ciclo());
-            pstmt.setLong(8, meta.getId_plano_acao());
+            pstmt.setObject(8, meta.getId_plano_acao());
             pstmt.setLong(9, meta.getId_meta());
 
             if (pstmt.executeUpdate() > 0) return 1;
