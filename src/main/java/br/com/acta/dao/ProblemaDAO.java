@@ -35,8 +35,8 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
             pstmt.setString(6, problema.getOrigem());
             pstmt.setDate(7, problema.getEncontrado_em());
             pstmt.setLong(8, problema.getId_ciclo());
-            pstmt.setLong(9, problema.getId_plano_acao());
-            pstmt.setLong(10, problema.getId_colaborador());
+            pstmt.setObject(9, problema.getId_plano_acao(), java.sql.Types.BIGINT);
+            pstmt.setObject(10, problema.getId_colaborador(), java.sql.Types.BIGINT);
 
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
@@ -167,8 +167,8 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
             pstmt.setString(6, problema.getOrigem());
             pstmt.setDate(7, problema.getEncontrado_em());
             pstmt.setLong(8, problema.getId_ciclo());
-            pstmt.setLong(9, problema.getId_plano_acao());
-            pstmt.setLong(10, problema.getId_colaborador());
+            pstmt.setObject(9, problema.getId_plano_acao(), java.sql.Types.BIGINT);
+            pstmt.setObject(10, problema.getId_colaborador(), java.sql.Types.BIGINT);
             pstmt.setLong(11, problema.getId_problema());
 
             if (pstmt.executeUpdate() > 0) return 1;
