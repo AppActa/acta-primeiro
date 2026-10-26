@@ -69,7 +69,7 @@ public class ColaboradorServlet extends HttpServlet {
         colaborador.setPermissao_gestor(Boolean.parseBoolean(req.getParameter("permissao_gestor")));
         colaborador.setStatus(Status.valueOf(req.getParameter("status")));
         colaborador.setArea(normalizarArea(req.getParameter("area")));
-        colaborador.setCargo(req.getParameter("cargo"));
+        colaborador.setCargo(normalizarCargo(req.getParameter("cargo")));
         colaborador.setDt_contratacao(Date.valueOf(req.getParameter("dt_contratacao")));
         colaborador.setEmail(req.getParameter("email"));
         colaborador.setSenha(req.getParameter("senha"));
@@ -100,6 +100,7 @@ public class ColaboradorServlet extends HttpServlet {
 
         req.setAttribute("colaboradorList", List.of(colaborador));
         req.setAttribute("areaList", DAO.buscarAreas());
+        req.setAttribute("cargoList", DAO.buscarCargos());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 
@@ -107,6 +108,7 @@ public class ColaboradorServlet extends HttpServlet {
         String busca = req.getParameter("busca");
         String statusParam = req.getParameter("status");
         String area = req.getParameter("area");
+        String cargo = req.getParameter("cargo");
         String gestorParam = req.getParameter("gestor");
         String dataInicialParam = req.getParameter("dataInicial");
         String dataFinalParam = req.getParameter("dataFinal");
@@ -133,11 +135,11 @@ public class ColaboradorServlet extends HttpServlet {
             dataFinal = Date.valueOf(dataFinalParam);
         }
 
-        List<Colaborador> colaboradores = DAO.buscaFiltrada(busca, status, area, permissaoGestor,
-                dataInicial, dataFinal, ordem, direcao);
+        List<Colaborador> colaboradores = DAO.buscaFiltrada(busca, status, area, cargo, permissaoGestor, dataInicial, dataFinal, ordem, direcao);
 
         req.setAttribute("colaboradorList", colaboradores);
         req.setAttribute("areaList", DAO.buscarAreas());
+        req.setAttribute("cargoList", DAO.buscarCargos());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 
@@ -151,7 +153,7 @@ public class ColaboradorServlet extends HttpServlet {
         colaborador.setPermissao_gestor(Boolean.parseBoolean(req.getParameter("permissao_gestor")));
         colaborador.setStatus(Status.valueOf(req.getParameter("status")));
         colaborador.setArea(normalizarArea(req.getParameter("area")));
-        colaborador.setCargo(req.getParameter("cargo"));
+        colaborador.setCargo(normalizarCargo(req.getParameter("cargo")));
         colaborador.setDt_contratacao(Date.valueOf(req.getParameter("dt_contratacao")));
         colaborador.setEmail(req.getParameter("email"));
         colaborador.setTelefone(req.getParameter("telefone"));
@@ -179,6 +181,12 @@ public class ColaboradorServlet extends HttpServlet {
         return existente != null ? existente : limpa;
     }
 
+    private String normalizarCargo(String cargo) {
+        String limpa = cargo.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarCargoExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
     private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
         req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
         req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -191,6 +199,7 @@ public class ColaboradorServlet extends HttpServlet {
 
         req.setAttribute("colaboradorList", colaboradores);
         req.setAttribute("areaList", DAO.buscarAreas());
+        req.setAttribute("cargoList", DAO.buscarCargos());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 }
