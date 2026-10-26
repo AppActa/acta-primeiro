@@ -10,6 +10,7 @@ import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.excecoes.ValidacaoException;
+import br.com.acta.utils.Validador;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -123,16 +124,16 @@ public class ProblemaServlet extends HttpServlet {
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Problema problema = new Problema();
 
-        problema.setTitulo(req.getParameter("titulo"));
-        problema.setDescricao(req.getParameter("descricao"));
-        problema.setPeso(Intensidade.valueOf(req.getParameter("peso")));
-        problema.setSolucao(req.getParameter("solucao"));
-        problema.setStatus(StatusProblema.valueOf(req.getParameter("status")));
-        problema.setOrigem(req.getParameter("origem"));
-        problema.setEncontrado_em(Date.valueOf(req.getParameter("encontrado_em")));
-        problema.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
-        problema.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
-        problema.setId_colaborador(Long.parseLong(req.getParameter("id_colaborador")));
+        problema.setTitulo(Validador.texto(req.getParameter("titulo"), "Título", 100));
+        problema.setDescricao(Validador.textoLongo(req.getParameter("descricao"), "Descrição"));
+        problema.setPeso(Validador.opcao(Intensidade.class, req.getParameter("peso"), "Peso"));
+        problema.setSolucao(Validador.textoOpcional(req.getParameter("solucao"), "Solução", 200));
+        problema.setStatus(Validador.opcao(StatusProblema.class, req.getParameter("status"), "Status"));
+        problema.setOrigem(Validador.textoLongoOpcional(req.getParameter("origem"), "Origem"));
+        problema.setEncontrado_em(Validador.dataNaoFutura(req.getParameter("encontrado_em"), "Data em que foi encontrado"));
+        problema.setId_ciclo(Validador.id(req.getParameter("id_ciclo"), "Ciclo"));
+        problema.setId_plano_acao(Validador.idOpcional(req.getParameter("id_plano_acao"), "Plano de ação"));
+        problema.setId_colaborador(Validador.idOpcional(req.getParameter("id_colaborador"), "Colaborador"));
 
         int resultado = DAO.inserir(problema);
 
@@ -147,7 +148,7 @@ public class ProblemaServlet extends HttpServlet {
             return;
         }
 
-        Problema problema = DAO.buscar(Long.parseLong(id));
+        Problema problema = DAO.buscar(Validador.id(id, "Id"));
 
         if (problema == null) {
             throw new RegistroNaoEncontradoException("Registro de problema não encontrado.");
@@ -186,20 +187,20 @@ public class ProblemaServlet extends HttpServlet {
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-problema"));
+        Long id = Validador.id(req.getParameter("id-problema"), "Id do problema");
         Problema problema = new Problema();
 
         problema.setId_problema(id);
-        problema.setTitulo(req.getParameter("titulo"));
-        problema.setDescricao(req.getParameter("descricao"));
-        problema.setPeso(Intensidade.valueOf(req.getParameter("peso")));
-        problema.setSolucao(req.getParameter("solucao"));
-        problema.setStatus(StatusProblema.valueOf(req.getParameter("status")));
-        problema.setOrigem(req.getParameter("origem"));
-        problema.setEncontrado_em(Date.valueOf(req.getParameter("encontrado_em")));
-        problema.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
-        problema.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
-        problema.setId_colaborador(Long.parseLong(req.getParameter("id_colaborador")));
+        problema.setTitulo(Validador.texto(req.getParameter("titulo"), "Título", 100));
+        problema.setDescricao(Validador.textoLongo(req.getParameter("descricao"), "Descrição"));
+        problema.setPeso(Validador.opcao(Intensidade.class, req.getParameter("peso"), "Peso"));
+        problema.setSolucao(Validador.textoOpcional(req.getParameter("solucao"), "Solução", 200));
+        problema.setStatus(Validador.opcao(StatusProblema.class, req.getParameter("status"), "Status"));
+        problema.setOrigem(Validador.textoLongoOpcional(req.getParameter("origem"), "Origem"));
+        problema.setEncontrado_em(Validador.dataNaoFutura(req.getParameter("encontrado_em"), "Data em que foi encontrado"));
+        problema.setId_ciclo(Validador.id(req.getParameter("id_ciclo"), "Ciclo"));
+        problema.setId_plano_acao(Validador.idOpcional(req.getParameter("id_plano_acao"), "Plano de ação"));
+        problema.setId_colaborador(Validador.idOpcional(req.getParameter("id_colaborador"), "Colaborador"));
 
         int resultado = DAO.atualizar(problema);
 
@@ -208,7 +209,7 @@ public class ProblemaServlet extends HttpServlet {
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-problema"));
+        Long id = Validador.id(req.getParameter("id-problema"), "Id do problema");
         int resultado = DAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
