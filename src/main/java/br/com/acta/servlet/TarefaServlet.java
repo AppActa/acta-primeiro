@@ -71,6 +71,7 @@ public class TarefaServlet extends HttpServlet {
         tarefa.setStatus(Situacao.valueOf(req.getParameter("status")));
         tarefa.setDt_inicio(Date.valueOf(req.getParameter("dt_inicio")));
         tarefa.setId_colaborador(Long.parseLong(req.getParameter("id_colaborador")));
+        tarefa.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
 
         int resultado = DAO.inserir(tarefa);
 
@@ -135,6 +136,7 @@ public class TarefaServlet extends HttpServlet {
         tarefa.setStatus(Situacao.valueOf(req.getParameter("status")));
         tarefa.setDt_inicio(Date.valueOf(req.getParameter("dt_inicio")));
         tarefa.setId_colaborador(Long.parseLong(req.getParameter("id_colaborador")));
+        tarefa.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
 
         int resultado = DAO.atualizar(tarefa);
 
