@@ -72,7 +72,7 @@ public class ProblemaServlet extends HttpServlet {
         problema.setPeso(Intensidade.valueOf(req.getParameter("peso")));
         problema.setSolucao(req.getParameter("solucao"));
         problema.setStatus(StatusProblema.valueOf(req.getParameter("status")));
-        problema.setOrigem(req.getParameter("origem"));
+        problema.setOrigem(normalizarOrigem(req.getParameter("origem")));
         problema.setEncontrado_em(Date.valueOf(req.getParameter("encontrado_em")));
         problema.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
         problema.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
@@ -99,6 +99,7 @@ public class ProblemaServlet extends HttpServlet {
         }
 
         req.setAttribute("problemaList", List.of(problema));
+        req.setAttribute("origemList", DAO.buscarOrigem());
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
 
@@ -127,6 +128,7 @@ public class ProblemaServlet extends HttpServlet {
         List<Problema> problemas = DAO.buscaFiltrada(busca, peso, status, origem, dataInicial, dataFinal, ordem, direcao);
 
         req.setAttribute("problemaList", problemas);
+        req.setAttribute("origemList", DAO.buscarOrigem());
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
 
@@ -140,7 +142,7 @@ public class ProblemaServlet extends HttpServlet {
         problema.setPeso(Intensidade.valueOf(req.getParameter("peso")));
         problema.setSolucao(req.getParameter("solucao"));
         problema.setStatus(StatusProblema.valueOf(req.getParameter("status")));
-        problema.setOrigem(req.getParameter("origem"));
+        problema.setOrigem(normalizarOrigem(req.getParameter("origem")));
         problema.setEncontrado_em(Date.valueOf(req.getParameter("encontrado_em")));
         problema.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
         problema.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
@@ -161,6 +163,14 @@ public class ProblemaServlet extends HttpServlet {
     }
 
     // UTILITARIOS
+    private String normalizarOrigem(String origem) {
+        if (origem == null || origem.isBlank()) return null;
+
+        String limpa = origem.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarOrigemExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
     private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
         req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
         req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -172,6 +182,7 @@ public class ProblemaServlet extends HttpServlet {
         List<Problema> problemas = DAO.buscar();
 
         req.setAttribute("problemaList", problemas);
+        req.setAttribute("origemList", DAO.buscarOrigem());
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
 }

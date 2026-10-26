@@ -65,9 +65,9 @@ public class LicoesAprendidasServlet extends HttpServlet {
         LicoesAprendidas licoesAprendidas = new LicoesAprendidas();
 
         licoesAprendidas.setTitulo(req.getParameter("titulo"));
-        licoesAprendidas.setArea(req.getParameter("area"));
+        licoesAprendidas.setArea(normalizarArea(req.getParameter("area")));
         licoesAprendidas.setAprendizado(req.getParameter("aprendizado"));
-        licoesAprendidas.setCategoria(req.getParameter("categoria"));
+        licoesAprendidas.setCategoria(normalizarCategoria(req.getParameter("categoria")));
         licoesAprendidas.setDescricao(req.getParameter("descricao"));
         licoesAprendidas.setFase_origem(EtapaCiclo.valueOf(req.getParameter("fase_origem")));
         licoesAprendidas.setSeveridade(Intensidade.valueOf(req.getParameter("severidade")));
@@ -82,7 +82,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
-            buscaFiltrada(req, resp); // ALTERADO (antes: enviarPaginaCerta(req, resp);)
+            buscaFiltrada(req, resp);
             return;
         }
 
@@ -94,6 +94,8 @@ public class LicoesAprendidasServlet extends HttpServlet {
         }
 
         req.setAttribute("licoesAprendidasList", List.of(licoesAprendidas));
+        req.setAttribute("areaList", DAO.buscarArea());
+        req.setAttribute("categoriaList", DAO.buscarCategoria());
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
@@ -115,6 +117,8 @@ public class LicoesAprendidasServlet extends HttpServlet {
         List<LicoesAprendidas> licoesAprendidas = DAO.buscaFiltrada(busca, fase, severidade, area, categoria, ordem, direcao);
 
         req.setAttribute("licoesAprendidasList", licoesAprendidas);
+        req.setAttribute("areaList", DAO.buscarArea());
+        req.setAttribute("categoriaList", DAO.buscarCategoria());
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
@@ -124,9 +128,9 @@ public class LicoesAprendidasServlet extends HttpServlet {
 
         licoesAprendidas.setId_licao(id);
         licoesAprendidas.setTitulo(req.getParameter("titulo"));
-        licoesAprendidas.setArea(req.getParameter("area"));
+        licoesAprendidas.setArea(normalizarArea(req.getParameter("area")));
         licoesAprendidas.setAprendizado(req.getParameter("aprendizado"));
-        licoesAprendidas.setCategoria(req.getParameter("categoria"));
+        licoesAprendidas.setCategoria(normalizarCategoria(req.getParameter("categoria")));
         licoesAprendidas.setDescricao(req.getParameter("descricao"));
         licoesAprendidas.setFase_origem(EtapaCiclo.valueOf(req.getParameter("fase_origem")));
         licoesAprendidas.setSeveridade(Intensidade.valueOf(req.getParameter("severidade")));
@@ -147,6 +151,22 @@ public class LicoesAprendidasServlet extends HttpServlet {
     }
 
     // UTILITARIOS
+    private String normalizarArea(String area) {
+        if (area == null || area.isBlank()) return null;
+
+        String limpa = area.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarAreaExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
+    private String normalizarCategoria(String categoria) {
+        if (categoria == null || categoria.isBlank()) return null;
+
+        String limpa = categoria.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarCategoriaExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
     private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
         req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
         req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -158,6 +178,8 @@ public class LicoesAprendidasServlet extends HttpServlet {
         List<LicoesAprendidas> licoesAprendidas = DAO.buscar();
 
         req.setAttribute("licoesAprendidasList", licoesAprendidas);
+        req.setAttribute("areaList", DAO.buscarArea());
+        req.setAttribute("categoriaList", DAO.buscarCategoria());
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 }

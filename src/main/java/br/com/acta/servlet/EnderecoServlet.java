@@ -64,7 +64,7 @@ public class EnderecoServlet extends HttpServlet {
 
         endereco.setRua(req.getParameter("rua"));
         endereco.setBairro(req.getParameter("bairro"));
-        endereco.setCidade(req.getParameter("cidade"));
+        endereco.setCidade(normalizarCidade(req.getParameter("cidade")));
         endereco.setEstado(req.getParameter("estado"));
         endereco.setCep(req.getParameter("cep"));
         endereco.setNumero(req.getParameter("numero"));
@@ -93,6 +93,7 @@ public class EnderecoServlet extends HttpServlet {
         }
 
         req.setAttribute("enderecoList", List.of(endereco));
+        req.setAttribute("cidadeList", DAO.buscarCidade());
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
 
@@ -106,6 +107,7 @@ public class EnderecoServlet extends HttpServlet {
         List<Endereco> lista = DAO.buscaFiltrada(busca, estado, cidade, ordem, direcao);
 
         req.setAttribute("enderecoList", lista);
+        req.setAttribute("cidadeList", DAO.buscarCidade());
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
 
@@ -116,7 +118,7 @@ public class EnderecoServlet extends HttpServlet {
         endereco.setId_endereco(id);
         endereco.setRua(req.getParameter("rua"));
         endereco.setBairro(req.getParameter("bairro"));
-        endereco.setCidade(req.getParameter("cidade"));
+        endereco.setCidade(normalizarCidade(req.getParameter("cidade")));
         endereco.setEstado(req.getParameter("estado"));
         endereco.setCep(req.getParameter("cep"));
         endereco.setNumero(req.getParameter("numero"));
@@ -139,6 +141,12 @@ public class EnderecoServlet extends HttpServlet {
     }
 
     // UTILITARIOS
+    private String normalizarCidade(String cidade) {
+        String limpa = cidade.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarCidadeExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
     private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
         req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
         req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -150,6 +158,7 @@ public class EnderecoServlet extends HttpServlet {
         List<Endereco> lista = DAO.buscar();
 
         req.setAttribute("enderecoList", lista);
+        req.setAttribute("cidadeList", DAO.buscarCidade());
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
 

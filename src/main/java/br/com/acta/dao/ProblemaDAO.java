@@ -49,7 +49,7 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
     // READ
     @Override
     public Problema buscar(Long id) {
-        String sql = "SELECT * FROM problema WHERE id_problema = ?;";
+        String sql = "SELECT * FROM vw_problema WHERE id_problema = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -71,7 +71,7 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
     @Override
     public List<Problema> buscar() {
         List<Problema> lista = new ArrayList<>();
-        String sql = "SELECT * FROM problema;";
+        String sql = "SELECT * FROM vw_problema;";
 
         try (Connection conn = Conexao.conectar();
              Statement stmt = conn.createStatement();
@@ -135,6 +135,24 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
                 }
             }
             return lista;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> buscarOrigem() {
+        List<String> origens = new ArrayList<>();
+        String sql = "SELECT DISTINCT origem FROM problema ORDER BY origem;";
+
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                origens.add(rs.getString("origem"));
+            }
+            return origens;
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -217,7 +235,7 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
         problema.setEncontrado_em(rs.getDate("encontrado_em"));
         problema.setNome_ciclo(rs.getString("nome_ciclo"));
         problema.setNome_plano_acao(rs.getString("nome_plano_acao"));
-        problema.setNome_ciclo(rs.getString("nome_ciclo"));
+        problema.setNome_colaborador(rs.getString("nome_colaborador"));
         return problema;
     }
 
@@ -226,8 +244,28 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
             "peso", "peso",
             "status", "status",
             "origem", "origem",
-            "data", "encontrado_em",
+            "encontrado_em", "encontrado_em",
             "ciclo", "nome_ciclo",
-            "plano", "nome_plano_acao"
+            "plano_acao", "nome_plano_acao"
     );
+
+    public String buscarOrigemExistente(String origem) {
+        String sql = "SELECT origem FROM problema WHERE LOWER(origem) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, origem);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs. next()) {
+                    return rs.getString("origem");
+                }
+                return null;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

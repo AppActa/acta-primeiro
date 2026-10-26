@@ -135,6 +135,42 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         }
     }
 
+    public List<String> buscarArea() {
+        List<String> areas = new ArrayList<>();
+        String sql = "SELECT DISTINCT area FROM licoes_aprendidas ORDER BY area;";
+
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                areas.add(rs.getString("area"));
+            }
+            return areas;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> buscarCategoria() {
+        List<String> categorias = new ArrayList<>();
+        String sql = "SELECT DISTINCT categoria FROM licoes_aprendidas ORDER BY categoria;";
+
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                categorias.add(rs.getString("categoria"));
+            }
+            return categorias;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // UPDATE
     @Override
     public int atualizar(LicoesAprendidas licoesAprendidas) {
@@ -220,4 +256,43 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
             "ciclo", "nome_ciclo"
     );
 
+    public String buscarAreaExistente(String area) {
+        String sql = "SELECT area FROM licoes_aprendidas WHERE LOWER(area) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, area);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs. next()) {
+                    return rs.getString("area");
+                }
+                return null;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String buscarCategoriaExistente(String categoria) {
+        String sql = "SELECT categoria FROM licoes_aprendidas WHERE LOWER(categoria) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, categoria);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs. next()) {
+                    return rs.getString("categoria");
+                }
+                return null;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
