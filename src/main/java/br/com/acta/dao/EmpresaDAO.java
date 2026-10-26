@@ -18,8 +18,6 @@ import br.com.acta.enums.TamanhoEmpresa;
 import br.com.acta.model.Empresa;
 import br.com.acta.utils.Conexao;
 
-import javax.xml.transform.Result;
-
 public class EmpresaDAO implements MetodosCrud<Empresa> {
 
     //INSERT
@@ -97,7 +95,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         StringBuilder sql = new StringBuilder("SELECT * FROM empresa WHERE 1=1");
 
         boolean temBusca = busca != null && !busca.isBlank();
-        boolean temSetor = setor != null && !busca.isBlank();
+        boolean temSetor = setor != null && !setor.isBlank();
         boolean temStatus = status != null;
         boolean temTamanho = tamanho != null;
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
@@ -106,7 +104,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         if (temBusca) sql.append(" AND (nome ILIKE ? OR cnpj ILIKE ?)");
         if (temSetor) sql.append(" AND setor ILIKE ?");
         if (temStatus) sql.append(" AND status = ?");
-        if  (temTamanho) sql.append(" AND tamanho = ?");
+        if (temTamanho) sql.append(" AND tamanho = ?");
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
             sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
@@ -121,6 +119,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
+            if (temSetor) pstmt.setString(i++, setor);
             if (temStatus) pstmt.setString(i++, status.name());
             if (temTamanho) pstmt.setString(i++, tamanho.name());
 
