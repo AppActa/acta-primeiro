@@ -2,9 +2,6 @@
 package br.com.acta.dao;
 
 import java.util.List;
-
-
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,8 +12,12 @@ import java.util.Map;
 
 import br.com.acta.enums.Status;
 import br.com.acta.enums.TamanhoEmpresa;
+import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.model.Empresa;
 import br.com.acta.utils.Conexao;
+import br.com.acta.excecoes.DaoException;
+import br.com.acta.excecoes.DuplicidadeException;
+import br.com.acta.excecoes.IntegridadeReferencialException;
 
 public class EmpresaDAO implements MetodosCrud<Empresa> {
 
@@ -42,11 +43,17 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             else return 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+
+            if ("23505".equals(e.getSQLState())){
+                throw new DuplicidadeException("Já existe um registro com esse dados.",e);
+            }
+            if ("23503".equals(e.getSQLState())){
+                throw new IntegridadeReferencialException("Existe uma referência inválida no cadastro.",e);
+            }
+            throw new DaoException("Erro ao cadrastrar empresa.", e);
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException("Driver do banco de dados não encontrado.", e);
         }
     }
 
@@ -129,7 +136,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
                 }
             } return empresas;
 
-        } catch(SQLException | ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -148,7 +155,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             return setores;
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados",e);
         }
     }
 
@@ -167,14 +174,31 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             pstmt.setLong(6, empresa.getId_empresa()); //localizando o id
 
             if (pstmt.executeUpdate() > 0) return 1;
-            else return 0;
+
+            throw new RegistroNaoEncontradoException("Empresa não encontrada para atualização");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException(
+                        "Já existe uma empresa com esses dados.", e
+                );
+            }
+
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Referência inválida na atualização.", e
+                );
+            }
+
+            throw new DaoException(
+                    "Erro ao atualizar empresa.", e
+            );
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException(
+                    "Erro ao conectar no banco de dados.", e
+            );
         }
     }
 
@@ -188,23 +212,26 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             pstmt.setLong(1, id);
 
             if (pstmt.executeUpdate() > 0) return 1;
-            else return 0;
+            throw new RegistroNaoEncontradoException(
+                    "Empresa não encontrada para exclusão"
+            );
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Não é possível excluir a empresa porque existem registros vinculados.", e
+                );
+            }
 
-    private static int codigoDeErro(SQLException e) {
-        String state = e.getSQLState();
-        if (state != null && state.startsWith("23")) {
-            return 0;
+            throw new DaoException(
+                    "Erro ao excluir empresa.", e
+            );
+
+        } catch (ClassNotFoundException e) {
+            throw new DaoException(
+                    "Driver do banco não encontrado.", e
+            );
         }
-        return -1;
     }
 
     private static Empresa mapearEmpresa(ResultSet rs) throws SQLException {
@@ -241,7 +268,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.",e);
         }
     }
 }
