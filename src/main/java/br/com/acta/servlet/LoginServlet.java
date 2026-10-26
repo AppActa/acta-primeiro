@@ -4,6 +4,8 @@ import br.com.acta.dao.AdministradorGeralDAO;
 import br.com.acta.dao.ColaboradorDAO;
 import br.com.acta.model.AdministradorGeral;
 import br.com.acta.model.Colaborador;
+import br.com.acta.excecoes.ValidacaoException;
+import br.com.acta.utils.Validador;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -37,14 +39,17 @@ public class LoginServlet extends HttpServlet {
                     enviarErro(req, resp, "Ação não existente");
             }
 
+        } catch (ValidacaoException e) {
+            enviarErroLogin(req, resp, e.getMessage());
+
         } catch (Exception e) {
             enviarErro(req, resp, "Não foi possível concluir");
         }
     }
 
     private void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String email = req.getParameter("email");
-        String senha = req.getParameter("senha");
+        String email = Validador.obrigatorio(req.getParameter("email"), "E-mail");
+        String senha = Validador.obrigatorio(req.getParameter("senha"), "Senha");
 
         AdministradorGeral administradorGeral = ADMINISTRADOR_DAO.autenticar(email, senha);
         if (administradorGeral != null) {
