@@ -214,7 +214,7 @@ public class MetaDAO implements MetodosCrud<Meta> {
         meta.setPrioridade(Intensidade.valueOf(rs.getString("prioridade")));
         meta.setPrazo(rs.getDate("prazo"));
         meta.setStatus(StatusMeta.valueOf(rs.getString("status")));
-        meta.setCriando_em(rs.getObject("criando_em", OffsetDateTime.class));
+        meta.setCriando_em(rs.getObject("criado_em", OffsetDateTime.class));
         meta.setNome_ciclo(rs.getString("nome_ciclo"));
         meta.setNome_plano_acao(rs.getString("nome_plano_acao"));
         return meta;
@@ -225,9 +225,9 @@ public class MetaDAO implements MetodosCrud<Meta> {
             "prioridade", "prioridade",
             "prazo", "prazo",
             "status", "status",
-            "criado", "criando_em",
+            "criado_em", "criado_em",
             "ciclo", "nome_ciclo",
-            "plano", "nome_plano_acao"
+            "plano_acao", "nome_plano_acao"
     );
 
 }
