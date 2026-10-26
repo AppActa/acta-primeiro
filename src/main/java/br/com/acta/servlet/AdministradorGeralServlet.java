@@ -7,6 +7,7 @@ import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.excecoes.ValidacaoException;
+import br.com.acta.utils.Validador;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -128,10 +129,10 @@ public class AdministradorGeralServlet extends HttpServlet {
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         AdministradorGeral administradorGeral = new AdministradorGeral();
 
-        administradorGeral.setNome(req.getParameter("nome"));
-        administradorGeral.setSenha(req.getParameter("senha"));
-        administradorGeral.setEmail(req.getParameter("email"));
-        administradorGeral.setTelefone(req.getParameter("telefone"));
+        administradorGeral.setNome(Validador.nomePessoa(req.getParameter("nome"), "Nome", 100));
+        administradorGeral.setSenha(Validador.senha(req.getParameter("senha")));
+        administradorGeral.setEmail(Validador.email(req.getParameter("email")));
+        administradorGeral.setTelefone(Validador.telefone(req.getParameter("telefone")));
 
         int resultado = DAO.inserir(administradorGeral);
 
@@ -146,7 +147,7 @@ public class AdministradorGeralServlet extends HttpServlet {
             return;
         }
 
-        AdministradorGeral administradorGeral = DAO.buscar(Long.parseLong(id));
+        AdministradorGeral administradorGeral = DAO.buscar(Validador.id(id, "Id"));
 
         if (administradorGeral == null) {
             throw new RegistroNaoEncontradoException("Registro de administrador não encontrado.");
@@ -168,13 +169,13 @@ public class AdministradorGeralServlet extends HttpServlet {
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-adm-geral"));
+        Long id = Validador.id(req.getParameter("id-adm-geral"), "Id do administrador");
         AdministradorGeral administradorGeral = new AdministradorGeral();
 
         administradorGeral.setAdm_geral_id(id);
-        administradorGeral.setNome(req.getParameter("nome"));
-        administradorGeral.setEmail(req.getParameter("email"));
-        administradorGeral.setTelefone(req.getParameter("telefone"));
+        administradorGeral.setNome(Validador.nomePessoa(req.getParameter("nome"), "Nome", 50));
+        administradorGeral.setEmail(Validador.email(req.getParameter("email")));
+        administradorGeral.setTelefone(Validador.telefone(req.getParameter("telefone")));
 
         int resultado = DAO.atualizar(administradorGeral);
 
@@ -183,9 +184,9 @@ public class AdministradorGeralServlet extends HttpServlet {
     }
 
     private void atualizarSenha(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String email = req.getParameter("email");
-        String senhaAntiga = req.getParameter("senha_antiga");
-        String senhaNova = req.getParameter("senha_nova");
+        String email = Validador.email(req.getParameter("email"));
+        String senhaAntiga = Validador.obrigatorio(req.getParameter("senha_antiga"), "Senha atual");
+        String senhaNova = Validador.senha(req.getParameter("senha_nova"));
 
         int resultado = DAO.atualizarSenha(email, senhaAntiga, senhaNova);
 
@@ -194,7 +195,7 @@ public class AdministradorGeralServlet extends HttpServlet {
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-adm-geral"));
+        Long id = Validador.id(req.getParameter("id-adm-geral"), "Id do administrador");
         int resultado = DAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
@@ -203,8 +204,8 @@ public class AdministradorGeralServlet extends HttpServlet {
 
     // AUTENTICACAO
     private void autenticar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String email = req.getParameter("email");
-        String senha = req.getParameter("senha");
+        String email = Validador.obrigatorio(req.getParameter("email"), "E-mail");
+        String senha = Validador.obrigatorio(req.getParameter("senha"), "Senha");
 
         AdministradorGeral administradorGeral = DAO.autenticar(email, senha);
 
