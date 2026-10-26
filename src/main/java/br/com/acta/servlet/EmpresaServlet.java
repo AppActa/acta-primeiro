@@ -16,6 +16,7 @@ import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.excecoes.ValidacaoException;
+import br.com.acta.utils.Validador;
 import java.io.IOException;
 import java.util.List;
 
@@ -120,11 +121,12 @@ public class EmpresaServlet extends HttpServlet {
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Empresa empresa = new Empresa();
 
-        empresa.setNome(req.getParameter("nome"));
-        empresa.setSetor(normalizarSetor(req.getParameter("setor")));
-        empresa.setCnpj(req.getParameter("cnpj"));
-        empresa.setStatus(Status.valueOf(req.getParameter("status")));
-        empresa.setTamanho(TamanhoEmpresa.valueOf(req.getParameter("tamanho")));
+        empresa.setNome(Validador.texto(req.getParameter("nome"), "Nome", 50));
+        empresa.setCnpj(Validador.cnpj(req.getParameter("cnpj")));
+        empresa.setStatus(Validador.opcao(Status.class, req.getParameter("status"), "Status"));
+        empresa.setTamanho(Validador.opcao(TamanhoEmpresa.class, req.getParameter("tamanho"), "Tamanho"));
+
+        empresa.setSetor(normalizarSetor(Validador.texto(req.getParameter("setor"), "Setor", 30)));
 
         int resultado = DAO.inserir(empresa);
 
@@ -140,7 +142,7 @@ public class EmpresaServlet extends HttpServlet {
             return;
         }
 
-        Empresa empresa = DAO.buscar(Long.parseLong(id));
+        Empresa empresa = DAO.buscar(Validador.id(id, "Id"));
 
         if (empresa == null) {
             throw new RegistroNaoEncontradoException(
@@ -177,15 +179,16 @@ public class EmpresaServlet extends HttpServlet {
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-empresa"));
+        Long id = Validador.id(req.getParameter("id-empresa"), "Id da empresa");
         Empresa empresa = new Empresa();
 
         empresa.setId_empresa(id);
-        empresa.setNome(req.getParameter("nome"));
-        empresa.setSetor(normalizarSetor(req.getParameter("setor")));
-        empresa.setCnpj(req.getParameter("cnpj"));
-        empresa.setStatus(Status.valueOf(req.getParameter("status")));
-        empresa.setTamanho(TamanhoEmpresa.valueOf(req.getParameter("tamanho")));
+        empresa.setNome(Validador.texto(req.getParameter("nome"), "Nome", 50));
+        empresa.setCnpj(Validador.cnpj(req.getParameter("cnpj")));
+        empresa.setStatus(Validador.opcao(Status.class, req.getParameter("status"), "Status"));
+        empresa.setTamanho(Validador.opcao(TamanhoEmpresa.class, req.getParameter("tamanho"), "Tamanho"));
+
+        empresa.setSetor(normalizarSetor(Validador.texto(req.getParameter("setor"), "Setor", 30)));
 
         int resultado = DAO.atualizar(empresa);
 
@@ -195,7 +198,7 @@ public class EmpresaServlet extends HttpServlet {
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-empresa"));
+        Long id = Validador.id(req.getParameter("id-empresa"), "Id da empresa");
         int resultado = DAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
