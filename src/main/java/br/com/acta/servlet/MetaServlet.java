@@ -9,6 +9,7 @@ import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.excecoes.ValidacaoException;
+import br.com.acta.utils.Validador;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -122,14 +123,14 @@ public class MetaServlet extends HttpServlet {
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Meta meta = new Meta();
 
-        meta.setMeta(req.getParameter("meta"));
-        meta.setDescricao_meta(req.getParameter("descricao_meta"));
-        meta.setObjetivo(req.getParameter("objetivo"));
-        meta.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
-        meta.setPrazo(Date.valueOf(req.getParameter("prazo")));
-        meta.setStatus(StatusMeta.valueOf(req.getParameter("status")));
-        meta.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
-        meta.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
+        meta.setMeta(Validador.texto(req.getParameter("meta"), "Meta", 100));
+        meta.setDescricao_meta(Validador.textoLongoOpcional(req.getParameter("descricao_meta"), "Descrição"));
+        meta.setObjetivo(Validador.textoOpcional(req.getParameter("objetivo"), "Objetivo", 200));
+        meta.setPrioridade(Validador.opcao(Intensidade.class, req.getParameter("prioridade"), "Prioridade"));
+        meta.setPrazo(Validador.data(req.getParameter("prazo"), "Prazo"));
+        meta.setStatus(Validador.opcao(StatusMeta.class, req.getParameter("status"), "Status"));
+        meta.setId_ciclo(Validador.id(req.getParameter("id_ciclo"), "Ciclo"));
+        meta.setId_plano_acao(Validador.idOpcional(req.getParameter("id_plano_acao"), "Plano de ação"));
 
         int resultado = DAO.inserir(meta);
 
@@ -144,7 +145,7 @@ public class MetaServlet extends HttpServlet {
             return;
         }
 
-        Meta meta = DAO.buscar(Long.parseLong(id));
+        Meta meta = DAO.buscar(Validador.id(id, "Id"));
 
         if (meta == null) {
             throw new RegistroNaoEncontradoException("Registro de meta não encontrado.");
@@ -190,18 +191,18 @@ public class MetaServlet extends HttpServlet {
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-meta"));
+        Long id = Validador.id(req.getParameter("id-meta"), "Id da meta");
         Meta meta = new Meta();
 
         meta.setId_meta(id);
-        meta.setMeta(req.getParameter("meta"));
-        meta.setDescricao_meta(req.getParameter("descricao_meta"));
-        meta.setObjetivo(req.getParameter("objetivo"));
-        meta.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
-        meta.setPrazo(Date.valueOf(req.getParameter("prazo")));
-        meta.setStatus(StatusMeta.valueOf(req.getParameter("status")));
-        meta.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
-        meta.setId_plano_acao(Long.parseLong(req.getParameter("id_plano_acao")));
+        meta.setMeta(Validador.texto(req.getParameter("meta"), "Meta", 100));
+        meta.setDescricao_meta(Validador.textoLongoOpcional(req.getParameter("descricao_meta"), "Descrição"));
+        meta.setObjetivo(Validador.textoOpcional(req.getParameter("objetivo"), "Objetivo", 200));
+        meta.setPrioridade(Validador.opcao(Intensidade.class, req.getParameter("prioridade"), "Prioridade"));
+        meta.setPrazo(Validador.data(req.getParameter("prazo"), "Prazo"));
+        meta.setStatus(Validador.opcao(StatusMeta.class, req.getParameter("status"), "Status"));
+        meta.setId_ciclo(Validador.id(req.getParameter("id_ciclo"), "Ciclo"));
+        meta.setId_plano_acao(Validador.idOpcional(req.getParameter("id_plano_acao"), "Plano de ação"));
 
         int resultado = DAO.atualizar(meta);
 
@@ -210,7 +211,7 @@ public class MetaServlet extends HttpServlet {
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-meta"));
+        Long id = Validador.id(req.getParameter("id-meta"), "Id da meta");
         int resultado = DAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
