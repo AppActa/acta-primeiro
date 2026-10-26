@@ -4,6 +4,11 @@ import br.com.acta.dao.LicoesAprendidasDAO;
 import br.com.acta.model.LicoesAprendidas;
 import br.com.acta.enums.EtapaCiclo;
 import br.com.acta.enums.Intensidade;
+import br.com.acta.excecoes.DaoException;
+import br.com.acta.excecoes.DuplicidadeException;
+import br.com.acta.excecoes.IntegridadeReferencialException;
+import br.com.acta.excecoes.RegistroNaoEncontradoException;
+import br.com.acta.excecoes.ValidacaoException;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,21 +26,41 @@ public class LicoesAprendidasServlet extends HttpServlet {
     private final LicoesAprendidasDAO DAO = new LicoesAprendidasDAO();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         try {
             buscar(req, resp);
+
+        } catch (RegistroNaoEncontradoException e) {
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
+
+        } catch (ValidacaoException | IllegalArgumentException e) {
+            enviarErro(req, resp, "Parâmetro de consulta inválido.", HttpServletResponse.SC_BAD_REQUEST);
+
+        } catch (DaoException e) {
+            e.printStackTrace();
+            enviarErro(req, resp, "Erro ao consultar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível encontrar as lições aprendidas");
+            enviarErro(req, resp, "Não foi possível encontrar as lições aprendidas.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
         req.setCharacterEncoding("UTF-8");
         String acao = req.getParameter("acao");
 
         try {
+            if (acao == null) {
+                enviarErro(req, resp, "Ação não informada.",
+                        HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+
             switch (acao) {
                 case "inserir":
                     inserir(req, resp);
@@ -46,16 +71,32 @@ public class LicoesAprendidasServlet extends HttpServlet {
                 case "excluir":
                     excluir(req, resp);
                     break;
-                case null:
-                    enviarErro(req, resp, "Ação não informada");
-                    break;
                 default:
-                    enviarErro(req, resp, "Ação não existente");
+                    enviarErro(req, resp, "Ação não existente.", HttpServletResponse.SC_BAD_REQUEST);
             }
+
+        } catch (ValidacaoException e) {
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
+
+        } catch (RegistroNaoEncontradoException e) {
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
+
+        } catch (DuplicidadeException e) {
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
+
+        } catch (IntegridadeReferencialException e) {
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
+
+        } catch (IllegalArgumentException e) {
+            enviarErro(req, resp, "Parâmetro inválido.", HttpServletResponse.SC_BAD_REQUEST);
+
+        } catch (DaoException e) {
+            e.printStackTrace();
+            enviarErro(req, resp, "Erro interno ao acessar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível concluir");
+            enviarErro(req, resp, "Não foi possível concluir a operação.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -89,8 +130,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         LicoesAprendidas licoesAprendidas = DAO.buscar(Long.parseLong(id));
 
         if (licoesAprendidas == null) {
-            enviarPaginaCerta(req, resp);
-            return;
+            throw new RegistroNaoEncontradoException("Registro de lição aprendida não encontrado.");
         }
 
         req.setAttribute("licoesAprendidasList", List.of(licoesAprendidas));
@@ -167,11 +207,52 @@ public class LicoesAprendidasServlet extends HttpServlet {
         return existente != null ? existente : limpa;
     }
 
-    private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
-        req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
-        req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        req.getRequestDispatcher(PAGINA_ERRO).forward(req, resp);
+    // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
+    // Assume 500 (erro grave), então o usuário é levado para a página de erro.
+    private void enviarErro(
+            HttpServletRequest req,
+            HttpServletResponse resp,
+            String mensagem
+    ) throws ServletException, IOException {
+
+        enviarErro(req, resp, mensagem,
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    // SOBRECARGA 2 (4 parâmetros): quem realmente trata o erro. O destino depende do status:
+    //  - 404 (registro não encontrado) e 500 (erro de banco/inesperado): vai para a página de erro (/erro.jsp)
+    //  - 400 (dado inválido) e 409 (duplicado/em uso): volta para a tela da entidade, mostrando a mensagem
+    private void enviarErro(
+            HttpServletRequest req,
+            HttpServletResponse resp,
+            String mensagem,
+            int status
+    ) throws ServletException, IOException {
+
+        resp.setStatus(status);
+
+        // Erros graves: página de erro (não consulta o banco, então funciona mesmo com ele fora do ar)
+        if (status == HttpServletResponse.SC_NOT_FOUND
+                || status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+            req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
+            req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, status);
+            req.getRequestDispatcher(PAGINA_ERRO).forward(req, resp);
+            return;
+        }
+
+        // Erros do usuário: volta para a tela com a mensagem
+        req.setAttribute("mensagemErro", mensagem);
+
+        // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
+        try {
+            List<LicoesAprendidas> licoesAprendidas = DAO.buscar();
+
+            req.setAttribute("licoesAprendidasList", licoesAprendidas);
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+            req.setAttribute("licoesAprendidasList", List.of());
+        }
+        req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

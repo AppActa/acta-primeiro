@@ -3,6 +3,10 @@ package br.com.acta.dao;
 import br.com.acta.model.Tarefa;
 import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
+import br.com.acta.excecoes.DaoException;
+import br.com.acta.excecoes.DuplicidadeException;
+import br.com.acta.excecoes.IntegridadeReferencialException;
+import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.utils.Conexao;
 
 import java.sql.*;
@@ -36,11 +40,17 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             else return 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException("Já existe um registro de tarefa com esses dados.", e);
+            }
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException("Existe uma referência inválida no cadastro.", e);
+            }
+            throw new DaoException("Erro ao cadastrar tarefa.", e);
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -62,7 +72,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             }
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -81,7 +91,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             return lista;
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -131,7 +141,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             return lista;
 
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -154,14 +164,31 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             pstmt.setLong(9, tarefa.getId_tarefa());
 
             if (pstmt.executeUpdate() > 0) return 1;
-            return 0;
+
+            throw new RegistroNaoEncontradoException("Registro de tarefa não encontrado para atualização.");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException(
+                        "Já existe um registro de tarefa com esses dados.", e
+                );
+            }
+
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Referência inválida na atualização.", e
+                );
+            }
+
+            throw new DaoException(
+                    "Erro ao atualizar tarefa.", e
+            );
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException(
+                    "Erro ao conectar no banco de dados.", e
+            );
         }
     }
 
@@ -176,25 +203,27 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             pstmt.setLong(1, id);
 
             if (pstmt.executeUpdate() > 0) return 1;
-            else return 0;
+            throw new RegistroNaoEncontradoException("Registro de tarefa não encontrado para exclusão.");
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            return codigoDeErro(e);
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Não é possível excluir o registro de tarefa porque existem registros vinculados.", e
+                );
+            }
+
+            throw new DaoException(
+                    "Erro ao excluir tarefa.", e
+            );
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return -1;
+            throw new DaoException(
+                    "Erro ao conectar no banco de dados.", e
+            );
         }
     }
 
     // SQLState "23xxx" = violação de integridade (e-mail/CPF duplicado, FK, NOT NULL).
-    private static int codigoDeErro(SQLException e) {
-        String state = e.getSQLState();
-        if (state != null && state.startsWith("23")) {
-            return 0;
-        }
-        return -1;
-    }
 
     // Mapear tarefa para simplificar a busca
     private static Tarefa mapearTarefa(ResultSet rs) throws SQLException {
