@@ -9,6 +9,7 @@ import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.excecoes.ValidacaoException;
+import br.com.acta.utils.Validador;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -121,13 +122,14 @@ public class TarefaServlet extends HttpServlet {
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Tarefa tarefa = new Tarefa();
 
-        tarefa.setTitulo(req.getParameter("titulo"));
-        tarefa.setDescricao(req.getParameter("descricao"));
-        tarefa.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));tarefa.setDt_entrega(Date.valueOf(req.getParameter("dt_entrega")));
-        tarefa.setStatus(Situacao.valueOf(req.getParameter("status")));
-        tarefa.setDt_inicio(Date.valueOf(req.getParameter("dt_inicio")));
-        tarefa.setId_colaborador(Long.parseLong(req.getParameter("id_colaborador")));
+        tarefa.setTitulo(Validador.texto(req.getParameter("titulo"), "Título", 100));
+        tarefa.setDescricao(Validador.textoLongoOpcional(req.getParameter("descricao"), "Descrição"));
+        tarefa.setPrioridade(Validador.opcao(Intensidade.class, req.getParameter("prioridade"), "Prioridade"));tarefa.setDt_entrega(Validador.dataOpcional(req.getParameter("dt_entrega"), "Data de entrega"));
+        tarefa.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
+        tarefa.setDt_inicio(Validador.data(req.getParameter("dt_inicio"), "Data de início"));
+        tarefa.setId_colaborador(Validador.id(req.getParameter("id_colaborador"), "Colaborador"));
 
+        Validador.periodo(tarefa.getDt_inicio(), tarefa.getDt_entrega(), "A data de entrega");
         int resultado = DAO.inserir(tarefa);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
@@ -141,7 +143,7 @@ public class TarefaServlet extends HttpServlet {
             return;
         }
 
-        Tarefa tarefa = DAO.buscar(Long.parseLong(id));
+        Tarefa tarefa = DAO.buscar(Validador.id(id, "Id"));
 
         if (tarefa == null) {
             throw new RegistroNaoEncontradoException("Registro de tarefa não encontrado.");
@@ -179,18 +181,19 @@ public class TarefaServlet extends HttpServlet {
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-tarefa"));
+        Long id = Validador.id(req.getParameter("id-tarefa"), "Id da tarefa");
         Tarefa tarefa = new Tarefa();
 
         tarefa.setId_tarefa(id);
-        tarefa.setTitulo(req.getParameter("titulo"));
-        tarefa.setDescricao(req.getParameter("descricao"));
-        tarefa.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
-        tarefa.setDt_entrega(Date.valueOf(req.getParameter("dt_entrega")));
-        tarefa.setStatus(Situacao.valueOf(req.getParameter("status")));
-        tarefa.setDt_inicio(Date.valueOf(req.getParameter("dt_inicio")));
-        tarefa.setId_colaborador(Long.parseLong(req.getParameter("id_colaborador")));
+        tarefa.setTitulo(Validador.texto(req.getParameter("titulo"), "Título", 100));
+        tarefa.setDescricao(Validador.textoLongoOpcional(req.getParameter("descricao"), "Descrição"));
+        tarefa.setPrioridade(Validador.opcao(Intensidade.class, req.getParameter("prioridade"), "Prioridade"));
+        tarefa.setDt_entrega(Validador.dataOpcional(req.getParameter("dt_entrega"), "Data de entrega"));
+        tarefa.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
+        tarefa.setDt_inicio(Validador.data(req.getParameter("dt_inicio"), "Data de início"));
+        tarefa.setId_colaborador(Validador.id(req.getParameter("id_colaborador"), "Colaborador"));
 
+        Validador.periodo(tarefa.getDt_inicio(), tarefa.getDt_entrega(), "A data de entrega");
         int resultado = DAO.atualizar(tarefa);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
@@ -198,7 +201,7 @@ public class TarefaServlet extends HttpServlet {
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-tarefa"));
+        Long id = Validador.id(req.getParameter("id-tarefa"), "Id da tarefa");
         int resultado = DAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
