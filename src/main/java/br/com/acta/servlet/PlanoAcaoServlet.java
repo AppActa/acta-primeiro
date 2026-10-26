@@ -9,6 +9,8 @@ import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.excecoes.ValidacaoException;
+import br.com.acta.utils.Validador;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -120,12 +122,12 @@ public class PlanoAcaoServlet extends HttpServlet {
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PlanoAcao planoAcao = new PlanoAcao();
 
-        planoAcao.setNome(req.getParameter("nome"));
-        planoAcao.setDescricao(req.getParameter("descricao"));
-        planoAcao.setStatus(Situacao.valueOf(req.getParameter("status")));
-        planoAcao.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
-        planoAcao.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
-        planoAcao.setId_criador(Long.parseLong(req.getParameter("id_criador")));
+        planoAcao.setNome(Validador.texto(req.getParameter("nome"), "Nome", 100));
+        planoAcao.setDescricao(Validador.textoLongoOpcional(req.getParameter("descricao"), "Descrição"));
+        planoAcao.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
+        planoAcao.setPrioridade(Validador.opcao(Intensidade.class, req.getParameter("prioridade"), "Prioridade"));
+        planoAcao.setId_ciclo(Validador.id(req.getParameter("id_ciclo"), "Ciclo"));
+        planoAcao.setId_criador(Validador.id(req.getParameter("id_criador"), "Criador"));
 
         int resultado = DAO.inserir(planoAcao);
 
@@ -141,7 +143,7 @@ public class PlanoAcaoServlet extends HttpServlet {
             return;
         }
 
-        PlanoAcao planoAcao = DAO.buscar(Long.parseLong(id));
+        PlanoAcao planoAcao = DAO.buscar(Validador.id(id, "Id"));
 
         if (planoAcao == null) {
             throw new RegistroNaoEncontradoException("Registro de plano de ação não encontrado.");
@@ -171,16 +173,16 @@ public class PlanoAcaoServlet extends HttpServlet {
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
-        Long id = Long.parseLong(req.getParameter("id-planoAcao"));
+        Long id = Validador.id(req.getParameter("id-planoAcao"), "Id do plano de ação");
         PlanoAcao planoAcao = new PlanoAcao();
 
         planoAcao.setId_plano_acao(id);
-        planoAcao.setNome(req.getParameter("nome"));
-        planoAcao.setDescricao(req.getParameter("descricao"));
-        planoAcao.setStatus(Situacao.valueOf(req.getParameter("status")));
-        planoAcao.setPrioridade(Intensidade.valueOf(req.getParameter("prioridade")));
-        planoAcao.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
-        planoAcao.setId_criador(Long.parseLong(req.getParameter("id_criador")));
+        planoAcao.setNome(Validador.texto(req.getParameter("nome"), "Nome", 100));
+        planoAcao.setDescricao(Validador.textoLongoOpcional(req.getParameter("descricao"), "Descrição"));
+        planoAcao.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
+        planoAcao.setPrioridade(Validador.opcao(Intensidade.class, req.getParameter("prioridade"), "Prioridade"));
+        planoAcao.setId_ciclo(Validador.id(req.getParameter("id_ciclo"), "Ciclo"));
+        planoAcao.setId_criador(Validador.id(req.getParameter("id_criador"), "Criador"));
 
         int resultado = DAO.atualizar(planoAcao);
 
@@ -189,7 +191,7 @@ public class PlanoAcaoServlet extends HttpServlet {
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-planoAcao"));
+        Long id = Validador.id(req.getParameter("id-planoAcao"), "Id do plano de ação");
         int resultado = DAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
@@ -218,6 +220,17 @@ public class PlanoAcaoServlet extends HttpServlet {
     ) throws ServletException, IOException {
 
         resp.setStatus(status);
+
+        // Erros graves: página de erro (não consulta o banco, então funciona mesmo com ele fora do ar)
+        if (status == HttpServletResponse.SC_NOT_FOUND
+                || status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+            req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
+            req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, status);
+            req.getRequestDispatcher(PAGINA_ERRO).forward(req, resp);
+            return;
+        }
+
+        // Erros do usuário: volta para a tela com a mensagem
         req.setAttribute("mensagemErro", mensagem);
 
         // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
