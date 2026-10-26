@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
+        <link rel="stylesheet" href="../assets/css/crud.css">
+        <title>Configurações</title>
+    </head>
+    <body>
+        <div class="sistema">
+            <aside class="sidebar">
+                <div class="sidebar-logo">
+                    <img src="../assets/images/logo_oficial.svg" alt="ACTA">
+                </div>
+                <nav class="menu">
+                    <a href="empresas.html" class="menu-item">
+                        <img src="../assets/images/icone_empresas.svg" alt="">
+                        <span>Empresas</span>
+                    </a>
+                    <a href="colaborador.html" class="menu-item">
+                        <img src="../assets/images/icone_colaborador.svg" alt="">
+                        <span>Colaborador</span>
+                    </a>
+                    <a href="tarefa.html" class="menu-item">
+                        <img src="../assets/images/icone_tarefa.svg" alt="">
+                        <span>Tarefa</span>
+                    </a>
+                    <a href="plano.html" class="menu-item">
+                        <img src="../assets/images/icone_plano_de_acao.svg" alt="">
+                        <span>Plano de ação</span>
+                    </a>
+                    <a href="ciclos.html" class="menu-item">
+                        <img src="../assets/images/icone_ciclos.svg" alt="">
+                        <span>Ciclos</span>
+                    </a>
+                    <a href="licoes.html" class="menu-item">
+                        <img src="../assets/images/icone_licoes_aprendidas.svg" alt="">
+                        <span>Lições Aprendidas</span>
+                    </a>
+                    <a href="metas.html" class="menu-item">
+                        <img src="../assets/images/icone_metas.svg" alt="">
+                        <span>Metas</span>
+                    </a>
+                    <a href="problemas.html" class="menu-item">
+                        <img src="../assets/images/icone_problemas.svg" alt="">
+                        <span>Problemas</span>
+                    </a>
+                    <a href="endereco.html" class="menu-item">
+                        <img src="../assets/images/icone_endereco.svg" alt="">
+                        <span>Endereço</span>
+                    </a>
+                </nav>
+                <div class="perfil-barra">
+                    <a href="configuracoes.html" class="perfil-admin">
+                        <div class="perfil-foto">
+                            <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
+                        </div>
+                        <div class="perfil-info">
+                            <span class="perfil-nome">Nome Sobrenome</span>
+                            <span class="perfil-email">email@email.com</span>
+                        </div>
+                    </a>
+                    <a href="login.html" target="_self" class="botao botao-sair">Sair</a>
+                </div>
+            </aside>
+
+            <main class="conteudo conteudo-config">
+                <section class="config">
+                    <!-- Quando a URL termina com #editar-configuracoes, a página mostra o modo de edição -->
+                    <span id="editar-configuracoes" class="config-ancora"></span>
+
+                    <h1 class="config-titulo">Configurações</h1>
+
+                    <div class="config-layout">
+
+                        <!-- Modo visualização -->
+                        <div class="config-leitura">
+                            <div class="config-foto">
+                                <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
+                                <a href="#editar-configuracoes" class="config-camera" aria-label="Alterar foto">
+                                    <img src="../assets/images/icone_camera.svg" alt="">
+                                </a>
+                            </div>
+
+                            <div class="config-campo">
+                                <span class="config-rotulo">Nome</span>
+                                <p class="config-valor">Daniel de Freitas</p>
+                            </div>
+
+                            <div class="config-campo">
+                                <span class="config-rotulo">E-mail</span>
+                                <p class="config-valor"><a href="mailto:danielfrei@gmail.com">danielfrei@gmail.com</a></p>
+                            </div>
+
+                            <div class="config-campo">
+                                <span class="config-rotulo">Senha</span>
+                                <p class="config-valor">********</p>
+                            </div>
+
+                            <a href="#editar-configuracoes" class="botao botao-config">Editar</a>
+                        </div>
+
+                        <!-- Modo edição -->
+                        <form class="config-edicao" method="post" action="#" enctype="multipart/form-data">
+                            <div class="config-foto">
+                                <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
+                                <label for="config-foto-arquivo" class="config-camera" aria-label="Alterar foto">
+                                    <img src="../assets/images/icone_camera.svg" alt="">
+                                </label>
+                                <input type="file" id="config-foto-arquivo" name="foto" accept="image/png, image/jpeg, image/webp" hidden>
+                            </div>
+
+                            <div class="config-campo">
+                                <label for="config-nome" class="config-rotulo">Nome</label>
+                                <input type="text" id="config-nome" name="nome" maxlength="50" value="Daniel de Freitas" autocomplete="name" required>
+                            </div>
+
+                            <div class="config-campo">
+                                <label for="config-email" class="config-rotulo">E-mail</label>
+                                <input type="email" id="config-email" name="email" maxlength="80" value="danielfrei@gmail.com" autocomplete="email" required>
+                            </div>
+
+                            <div class="config-campo">
+                                <label for="config-senha" class="config-rotulo">Senha</label>
+                                <!-- Em branco = manter a senha atual (o Servlet só gera novo hash se vier preenchida) -->
+                                <input type="password" id="config-senha" name="senha" maxlength="100" placeholder="********" autocomplete="new-password">
+                            </div>
+
+                            <div class="config-botoes">
+                                <button type="submit" class="botao botao-config">Salvar</button>
+                                <a href="#" class="botao botao-config botao-config-alt">Cancelar</a>
+                            </div>
+                        </form>
+
+                        <!-- Cartão de contato -->
+                        <aside class="config-contato">
+                            <h2>Contato</h2>
+                            <p>Rua Irineu José Bordon, 355</p>
+                            <div class="config-contato-grupo">
+                                <p>(11) 86934-5699</p>
+                                <p>acta.institutojef@gmail.com</p>
+                            </div>
+                        </aside>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </body>
+</html>
