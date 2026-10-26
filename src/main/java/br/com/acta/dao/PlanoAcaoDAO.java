@@ -94,7 +94,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
-        if (temBusca) sql.append(" AND (nome ILIKE ? OR nome_ciclo ILIKE ? OR nome_criador ILIKE ?)");
+        if (temBusca) sql.append(" AND (nome ILIKE ? OR nome_ciclo ILIKE ? OR nome_colaborador ILIKE ?)");
         if (temStatus) sql.append(" AND status = ?");
         if (temPrioridade) sql.append(" AND prioridade = ?");
         if (temOrdem) {
@@ -192,7 +192,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         planoAcao.setStatus(Situacao.valueOf(rs.getString("status")));
         planoAcao.setPrioridade(Intensidade.valueOf(rs.getString("prioridade")));
         planoAcao.setNome_ciclo(rs.getString("nome_ciclo"));
-        planoAcao.setNome_criador(rs.getString("nome_criador"));
+        planoAcao.setNome_criador(rs.getString("nome_colaborador"));
         return planoAcao;
     }
 
@@ -201,6 +201,6 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
             "status", "status",
             "prioridade", "prioridade",
             "ciclo", "nome_ciclo",
-            "criador", "nome_criador"
+            "criador", "nome_colaborador"
     );
 }
