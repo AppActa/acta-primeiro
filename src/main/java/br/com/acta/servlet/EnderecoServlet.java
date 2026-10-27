@@ -7,6 +7,7 @@ import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.excecoes.ValidacaoException;
+import br.com.acta.utils.Validador;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -102,15 +103,15 @@ public class EnderecoServlet extends HttpServlet {
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Endereco endereco = new Endereco();
 
-        endereco.setRua(req.getParameter("rua"));
-        endereco.setBairro(req.getParameter("bairro"));
-        endereco.setCidade(normalizarCidade(req.getParameter("cidade")));
-        endereco.setEstado(req.getParameter("estado"));
-        endereco.setCep(req.getParameter("cep"));
-        endereco.setNumero(req.getParameter("numero"));
-        endereco.setComplemento(req.getParameter("complemento"));
-        endereco.setUnidade(req.getParameter("unidade"));
-        endereco.setId_empresa(Long.parseLong(req.getParameter("id_empresa")));
+        endereco.setRua(Validador.texto(req.getParameter("rua"), "Rua", 50));
+        endereco.setBairro(Validador.texto(req.getParameter("bairro"), "Bairro", 30));
+        endereco.setCidade(normalizarCidade(Validador.nomePessoa(req.getParameter("cidade"), "Cidade", 30)));
+        endereco.setEstado(Validador.uf(req.getParameter("estado")));
+        endereco.setCep(Validador.cep(req.getParameter("cep")));
+        endereco.setNumero(Validador.numeroEndereco(req.getParameter("numero")));
+        endereco.setComplemento(Validador.textoLongoOpcional(req.getParameter("complemento"), "Complemento"));
+        endereco.setUnidade(Validador.texto(req.getParameter("unidade"), "Unidade", 30));
+        endereco.setId_empresa(Validador.id(req.getParameter("id_empresa"), "Empresa"));
 
         int resultado = DAO.inserir(endereco);
 
@@ -125,7 +126,7 @@ public class EnderecoServlet extends HttpServlet {
             return;
         }
 
-        Endereco endereco = DAO.buscar(Long.parseLong(id));
+        Endereco endereco = DAO.buscar(Validador.id(id, "Id"));
 
         if (endereco == null) {
             throw new RegistroNaoEncontradoException("Registro de endereço não encontrado.");
@@ -151,19 +152,19 @@ public class EnderecoServlet extends HttpServlet {
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-endereco"));
+        Long id = Validador.id(req.getParameter("id-endereco"), "Id do endereço");
         Endereco endereco = new Endereco();
 
         endereco.setId_endereco(id);
-        endereco.setRua(req.getParameter("rua"));
-        endereco.setBairro(req.getParameter("bairro"));
-        endereco.setCidade(normalizarCidade(req.getParameter("cidade")));
-        endereco.setEstado(req.getParameter("estado"));
-        endereco.setCep(req.getParameter("cep"));
-        endereco.setNumero(req.getParameter("numero"));
-        endereco.setComplemento(req.getParameter("complemento"));
-        endereco.setUnidade(req.getParameter("unidade"));
-        endereco.setId_empresa(Long.parseLong(req.getParameter("id_empresa")));
+        endereco.setRua(Validador.texto(req.getParameter("rua"), "Rua", 50));
+        endereco.setBairro(Validador.texto(req.getParameter("bairro"), "Bairro", 30));
+        endereco.setCidade(normalizarCidade(Validador.nomePessoa(req.getParameter("cidade"), "Cidade", 30)));
+        endereco.setEstado(Validador.uf(req.getParameter("estado")));
+        endereco.setCep(Validador.cep(req.getParameter("cep")));
+        endereco.setNumero(Validador.numeroEndereco(req.getParameter("numero")));
+        endereco.setComplemento(Validador.textoLongoOpcional(req.getParameter("complemento"), "Complemento"));
+        endereco.setUnidade(Validador.texto(req.getParameter("unidade"), "Unidade", 30));
+        endereco.setId_empresa(Validador.id(req.getParameter("id_empresa"), "Empresa"));
 
         int resultado = DAO.atualizar(endereco);
 
@@ -172,7 +173,7 @@ public class EnderecoServlet extends HttpServlet {
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-endereco"));
+        Long id = Validador.id(req.getParameter("id-endereco"), "Id do endereço");
         int resultado = DAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
