@@ -250,7 +250,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
             "status", "status",
             "inicio", "dt_inicio",
             "fim", "dt_fim",
-            "criado", "criado_em",
+            "criado_em", "criado_em",
             "empresa", "nome_empresa",
             "responsavel", "nome_responsavel"
     );

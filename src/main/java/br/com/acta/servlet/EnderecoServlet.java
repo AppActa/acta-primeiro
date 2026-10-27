@@ -31,22 +31,18 @@ public class EnderecoServlet extends HttpServlet {
             buscar(req, resp);
 
         } catch (RegistroNaoEncontradoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_NOT_FOUND);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
 
         } catch (ValidacaoException | IllegalArgumentException e) {
-            enviarErro(req, resp, "Parâmetro de consulta inválido.",
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, "Parâmetro de consulta inválido.", HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (DaoException e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Erro ao consultar o banco de dados.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Erro ao consultar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível encontrar os endereços.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Não foi possível encontrar os endereços.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -59,8 +55,7 @@ public class EnderecoServlet extends HttpServlet {
 
         try {
             if (acao == null) {
-                enviarErro(req, resp, "Ação não informada.",
-                        HttpServletResponse.SC_BAD_REQUEST);
+                enviarErro(req, resp, "Ação não informada.", HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
 
@@ -68,49 +63,38 @@ public class EnderecoServlet extends HttpServlet {
                 case "inserir":
                     inserir(req, resp);
                     break;
-
                 case "atualizar":
                     atualizar(req, resp);
                     break;
-
                 case "excluir":
                     excluir(req, resp);
                     break;
-
                 default:
-                    enviarErro(req, resp, "Ação não existente.",
-                            HttpServletResponse.SC_BAD_REQUEST);
+                    enviarErro(req, resp, "Ação não existente.", HttpServletResponse.SC_BAD_REQUEST);
             }
 
         } catch (ValidacaoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (RegistroNaoEncontradoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_NOT_FOUND);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
 
         } catch (DuplicidadeException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_CONFLICT);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
 
         } catch (IntegridadeReferencialException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_CONFLICT);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
 
         } catch (IllegalArgumentException e) {
-            enviarErro(req, resp, "Parâmetro inválido.",
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, "Parâmetro inválido.", HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (DaoException e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Erro interno ao acessar o banco de dados.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Erro interno ao acessar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível concluir a operação.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Não foi possível concluir a operação.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -121,7 +105,7 @@ public class EnderecoServlet extends HttpServlet {
 
         endereco.setRua(Validador.texto(req.getParameter("rua"), "Rua", 50));
         endereco.setBairro(Validador.texto(req.getParameter("bairro"), "Bairro", 30));
-        endereco.setCidade(Validador.nomePessoa(req.getParameter("cidade"), "Cidade", 30));
+        endereco.setCidade(normalizarCidade(Validador.nomePessoa(req.getParameter("cidade"), "Cidade", 30)));
         endereco.setEstado(Validador.uf(req.getParameter("estado")));
         endereco.setCep(Validador.cep(req.getParameter("cep")));
         endereco.setNumero(Validador.numeroEndereco(req.getParameter("numero")));
@@ -149,6 +133,7 @@ public class EnderecoServlet extends HttpServlet {
         }
 
         req.setAttribute("enderecoList", List.of(endereco));
+        req.setAttribute("cidadeList", DAO.buscarCidade());
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
 
@@ -162,6 +147,7 @@ public class EnderecoServlet extends HttpServlet {
         List<Endereco> lista = DAO.buscaFiltrada(busca, estado, cidade, ordem, direcao);
 
         req.setAttribute("enderecoList", lista);
+        req.setAttribute("cidadeList", DAO.buscarCidade());
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
 
@@ -172,7 +158,7 @@ public class EnderecoServlet extends HttpServlet {
         endereco.setId_endereco(id);
         endereco.setRua(Validador.texto(req.getParameter("rua"), "Rua", 50));
         endereco.setBairro(Validador.texto(req.getParameter("bairro"), "Bairro", 30));
-        endereco.setCidade(Validador.nomePessoa(req.getParameter("cidade"), "Cidade", 30));
+        endereco.setCidade(normalizarCidade(Validador.nomePessoa(req.getParameter("cidade"), "Cidade", 30)));
         endereco.setEstado(Validador.uf(req.getParameter("estado")));
         endereco.setCep(Validador.cep(req.getParameter("cep")));
         endereco.setNumero(Validador.numeroEndereco(req.getParameter("numero")));
@@ -195,6 +181,12 @@ public class EnderecoServlet extends HttpServlet {
     }
 
     // UTILITARIOS
+    private String normalizarCidade(String cidade) {
+        String limpa = cidade.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarCidadeExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
     // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
     // Assume 500 (erro grave), então o usuário é levado para a página de erro.
     private void enviarErro(
@@ -247,6 +239,7 @@ public class EnderecoServlet extends HttpServlet {
         List<Endereco> lista = DAO.buscar();
 
         req.setAttribute("enderecoList", lista);
+        req.setAttribute("cidadeList", DAO.buscarCidade());
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
 

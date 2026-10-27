@@ -33,22 +33,18 @@ public class ColaboradorServlet extends HttpServlet {
             buscar(req, resp);
 
         } catch (RegistroNaoEncontradoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_NOT_FOUND);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
 
         } catch (ValidacaoException | IllegalArgumentException e) {
-            enviarErro(req, resp, "Parâmetro de consulta inválido.",
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, "Parâmetro de consulta inválido.", HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (DaoException e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Erro ao consultar o banco de dados.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Erro ao consultar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível encontrar os colaboradores.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Não foi possível encontrar os colaboradores.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -61,8 +57,7 @@ public class ColaboradorServlet extends HttpServlet {
 
         try {
             if (acao == null) {
-                enviarErro(req, resp, "Ação não informada.",
-                        HttpServletResponse.SC_BAD_REQUEST);
+                enviarErro(req, resp, "Ação não informada.", HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
 
@@ -70,49 +65,38 @@ public class ColaboradorServlet extends HttpServlet {
                 case "inserir":
                     inserir(req, resp);
                     break;
-
                 case "atualizar":
                     atualizar(req, resp);
                     break;
-
                 case "excluir":
                     excluir(req, resp);
                     break;
-
                 default:
-                    enviarErro(req, resp, "Ação não existente.",
-                            HttpServletResponse.SC_BAD_REQUEST);
+                    enviarErro(req, resp, "Ação não existente.", HttpServletResponse.SC_BAD_REQUEST);
             }
 
         } catch (ValidacaoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (RegistroNaoEncontradoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_NOT_FOUND);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
 
         } catch (DuplicidadeException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_CONFLICT);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
 
         } catch (IntegridadeReferencialException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_CONFLICT);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
 
         } catch (IllegalArgumentException e) {
-            enviarErro(req, resp, "Parâmetro inválido.",
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, "Parâmetro inválido.", HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (DaoException e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Erro interno ao acessar o banco de dados.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Erro interno ao acessar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível concluir a operação.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Não foi possível concluir a operação.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -125,15 +109,14 @@ public class ColaboradorServlet extends HttpServlet {
         colaborador.setSobrenome(Validador.nomePessoa(req.getParameter("sobrenome"), "Sobrenome", 50));
         colaborador.setPermissao_gestor(Validador.booleano(req.getParameter("permissao_gestor")));
         colaborador.setStatus(Validador.opcao(Status.class, req.getParameter("status"), "Status"));
-        colaborador.setCargo(Validador.texto(req.getParameter("cargo"), "Cargo", 100));
+        colaborador.setArea(normalizarArea(Validador.texto(req.getParameter("area"), "Área", 30)));
+        colaborador.setCargo(normalizarCargo(Validador.texto(req.getParameter("cargo"), "Cargo", 100)));
         colaborador.setDt_contratacao(Validador.dataNaoFutura(req.getParameter("dt_contratacao"), "Data de contratação"));
         colaborador.setEmail(Validador.email(req.getParameter("email")));
         colaborador.setSenha(Validador.senha(req.getParameter("senha")));
         colaborador.setTelefone(Validador.telefone(req.getParameter("telefone")));
         colaborador.setCpf(Validador.cpf(req.getParameter("cpf")));
         colaborador.setId_empresa(Validador.id(req.getParameter("id_empresa"), "Empresa"));
-
-        colaborador.setArea(normalizarArea(Validador.texto(req.getParameter("area"), "Área", 30)));
 
         int resultado = DAO.inserir(colaborador);
 
@@ -157,6 +140,7 @@ public class ColaboradorServlet extends HttpServlet {
 
         req.setAttribute("colaboradorList", List.of(colaborador));
         req.setAttribute("areaList", DAO.buscarAreas());
+        req.setAttribute("cargoList", DAO.buscarCargos());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 
@@ -164,6 +148,7 @@ public class ColaboradorServlet extends HttpServlet {
         String busca = req.getParameter("busca");
         String statusParam = req.getParameter("status");
         String area = req.getParameter("area");
+        String cargo = req.getParameter("cargo");
         String gestorParam = req.getParameter("gestor");
         String dataInicialParam = req.getParameter("dataInicial");
         String dataFinalParam = req.getParameter("dataFinal");
@@ -190,11 +175,11 @@ public class ColaboradorServlet extends HttpServlet {
             dataFinal = Date.valueOf(dataFinalParam);
         }
 
-        List<Colaborador> colaboradores = DAO.buscaFiltrada(busca, status, area, permissaoGestor,
-                dataInicial, dataFinal, ordem, direcao);
+        List<Colaborador> colaboradores = DAO.buscaFiltrada(busca, status, area, cargo, permissaoGestor, dataInicial, dataFinal, ordem, direcao);
 
         req.setAttribute("colaboradorList", colaboradores);
         req.setAttribute("areaList", DAO.buscarAreas());
+        req.setAttribute("cargoList", DAO.buscarCargos());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 
@@ -207,14 +192,13 @@ public class ColaboradorServlet extends HttpServlet {
         colaborador.setSobrenome(Validador.nomePessoa(req.getParameter("sobrenome"), "Sobrenome", 50));
         colaborador.setPermissao_gestor(Validador.booleano(req.getParameter("permissao_gestor")));
         colaborador.setStatus(Validador.opcao(Status.class, req.getParameter("status"), "Status"));
-        colaborador.setCargo(Validador.texto(req.getParameter("cargo"), "Cargo", 100));
+        colaborador.setArea(normalizarArea(Validador.texto(req.getParameter("area"), "Área", 30)));
+        colaborador.setCargo(normalizarCargo(Validador.texto(req.getParameter("cargo"), "Cargo", 100)));
         colaborador.setDt_contratacao(Validador.dataNaoFutura(req.getParameter("dt_contratacao"), "Data de contratação"));
         colaborador.setEmail(Validador.email(req.getParameter("email")));
         colaborador.setTelefone(Validador.telefone(req.getParameter("telefone")));
         colaborador.setCpf(Validador.cpf(req.getParameter("cpf")));
         colaborador.setId_empresa(Validador.id(req.getParameter("id_empresa"), "Empresa"));
-
-        colaborador.setArea(normalizarArea(Validador.texto(req.getParameter("area"), "Área", 30)));
 
         int resultado = DAO.atualizar(colaborador);
 
@@ -237,6 +221,13 @@ public class ColaboradorServlet extends HttpServlet {
         return existente != null ? existente : limpa;
     }
 
+    private String normalizarCargo(String cargo) {
+        String limpa = cargo.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarCargoExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
+    // ERROS
     // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
     // Assume 500 (erro grave), então o usuário é levado para a página de erro.
     private void enviarErro(
@@ -292,6 +283,7 @@ public class ColaboradorServlet extends HttpServlet {
 
         req.setAttribute("colaboradorList", colaboradores);
         req.setAttribute("areaList", DAO.buscarAreas());
+        req.setAttribute("cargoList", DAO.buscarCargos());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 }
