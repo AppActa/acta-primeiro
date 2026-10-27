@@ -788,6 +788,10 @@ td.coluna-acao {
 .config-ancora {
     display: block;
     height: 0;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;    
 }
  
 /* Separando os dados para a esquerda e o cartão para a direita */
@@ -817,7 +821,7 @@ body:has(#editar-configuracoes:target) .config-edicao {
     width: 155px;
     height: 155px;
     margin: 0 0 90px 30px;
-}
+}   
  
 .config-foto > img {
     width: 100%;
@@ -854,7 +858,8 @@ body:has(#editar-configuracoes:target) .config-edicao {
  
 /* Campos */
 .config-campo {
-    margin-bottom: 29px;
+    min-height: 84px;
+    margin-bottom: 0;
 }
  
 .config-rotulo {
@@ -880,7 +885,7 @@ body:has(#editar-configuracoes:target) .config-edicao {
  
 /* inputs com borda verde no modo edição */
 .config-edicao .config-campo {
-    margin-bottom: 19px;
+    margin-bottom: 0;
 }
  
 .config-edicao .config-rotulo {
@@ -935,14 +940,15 @@ body:has(#editar-configuracoes:target) .config-edicao {
 }
  
 .config-leitura .botao-config {
+    display: flex;
     margin-top: 25px;
 }
  
 .config-botoes {
     display: flex;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     gap: 14px;
-    margin-top: 22px;
+    margin-top: 25px;
 }
  
 /* Cartão de contato */
