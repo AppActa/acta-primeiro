@@ -3,6 +3,7 @@
     --cor-fundo: #EDF0F0;
     --cor-card: #FFFFFF;
     --cor-texto: #027373;
+    --cor-texto-suave: #015454;
     --cor-texto-tabela: #EDF0F0;
     --cor-borda: #04BFAD;
     --cor-perigo: #CA1D1D;
@@ -77,7 +78,7 @@ body {
 }
  
 .menu-item img {
-    width: 20px;
+    width: 40px;
     height: 20px;
 }
  
@@ -178,6 +179,7 @@ body:not(:has(:target)) .menu-item[href="#empresas"] {
 /* Conteúdo */
 .conteudo {
     flex: 1;
+    min-width: 0; /* responsivo: impede que a tabela estoure a largura da página */
     padding: 30px;
     position: relative;
 }
@@ -209,6 +211,7 @@ body:has(#alterar-senha:target) #empresas {
 /* Barra de Ações */
 .barra-acoes {
     display: flex;
+    flex-wrap: wrap; /* responsivo: botões descem para a linha de baixo quando faltar espaço */
     gap: 15px;
     margin-bottom: 20px;
     align-items: center;
@@ -216,6 +219,7 @@ body:has(#alterar-senha:target) #empresas {
  
 .pesquisa {
     flex: 1;
+    min-width: 200px; /* responsivo: a pesquisa nunca fica espremida demais */
 }
  
 .pesquisa input {
@@ -306,6 +310,8 @@ body:has(#alterar-senha:target) #empresas {
 
 .header-conteudo{
     display: flex;
+    flex-wrap: wrap; /* responsivo */
+    gap: 10px; /* responsivo */
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -316,11 +322,13 @@ body:has(#alterar-senha:target) #empresas {
     background-color: var(--cor-card);
     border-radius: 8px;
     border: 1px solid var(--cor-borda);
-    overflow: hidden;
+    overflow-x: auto; /* responsivo: a tabela rola na horizontal em telas pequenas */
+    -webkit-overflow-scrolling: touch;
 }
  
 table {
     width: 100%;
+    min-width: 640px; /* responsivo: evita colunas amassadas; a rolagem entra em ação */
     border-collapse: collapse;
     text-align: left;
 }
@@ -368,6 +376,7 @@ td.coluna-acao {
     left: 0;
     width: 100vw;
     height: 100vh;
+    height: 100dvh; /* responsivo: respeita a barra do navegador no celular */
     z-index: 1000;
 }
  
@@ -389,6 +398,7 @@ td.coluna-acao {
     width: 100%;
     max-width: 500px;
     max-height: 90vh;
+    max-height: 90dvh; /* responsivo */
     overflow-y: auto;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -716,9 +726,22 @@ td.coluna-acao {
  
 .botoes-modal {
     display: flex;
+    flex-wrap: wrap; /* responsivo: botões do modal descem de linha se faltar espaço */
     justify-content: center;
     gap: 10px;
     margin-top: 15px;
+}
+
+/* Tablet: modal largo (Colaborador) passa de 3 para 2 colunas */
+@media (min-width: 761px) and (max-width: 1024px) {
+    .modal-larga {
+        max-width: 760px;
+    }
+
+    .modal-larga .formulario,
+    .modal-larga .detalhes {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* Telas pequenas: modais voltam para 1 coluna */
@@ -917,6 +940,7 @@ body:has(#editar-configuracoes:target) .config-edicao {
  
 .config-botoes {
     display: flex;
+    flex-wrap: wrap; 
     gap: 14px;
     margin-top: 22px;
 }
@@ -966,5 +990,175 @@ body:has(#editar-configuracoes:target) .config-edicao {
     .config-contato {
         margin-top: 40px;
         width: min(100%, 335px);
+    }
+}
+
+/* Tablet (até 1024px): sidebar mais estreita e menos espaçamento */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 210px;
+    }
+
+    .sidebar-logo {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .sidebar-logo img {
+        max-width: 110px;
+    }
+
+    .menu-item {
+        padding: 12px 16px;
+    }
+
+    .conteudo {
+        padding: 22px;
+    }
+}
+
+/* Celular e tablet pequeno (até 768px): sidebar vira barra no topo */
+@media (max-width: 768px) {
+    .sistema {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        align-self: stretch;
+        border-right: none;
+        border-bottom: 1px solid var(--cor-borda);
+        overflow: visible;
+    }
+
+    .sidebar-logo {
+        padding: 12px 16px;
+    }
+
+    /* Menu em linha, com rolagem horizontal */
+    .menu {
+        flex-direction: row;
+        gap: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-top: 1px solid var(--cor-borda);
+    }
+
+    .menu-item {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    /* Perfil fica abaixo do menu */
+    .perfil-barra {
+        margin-top: 0;
+    }
+
+    .perfil-admin {
+        padding: 10px 12px 10px 16px;
+    }
+
+    .conteudo {
+        padding: 16px;
+    }
+
+    .pagina h1 {
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+
+    .pesquisa {
+        flex: 1 1 100%;
+    }
+
+    th,
+    td {
+        padding: 10px 12px;
+    }
+
+    .modal-fundo {
+        padding: 12px;
+    }
+
+    .modal {
+        padding: 18px;
+    }
+
+    /* Configurações */
+    .conteudo-config {
+        padding: 24px 16px;
+    }
+
+    .config .config-titulo {
+        font-size: 28px;
+        margin-bottom: 32px;
+    }
+
+    .config-foto {
+        margin: 0 0 40px 0;
+    }
+
+    .config-rotulo {
+        font-size: 20px;
+    }
+
+    .config-edicao input[type="text"],
+    .config-edicao input[type="email"],
+    .config-edicao input[type="password"] {
+        width: 100%;
+    }
+
+    .config-contato {
+        margin-top: 24px;
+        padding: 13px 20px 24px;
+    }
+
+    .config-contato p {
+        line-height: 1.4;
+    }
+}
+
+/* Celulares pequenos (até 480px) */
+@media (max-width: 480px) {
+    .conteudo {
+        padding: 12px;
+    }
+
+    .botao {
+        padding: 10px 14px;
+    }
+
+    .barra-acoes .botao,
+    .barra-acoes .filtro-container {
+        flex: 1 1 auto;
+    }
+
+    .grupo-radio {
+        flex-direction: column;
+    }
+
+    .grupo-checkbox {
+        grid-template-columns: 1fr;
+    }
+
+    .foto-editar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .botoes-modal .botao {
+        flex: 1 1 100%;
+    }
+
+    .botao-config {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .perfil-foto-grande {
+        width: 90px;
+        height: 90px;
     }
 }
