@@ -111,7 +111,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         if (temBusca) sql.append(" AND (nome ILIKE ? OR cnpj ILIKE ?)");
         if (temSetor) sql.append(" AND setor ILIKE ?");
         if (temStatus) sql.append(" AND status = ?");
-        if  (temTamanho) sql.append(" AND tamanho = ?");
+        if (temTamanho) sql.append(" AND tamanho = ?");
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
             sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
@@ -126,6 +126,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
+            if (temSetor) pstmt.setString(i++, setor);
             if (temStatus) pstmt.setString(i++, status.name());
             if (temTamanho) pstmt.setString(i++, tamanho.name());
 

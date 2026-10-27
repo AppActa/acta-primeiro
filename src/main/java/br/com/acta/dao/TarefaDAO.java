@@ -20,8 +20,8 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
     @Override
     public int inserir(Tarefa tarefa) {
         String sql = """
-                INSERT INTO tarefa (titulo, descricao, prioridade, dt_entrega, status, dt_inicio, id_colaborador)
-                VALUES (?, ?, ?, ?, ?, ?, ?);
+                INSERT INTO tarefa (titulo, descricao, prioridade, dt_entrega, status, dt_inicio, id_colaborador, id_plano_acao)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
                 """;
 
         try (Connection conn = Conexao.conectar();
@@ -34,6 +34,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             pstmt.setString(5, tarefa.getStatus().name());
             pstmt.setDate(6, tarefa.getDt_inicio());
             pstmt.setLong(7, tarefa.getId_colaborador());
+            pstmt.setLong(8, tarefa.getId_plano_acao());
 
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
@@ -107,7 +108,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
-        if (temBusca) sql.append(" AND (titulo ILIKE ? OR nome_colaborador ILIKE ?)");
+        if (temBusca) sql.append(" AND (titulo ILIKE ? OR nome_colaborador ILIKE ? OR nome_plano_acao ILIKE ?)");
         if (temPrioridade) sql.append(" AND prioridade = ?");
         if (temStatus) sql.append(" AND status = ?");
         if (temDataInicial) sql.append(" AND dt_entrega >= ?");
@@ -123,6 +124,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
+                pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
@@ -146,7 +148,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
     // UPDATE
     @Override
     public int atualizar(Tarefa tarefa) {
-        String sql = "UPDATE tarefa SET titulo = ?, descricao = ?, prioridade = ?, dt_entrega = ?, status = ?, dt_inicio = ?, id_colaborador = ? WHERE id_tarefa = ?;";
+        String sql = "UPDATE tarefa SET titulo = ?, descricao = ?, prioridade = ?, dt_entrega = ?, status = ?, dt_inicio = ?, id_colaborador = ?, id_plano_acao = ? WHERE id_tarefa = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -158,7 +160,8 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             pstmt.setString(5, tarefa.getStatus().name());
             pstmt.setDate(6, tarefa.getDt_inicio());
             pstmt.setLong(7, tarefa.getId_colaborador());
-            pstmt.setLong(8, tarefa.getId_tarefa());
+            pstmt.setLong(8, tarefa.getId_plano_acao());
+            pstmt.setLong(9, tarefa.getId_tarefa());
 
             if (pstmt.executeUpdate() > 0) return 1;
 
@@ -242,7 +245,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             "entrega", "dt_entrega",
             "status", "status",
             "inicio", "dt_inicio",
-            "colaborador", "nome_colaborador"
+            "colaborador", "nome_colaborador",
+            "plano_acao", "nome_plano_acao"
     );
-
 }

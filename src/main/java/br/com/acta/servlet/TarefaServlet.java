@@ -66,20 +66,16 @@ public class TarefaServlet extends HttpServlet {
                         HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-
             switch (acao) {
                 case "inserir":
                     inserir(req, resp);
                     break;
-
                 case "atualizar":
                     atualizar(req, resp);
                     break;
-
                 case "excluir":
                     excluir(req, resp);
                     break;
-
                 default:
                     enviarErro(req, resp, "Ação não existente.",
                             HttpServletResponse.SC_BAD_REQUEST);

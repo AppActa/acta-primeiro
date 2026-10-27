@@ -36,22 +36,18 @@ public class ProblemaServlet extends HttpServlet {
             buscar(req, resp);
 
         } catch (RegistroNaoEncontradoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_NOT_FOUND);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
 
         } catch (ValidacaoException | IllegalArgumentException e) {
-            enviarErro(req, resp, "Parâmetro de consulta inválido.",
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, "Parâmetro de consulta inválido.", HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (DaoException e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Erro ao consultar o banco de dados.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Erro ao consultar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível encontrar os problemas.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Não foi possível encontrar os problemas.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -64,8 +60,7 @@ public class ProblemaServlet extends HttpServlet {
 
         try {
             if (acao == null) {
-                enviarErro(req, resp, "Ação não informada.",
-                        HttpServletResponse.SC_BAD_REQUEST);
+                enviarErro(req, resp, "Ação não informada.", HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
 
@@ -73,49 +68,38 @@ public class ProblemaServlet extends HttpServlet {
                 case "inserir":
                     inserir(req, resp);
                     break;
-
                 case "atualizar":
                     atualizar(req, resp);
                     break;
-
                 case "excluir":
                     excluir(req, resp);
                     break;
-
                 default:
-                    enviarErro(req, resp, "Ação não existente.",
-                            HttpServletResponse.SC_BAD_REQUEST);
+                    enviarErro(req, resp, "Ação não existente.", HttpServletResponse.SC_BAD_REQUEST);
             }
 
         } catch (ValidacaoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (RegistroNaoEncontradoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_NOT_FOUND);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
 
         } catch (DuplicidadeException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_CONFLICT);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
 
         } catch (IntegridadeReferencialException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_CONFLICT);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
 
         } catch (IllegalArgumentException e) {
-            enviarErro(req, resp, "Parâmetro inválido.",
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, "Parâmetro inválido.", HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (DaoException e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Erro interno ao acessar o banco de dados.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Erro interno ao acessar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível concluir a operação.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Não foi possível concluir a operação.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -129,7 +113,7 @@ public class ProblemaServlet extends HttpServlet {
         problema.setPeso(Validador.opcao(Intensidade.class, req.getParameter("peso"), "Peso"));
         problema.setSolucao(Validador.textoOpcional(req.getParameter("solucao"), "Solução", 200));
         problema.setStatus(Validador.opcao(StatusProblema.class, req.getParameter("status"), "Status"));
-        problema.setOrigem(Validador.textoLongoOpcional(req.getParameter("origem"), "Origem"));
+        problema.setOrigem(normalizarOrigem(Validador.textoLongoOpcional(req.getParameter("origem"), "Origem")));
         problema.setEncontrado_em(Validador.dataNaoFutura(req.getParameter("encontrado_em"), "Data em que foi encontrado"));
         problema.setId_ciclo(Validador.id(req.getParameter("id_ciclo"), "Ciclo"));
         problema.setId_plano_acao(Validador.idOpcional(req.getParameter("id_plano_acao"), "Plano de ação"));
@@ -155,6 +139,7 @@ public class ProblemaServlet extends HttpServlet {
         }
 
         req.setAttribute("problemaList", List.of(problema));
+        req.setAttribute("origemList", DAO.buscarOrigem());
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
 
@@ -183,6 +168,7 @@ public class ProblemaServlet extends HttpServlet {
         List<Problema> problemas = DAO.buscaFiltrada(busca, peso, status, origem, dataInicial, dataFinal, ordem, direcao);
 
         req.setAttribute("problemaList", problemas);
+        req.setAttribute("origemList", DAO.buscarOrigem());
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
 
@@ -196,7 +182,7 @@ public class ProblemaServlet extends HttpServlet {
         problema.setPeso(Validador.opcao(Intensidade.class, req.getParameter("peso"), "Peso"));
         problema.setSolucao(Validador.textoOpcional(req.getParameter("solucao"), "Solução", 200));
         problema.setStatus(Validador.opcao(StatusProblema.class, req.getParameter("status"), "Status"));
-        problema.setOrigem(Validador.textoLongoOpcional(req.getParameter("origem"), "Origem"));
+        problema.setOrigem(normalizarOrigem(Validador.textoLongoOpcional(req.getParameter("origem"), "Origem")));
         problema.setEncontrado_em(Validador.dataNaoFutura(req.getParameter("encontrado_em"), "Data em que foi encontrado"));
         problema.setId_ciclo(Validador.id(req.getParameter("id_ciclo"), "Ciclo"));
         problema.setId_plano_acao(Validador.idOpcional(req.getParameter("id_plano_acao"), "Plano de ação"));
@@ -217,6 +203,14 @@ public class ProblemaServlet extends HttpServlet {
     }
 
     // UTILITARIOS
+    private String normalizarOrigem(String origem) {
+        if (origem == null || origem.isBlank()) return null;
+
+        String limpa = origem.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarOrigemExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
     // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
     // Assume 500 (erro grave), então o usuário é levado para a página de erro.
     private void enviarErro(
@@ -268,6 +262,7 @@ public class ProblemaServlet extends HttpServlet {
         List<Problema> problemas = DAO.buscar();
 
         req.setAttribute("problemaList", problemas);
+        req.setAttribute("origemList", DAO.buscarOrigem());
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
 }
