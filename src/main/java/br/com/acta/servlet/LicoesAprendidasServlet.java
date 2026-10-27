@@ -9,6 +9,7 @@ import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.excecoes.ValidacaoException;
+import br.com.acta.utils.Validador;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -105,14 +106,14 @@ public class LicoesAprendidasServlet extends HttpServlet {
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         LicoesAprendidas licoesAprendidas = new LicoesAprendidas();
 
-        licoesAprendidas.setTitulo(req.getParameter("titulo"));
-        licoesAprendidas.setArea(normalizarArea(req.getParameter("area")));
-        licoesAprendidas.setAprendizado(req.getParameter("aprendizado"));
-        licoesAprendidas.setCategoria(normalizarCategoria(req.getParameter("categoria")));
-        licoesAprendidas.setDescricao(req.getParameter("descricao"));
-        licoesAprendidas.setFase_origem(EtapaCiclo.valueOf(req.getParameter("fase_origem")));
-        licoesAprendidas.setSeveridade(Intensidade.valueOf(req.getParameter("severidade")));
-        licoesAprendidas.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
+        licoesAprendidas.setTitulo(Validador.texto(req.getParameter("titulo"), "Título", 100));
+        licoesAprendidas.setArea(normalizarArea(Validador.textoOpcional(req.getParameter("area"), "Área", 30)));
+        licoesAprendidas.setAprendizado(Validador.textoLongo(req.getParameter("aprendizado"), "Aprendizado"));
+        licoesAprendidas.setCategoria(normalizarCategoria(Validador.textoOpcional(req.getParameter("categoria"), "Categoria", 30)));
+        licoesAprendidas.setDescricao(Validador.textoLongoOpcional(req.getParameter("descricao"), "Descrição"));
+        licoesAprendidas.setFase_origem(Validador.opcao(EtapaCiclo.class, req.getParameter("fase_origem"), "Fase de origem"));
+        licoesAprendidas.setSeveridade(Validador.opcao(Intensidade.class, req.getParameter("severidade"), "Severidade"));
+        licoesAprendidas.setId_ciclo(Validador.id(req.getParameter("id_ciclo"), "Ciclo"));
 
         int resultado = DAO.inserir(licoesAprendidas);
 
@@ -127,7 +128,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
             return;
         }
 
-        LicoesAprendidas licoesAprendidas = DAO.buscar(Long.parseLong(id));
+        LicoesAprendidas licoesAprendidas = DAO.buscar(Validador.id(id, "Id"));
 
         if (licoesAprendidas == null) {
             throw new RegistroNaoEncontradoException("Registro de lição aprendida não encontrado.");
@@ -163,18 +164,18 @@ public class LicoesAprendidasServlet extends HttpServlet {
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-licoesAprendidas"));
+        Long id = Validador.id(req.getParameter("id-licoesAprendidas"), "Id da lição");
         LicoesAprendidas licoesAprendidas = new LicoesAprendidas();
 
         licoesAprendidas.setId_licao(id);
-        licoesAprendidas.setTitulo(req.getParameter("titulo"));
-        licoesAprendidas.setArea(normalizarArea(req.getParameter("area")));
-        licoesAprendidas.setAprendizado(req.getParameter("aprendizado"));
-        licoesAprendidas.setCategoria(normalizarCategoria(req.getParameter("categoria")));
-        licoesAprendidas.setDescricao(req.getParameter("descricao"));
-        licoesAprendidas.setFase_origem(EtapaCiclo.valueOf(req.getParameter("fase_origem")));
-        licoesAprendidas.setSeveridade(Intensidade.valueOf(req.getParameter("severidade")));
-        licoesAprendidas.setId_ciclo(Long.parseLong(req.getParameter("id_ciclo")));
+        licoesAprendidas.setTitulo(Validador.texto(req.getParameter("titulo"), "Título", 100));
+        licoesAprendidas.setArea(normalizarArea(Validador.textoOpcional(req.getParameter("area"), "Área", 30)));
+        licoesAprendidas.setAprendizado(Validador.textoLongo(req.getParameter("aprendizado"), "Aprendizado"));
+        licoesAprendidas.setCategoria(normalizarCategoria(Validador.textoOpcional(req.getParameter("categoria"), "Categoria", 30)));
+        licoesAprendidas.setDescricao(Validador.textoLongoOpcional(req.getParameter("descricao"), "Descrição"));
+        licoesAprendidas.setFase_origem(Validador.opcao(EtapaCiclo.class, req.getParameter("fase_origem"), "Fase de origem"));
+        licoesAprendidas.setSeveridade(Validador.opcao(Intensidade.class, req.getParameter("severidade"), "Severidade"));
+        licoesAprendidas.setId_ciclo(Validador.id(req.getParameter("id_ciclo"), "Ciclo"));
 
         int resultado = DAO.atualizar(licoesAprendidas);
 
@@ -183,7 +184,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-licoesAprendidas"));
+        Long id = Validador.id(req.getParameter("id-licoesAprendidas"), "Id da lição");
         int resultado = DAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);

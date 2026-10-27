@@ -9,6 +9,7 @@ import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.excecoes.ValidacaoException;
+import br.com.acta.utils.Validador;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -120,16 +121,17 @@ public class CicloServlet extends HttpServlet {
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Ciclo ciclo = new Ciclo();
 
-        ciclo.setNome(req.getParameter("nome"));
-        ciclo.setDescricao(req.getParameter("descricao"));
-        ciclo.setEtapa_atual(EtapaCiclo.valueOf(req.getParameter("etapa_atual")));
-        ciclo.setDt_inicio(Date.valueOf(req.getParameter("dt_inicio")));
-        ciclo.setDt_fim(Date.valueOf(req.getParameter("dt_fim")));
-        ciclo.setStatus(Situacao.valueOf(req.getParameter("status")));
-        ciclo.setId_empresa(Long.parseLong(req.getParameter("id_empresa")));
-        ciclo.setId_responsavel(Long.parseLong(req.getParameter("id_responsavel")));
+        ciclo.setNome(Validador.texto(req.getParameter("nome"), "Nome", 100));
+        ciclo.setDescricao(Validador.textoLongoOpcional(req.getParameter("descricao"), "Descrição"));
+        ciclo.setEtapa_atual(Validador.opcao(EtapaCiclo.class, req.getParameter("etapa_atual"), "Etapa"));
+        ciclo.setDt_inicio(Validador.data(req.getParameter("dt_inicio"), "Data de início"));
+        ciclo.setDt_fim(Validador.dataOpcional(req.getParameter("dt_fim"), "Data de fim"));
+        ciclo.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
+        ciclo.setId_empresa(Validador.id(req.getParameter("id_empresa"), "Empresa"));
+        ciclo.setId_responsavel(Validador.id(req.getParameter("id_responsavel"), "Responsável"));
         // criado_em não é setado aqui — quem preenche é o banco (now())
 
+        Validador.periodo(ciclo.getDt_inicio(), ciclo.getDt_fim(), "A data de fim");
         int resultado = cicloDAO.inserir(ciclo);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
@@ -143,7 +145,7 @@ public class CicloServlet extends HttpServlet {
             return;
         }
 
-        Ciclo ciclo = cicloDAO.buscar(Long.parseLong(id));
+        Ciclo ciclo = cicloDAO.buscar(Validador.id(id, "Id"));
 
         if (ciclo == null) {
             throw new RegistroNaoEncontradoException("Registro de ciclo não encontrado.");
@@ -189,20 +191,21 @@ public class CicloServlet extends HttpServlet {
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-ciclo"));
+        Long id = Validador.id(req.getParameter("id-ciclo"), "Id do ciclo");
         Ciclo ciclo = new Ciclo();
 
         ciclo.setId_ciclo(id);
-        ciclo.setNome(req.getParameter("nome"));
-        ciclo.setDescricao(req.getParameter("descricao"));
-        ciclo.setEtapa_atual(EtapaCiclo.valueOf(req.getParameter("etapa_atual")));
-        ciclo.setDt_inicio(Date.valueOf(req.getParameter("dt_inicio")));
-        ciclo.setDt_fim(Date.valueOf(req.getParameter("dt_fim")));
-        ciclo.setStatus(Situacao.valueOf(req.getParameter("status")));
-        ciclo.setId_empresa(Long.parseLong(req.getParameter("id_empresa")));
-        ciclo.setId_responsavel(Long.parseLong(req.getParameter("id_responsavel")));
+        ciclo.setNome(Validador.texto(req.getParameter("nome"), "Nome", 100));
+        ciclo.setDescricao(Validador.textoLongoOpcional(req.getParameter("descricao"), "Descrição"));
+        ciclo.setEtapa_atual(Validador.opcao(EtapaCiclo.class, req.getParameter("etapa_atual"), "Etapa"));
+        ciclo.setDt_inicio(Validador.data(req.getParameter("dt_inicio"), "Data de início"));
+        ciclo.setDt_fim(Validador.dataOpcional(req.getParameter("dt_fim"), "Data de fim"));
+        ciclo.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
+        ciclo.setId_empresa(Validador.id(req.getParameter("id_empresa"), "Empresa"));
+        ciclo.setId_responsavel(Validador.id(req.getParameter("id_responsavel"), "Responsável"));
         // criado_em também não entra aqui porque o banco faz automatico.
 
+        Validador.periodo(ciclo.getDt_inicio(), ciclo.getDt_fim(), "A data de fim");
         int resultado = cicloDAO.atualizar(ciclo);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
@@ -210,7 +213,7 @@ public class CicloServlet extends HttpServlet {
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.parseLong(req.getParameter("id-ciclo"));
+        Long id = Validador.id(req.getParameter("id-ciclo"), "Id do ciclo");
         int resultado = cicloDAO.excluir(id);
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
