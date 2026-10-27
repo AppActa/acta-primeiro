@@ -33,22 +33,18 @@ public class LicoesAprendidasServlet extends HttpServlet {
             buscar(req, resp);
 
         } catch (RegistroNaoEncontradoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_NOT_FOUND);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
 
         } catch (ValidacaoException | IllegalArgumentException e) {
-            enviarErro(req, resp, "Parâmetro de consulta inválido.",
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, "Parâmetro de consulta inválido.", HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (DaoException e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Erro ao consultar o banco de dados.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Erro ao consultar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível encontrar as lições aprendidas.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Não foi possível encontrar as lições aprendidas.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -70,49 +66,38 @@ public class LicoesAprendidasServlet extends HttpServlet {
                 case "inserir":
                     inserir(req, resp);
                     break;
-
                 case "atualizar":
                     atualizar(req, resp);
                     break;
-
                 case "excluir":
                     excluir(req, resp);
                     break;
-
                 default:
-                    enviarErro(req, resp, "Ação não existente.",
-                            HttpServletResponse.SC_BAD_REQUEST);
+                    enviarErro(req, resp, "Ação não existente.", HttpServletResponse.SC_BAD_REQUEST);
             }
 
         } catch (ValidacaoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (RegistroNaoEncontradoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_NOT_FOUND);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
 
         } catch (DuplicidadeException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_CONFLICT);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
 
         } catch (IntegridadeReferencialException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_CONFLICT);
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
 
         } catch (IllegalArgumentException e) {
-            enviarErro(req, resp, "Parâmetro inválido.",
-                    HttpServletResponse.SC_BAD_REQUEST);
+            enviarErro(req, resp, "Parâmetro inválido.", HttpServletResponse.SC_BAD_REQUEST);
 
         } catch (DaoException e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Erro interno ao acessar o banco de dados.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Erro interno ao acessar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         } catch (Exception e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível concluir a operação.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            enviarErro(req, resp, "Não foi possível concluir a operação.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -122,9 +107,9 @@ public class LicoesAprendidasServlet extends HttpServlet {
         LicoesAprendidas licoesAprendidas = new LicoesAprendidas();
 
         licoesAprendidas.setTitulo(Validador.texto(req.getParameter("titulo"), "Título", 100));
-        licoesAprendidas.setArea(Validador.textoOpcional(req.getParameter("area"), "Área", 30));
+        licoesAprendidas.setArea(normalizarArea(Validador.textoOpcional(req.getParameter("area"), "Área", 30)));
         licoesAprendidas.setAprendizado(Validador.textoLongo(req.getParameter("aprendizado"), "Aprendizado"));
-        licoesAprendidas.setCategoria(Validador.textoOpcional(req.getParameter("categoria"), "Categoria", 30));
+        licoesAprendidas.setCategoria(normalizarCategoria(Validador.textoOpcional(req.getParameter("categoria"), "Categoria", 30)));
         licoesAprendidas.setDescricao(Validador.textoLongoOpcional(req.getParameter("descricao"), "Descrição"));
         licoesAprendidas.setFase_origem(Validador.opcao(EtapaCiclo.class, req.getParameter("fase_origem"), "Fase de origem"));
         licoesAprendidas.setSeveridade(Validador.opcao(Intensidade.class, req.getParameter("severidade"), "Severidade"));
@@ -139,7 +124,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
-            buscaFiltrada(req, resp); // ALTERADO (antes: enviarPaginaCerta(req, resp);)
+            buscaFiltrada(req, resp);
             return;
         }
 
@@ -150,6 +135,8 @@ public class LicoesAprendidasServlet extends HttpServlet {
         }
 
         req.setAttribute("licoesAprendidasList", List.of(licoesAprendidas));
+        req.setAttribute("areaList", DAO.buscarArea());
+        req.setAttribute("categoriaList", DAO.buscarCategoria());
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
@@ -171,6 +158,8 @@ public class LicoesAprendidasServlet extends HttpServlet {
         List<LicoesAprendidas> licoesAprendidas = DAO.buscaFiltrada(busca, fase, severidade, area, categoria, ordem, direcao);
 
         req.setAttribute("licoesAprendidasList", licoesAprendidas);
+        req.setAttribute("areaList", DAO.buscarArea());
+        req.setAttribute("categoriaList", DAO.buscarCategoria());
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
@@ -180,9 +169,9 @@ public class LicoesAprendidasServlet extends HttpServlet {
 
         licoesAprendidas.setId_licao(id);
         licoesAprendidas.setTitulo(Validador.texto(req.getParameter("titulo"), "Título", 100));
-        licoesAprendidas.setArea(Validador.textoOpcional(req.getParameter("area"), "Área", 30));
+        licoesAprendidas.setArea(normalizarArea(Validador.textoOpcional(req.getParameter("area"), "Área", 30)));
         licoesAprendidas.setAprendizado(Validador.textoLongo(req.getParameter("aprendizado"), "Aprendizado"));
-        licoesAprendidas.setCategoria(Validador.textoOpcional(req.getParameter("categoria"), "Categoria", 30));
+        licoesAprendidas.setCategoria(normalizarCategoria(Validador.textoOpcional(req.getParameter("categoria"), "Categoria", 30)));
         licoesAprendidas.setDescricao(Validador.textoLongoOpcional(req.getParameter("descricao"), "Descrição"));
         licoesAprendidas.setFase_origem(Validador.opcao(EtapaCiclo.class, req.getParameter("fase_origem"), "Fase de origem"));
         licoesAprendidas.setSeveridade(Validador.opcao(Intensidade.class, req.getParameter("severidade"), "Severidade"));
@@ -203,6 +192,22 @@ public class LicoesAprendidasServlet extends HttpServlet {
     }
 
     // UTILITARIOS
+    private String normalizarArea(String area) {
+        if (area == null || area.isBlank()) return null;
+
+        String limpa = area.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarAreaExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
+    private String normalizarCategoria(String categoria) {
+        if (categoria == null || categoria.isBlank()) return null;
+
+        String limpa = categoria.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarCategoriaExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
     // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
     // Assume 500 (erro grave), então o usuário é levado para a página de erro.
     private void enviarErro(
@@ -251,12 +256,12 @@ public class LicoesAprendidasServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
-
-
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<LicoesAprendidas> licoesAprendidas = DAO.buscar();
 
         req.setAttribute("licoesAprendidasList", licoesAprendidas);
+        req.setAttribute("areaList", DAO.buscarArea());
+        req.setAttribute("categoriaList", DAO.buscarCategoria());
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 }
