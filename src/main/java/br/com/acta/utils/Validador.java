@@ -88,7 +88,7 @@ public class Validador {
         if (!EMAIL.matcher(v).matches()) {
             throw new ValidacaoException("E-mail inválido.");
         }
-        return v.toLowerCase();
+        return tamanhoMaximo(v, 80, "E-mail").toLowerCase();
     }
 
     // ---------------------------------------------------------------------------------
@@ -274,7 +274,7 @@ public class Validador {
         if (valor == null || valor.isEmpty()) {
             throw new ValidacaoException("Senha é obrigatória.");
         }
-        if (valor.length() > 101) {
+        if (valor.length() > 100) {
             throw new ValidacaoException("Senha deve ter no máximo 100 caracteres.");
         }
         if (!SENHA.matcher(valor).matches()) {
