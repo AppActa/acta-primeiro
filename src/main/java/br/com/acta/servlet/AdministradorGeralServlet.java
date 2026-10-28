@@ -129,7 +129,7 @@ public class AdministradorGeralServlet extends HttpServlet {
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         AdministradorGeral administradorGeral = new AdministradorGeral();
 
-        administradorGeral.setNome(Validador.nomePessoa(req.getParameter("nome"), "Nome", 100));
+        administradorGeral.setNome(Validador.nomePessoa(req.getParameter("nome"), "Nome", 50));
         administradorGeral.setSenha(Validador.senha(req.getParameter("senha")));
         administradorGeral.setEmail(Validador.email(req.getParameter("email")));
         administradorGeral.setTelefone(Validador.telefone(req.getParameter("telefone")));
