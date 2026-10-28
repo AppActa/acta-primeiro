@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
@@ -56,16 +57,20 @@ public class LoginServlet extends HttpServlet {
         AdministradorGeral administradorGeral = ADMINISTRADOR_DAO.autenticar(email, senha);
         if (administradorGeral != null) {
             administradorGeral.setSenha(null);
-            req.getSession().setAttribute("usuarioLogado", administradorGeral);
-            req.getSession().setAttribute("tipoUsuario", "ADMINISTRADOR_GERAL");
+            HttpSession sessao = req.getSession(true);
+            req.changeSessionId();
+            sessao.setAttribute("usuarioLogado", administradorGeral);
+            sessao.setAttribute("tipoUsuario", "ADMINISTRADOR_GERAL");
             resp.sendRedirect(req.getContextPath() + "/home-servlet");
             return;
         }
 
         Colaborador colaborador = COLABORADOR_DAO.autenticar(email, senha);
         if (colaborador != null) {
-            req.getSession().setAttribute("usuarioLogado", colaborador);
-            req.getSession().setAttribute("tipoUsuario", "COLABORADOR");
+            HttpSession sessao = req.getSession(true);
+            req.changeSessionId();
+            sessao.setAttribute("usuarioLogado", colaborador);
+            sessao.setAttribute("tipoUsuario", "COLABORADOR");
             resp.sendRedirect(req.getContextPath() + "/home-servlet");
             return;
         }
