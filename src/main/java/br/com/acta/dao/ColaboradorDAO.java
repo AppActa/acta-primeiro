@@ -30,7 +30,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setString(1, colaborador.getNome());
             pstmt.setString(2, colaborador.getSobrenome());
             pstmt.setBoolean(3, colaborador.getPermissao_gestor());
-            pstmt.setString(4, colaborador.getStatus().name());
+            pstmt.setObject(4, colaborador.getStatus().name(), Types.OTHER);
             pstmt.setString(5, colaborador.getArea());
             pstmt.setString(6, colaborador.getCargo());
             pstmt.setDate(7, colaborador.getDt_contratacao());
@@ -140,7 +140,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
-            if (temStatus) pstmt.setString(i++, status.name());
+            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
             if (temArea) pstmt.setString(i++, area);
             if (temCargo) pstmt.setString(i++, cargo);
             if (temGestor) pstmt.setBoolean(i++, permissaoGestor);
@@ -205,7 +205,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setString(1, colaborador.getNome());
             pstmt.setString(2, colaborador.getSobrenome());
             pstmt.setBoolean(3, colaborador.getPermissao_gestor());
-            pstmt.setString(4, colaborador.getStatus().name());
+            pstmt.setObject(4, colaborador.getStatus().name(), Types.OTHER);
             pstmt.setString(5, colaborador.getArea());
             pstmt.setString(6, colaborador.getCargo());
             pstmt.setDate(7, colaborador.getDt_contratacao());
