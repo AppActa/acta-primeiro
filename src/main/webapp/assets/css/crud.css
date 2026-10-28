@@ -746,7 +746,29 @@ td.coluna-acao {
 }
 
 .conteudo-config {
-    padding: 48px 55px;
+    padding: 30px;
+}
+ 
+/* Página em duas colunas: dados à esquerda, cartão verde ocupando toda a direita */
+.config {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 30px;
+    min-height: calc(100vh - 60px);
+}
+ 
+/* Chaves invisíveis que controlam os modos de edição (não rolam a página, não mudam a URL) */
+.config-toggle {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+ 
+/* Coluna da esquerda (mais afastada da sidebar) */
+.config-principal {
+    padding: 18px 40px 0 70px;
 }
  
 /* Título com linha embaixo */
@@ -762,29 +784,16 @@ td.coluna-acao {
     border-bottom: 1px solid var(--cor-primaria);
 }
  
-.config-ancora {
-    display: block;
-    height: 0;
-}
- 
-/* Separando os dados para a esquerda e o cartão para a direita */
-.config-layout {
-    display: grid;
-    grid-template-columns: 370px 335px;
-    column-gap: 8px;
-    align-items: start;
-}
- 
-/* Troca entre visualização e edição */
+/* Perfil: troca entre visualização e edição, mantendo tudo no mesmo lugar */
 .config-edicao {
     display: none;
 }
  
-body:has(#editar-configuracoes:target) .config-leitura {
+.config:has(#config-editar-perfil:checked) .config-leitura {
     display: none;
 }
  
-body:has(#editar-configuracoes:target) .config-edicao {
+.config:has(#config-editar-perfil:checked) .config-edicao {
     display: block;
 }
  
@@ -829,9 +838,9 @@ body:has(#editar-configuracoes:target) .config-edicao {
     display: block;
 }
  
-/* Campos */
+/* Campos: o texto (visualização) e o input (edição) têm exatamente a mesma altura */
 .config-campo {
-    margin-bottom: 29px;
+    margin-bottom: 19px;
 }
  
 .config-rotulo {
@@ -840,10 +849,13 @@ body:has(#editar-configuracoes:target) .config-edicao {
     font-weight: 600;
     line-height: 27px;
     color: var(--cor-primaria);
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
  
 .config-valor {
+    display: flex;
+    align-items: center;
+    height: 33px;
     font-size: 16px;
     line-height: 20px;
     color: #000;
@@ -856,17 +868,10 @@ body:has(#editar-configuracoes:target) .config-edicao {
 }
  
 /* inputs com borda verde no modo edição */
-.config-edicao .config-campo {
-    margin-bottom: 19px;
-}
- 
-.config-edicao .config-rotulo {
-    margin-bottom: 5px;
-}
- 
 .config-edicao input[type="text"],
 .config-edicao input[type="email"],
 .config-edicao input[type="password"] {
+    display: block;
     width: 268px;
     max-width: 100%;
     height: 33px;
@@ -887,7 +892,7 @@ body:has(#editar-configuracoes:target) .config-edicao {
     opacity: 1;
 }
  
-/* Botões Editar / Salvar / Cancelar */
+/* Botões Editar / Salvar / Cancelar (mesma posição nos dois modos) */
 .botao-config {
     width: 141px;
     height: 38px;
@@ -911,60 +916,155 @@ body:has(#editar-configuracoes:target) .config-edicao {
     background-color: #5BCFC5;
 }
  
-.config-leitura .botao-config {
-    margin-top: 25px;
-}
- 
 .config-botoes {
     display: flex;
     gap: 14px;
     margin-top: 22px;
 }
  
-/* Cartão de contato */
+/* ---------- Cartão de contato: o "quadradão" verde da direita ---------- */
 .config-contato {
-    margin-top: 128px;
-    min-height: 221px;
-    padding: 13px 31px 30px;
+    display: flex;
+    flex-direction: column;
+    padding: 36px 40px 40px;
     background-color: #8CBBBB;
-    border-radius: 10px;
+    border-radius: 16px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
     color: #000;
 }
  
+.config-contato-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+ 
+/* Linha de cima: título + lápis (ou Salvar/Cancelar) no canto superior direito */
+.config-contato-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    height: 40px;
+    margin-bottom: 24px;
+}
+ 
 .config-contato h2 {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 500;
     line-height: 35px;
-    margin-bottom: 30px;
 }
  
-.config-contato p {
+.config-contato-lapis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--cor-fundo);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+ 
+.config-contato-lapis:hover {
+    background-color: var(--cor-card);
+}
+ 
+.config-contato-lapis img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+ 
+.config-contato-botoes {
+    display: none;
+    gap: 10px;
+}
+ 
+.botao-config-contato {
+    width: 110px;
     font-size: 16px;
-    line-height: 15px;
-    padding-left: 9px;
 }
  
-.config-contato-grupo {
-    margin-top: 30px;
+.config:has(#config-editar-contato:checked) .config-contato-lapis {
+    display: none;
 }
  
-.config-contato-grupo p + p {
-    margin-top: 19px;
+.config:has(#config-editar-contato:checked) .config-contato-botoes {
+    display: flex;
+}
+ 
+/* Linhas de informação: texto e input com a mesma altura */
+.config-contato-linha {
+    display: flex;
+    align-items: center;
+    height: 38px;
+}
+ 
+.config-contato-linha p {
+    font-size: 18px;
+    line-height: 24px;
+}
+ 
+.config-contato a {
+    color: #000;
+    text-decoration: underline;
+}
+ 
+.config-contato-linha input {
+    display: none;
+    width: 100%;
+    height: 38px;
+    padding: 6px 10px;
+    font-size: 18px;
+    color: #000;
+    background-color: var(--cor-fundo);
+    border: 1px solid var(--cor-primaria);
+    border-radius: 6px;
+}
+ 
+.config-contato-linha input:focus {
+    outline: 2px solid var(--cor-borda);
+}
+ 
+.config:has(#config-editar-contato:checked) .contato-leitura {
+    display: none;
+}
+ 
+.config:has(#config-editar-contato:checked) .config-contato-linha input {
+    display: block;
+}
+ 
+/* Mapa: ocupa toda a largura do cartão e o espaço que sobra na altura */
+.config-contato iframe {
+    display: block;
+    width: 100%;
+    flex: 1;
+    min-height: 300px;
+    margin: 14px 0 18px;
+    border: 0;
+    border-radius: 10px;
+}
+ 
+.config-contato-grupo .config-contato-linha + .config-contato-linha {
+    margin-top: 6px;
 }
  
 /* Telas menores: cartão vai para baixo dos dados */
-@media (max-width: 900px) {
-    .conteudo-config {
-        padding: 30px;
+@media (max-width: 1100px) {
+    .config {
+        grid-template-columns: 1fr;
+        min-height: 0;
     }
  
-    .config-layout {
-        grid-template-columns: 1fr;
+    .config-principal {
+        padding: 18px 0 0 20px;
     }
  
     .config-contato {
-        margin-top: 40px;
-        width: min(100%, 335px);
+        min-height: 520px;
     }
 }
