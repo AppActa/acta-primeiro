@@ -17,13 +17,13 @@ public class Meta {
     private StatusMeta status;
     private OffsetDateTime criando_em;
     private Long id_ciclo;
-    private long id_plano_acao;
+    private Long id_plano_acao;
     private String nome_ciclo;
     private String nome_plano_acao;
 
     public Meta() {}
 
-    public Meta(String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, long id_plano_acao) {
+    public Meta(String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, Long id_plano_acao) {
         this.meta = meta;
         this.descricao_meta = descricao_meta;
         this.objetivo = objetivo;
@@ -35,7 +35,7 @@ public class Meta {
         this.id_plano_acao = id_plano_acao;
     }
 
-    public Meta(Long id_meta, String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, long id_plano_acao) {
+    public Meta(Long id_meta, String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, Long id_plano_acao) {
         this.id_meta = id_meta;
         this.meta = meta;
         this.descricao_meta = descricao_meta;
@@ -120,11 +120,11 @@ public class Meta {
         this.id_ciclo = id_ciclo;
     }
 
-    public long getId_plano_acao() {
+    public Long getId_plano_acao() {
         return id_plano_acao;
     }
 
-    public void setId_plano_acao(long id_plano_acao) {
+    public void setId_plano_acao(Long id_plano_acao) {
         this.id_plano_acao = id_plano_acao;
     }
 
