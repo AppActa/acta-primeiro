@@ -88,7 +88,7 @@ public class Validador {
         if (!EMAIL.matcher(v).matches()) {
             throw new ValidacaoException("E-mail inválido.");
         }
-        return v.toLowerCase();
+        return tamanhoMaximo(v, 80, "E-mail").toLowerCase();
     }
 
     // ---------------------------------------------------------------------------------
