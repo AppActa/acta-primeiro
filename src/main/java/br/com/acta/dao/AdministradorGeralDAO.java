@@ -149,7 +149,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
                 if (rs.next()) {
                     AdministradorGeral administradorGeral = mapearAdministradorGeral(rs);
 
-                    if (PasswordUtils.verificarSenha(senha, administradorGeral.getSenha())) {
+                    if (PasswordUtils.verificarSenha(senha, rs.getString("senha"))) {
                         return administradorGeral;
                     }
                 }
@@ -296,7 +296,6 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         AdministradorGeral administradorGeral = new AdministradorGeral();
         administradorGeral.setAdm_geral_id(rs.getLong("id_adm_geral"));
         administradorGeral.setNome(rs.getString("nome"));
-        administradorGeral.setSenha(rs.getString("senha"));
         administradorGeral.setEmail(rs.getString("email"));
         administradorGeral.setTelefone(rs.getString("telefone"));
         return administradorGeral;
