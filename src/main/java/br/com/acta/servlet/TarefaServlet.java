@@ -124,6 +124,7 @@ public class TarefaServlet extends HttpServlet {
         tarefa.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
         tarefa.setDt_inicio(Validador.data(req.getParameter("dt_inicio"), "Data de início"));
         tarefa.setId_colaborador(Validador.id(req.getParameter("id_colaborador"), "Colaborador"));
+        tarefa.setId_plano_acao(Validador.id(req.getParameter("id_plano_acao"), "Plano de ação"));
 
         Validador.periodo(tarefa.getDt_inicio(), tarefa.getDt_entrega(), "A data de entrega");
         int resultado = DAO.inserir(tarefa);
@@ -188,6 +189,7 @@ public class TarefaServlet extends HttpServlet {
         tarefa.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
         tarefa.setDt_inicio(Validador.data(req.getParameter("dt_inicio"), "Data de início"));
         tarefa.setId_colaborador(Validador.id(req.getParameter("id_colaborador"), "Colaborador"));
+        tarefa.setId_plano_acao(Validador.id(req.getParameter("id_plano_acao"), "Plano de ação"));
 
         Validador.periodo(tarefa.getDt_inicio(), tarefa.getDt_entrega(), "A data de entrega");
         int resultado = DAO.atualizar(tarefa);

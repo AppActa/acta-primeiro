@@ -29,8 +29,8 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
 
             pstmt.setString(1, planoAcao.getNome());
             pstmt.setString(2, planoAcao.getDescricao());
-            pstmt.setString(3, planoAcao.getStatus().name());
-            pstmt.setString(4, planoAcao.getPrioridade().name());
+            pstmt.setObject(3, planoAcao.getStatus().name(), Types.OTHER);
+            pstmt.setObject(4, planoAcao.getPrioridade().name(), Types.OTHER);
             pstmt.setLong(5, planoAcao.getId_ciclo());
             pstmt.setLong(6, planoAcao.getId_criador());
 
@@ -122,8 +122,8 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
-            if (temStatus) pstmt.setString(i++, status.name());
-            if (temPrioridade) pstmt.setString(i++, prioridade.name());
+            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
+            if (temPrioridade) pstmt.setObject(i++, prioridade.name(), Types.OTHER);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -146,8 +146,8 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
 
             pstmt.setString(1, planoAcao.getNome());
             pstmt.setString(2, planoAcao.getDescricao());
-            pstmt.setString(3, planoAcao.getStatus().name());
-            pstmt.setString(4, planoAcao.getPrioridade().name());
+            pstmt.setObject(3, planoAcao.getStatus().name(), Types.OTHER);
+            pstmt.setObject(4, planoAcao.getPrioridade().name(), Types.OTHER);
             pstmt.setLong(5, planoAcao.getId_ciclo());
             pstmt.setLong(6, planoAcao.getId_criador());
             pstmt.setLong(7,planoAcao.getId_plano_acao());
