@@ -69,8 +69,8 @@
                 <section class="config">
 
                     <!-- Chaves dos modos de edição (acionadas pelos <label for="..."> abaixo) -->
-                    <input type="checkbox" id="config-editar-perfil" class="config-toggle" data-form="form-perfil" aria-label="Editar perfil">
-                    <input type="checkbox" id="config-editar-contato" class="config-toggle" data-form="form-contato" aria-label="Editar contato">
+                    <input type="checkbox" id="config-editar-perfil" class="config-toggle" aria-label="Editar perfil">
+                    <input type="checkbox" id="config-editar-contato" class="config-toggle" aria-label="Editar contato">
 
                     <!-- Coluna da esquerda -->
                     <div class="config-principal">
@@ -101,7 +101,7 @@
                             </div>
 
                             <div class="config-botoes">
-                                <label for="config-editar-perfil" class="botao botao-config">Editar</label>
+                                <label for="config-editar-perfil" class="botao botao-principal botao-pilula">Editar</label>
                             </div>
                         </div>
 
@@ -127,12 +127,13 @@
 
                             <div class="config-campo">
                                 <label for="config-senha" class="config-rotulo">Senha</label>
+                                <!-- Em branco = manter a senha atual (o Servlet só gera novo hash se vier preenchida) -->
                                 <input type="password" id="config-senha" name="senha" maxlength="100" placeholder="********" autocomplete="new-password">
                             </div>
 
                             <div class="config-botoes">
-                                <button type="submit" class="botao botao-config">Salvar</button>
-                                <label for="config-editar-perfil" class="botao botao-config botao-config-alt">Cancelar</label>
+                                <button type="submit" class="botao botao-principal botao-pilula">Salvar</button>
+                                <label for="config-editar-perfil" class="botao botao-cancelar botao-pilula">Cancelar</label>
                             </div>
                         </form>
                     </div>
@@ -150,8 +151,8 @@
 
                                 <!-- Aparecem só no modo de edição -->
                                 <div class="config-contato-botoes">
-                                    <button type="submit" class="botao botao-config botao-config-contato">Salvar</button>
-                                    <label for="config-editar-contato" class="botao botao-config botao-config-alt botao-config-contato">Cancelar</label>
+                                    <button type="submit" class="botao botao-principal botao-pilula botao-pilula-sm">Salvar</button>
+                                    <label for="config-editar-contato" class="botao botao-cancelar botao-pilula botao-pilula-sm">Cancelar</label>
                                 </div>
                             </div>
 
@@ -178,15 +179,5 @@
                 </section>
             </main>
         </div>
-        <script>
-            // Ao cancelar (chave desmarcada), volta os campos para os valores originais
-            document.querySelectorAll('.config-toggle').forEach(function (chave) {
-                chave.addEventListener('change', function () {
-                    if (!chave.checked) {
-                        document.getElementById(chave.dataset.form).reset();
-                    }
-                });
-            });
-        </script>
     </body>
 </html>
