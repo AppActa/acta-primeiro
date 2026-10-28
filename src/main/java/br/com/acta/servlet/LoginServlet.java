@@ -29,12 +29,14 @@ public class LoginServlet extends HttpServlet {
         String acao = req.getParameter("acao");
 
         try {
+            if (acao == null) {
+                enviarErro(req, resp, "Ação não informada");
+                return;
+            }
+
             switch (acao) {
                 case "login":
                     login(req, resp);
-                    break;
-                case null:
-                    enviarErro(req, resp, "Ação não informada");
                     break;
                 default:
                     enviarErro(req, resp, "Ação não existente");
@@ -54,6 +56,7 @@ public class LoginServlet extends HttpServlet {
 
         AdministradorGeral administradorGeral = ADMINISTRADOR_DAO.autenticar(email, senha);
         if (administradorGeral != null) {
+            administradorGeral.setSenha(null);
             HttpSession sessao = req.getSession(true);
             req.changeSessionId();
             sessao.setAttribute("usuarioLogado", administradorGeral);

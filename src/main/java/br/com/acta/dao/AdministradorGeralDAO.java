@@ -148,8 +148,9 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     AdministradorGeral administradorGeral = mapearAdministradorGeral(rs);
+                    String hash = rs.getString("senha");
 
-                    if (PasswordUtils.verificarSenha(senha, rs.getString("senha"))) {
+                    if (PasswordUtils.verificarSenha(senha, hash)) {
                         return administradorGeral;
                     }
                 }
