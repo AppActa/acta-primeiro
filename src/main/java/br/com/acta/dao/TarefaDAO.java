@@ -29,9 +29,9 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
 
             pstmt.setString(1, tarefa.getTitulo());
             pstmt.setString(2, tarefa.getDescricao());
-            pstmt.setString(3, tarefa.getPrioridade().name());
+            pstmt.setObject(3, tarefa.getPrioridade().name(), Types.OTHER);
             pstmt.setDate(4, tarefa.getDt_entrega());
-            pstmt.setString(5, tarefa.getStatus().name());
+            pstmt.setObject(5, tarefa.getStatus().name(), Types.OTHER);
             pstmt.setDate(6, tarefa.getDt_inicio());
             pstmt.setLong(7, tarefa.getId_colaborador());
             pstmt.setLong(8, tarefa.getId_plano_acao());
@@ -128,8 +128,8 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
-            if (temPrioridade) pstmt.setString(i++, prioridade.name());
-            if (temStatus) pstmt.setString(i++, status.name());
+            if (temPrioridade) pstmt.setObject(i++, prioridade.name(), Types.OTHER);
+            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
             if (temDataInicial) pstmt.setDate(i++, dataInicial);
             if (temDataFinal) pstmt.setDate(i++, dataFinal);
 
@@ -155,9 +155,9 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
 
             pstmt.setString(1, tarefa.getTitulo());
             pstmt.setString(2, tarefa.getDescricao());
-            pstmt.setString(3, tarefa.getPrioridade().name());
+            pstmt.setObject(3, tarefa.getPrioridade().name(), Types.OTHER);
             pstmt.setDate(4, tarefa.getDt_entrega());
-            pstmt.setString(5, tarefa.getStatus().name());
+            pstmt.setObject(5, tarefa.getStatus().name(), Types.OTHER);
             pstmt.setDate(6, tarefa.getDt_inicio());
             pstmt.setLong(7, tarefa.getId_colaborador());
             pstmt.setLong(8, tarefa.getId_plano_acao());
@@ -236,6 +236,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         tarefa.setStatus(Situacao.valueOf(rs.getString("status")));
         tarefa.setDt_inicio(rs.getDate("dt_inicio"));
         tarefa.setNome_colaborador(rs.getString("nome_colaborador"));
+        tarefa.setNome_plano_acao(rs.getString("nome_plano_acao"));
         return tarefa;
     }
 

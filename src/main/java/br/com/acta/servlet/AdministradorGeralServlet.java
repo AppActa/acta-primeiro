@@ -218,6 +218,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         administradorGeral.setSenha(null);
 
         HttpSession sessao = req.getSession(true);
+        req.changeSessionId();
         sessao.setAttribute("administradorGeralLogado", administradorGeral);
 
         enviarPaginaCerta(req, resp);
