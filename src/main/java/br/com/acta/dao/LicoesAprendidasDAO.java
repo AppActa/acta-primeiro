@@ -32,8 +32,8 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
             pstmt.setString(3, licoesAprendidas.getAprendizado());
             pstmt.setString(4, licoesAprendidas.getCategoria());
             pstmt.setString(5, licoesAprendidas.getDescricao());
-            pstmt.setString(6, licoesAprendidas.getFase_origem().name());
-            pstmt.setString(7, licoesAprendidas.getSeveridade().name());
+            pstmt.setObject(6, licoesAprendidas.getFase_origem().name(), Types.OTHER);
+            pstmt.setObject(7, licoesAprendidas.getSeveridade().name(), Types.OTHER);
             pstmt.setLong(8, licoesAprendidas.getId_ciclo());
 
             if (pstmt.executeUpdate() > 0) return 1;
@@ -128,8 +128,8 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
-            if (temFase) pstmt.setString(i++, fase.name());
-            if (temSeveridade) pstmt.setString(i++, severidade.name());
+            if (temFase) pstmt.setObject(i++, fase.name(), Types.OTHER);
+            if (temSeveridade) pstmt.setObject(i++, severidade.name(), Types.OTHER);
             if (temArea) pstmt.setString(i++, area.trim());
             if (temCategoria) pstmt.setString(i++, categoria.trim());
 
@@ -194,8 +194,8 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
             pstmt.setString(3, licoesAprendidas.getAprendizado());
             pstmt.setString(4, licoesAprendidas.getCategoria());
             pstmt.setString(5, licoesAprendidas.getDescricao());
-            pstmt.setString(6, licoesAprendidas.getFase_origem().name());
-            pstmt.setString(7, licoesAprendidas.getSeveridade().name());
+            pstmt.setObject(6, licoesAprendidas.getFase_origem().name(), Types.OTHER);
+            pstmt.setObject(7, licoesAprendidas.getSeveridade().name(), Types.OTHER);
             pstmt.setLong(8, licoesAprendidas.getId_ciclo());
             pstmt.setLong(9, licoesAprendidas.getId_licao());
 

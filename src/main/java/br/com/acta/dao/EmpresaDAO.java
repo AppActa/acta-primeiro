@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -36,8 +37,8 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             pstmt.setString(1,empresa.getNome());
             pstmt.setString(2,empresa.getSetor());
             pstmt.setString(3,empresa.getCnpj());
-            pstmt.setString(4, empresa.getStatus().name());
-            pstmt.setString(5,empresa.getTamanho().name());
+            pstmt.setObject(4, empresa.getStatus().name(), Types.OTHER);
+            pstmt.setObject(5,empresa.getTamanho().name(), Types.OTHER);
 
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
@@ -127,8 +128,8 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
                 pstmt.setString(i++, termo);
             }
             if (temSetor) pstmt.setString(i++, setor);
-            if (temStatus) pstmt.setString(i++, status.name());
-            if (temTamanho) pstmt.setString(i++, tamanho.name());
+            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
+            if (temTamanho) pstmt.setObject(i++, tamanho.name(), Types.OTHER);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -169,8 +170,8 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             pstmt.setString(1, empresa.getNome());
             pstmt.setString(2, empresa.getSetor());
             pstmt.setString(3, empresa.getCnpj());
-            pstmt.setString(4, empresa.getStatus().name());
-            pstmt.setString(5, empresa.getTamanho().name());
+            pstmt.setObject(4, empresa.getStatus().name(), Types.OTHER);
+            pstmt.setObject(5, empresa.getTamanho().name(), Types.OTHER);
             pstmt.setLong(6, empresa.getId_empresa()); //localizando o id
 
             if (pstmt.executeUpdate() > 0) return 1;
@@ -241,7 +242,8 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         empresa.setSetor(rs.getString("setor"));
         empresa.setCnpj(rs.getString("cnpj"));
         empresa.setStatus(Status.valueOf(rs.getString("status")));
-        empresa.setTamanho(TamanhoEmpresa.valueOf(rs.getString("tamanho")));
+        String tamanho = rs.getString("tamanho");
+        empresa.setTamanho(tamanho == null ? null : TamanhoEmpresa.valueOf(tamanho));
         return empresa;
     }
 

@@ -29,9 +29,9 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
 
             pstmt.setString(1, problema.getTitulo());
             pstmt.setString(2, problema.getDescricao());
-            pstmt.setString(3, problema.getPeso().name());
+            pstmt.setObject(3, problema.getPeso().name(), Types.OTHER);
             pstmt.setString(4, problema.getSolucao());
-            pstmt.setString(5, problema.getStatus().name());
+            pstmt.setObject(5, problema.getStatus().name(), Types.OTHER);
             pstmt.setString(6, problema.getOrigem());
             pstmt.setDate(7, problema.getEncontrado_em());
             pstmt.setLong(8, problema.getId_ciclo());
@@ -133,8 +133,8 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
-            if (temPeso) pstmt.setString(i++, peso.name());
-            if (temStatus) pstmt.setString(i++, status.name());
+            if (temPeso) pstmt.setObject(i++, peso.name(), Types.OTHER);
+            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
             if (temOrigem) pstmt.setString(i++, origem.trim());
             if (temDataInicial) pstmt.setDate(i++, dataInicial);
             if (temDataFinal) pstmt.setDate(i++, dataFinal);
@@ -179,9 +179,9 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
 
             pstmt.setString(1, problema.getTitulo());
             pstmt.setString(2, problema.getDescricao());
-            pstmt.setString(3, problema.getPeso().name());
+            pstmt.setObject(3, problema.getPeso().name(), Types.OTHER);
             pstmt.setString(4, problema.getSolucao());
-            pstmt.setString(5, problema.getStatus().name());
+            pstmt.setObject(5, problema.getStatus().name(), Types.OTHER);
             pstmt.setString(6, problema.getOrigem());
             pstmt.setDate(7, problema.getEncontrado_em());
             pstmt.setLong(8, problema.getId_ciclo());
