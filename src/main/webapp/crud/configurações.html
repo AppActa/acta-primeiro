@@ -61,26 +61,28 @@
                             <span class="perfil-email">email@email.com</span>
                         </div>
                     </a>
-                    <a href="login.html" target="_self" class="botao botao-sair">Sair</a>
+                    <a href="../login.html" target="_self" class="botao botao-sair">Sair</a>
                 </div>
             </aside>
 
             <main class="conteudo conteudo-config">
                 <section class="config">
-                    <!-- Quando a URL termina com #editar-configuracoes, a página mostra o modo de edição -->
-                    <span id="editar-configuracoes" class="config-ancora"></span>
 
-                    <h1 class="config-titulo">Configurações</h1>
+                    <!-- Chaves dos modos de edição (acionadas pelos <label for="..."> abaixo) -->
+                    <input type="checkbox" id="config-editar-perfil" class="config-toggle" aria-label="Editar perfil">
+                    <input type="checkbox" id="config-editar-contato" class="config-toggle" aria-label="Editar contato">
 
-                    <div class="config-layout">
+                    <!-- Coluna da esquerda -->
+                    <div class="config-principal">
+                        <h1 class="config-titulo">Configurações</h1>
 
                         <!-- Modo visualização -->
                         <div class="config-leitura">
                             <div class="config-foto">
                                 <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
-                                <a href="#editar-configuracoes" class="config-camera" aria-label="Alterar foto">
+                                <label for="config-editar-perfil" class="config-camera" aria-label="Alterar foto">
                                     <img src="../assets/images/icone_camera.svg" alt="">
-                                </a>
+                                </label>
                             </div>
 
                             <div class="config-campo">
@@ -98,11 +100,13 @@
                                 <p class="config-valor">********</p>
                             </div>
 
-                            <a href="#editar-configuracoes" class="botao botao-config">Editar</a>
+                            <div class="config-botoes">
+                                <label for="config-editar-perfil" class="botao botao-principal botao-pilula">Editar</label>
+                            </div>
                         </div>
 
                         <!-- Modo edição -->
-                        <form class="config-edicao" method="post" action="#" enctype="multipart/form-data">
+                        <form class="config-edicao" id="form-perfil" method="post" action="#" enctype="multipart/form-data">
                             <div class="config-foto">
                                 <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
                                 <label for="config-foto-arquivo" class="config-camera" aria-label="Alterar foto">
@@ -128,21 +132,50 @@
                             </div>
 
                             <div class="config-botoes">
-                                <button type="submit" class="botao botao-config">Salvar</button>
-                                <a href="#" class="botao botao-config botao-config-alt">Cancelar</a>
+                                <button type="submit" class="botao botao-principal botao-pilula">Salvar</button>
+                                <label for="config-editar-perfil" class="botao botao-cancelar botao-pilula">Cancelar</label>
                             </div>
                         </form>
-
-                        <!-- Cartão de contato -->
-                        <aside class="config-contato">
-                            <h2>Contato</h2>
-                            <p>Rua Irineu José Bordon, 355</p>
-                            <div class="config-contato-grupo">
-                                <p>(11) 86934-5699</p>
-                                <p>acta.institutojef@gmail.com</p>
-                            </div>
-                        </aside>
                     </div>
+
+                    <!-- Cartão de contato (ocupa toda a direita) -->
+                    <aside class="config-contato">
+                        <form class="config-contato-form" id="form-contato" method="post" action="#">
+                            <div class="config-contato-topo">
+                                <h2>Contato</h2>
+
+                                <!-- Canetinha: entra no modo de edição do cartão -->
+                                <label for="config-editar-contato" class="config-contato-lapis" title="Editar contato">
+                                    <img src="../assets/images/icone_editar.svg" alt="Editar contato">
+                                </label>
+
+                                <!-- Aparecem só no modo de edição -->
+                                <div class="config-contato-botoes">
+                                    <button type="submit" class="botao botao-principal botao-pilula botao-pilula-sm">Salvar</button>
+                                    <label for="config-editar-contato" class="botao botao-cancelar botao-pilula botao-pilula-sm">Cancelar</label>
+                                </div>
+                            </div>
+
+                            <div class="config-contato-linha">
+                                <p class="contato-leitura">Rua Irineu José Bordon, 355</p>
+                                <input type="text" name="endereco" maxlength="100" value="Rua Irineu José Bordon, 355" aria-label="Endereço">
+                            </div>
+
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3658.541775564263!2d-46.73433032489266!3d-23.51300877883297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cef8dcf138b295%3A0xd94d466ade5d39a9!2sR.%20Irineu%20Jos%C3%A9%20Bordon%2C%20335%20-%20Vila%20Jaguara%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2005120-060!5e0!3m2!1spt-BR!2sbr!4v1793186571714!5m2!1spt-BR!2sbr" title="Mapa: Rua Irineu José Bordon, 355" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+
+                            <div class="config-contato-grupo">
+                                <div class="config-contato-linha">
+                                    <p class="contato-leitura">(11) 86934-5699</p>
+                                    <input type="tel" name="telefone" maxlength="20" value="(11) 86934-5699" aria-label="Telefone">
+                                </div>
+                                <div class="config-contato-linha">
+                                    <p class="contato-leitura"><a href="mailto:acta.institutojef@gmail.com">acta.institutojef@gmail.com</a></p>
+                                    <input type="email" name="email" maxlength="80" value="acta.institutojef@gmail.com" aria-label="E-mail de contato">
+                                </div>
+                            </div>
+                        </form>
+                    </aside>
+
                 </section>
             </main>
         </div>
