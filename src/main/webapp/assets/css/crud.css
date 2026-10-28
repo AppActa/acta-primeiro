@@ -942,7 +942,7 @@ td.coluna-acao {
     background-color: #8CBBBB;
     border-radius: 16px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
-    color: var(--cor-texto);
+    color: var(--cor-texto-suave);
 }
  
 .config-contato-form {
