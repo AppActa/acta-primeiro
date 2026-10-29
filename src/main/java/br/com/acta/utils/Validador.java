@@ -67,15 +67,15 @@ public class Validador {
         }
     }
 
+    /** Valida email. */
     public static String email(String valor) {
         String v = obrigatorio(valor, "E-mail");
+        tamanhoMaximo(v, 80, "E-mail");   // antes da regex
         if (!EMAIL.matcher(v).matches()) {
             throw new ValidacaoException("E-mail inválido.");
         }
         return v.toLowerCase();
     }
-
-    // CEP e telefone
 
     /** Valida o CEP. */
     public static String cep(String valor) {
@@ -99,7 +99,6 @@ public class Validador {
         return digitos;
     }
 
-    // CPF e CNPJ
 
     /** Valida o CPF. */
     public static String cpf(String valor) {
@@ -188,10 +187,11 @@ public class Validador {
     /** Valida texto de uma linha. */
     public static String texto(String valor, String campo, int max) {
         String v = obrigatorio(valor, campo);
+        tamanhoMaximo(v, max, campo);      // antes da regex
         if (!LINHA.matcher(v).matches()) {
             throw new ValidacaoException(campo + " contém caracteres inválidos.");
         }
-        return tamanhoMaximo(v, max, campo);
+        return v;
     }
 
     /** Valida texto opcional. */
@@ -205,10 +205,11 @@ public class Validador {
     /** Valida texto com várias linhas. */
     public static String textoLongo(String valor, String campo) {
         String v = obrigatorio(valor, campo);
+        tamanhoMaximo(v, TEXTO_LONGO_MAX, campo);   // antes da regex
         if (!LONGO.matcher(v).matches()) {
             throw new ValidacaoException(campo + " contém caracteres inválidos.");
         }
-        return tamanhoMaximo(v, TEXTO_LONGO_MAX, campo);
+        return v;
     }
 
     public static String textoLongoOpcional(String valor, String campo) {
@@ -221,11 +222,13 @@ public class Validador {
     /** Valida nome de pessoa ou cidade. */
     public static String nomePessoa(String valor, String campo, int max) {
         String v = obrigatorio(valor, campo);
+        tamanhoMaximo(v, max, campo);      // antes da regex
         if (!NOME_PESSOA.matcher(v).matches()) {
             throw new ValidacaoException(campo + " deve conter apenas letras.");
         }
-        return tamanhoMaximo(v, max, campo);
+        return v;
     }
+
 
     /** Valida a sigla do estado. */
     public static String uf(String valor) {
@@ -250,7 +253,7 @@ public class Validador {
         if (valor == null || valor.isEmpty()) {
             throw new ValidacaoException("Senha é obrigatória.");
         }
-        if (valor.length() > 101) {
+        if (valor.length() > 100) {        // era 101
             throw new ValidacaoException("Senha deve ter no máximo 100 caracteres.");
         }
         if (!SENHA.matcher(valor).matches()) {
