@@ -222,10 +222,13 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         planoAcao.setPrioridade(Intensidade.valueOf(rs.getString("prioridade")));
         planoAcao.setNome_ciclo(rs.getString("nome_ciclo"));
         planoAcao.setNome_criador(rs.getString("nome_colaborador"));
+        planoAcao.setId_ciclo(rs.getLong("id_ciclo"));
+        planoAcao.setId_criador(rs.getLong("id_criador"));
         return planoAcao;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_plano_acao",
             "nome", "nome",
             "status", "status",
             "prioridade", "prioridade",
