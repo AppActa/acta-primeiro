@@ -26,7 +26,9 @@ SELECT
     m.status,
     m.criado_em,
     c.nome AS nome_ciclo,
-    pa.nome AS nome_plano_acao
+    pa.nome AS nome_plano_acao,
+    m.id_ciclo,
+    m.id_plano_acao
 FROM meta m
 LEFT JOIN ciclo c ON m.id_ciclo = c.id_ciclo
 LEFT JOIN plano_acao pa ON m.id_plano_acao = pa.id_plano_acao
@@ -45,7 +47,10 @@ SELECT
     p.encontrado_em,
     c.nome AS nome_ciclo,
     pa.nome AS nome_plano_acao,
-    col.nome || ' ' || col.sobrenome AS nome_colaborador
+    col.nome || ' ' || col.sobrenome AS nome_colaborador,
+    p.id_ciclo,
+    p.id_plano_acao,
+    p.id_colaborador
 FROM problema p
 LEFT JOIN ciclo c ON p.id_ciclo = c.id_ciclo
 LEFT JOIN plano_acao pa ON p.id_plano_acao = pa.id_plano_acao
@@ -61,7 +66,9 @@ SELECT
     pa.status,
     pa.prioridade,
     c.nome AS nome_ciclo,
-    col.nome || ' ' || col.sobrenome AS nome_colaborador
+    col.nome || ' ' || col.sobrenome AS nome_colaborador,
+    pa.id_ciclo,
+    pa.id_criador
 FROM plano_acao pa
 JOIN ciclo c ON pa.id_ciclo = c.id_ciclo
 JOIN colaborador col ON pa.id_criador = col.id_colaborador
@@ -79,7 +86,9 @@ SELECT
     c.status,
     c.criado_em,
     emp.nome AS nome_empresa,
-    col.nome || ' ' || col.sobrenome AS nome_responsavel
+    col.nome || ' ' || col.sobrenome AS nome_responsavel,
+    c.id_empresa,
+    c.id_responsavel
 FROM ciclo c
 JOIN empresa emp ON c.id_empresa = emp.id_empresa
 JOIN colaborador col ON c.id_responsavel = col.id_colaborador
@@ -96,7 +105,9 @@ SELECT
     t.status,
     t.dt_inicio,
     col.nome || ' ' || col.sobrenome AS nome_colaborador,
-    pa.nome AS nome_plano_acao
+    pa.nome AS nome_plano_acao,
+    t.id_colaborador,
+    t.id_plano_acao
 FROM tarefa t
 JOIN colaborador col ON t.id_colaborador = col.id_colaborador
 JOIN plano_acao pa ON t.id_plano_acao = pa.id_plano_acao
@@ -113,7 +124,8 @@ SELECT
     l.descricao,
     l.fase_origem,
     l.severidade,
-    c.nome AS nome_ciclo
+    c.nome AS nome_ciclo,
+    l.id_ciclo
 FROM licoes_aprendidas l
 JOIN ciclo c ON l.id_ciclo = c.id_ciclo
 );
@@ -130,7 +142,8 @@ SELECT
     e.numero,
     e.complemento,
     e.unidade,
-    emp.nome AS nome_empresa
+    emp.nome AS nome_empresa,
+    e.id_empresa
 FROM endereco e
 JOIN empresa emp ON e.id_empresa = emp.id_empresa
 );
@@ -162,7 +175,8 @@ SELECT
     col.email,
     col.telefone,
     col.cpf,
-    emp.nome AS nome_empresa
+    emp.nome AS nome_empresa,
+    col.id_empresa
 FROM colaborador col
 JOIN empresa emp ON col.id_empresa = emp.id_empresa
 );
