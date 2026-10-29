@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+<!-- Estrutura HTML alinhada ao backend. Dados, mensagens e IDs serão preenchidos na futura conversão para JSP. -->
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
         <link rel="stylesheet" href="../assets/css/crud.css">
-        <title>Área Restrita</title>
+        <title>ACTA — Empresas</title>
+        <script src="../assets/js/crud.js" defer></script>
     </head>
-    <body>
+    <body class="crud-admin">
         <div class="sistema">
             <aside class="sidebar">
                 <div class="sidebar-logo">
@@ -69,12 +71,54 @@
                 <!-- Página Empresas -->
                 <section id="empresas" class="pagina">
                     <h1>Empresas</h1>
+                    <!-- Mensagens serão preenchidas pelo Servlet na futura JSP. -->
+                    <p id="mensagem-erro" role="alert" hidden></p>
+                    <p id="mensagem-sucesso" role="status" hidden></p>
                     <div class="barra-acoes">
                         <div class="pesquisa">
-                            <input type="text" placeholder="Pesquisar por empresa">
+                            <input type="search" name="busca" id="pesquisa-empresas" form="filtros-empresas-form" placeholder="Pesquisar" aria-label="Pesquisar registros">
                         </div>
                         <div class="filtro-container">
-                            <a href="#filtros-empresas" class="botao botao-filtro">Filtros</a>
+                            <button type="button" class="botao botao-filtro" data-abrir-filtros aria-controls="filtros-empresas" aria-expanded="false">Filtros</button>
+                            <section id="filtros-empresas" class="filtros-painel" aria-label="Filtros" hidden>
+                                <div class="filtros-corpo">
+                                    <div class="modal modal-ver modal-filtros">
+                                        <div class="modal-topo">
+                                            <h2>Filtros</h2>
+                                                <button type="button" class="modal-fechar" data-fechar-filtros aria-label="Fechar filtros">&times;</button>
+                                        </div>
+                                        <form class="formulario" id="filtros-empresas-form" method="get" action="../empresa-servlet">
+                                            <div class="campo">
+                                                <label for="filtros-empresas-setor">Setor</label>
+                                                <input type="text" id="filtros-empresas-setor" name="setor" list="sugestoes-empresas-setor" maxlength="30">
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-empresas-status">Status</label>
+                                                <select id="filtros-empresas-status" name="status">
+                                                    <option value="">Todos</option>
+                                                    <option value="ATIVA">Ativa</option>
+                                                    <option value="INATIVA">Inativa</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-empresas-tamanho">Tamanho</label>
+                                                <select id="filtros-empresas-tamanho" name="tamanho">
+                                                    <option value="">Todos</option>
+                                                    <option value="GRANDE">Grande</option>
+                                                    <option value="PEQUENA">Pequena</option>
+                                                    <option value="MEDIA">Média</option>
+                                                </select>
+                                            </div>
+                                            <input type="hidden" name="ordem" value="">
+                                            <input type="hidden" name="direcao" value="ASC">
+                                            <div class="botoes-modal">
+                                                <a href="empresas.html#empresas" class="botao botao-cancelar">Limpar filtros</a>
+                                                <button type="submit" class="botao botao-principal">Aplicar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                         <a href="#cadastrar-empresa" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -82,103 +126,28 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Nome</th>
-                                    <th>Setor</th>
-                                    <th>CNPJ</th>
-                                    <th>Unidade</th>
-                                    <th>Status</th>
-                                    <th>Tamanho</th>
-                                    <th class="coluna-acao">Ver</th>
-                                    <th class="coluna-acao">Editar</th>
-                                    <th class="coluna-acao">Excluir</th>
+                                    <!-- Na integração JSP, incluir a chave id na whitelist de ordenação do DAO. -->
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="id" aria-label="Ordenar por ID">#<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="nome" aria-label="Ordenar por Nome">Nome<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="setor" aria-label="Ordenar por Setor">Setor<span aria-hidden="true"></span></button></th>
+                                    <th scope="col">CNPJ</th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="status" aria-label="Ordenar por Status">Status<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="tamanho" aria-label="Ordenar por Tamanho">Tamanho<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-acao">Ver</th>
+                                    <th scope="col" class="coluna-acao">Editar</th>
+                                    <th scope="col" class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Flora</td>
-                                    <td>Cosméticos</td>
-                                    <td>13.425.674/8967-4</td>
-                                    <td>Matriz</td>
-                                    <td>Ativo</td>
-                                    <td>Grande</td>
-                                    <td class="coluna-acao">
-                                        <a href="#ver-empresa" class="icone-acao">
-                                            <img src="../assets/images/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#editar-empresa" class="icone-acao">
-                                            <img src="../assets/images/icone_editar.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#excluir-empresa" class="icone-acao">
-                                            <img src="../assets/images/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
-                                </tr>
+                                <!-- Na conversão futura, percorrer request.getAttribute("empresaList"); exibir o ID na coluna # e utilizá-lo nas ações. -->
+                                <tr><td colspan="9">Nenhum registro carregado.</td></tr>
+
+                                <!-- Modelo inerte: preencher com dados reais e vincular o ID às ações na futura JSP. -->
+                                <template id="modelo-linha-empresas"><tr><td data-campo="id_empresa"></td><td data-campo="nome"></td><td data-campo="setor"></td><td data-campo="cnpj"></td><td data-campo="status"></td><td data-campo="tamanho"></td><td class="coluna-acao"><a href="#ver-empresa" class="icone-acao" aria-label="Ver"><img src="../assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-empresa" class="icone-acao" aria-label="Editar"><img src="../assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-empresa" class="icone-acao" aria-label="Excluir"><img src="../assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr></template>
                             </tbody>
                         </table>
                     </div>
 
-                    <section id="filtros-empresas" class="pagina modal-pagina">
-                        <div class="modal-fundo">
-                            <div class="modal modal-ver modal-filtros">
-                                <div class="modal-topo">
-                                    <h2>Filtros</h2>
-                                    <a href="#empresas" class="modal-fechar" aria-label="Fechar">&times;</a>
-                                </div>
-                                <form class="formulario" method="get" action="#empresas">
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
-                                        <div class="grupo-checkbox">
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="nome">
-                                                Nome
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="setor">
-                                                Setor
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="cnpj">
-                                                CNPJ
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="unidade">
-                                                Unidade
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="status">
-                                                Status
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="tamanho">
-                                                Tamanho
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordem</span>
-                                        <div class="grupo-radio">
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="asc" checked>
-                                                Crescente (A → Z)
-                                            </label>
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="desc">
-                                                Decrescente (Z → A)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="botoes-modal">
-                                        <button type="submit" class="botao botao-principal">Aplicar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
-                    
                     <section id="ver-empresa" class="pagina modal-pagina">
                         <div class="modal-fundo">
                             <div class="modal modal-ver">
@@ -187,30 +156,11 @@
                                     <a href="#empresas" class="modal-fechar" aria-label="Fechar">&times;</a>
                                 </div>
                                 <div class="detalhes">
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Nome</span>
-                                        <span class="detalhe-valor">Flora</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Setor</span>
-                                        <span class="detalhe-valor">Cosméticos</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">CNPJ</span>
-                                        <span class="detalhe-valor">13.425.674/8967-4</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Unidade</span>
-                                        <span class="detalhe-valor">Matriz</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Status</span>
-                                        <span class="detalhe-valor">Ativa</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Tamanho</span>
-                                        <span class="detalhe-valor">Grande</span>
-                                    </div>
+                                    <div class="detalhe"><span class="detalhe-label">Nome</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Setor</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">CNPJ</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Status</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Tamanho</span><span class="detalhe-valor">—</span></div>
                                 </div>
                             </div>
                         </div>
@@ -220,23 +170,21 @@
                         <div class="modal-fundo">
                             <div class="modal">
                                 <h2>Cadastrar empresa</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../empresa-servlet">
+                                    <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-empresa-nome">Nome</label>
                                         <input type="text" id="cad-empresa-nome" name="nome" maxlength="50" placeholder="Digite o nome" required>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-empresa-setor">Setor</label>
-                                        <input type="text" id="cad-empresa-setor" name="setor" maxlength="30" placeholder="Digite o setor" required>
+                                        <input type="text" id="cad-empresa-setor" name="setor" maxlength="30" placeholder="Digite o setor" required list="sugestoes-empresas-setor">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-empresa-cnpj">CNPJ</label>
                                         <input type="text" id="cad-empresa-cnpj" name="cnpj" maxlength="14" inputmode="numeric" pattern="\d{14}" placeholder="Somente números (14 dígitos)" required>
                                     </div>
-                                    <div class="campo">
-                                        <label for="cad-empresa-unidade">Unidade</label>
-                                        <input type="text" id="cad-empresa-unidade" name="unidade" maxlength="30" placeholder="Digite a unidade" required>
-                                    </div>
+
                                     <div class="campo">
                                         <label for="cad-empresa-status">Status</label>
                                         <select id="cad-empresa-status" name="status" required>
@@ -248,8 +196,8 @@
                                         <label for="cad-empresa-tamanho">Tamanho</label>
                                         <select id="cad-empresa-tamanho" name="tamanho" required>
                                             <option value="GRANDE">Grande</option>
-                                            <option value="MEDIA">Média</option>
                                             <option value="PEQUENA">Pequena</option>
+                                            <option value="MEDIA">Média</option>
                                         </select>
                                     </div>
                                     <div class="botoes-modal">
@@ -265,36 +213,36 @@
                         <div class="modal-fundo">
                             <div class="modal">
                                 <h2>Editar empresa</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../empresa-servlet">
+                                    <input type="hidden" name="acao" value="atualizar">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-empresa" value="">
                                     <div class="campo">
                                         <label for="edi-empresa-nome">Nome</label>
-                                        <input type="text" id="edi-empresa-nome" name="nome" maxlength="50" placeholder="Digite o nome" value="Flora" required>
+                                        <input type="text" id="edi-empresa-nome" name="nome" maxlength="50" placeholder="Digite o nome" required>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-empresa-setor">Setor</label>
-                                        <input type="text" id="edi-empresa-setor" name="setor" maxlength="30" placeholder="Digite o setor" value="Cosméticos" required>
+                                        <input type="text" id="edi-empresa-setor" name="setor" maxlength="30" placeholder="Digite o setor" required list="sugestoes-empresas-setor">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-empresa-cnpj">CNPJ</label>
-                                        <input type="text" id="edi-empresa-cnpj" name="cnpj" maxlength="14" inputmode="numeric" pattern="\d{14}" placeholder="Somente números (14 dígitos)" value="13425674896704" required>
+                                        <input type="text" id="edi-empresa-cnpj" name="cnpj" maxlength="14" inputmode="numeric" pattern="\d{14}" placeholder="Somente números (14 dígitos)" required>
                                     </div>
-                                    <div class="campo">
-                                        <label for="edi-empresa-unidade">Unidade</label>
-                                        <input type="text" id="edi-empresa-unidade" name="unidade" maxlength="30" placeholder="Digite a unidade" value="Matriz" required>
-                                    </div>
+
                                     <div class="campo">
                                         <label for="edi-empresa-status">Status</label>
                                         <select id="edi-empresa-status" name="status" required>
-                                            <option value="ATIVA" selected>Ativa</option>
+                                            <option value="ATIVA">Ativa</option>
                                             <option value="INATIVA">Inativa</option>
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-empresa-tamanho">Tamanho</label>
                                         <select id="edi-empresa-tamanho" name="tamanho" required>
-                                            <option value="GRANDE" selected>Grande</option>
-                                            <option value="MEDIA">Média</option>
+                                            <option value="GRANDE">Grande</option>
                                             <option value="PEQUENA">Pequena</option>
+                                            <option value="MEDIA">Média</option>
                                         </select>
                                     </div>
                                     <div class="botoes-modal">
@@ -311,15 +259,23 @@
                             <div class="modal modal-exclusao">
                                 <h2>Excluir empresa</h2>
                                 <p>Tem certeza que deseja excluir esta empresa?</p>
-                                <div class="botoes-modal">
+                                <form method="post" action="../empresa-servlet">
+                                    <input type="hidden" name="acao" value="excluir">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-empresa" value="">
+                                    <div class="botoes-modal">
                                     <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
-                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                    <button type="submit" class="botao botao-excluir">Confirmar exclusão</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </section>
                 </section>
 
+                <datalist id="sugestoes-empresas-setor">
+                    <!-- Preencher futuramente com request.getAttribute("setorList"); não inserir opções fictícias. -->
+                </datalist>
             </main>
         </div>
     </body>
