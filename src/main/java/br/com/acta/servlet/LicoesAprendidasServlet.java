@@ -24,7 +24,7 @@ import java.util.List;
 
 @WebServlet(name = "LicoesAprendidasServlet", value = "/licoes-aprendidas-servlet")
 public class LicoesAprendidasServlet extends HttpServlet {
-    private static final String PAGINA_LICOES_APRENDIDAS = "/licoes-aprendidas.jsp";
+    private static final String PAGINA_LICOES_APRENDIDAS = "/crud/licoes-aprendidas.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final LicoesAprendidasDAO DAO = new LicoesAprendidasDAO();
 
