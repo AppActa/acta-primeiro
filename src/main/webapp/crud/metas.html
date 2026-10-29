@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+<!-- Estrutura HTML alinhada ao backend. Dados, mensagens e IDs serão preenchidos na futura conversão para JSP. -->
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
         <link rel="stylesheet" href="../assets/css/crud.css">
-        <title>Área Restrita</title>
+        <title>ACTA — Metas</title>
+        <script src="../assets/js/crud.js" defer></script>
     </head>
-    <body>
+    <body class="crud-admin">
         <div class="sistema">
             <aside class="sidebar">
                 <div class="sidebar-logo">
@@ -69,12 +71,65 @@
                 <!-- Página Metas -->
                 <section id="metas" class="pagina">
                     <h1>Metas</h1>
+                    <!-- Mensagens serão preenchidas pelo Servlet na futura JSP. -->
+                    <p id="mensagem-erro" role="alert" hidden></p>
+                    <p id="mensagem-sucesso" role="status" hidden></p>
                     <div class="barra-acoes">
                         <div class="pesquisa">
-                            <input type="text" placeholder="Pesquisar por meta">
+                            <input type="search" name="busca" id="pesquisa-metas" form="filtros-metas-form" placeholder="Pesquisar" aria-label="Pesquisar registros">
                         </div>
                         <div class="filtro-container">
-                            <a href="#filtros-metas" class="botao botao-filtro">Filtros</a>
+                            <button type="button" class="botao botao-filtro" data-abrir-filtros aria-controls="filtros-metas" aria-expanded="false">Filtros</button>
+                            <section id="filtros-metas" class="filtros-painel" aria-label="Filtros" hidden>
+                                <div class="filtros-corpo">
+                                    <div class="modal modal-ver modal-filtros">
+                                        <div class="modal-topo">
+                                            <h2>Filtros</h2>
+                                                <button type="button" class="modal-fechar" data-fechar-filtros aria-label="Fechar filtros">&times;</button>
+                                        </div>
+                                        <form class="formulario" id="filtros-metas-form" method="get" action="../meta-servlet">
+                                            <div class="campo">
+                                                <label for="filtros-metas-prioridade">Prioridade</label>
+                                                <select id="filtros-metas-prioridade" name="prioridade">
+                                                    <option value="">Todos</option>
+                                                    <option value="ALTO">Alto</option>
+                                                    <option value="MEDIO">Médio</option>
+                                                    <option value="BAIXO">Baixo</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-metas-status">Status</label>
+                                                <select id="filtros-metas-status" name="status">
+                                                    <option value="">Todos</option>
+                                                    <option value="ABAIXO_DO_ESPERADO">Abaixo do esperado</option>
+                                                    <option value="REGULAR">Regular</option>
+                                                    <option value="ACIMA_DO_ESPERADO">Acima do esperado</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo periodo-datas">
+                                                <span class="rotulo-campo">Prazo</span>
+                                                <div class="datas-linha">
+                                                    <div class="campo"><label for="filtros-metas-dataInicial">De</label><input type="date" id="filtros-metas-dataInicial" name="dataInicial" min="1900-01-01" max="2100-12-31"></div>
+                                                    <div class="campo"><label for="filtros-metas-dataFinal">Até</label><input type="date" id="filtros-metas-dataFinal" name="dataFinal" min="1900-01-01" max="2100-12-31"></div>
+                                                </div>
+                                            </div>
+                                            <div class="campo periodo-datas">
+                                                <span class="rotulo-campo">Criado em</span>
+                                                <div class="datas-linha">
+                                                    <div class="campo"><label for="filtros-metas-criadoDe">De</label><input type="date" id="filtros-metas-criadoDe" name="criadoDe" min="1900-01-01" max="2100-12-31"></div>
+                                                    <div class="campo"><label for="filtros-metas-criadoAte">Até</label><input type="date" id="filtros-metas-criadoAte" name="criadoAte" min="1900-01-01" max="2100-12-31"></div>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="ordem" value="">
+                                            <input type="hidden" name="direcao" value="ASC">
+                                            <div class="botoes-modal">
+                                                <a href="metas.html#metas" class="botao botao-cancelar">Limpar filtros</a>
+                                                <button type="submit" class="botao botao-principal">Aplicar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                         <a href="#cadastrar-meta" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -82,103 +137,31 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Meta</th>
-                                    <th>Alvo</th>
-                                    <th>Ciclo</th>
-                                    <th>Prioridade</th>
-                                    <th>Prazo</th>
-                                    <th>Status</th>
-                                    <th class="coluna-acao">Ver</th>
-                                    <th class="coluna-acao">Editar</th>
-                                    <th class="coluna-acao">Excluir</th>
+                                    <!-- Na integração JSP, incluir a chave id na whitelist de ordenação do DAO. -->
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="id" aria-label="Ordenar por ID">#<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="meta" aria-label="Ordenar por Meta">Meta<span aria-hidden="true"></span></button></th>
+                                    <th scope="col">Objetivo</th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="ciclo" aria-label="Ordenar por Ciclo">Ciclo<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="plano_acao" aria-label="Ordenar por Plano de ação">Plano de ação<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="prioridade" aria-label="Ordenar por Prioridade">Prioridade<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="prazo" aria-label="Ordenar por Prazo">Prazo<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="status" aria-label="Ordenar por Status">Status<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="criado_em" aria-label="Ordenar por Criado em">Criado em<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-acao">Ver</th>
+                                    <th scope="col" class="coluna-acao">Editar</th>
+                                    <th scope="col" class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Nome da meta</td>
-                                    <td>Meta alvo</td>
-                                    <td>Ciclo 1</td>
-                                    <td>Médio</td>
-                                    <td>00/00/0000</td>
-                                    <td>Regular</td>
-                                    <td class="coluna-acao">
-                                        <a href="#ver-meta" class="icone-acao">
-                                            <img src="../assets/images/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#editar-meta" class="icone-acao">
-                                            <img src="../assets/images/icone_editar.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#excluir-meta" class="icone-acao">
-                                            <img src="../assets/images/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
-                                </tr>
+                                <!-- Na conversão futura, percorrer request.getAttribute("metaList"); exibir o ID na coluna # e utilizá-lo nas ações. -->
+                                <tr><td colspan="12">Nenhum registro carregado.</td></tr>
+
+                                <!-- Modelo inerte: preencher com dados reais e vincular o ID às ações na futura JSP. -->
+                                <template id="modelo-linha-metas"><tr><td data-campo="id_meta"></td><td data-campo="meta"></td><td data-campo="objetivo"></td><td data-campo="nome_ciclo"></td><td data-campo="nome_plano_acao"></td><td data-campo="prioridade"></td><td data-campo="prazo"></td><td data-campo="status"></td><td data-campo="criando_em"></td><td class="coluna-acao"><a href="#ver-meta" class="icone-acao" aria-label="Ver"><img src="../assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-meta" class="icone-acao" aria-label="Editar"><img src="../assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-meta" class="icone-acao" aria-label="Excluir"><img src="../assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr></template>
                             </tbody>
                         </table>
                     </div>
 
-                    <section id="filtros-metas" class="pagina modal-pagina">
-                        <div class="modal-fundo">
-                            <div class="modal modal-ver modal-filtros">
-                                <div class="modal-topo">
-                                    <h2>Filtros</h2>
-                                    <a href="#metas" class="modal-fechar" aria-label="Fechar">&times;</a>
-                                </div>
-                                <form class="formulario" method="get" action="#metas">
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
-                                        <div class="grupo-checkbox">
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="meta">
-                                                Meta
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="objetivo">
-                                                Alvo
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="ciclo">
-                                                Ciclo
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="prioridade">
-                                                Prioridade
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="prazo">
-                                                Prazo
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="status">
-                                                Status
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordem</span>
-                                        <div class="grupo-radio">
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="asc" checked>
-                                                Crescente (A → Z)
-                                            </label>
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="desc">
-                                                Decrescente (Z → A)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="botoes-modal">
-                                        <button type="submit" class="botao botao-principal">Aplicar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
-                    
                     <section id="ver-meta" class="pagina modal-pagina">
                         <div class="modal-fundo">
                             <div class="modal modal-ver">
@@ -187,38 +170,15 @@
                                     <a href="#metas" class="modal-fechar" aria-label="Fechar">&times;</a>
                                 </div>
                                 <div class="detalhes">
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Meta</span>
-                                        <span class="detalhe-valor">Nome da meta</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Objetivo (alvo)</span>
-                                        <span class="detalhe-valor">Meta alvo</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Ciclo</span>
-                                        <span class="detalhe-valor">Ciclo 1</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Plano de ação</span>
-                                        <span class="detalhe-valor">Nome do plano</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Prioridade</span>
-                                        <span class="detalhe-valor">Médio</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Prazo</span>
-                                        <span class="detalhe-valor">00/00/0000</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Status</span>
-                                        <span class="detalhe-valor">Regular</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Descrição</span>
-                                        <span class="detalhe-valor">Descrição da meta</span>
-                                    </div>
+                                    <div class="detalhe"><span class="detalhe-label">Meta</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Objetivo</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Ciclo</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Plano de ação</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Prioridade</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Prazo</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Status</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Criado em</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe detalhe-largo"><span class="detalhe-label">Descrição</span><span class="detalhe-valor">—</span></div>
                                 </div>
                             </div>
                         </div>
@@ -228,7 +188,8 @@
                         <div class="modal-fundo">
                             <div class="modal modal-grande">
                                 <h2>Cadastrar meta</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../meta-servlet">
+                                    <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-meta-meta">Meta</label>
                                         <input type="text" id="cad-meta-meta" name="meta" maxlength="100" placeholder="Digite meta" required>
@@ -239,7 +200,7 @@
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="cad-meta-descricao_meta">Descrição</label>
-                                        <textarea id="cad-meta-descricao_meta" name="descricao_meta" rows="3"></textarea>
+                                        <textarea id="cad-meta-descricao_meta" name="descricao_meta" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-meta-prioridade">Prioridade</label>
@@ -251,7 +212,7 @@
                                     </div>
                                     <div class="campo">
                                         <label for="cad-meta-prazo">Prazo</label>
-                                        <input type="date" id="cad-meta-prazo" name="prazo" required>
+                                        <input type="date" id="cad-meta-prazo" name="prazo" required min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-meta-status">Status</label>
@@ -264,13 +225,15 @@
                                     <div class="campo">
                                         <label for="cad-meta-id_ciclo">Ciclo</label>
                                         <select id="cad-meta-id_ciclo" name="id_ciclo" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-meta-id_plano_acao">Plano de ação</label>
                                         <select id="cad-meta-id_plano_acao" name="id_plano_acao">
-                                            <option value="">Nenhum</option>
+                                            <option value="">Sem vínculo</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="botoes-modal">
@@ -286,7 +249,10 @@
                         <div class="modal-fundo">
                             <div class="modal modal-grande">
                                 <h2>Editar meta</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../meta-servlet">
+                                    <input type="hidden" name="acao" value="atualizar">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-meta" value="">
                                     <div class="campo">
                                         <label for="edi-meta-meta">Meta</label>
                                         <input type="text" id="edi-meta-meta" name="meta" maxlength="100" placeholder="Digite meta" required>
@@ -297,7 +263,7 @@
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="edi-meta-descricao_meta">Descrição</label>
-                                        <textarea id="edi-meta-descricao_meta" name="descricao_meta" rows="3"></textarea>
+                                        <textarea id="edi-meta-descricao_meta" name="descricao_meta" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-meta-prioridade">Prioridade</label>
@@ -309,7 +275,7 @@
                                     </div>
                                     <div class="campo">
                                         <label for="edi-meta-prazo">Prazo</label>
-                                        <input type="date" id="edi-meta-prazo" name="prazo" required>
+                                        <input type="date" id="edi-meta-prazo" name="prazo" required min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-meta-status">Status</label>
@@ -322,13 +288,15 @@
                                     <div class="campo">
                                         <label for="edi-meta-id_ciclo">Ciclo</label>
                                         <select id="edi-meta-id_ciclo" name="id_ciclo" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-meta-id_plano_acao">Plano de ação</label>
                                         <select id="edi-meta-id_plano_acao" name="id_plano_acao">
-                                            <option value="">Nenhum</option>
+                                            <option value="">Sem vínculo</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="botoes-modal">
@@ -345,10 +313,15 @@
                             <div class="modal modal-exclusao">
                                 <h2>Excluir meta</h2>
                                 <p>Tem certeza que deseja excluir esta meta?</p>
-                                <div class="botoes-modal">
+                                <form method="post" action="../meta-servlet">
+                                    <input type="hidden" name="acao" value="excluir">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-meta" value="">
+                                    <div class="botoes-modal">
                                     <a href="#metas" class="botao botao-cancelar">Cancelar</a>
-                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                    <button type="submit" class="botao botao-excluir">Confirmar exclusão</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </section>

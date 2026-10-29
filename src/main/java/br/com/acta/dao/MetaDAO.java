@@ -246,10 +246,13 @@ public class MetaDAO implements MetodosCrud<Meta> {
         meta.setCriando_em(rs.getObject("criado_em", OffsetDateTime.class));
         meta.setNome_ciclo(rs.getString("nome_ciclo"));
         meta.setNome_plano_acao(rs.getString("nome_plano_acao"));
+        meta.setId_ciclo(rs.getLong("id_ciclo"));
+        meta.setId_plano_acao(rs.getObject("id_plano_acao", Long.class));
         return meta;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_meta",
             "meta", "meta",
             "prioridade", "prioridade",
             "prazo", "prazo",
