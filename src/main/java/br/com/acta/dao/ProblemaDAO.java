@@ -265,10 +265,14 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
         problema.setNome_ciclo(rs.getString("nome_ciclo"));
         problema.setNome_plano_acao(rs.getString("nome_plano_acao"));
         problema.setNome_colaborador(rs.getString("nome_colaborador"));
+        problema.setId_ciclo(rs.getLong("id_ciclo"));
+        problema.setId_plano_acao(rs.getObject("id_plano_acao", Long.class));
+        problema.setId_colaborador(rs.getObject("id_colaborador", Long.class));
         return problema;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_problema",
             "titulo", "titulo",
             "peso", "peso",
             "status", "status",
