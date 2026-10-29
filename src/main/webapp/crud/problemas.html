@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+<!-- Estrutura HTML alinhada ao backend. Dados, mensagens e IDs serão preenchidos na futura conversão para JSP. -->
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
         <link rel="stylesheet" href="../assets/css/crud.css">
-        <title>Área Restrita</title>
+        <title>ACTA — Problemas</title>
+        <script src="../assets/js/crud.js" defer></script>
     </head>
-    <body>
+    <body class="crud-admin">
         <div class="sistema">
             <aside class="sidebar">
                 <div class="sidebar-logo">
@@ -69,12 +71,62 @@
                 <!-- Página Problemas -->
                 <section id="problemas" class="pagina">
                     <h1>Problemas</h1>
+                    <!-- Mensagens serão preenchidas pelo Servlet na futura JSP. -->
+                    <p id="mensagem-erro" role="alert" hidden></p>
+                    <p id="mensagem-sucesso" role="status" hidden></p>
                     <div class="barra-acoes">
                         <div class="pesquisa">
-                            <input type="text" placeholder="Pesquisar por problema">
+                            <input type="search" name="busca" id="pesquisa-problemas" form="filtros-problemas-form" placeholder="Pesquisar" aria-label="Pesquisar registros">
                         </div>
                         <div class="filtro-container">
-                            <a href="#filtros-problemas" class="botao botao-filtro">Filtros</a>
+                            <button type="button" class="botao botao-filtro" data-abrir-filtros aria-controls="filtros-problemas" aria-expanded="false">Filtros</button>
+                            <section id="filtros-problemas" class="filtros-painel" aria-label="Filtros" hidden>
+                                <div class="filtros-corpo">
+                                    <div class="modal modal-ver modal-filtros">
+                                        <div class="modal-topo">
+                                            <h2>Filtros</h2>
+                                                <button type="button" class="modal-fechar" data-fechar-filtros aria-label="Fechar filtros">&times;</button>
+                                        </div>
+                                        <form class="formulario" id="filtros-problemas-form" method="get" action="../problema-servlet">
+                                            <div class="campo">
+                                                <label for="filtros-problemas-peso">Gravidade</label>
+                                                <select id="filtros-problemas-peso" name="peso">
+                                                    <option value="">Todos</option>
+                                                    <option value="ALTO">Alto</option>
+                                                    <option value="MEDIO">Médio</option>
+                                                    <option value="BAIXO">Baixo</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-problemas-status">Status</label>
+                                                <select id="filtros-problemas-status" name="status">
+                                                    <option value="">Todos</option>
+                                                    <option value="EM_ANALISE">Em análise</option>
+                                                    <option value="EM_RESOLUCAO">Em resolução</option>
+                                                    <option value="RESOLVIDO">Resolvido</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-problemas-origem">Origem</label>
+                                                <input type="text" id="filtros-problemas-origem" name="origem" list="sugestoes-problemas-origem">
+                                            </div>
+                                            <div class="campo periodo-datas">
+                                                <span class="rotulo-campo">Encontrado em</span>
+                                                <div class="datas-linha">
+                                                    <div class="campo"><label for="filtros-problemas-dataInicial">De</label><input type="date" id="filtros-problemas-dataInicial" name="dataInicial" min="1900-01-01" max="2100-12-31"></div>
+                                                    <div class="campo"><label for="filtros-problemas-dataFinal">Até</label><input type="date" id="filtros-problemas-dataFinal" name="dataFinal" min="1900-01-01" max="2100-12-31"></div>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="ordem" value="">
+                                            <input type="hidden" name="direcao" value="ASC">
+                                            <div class="botoes-modal">
+                                                <a href="problemas.html#problemas" class="botao botao-cancelar">Limpar filtros</a>
+                                                <button type="submit" class="botao botao-principal">Aplicar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                         <a href="#cadastrar-problema" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -82,103 +134,32 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Problema</th>
-                                    <th>Gravidade</th>
-                                    <th>Status</th>
-                                    <th>Ciclo</th>
-                                    <th>Colaborador</th>
-                                    <th>Encontrado em</th>
-                                    <th class="coluna-acao">Ver</th>
-                                    <th class="coluna-acao">Editar</th>
-                                    <th class="coluna-acao">Excluir</th>
+                                    <!-- Na integração JSP, incluir a chave id na whitelist de ordenação do DAO. -->
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="id" aria-label="Ordenar por ID">#<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="titulo" aria-label="Ordenar por Título">Título<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="peso" aria-label="Ordenar por Gravidade">Gravidade<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="status" aria-label="Ordenar por Status">Status<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="ciclo" aria-label="Ordenar por Ciclo">Ciclo<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="plano_acao" aria-label="Ordenar por Plano de ação">Plano de ação<span aria-hidden="true"></span></button></th>
+                                    <th scope="col">Colaborador</th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="encontrado_em" aria-label="Ordenar por Encontrado em">Encontrado em<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="origem" aria-label="Ordenar por Origem">Origem<span aria-hidden="true"></span></button></th>
+                                    <th scope="col">Solução</th>
+                                    <th scope="col" class="coluna-acao">Ver</th>
+                                    <th scope="col" class="coluna-acao">Editar</th>
+                                    <th scope="col" class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Nome do problema</td>
-                                    <td>Alta</td>
-                                    <td>Em análise</td>
-                                    <td>Ciclo 1</td>
-                                    <td>Nome</td>
-                                    <td>00/00/0000</td>
-                                    <td class="coluna-acao">
-                                        <a href="#ver-problema" class="icone-acao">
-                                            <img src="../assets/images/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#editar-problema" class="icone-acao">
-                                            <img src="../assets/images/icone_editar.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#excluir-problema" class="icone-acao">
-                                            <img src="../assets/images/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
-                                </tr>
+                                <!-- Na conversão futura, percorrer request.getAttribute("problemaList"); exibir o ID na coluna # e utilizá-lo nas ações. -->
+                                <tr><td colspan="13">Nenhum registro carregado.</td></tr>
+
+                                <!-- Modelo inerte: preencher com dados reais e vincular o ID às ações na futura JSP. -->
+                                <template id="modelo-linha-problemas"><tr><td data-campo="id_problema"></td><td data-campo="titulo"></td><td data-campo="peso"></td><td data-campo="status"></td><td data-campo="nome_ciclo"></td><td data-campo="nome_plano_acao"></td><td data-campo="nome_colaborador"></td><td data-campo="encontrado_em"></td><td data-campo="origem"></td><td data-campo="solucao"></td><td class="coluna-acao"><a href="#ver-problema" class="icone-acao" aria-label="Ver"><img src="../assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-problema" class="icone-acao" aria-label="Editar"><img src="../assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-problema" class="icone-acao" aria-label="Excluir"><img src="../assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr></template>
                             </tbody>
                         </table>
                     </div>
 
-                    <section id="filtros-problemas" class="pagina modal-pagina">
-                        <div class="modal-fundo">
-                            <div class="modal modal-ver modal-filtros">
-                                <div class="modal-topo">
-                                    <h2>Filtros</h2>
-                                    <a href="#problemas" class="modal-fechar" aria-label="Fechar">&times;</a>
-                                </div>
-                                <form class="formulario" method="get" action="#problemas">
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
-                                        <div class="grupo-checkbox">
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="titulo">
-                                                Problema
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="peso">
-                                                Gravidade
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="status">
-                                                Status
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="ciclo">
-                                                Ciclo
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="colaborador">
-                                                Colaborador
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="encontrado_em">
-                                                Encontrado em
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordem</span>
-                                        <div class="grupo-radio">
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="asc" checked>
-                                                Crescente (A → Z)
-                                            </label>
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="desc">
-                                                Decrescente (Z → A)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="botoes-modal">
-                                        <button type="submit" class="botao botao-principal">Aplicar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
-                    
                     <section id="ver-problema" class="pagina modal-pagina">
                         <div class="modal-fundo">
                             <div class="modal modal-ver modal-larga">
@@ -187,46 +168,16 @@
                                     <a href="#problemas" class="modal-fechar" aria-label="Fechar">&times;</a>
                                 </div>
                                 <div class="detalhes">
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Título</span>
-                                        <span class="detalhe-valor">Nome do problema</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Gravidade (peso)</span>
-                                        <span class="detalhe-valor">Alta</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Status</span>
-                                        <span class="detalhe-valor">Em análise</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Encontrado em</span>
-                                        <span class="detalhe-valor">00/00/0000</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Ciclo</span>
-                                        <span class="detalhe-valor">Ciclo 1</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Plano de ação</span>
-                                        <span class="detalhe-valor">Nome do plano</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Colaborador</span>
-                                        <span class="detalhe-valor">Nome</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Solução</span>
-                                        <span class="detalhe-valor">Solução proposta</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Descrição</span>
-                                        <span class="detalhe-valor">Descrição do problema</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Origem</span>
-                                        <span class="detalhe-valor">Origem do problema</span>
-                                    </div>
+                                    <div class="detalhe"><span class="detalhe-label">Título</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Gravidade</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Status</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Ciclo</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Plano de ação</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Colaborador</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Encontrado em</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe detalhe-largo"><span class="detalhe-label">Origem</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Solução</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe detalhe-largo"><span class="detalhe-label">Descrição</span><span class="detalhe-valor">—</span></div>
                                 </div>
                             </div>
                         </div>
@@ -236,7 +187,8 @@
                         <div class="modal-fundo">
                             <div class="modal modal-larga">
                                 <h2>Cadastrar problema</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../problema-servlet">
+                                    <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-problema-titulo">Título</label>
                                         <input type="text" id="cad-problema-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
@@ -259,15 +211,15 @@
                                     </div>
                                     <div class="campo">
                                         <label for="cad-problema-encontrado_em">Encontrado em</label>
-                                        <input type="date" id="cad-problema-encontrado_em" name="encontrado_em" required>
+                                        <input type="date" id="cad-problema-encontrado_em" name="encontrado_em" required min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="cad-problema-descricao">Descrição</label>
-                                        <textarea id="cad-problema-descricao" name="descricao" rows="3" required></textarea>
+                                        <textarea id="cad-problema-descricao" name="descricao" rows="3" required maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="cad-problema-origem">Origem</label>
-                                        <textarea id="cad-problema-origem" name="origem" rows="3"></textarea>
+                                        <textarea id="cad-problema-origem" name="origem" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-problema-solucao">Solução</label>
@@ -276,19 +228,22 @@
                                     <div class="campo">
                                         <label for="cad-problema-id_ciclo">Ciclo</label>
                                         <select id="cad-problema-id_ciclo" name="id_ciclo" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-problema-id_plano_acao">Plano de ação</label>
                                         <select id="cad-problema-id_plano_acao" name="id_plano_acao">
-                                            <option value="">Nenhum</option>
+                                            <option value="">Sem vínculo</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-problema-id_colaborador">Colaborador</label>
                                         <select id="cad-problema-id_colaborador" name="id_colaborador">
-                                            <option value="">Nenhum</option>
+                                            <option value="">Sem vínculo</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="botoes-modal">
@@ -304,7 +259,10 @@
                         <div class="modal-fundo">
                             <div class="modal modal-larga">
                                 <h2>Editar problema</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../problema-servlet">
+                                    <input type="hidden" name="acao" value="atualizar">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-problema" value="">
                                     <div class="campo">
                                         <label for="edi-problema-titulo">Título</label>
                                         <input type="text" id="edi-problema-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
@@ -327,15 +285,15 @@
                                     </div>
                                     <div class="campo">
                                         <label for="edi-problema-encontrado_em">Encontrado em</label>
-                                        <input type="date" id="edi-problema-encontrado_em" name="encontrado_em" required>
+                                        <input type="date" id="edi-problema-encontrado_em" name="encontrado_em" required min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="edi-problema-descricao">Descrição</label>
-                                        <textarea id="edi-problema-descricao" name="descricao" rows="3" required></textarea>
+                                        <textarea id="edi-problema-descricao" name="descricao" rows="3" required maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="edi-problema-origem">Origem</label>
-                                        <textarea id="edi-problema-origem" name="origem" rows="3"></textarea>
+                                        <textarea id="edi-problema-origem" name="origem" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-problema-solucao">Solução</label>
@@ -344,19 +302,22 @@
                                     <div class="campo">
                                         <label for="edi-problema-id_ciclo">Ciclo</label>
                                         <select id="edi-problema-id_ciclo" name="id_ciclo" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-problema-id_plano_acao">Plano de ação</label>
                                         <select id="edi-problema-id_plano_acao" name="id_plano_acao">
-                                            <option value="">Nenhum</option>
+                                            <option value="">Sem vínculo</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-problema-id_colaborador">Colaborador</label>
                                         <select id="edi-problema-id_colaborador" name="id_colaborador">
-                                            <option value="">Nenhum</option>
+                                            <option value="">Sem vínculo</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="botoes-modal">
@@ -373,15 +334,23 @@
                             <div class="modal modal-exclusao">
                                 <h2>Excluir problema</h2>
                                 <p>Tem certeza que deseja excluir este problema?</p>
-                                <div class="botoes-modal">
+                                <form method="post" action="../problema-servlet">
+                                    <input type="hidden" name="acao" value="excluir">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-problema" value="">
+                                    <div class="botoes-modal">
                                     <a href="#problemas" class="botao botao-cancelar">Cancelar</a>
-                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                    <button type="submit" class="botao botao-excluir">Confirmar exclusão</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </section>
                 </section>
 
+                <datalist id="sugestoes-problemas-origem">
+                    <!-- Preencher futuramente com request.getAttribute("origemList"); não inserir opções fictícias. -->
+                </datalist>
             </main>
         </div>
     </body>
