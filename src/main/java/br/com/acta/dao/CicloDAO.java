@@ -241,10 +241,13 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         ciclo.setCriado_em(rs.getObject("criado_em", OffsetDateTime.class));
         ciclo.setNome_empresa(rs.getString("nome_empresa"));
         ciclo.setNome_responsavel(rs.getString("nome_responsavel"));
+        ciclo.setId_empresa(rs.getLong("id_empresa"));
+        ciclo.setId_responsavel(rs.getLong("id_responsavel"));
         return ciclo;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_ciclo",
             "nome", "nome",
             "etapa", "etapa_atual",
             "status", "status",
