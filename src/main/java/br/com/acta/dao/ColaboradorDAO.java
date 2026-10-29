@@ -139,7 +139,6 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
-                pstmt.setString(i++, termo);
             }
             if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
             if (temArea) pstmt.setString(i++, area);
