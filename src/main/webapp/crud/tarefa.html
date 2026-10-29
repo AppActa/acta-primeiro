@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+<!-- Estrutura HTML alinhada ao backend. Dados, mensagens e IDs serão preenchidos na futura conversão para JSP. -->
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
         <link rel="stylesheet" href="../assets/css/crud.css">
-        <title>Área Restrita</title>
+        <title>ACTA — Tarefa</title>
+        <script src="../assets/js/crud.js" defer></script>
     </head>
-    <body>
+    <body class="crud-admin">
         <div class="sistema">
             <aside class="sidebar">
                 <div class="sidebar-logo">
@@ -69,12 +71,58 @@
                 <!-- Página Tarefa -->
                 <section id="tarefa" class="pagina">
                     <h1>Tarefa</h1>
+                    <!-- Mensagens serão preenchidas pelo Servlet na futura JSP. -->
+                    <p id="mensagem-erro" role="alert" hidden></p>
+                    <p id="mensagem-sucesso" role="status" hidden></p>
                     <div class="barra-acoes">
                         <div class="pesquisa">
-                            <input type="text" placeholder="Pesquisar por tarefa">
+                            <input type="search" name="busca" id="pesquisa-tarefa" form="filtros-tarefa-form" placeholder="Pesquisar" aria-label="Pesquisar registros">
                         </div>
                         <div class="filtro-container">
-                            <a href="#filtros-tarefa" class="botao botao-filtro">Filtros</a>
+                            <button type="button" class="botao botao-filtro" data-abrir-filtros aria-controls="filtros-tarefa" aria-expanded="false">Filtros</button>
+                            <section id="filtros-tarefa" class="filtros-painel" aria-label="Filtros" hidden>
+                                <div class="filtros-corpo">
+                                    <div class="modal modal-ver modal-filtros">
+                                        <div class="modal-topo">
+                                            <h2>Filtros</h2>
+                                                <button type="button" class="modal-fechar" data-fechar-filtros aria-label="Fechar filtros">&times;</button>
+                                        </div>
+                                        <form class="formulario" id="filtros-tarefa-form" method="get" action="../tarefa-servlet">
+                                            <div class="campo">
+                                                <label for="filtros-tarefa-prioridade">Prioridade</label>
+                                                <select id="filtros-tarefa-prioridade" name="prioridade">
+                                                    <option value="">Todos</option>
+                                                    <option value="ALTO">Alto</option>
+                                                    <option value="MEDIO">Médio</option>
+                                                    <option value="BAIXO">Baixo</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-tarefa-status">Status</label>
+                                                <select id="filtros-tarefa-status" name="status">
+                                                    <option value="">Todos</option>
+                                                    <option value="NAO_INICIADO">Não iniciado</option>
+                                                    <option value="INICIADO">Iniciado</option>
+                                                    <option value="FINALIZADO">Finalizado</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo periodo-datas">
+                                                <span class="rotulo-campo">Entrega</span>
+                                                <div class="datas-linha">
+                                                    <div class="campo"><label for="filtros-tarefa-dataInicial">De</label><input type="date" id="filtros-tarefa-dataInicial" name="dataInicial" min="1900-01-01" max="2100-12-31"></div>
+                                                    <div class="campo"><label for="filtros-tarefa-dataFinal">Até</label><input type="date" id="filtros-tarefa-dataFinal" name="dataFinal" min="1900-01-01" max="2100-12-31"></div>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="ordem" value="">
+                                            <input type="hidden" name="direcao" value="ASC">
+                                            <div class="botoes-modal">
+                                                <a href="tarefa.html#tarefa" class="botao botao-cancelar">Limpar filtros</a>
+                                                <button type="submit" class="botao botao-principal">Aplicar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                         <a href="#cadastrar-tarefa" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -82,109 +130,30 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Tarefa</th>
-                                    <th>Responsável</th>
-                                    <th>Plano de ação</th>
-                                    <th>Prioridade</th>
-                                    <th>Status</th>
-                                    <th>Início</th>
-                                    <th>Prazo</th>
-                                    <th class="coluna-acao">Ver</th>
-                                    <th class="coluna-acao">Editar</th>
-                                    <th class="coluna-acao">Excluir</th>
+                                    <!-- Na integração JSP, incluir a chave id na whitelist de ordenação do DAO. -->
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="id" aria-label="Ordenar por ID">#<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="titulo" aria-label="Ordenar por Título">Título<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="colaborador" aria-label="Ordenar por Colaborador">Colaborador<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="plano_acao" aria-label="Ordenar por Plano de ação">Plano de ação<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="prioridade" aria-label="Ordenar por Prioridade">Prioridade<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="status" aria-label="Ordenar por Status">Status<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="inicio" aria-label="Ordenar por Data de início">Data de início<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="entrega" aria-label="Ordenar por Data de entrega">Data de entrega<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-acao">Ver</th>
+                                    <th scope="col" class="coluna-acao">Editar</th>
+                                    <th scope="col" class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Nome da tarefa</td>
-                                    <td>Responsável</td>
-                                    <td>Nome do plano</td>
-                                    <td>Médio</td>
-                                    <td>Iniciado</td>
-                                    <td>00/00/0000</td>
-                                    <td>00/00/0000</td>
-                                    <td class="coluna-acao">
-                                        <a href="#ver-tarefa" class="icone-acao">
-                                            <img src="../assets/images/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#editar-tarefa" class="icone-acao">
-                                            <img src="../assets/images/icone_editar.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#excluir-tarefa" class="icone-acao">
-                                            <img src="../assets/images/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
-                                </tr>
+                                <!-- Na conversão futura, percorrer request.getAttribute("tarefaList"); exibir o ID na coluna # e utilizá-lo nas ações. -->
+                                <tr><td colspan="11">Nenhum registro carregado.</td></tr>
+
+                                <!-- Modelo inerte: preencher com dados reais e vincular o ID às ações na futura JSP. -->
+                                <template id="modelo-linha-tarefa"><tr><td data-campo="id_tarefa"></td><td data-campo="titulo"></td><td data-campo="nome_colaborador"></td><td data-campo="nome_plano_acao"></td><td data-campo="prioridade"></td><td data-campo="status"></td><td data-campo="dt_inicio"></td><td data-campo="dt_entrega"></td><td class="coluna-acao"><a href="#ver-tarefa" class="icone-acao" aria-label="Ver"><img src="../assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-tarefa" class="icone-acao" aria-label="Editar"><img src="../assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-tarefa" class="icone-acao" aria-label="Excluir"><img src="../assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr></template>
                             </tbody>
                         </table>
                     </div>
 
-                    <section id="filtros-tarefa" class="pagina modal-pagina">
-                        <div class="modal-fundo">
-                            <div class="modal modal-ver modal-filtros">
-                                <div class="modal-topo">
-                                    <h2>Filtros</h2>
-                                    <a href="#tarefa" class="modal-fechar" aria-label="Fechar">&times;</a>
-                                </div>
-                                <form class="formulario" method="get" action="#tarefa">
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
-                                        <div class="grupo-checkbox">
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="titulo">
-                                                Tarefa
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="responsavel">
-                                                Responsável
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="plano_acao">
-                                                Plano de ação
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="prioridade">
-                                                Prioridade
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="status">
-                                                Status
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="dt_inicio">
-                                                Início
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="dt_entrega">
-                                                Prazo
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordem</span>
-                                        <div class="grupo-radio">
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="asc" checked>
-                                                Crescente (A → Z)
-                                            </label>
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="desc">
-                                                Decrescente (Z → A)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="botoes-modal">
-                                        <button type="submit" class="botao botao-principal">Aplicar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
-                    
                     <section id="ver-tarefa" class="pagina modal-pagina">
                         <div class="modal-fundo">
                             <div class="modal modal-ver">
@@ -193,38 +162,14 @@
                                     <a href="#tarefa" class="modal-fechar" aria-label="Fechar">&times;</a>
                                 </div>
                                 <div class="detalhes">
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Título</span>
-                                        <span class="detalhe-valor">Nome da tarefa</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Responsável</span>
-                                        <span class="detalhe-valor">Responsável</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Plano de ação</span>
-                                        <span class="detalhe-valor">Nome do plano</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Prioridade</span>
-                                        <span class="detalhe-valor">Médio</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Status</span>
-                                        <span class="detalhe-valor">Iniciado</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Data de início</span>
-                                        <span class="detalhe-valor">00/00/0000</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Data de entrega</span>
-                                        <span class="detalhe-valor">00/00/0000</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Descrição</span>
-                                        <span class="detalhe-valor">Descrição da tarefa</span>
-                                    </div>
+                                    <div class="detalhe"><span class="detalhe-label">Título</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Colaborador</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Plano de ação</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Prioridade</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Status</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Data de início</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Data de entrega</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe detalhe-largo"><span class="detalhe-label">Descrição</span><span class="detalhe-valor">—</span></div>
                                 </div>
                             </div>
                         </div>
@@ -234,14 +179,15 @@
                         <div class="modal-fundo">
                             <div class="modal modal-grande">
                                 <h2>Cadastrar tarefa</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../tarefa-servlet">
+                                    <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-tarefa-titulo">Título</label>
                                         <input type="text" id="cad-tarefa-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="cad-tarefa-descricao">Descrição</label>
-                                        <textarea id="cad-tarefa-descricao" name="descricao" rows="3"></textarea>
+                                        <textarea id="cad-tarefa-descricao" name="descricao" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-tarefa-prioridade">Prioridade</label>
@@ -261,22 +207,24 @@
                                     </div>
                                     <div class="campo">
                                         <label for="cad-tarefa-dt_inicio">Data de início</label>
-                                        <input type="date" id="cad-tarefa-dt_inicio" name="dt_inicio" required>
+                                        <input type="date" id="cad-tarefa-dt_inicio" name="dt_inicio" required min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-tarefa-dt_entrega">Data de entrega</label>
-                                        <input type="date" id="cad-tarefa-dt_entrega" name="dt_entrega">
+                                        <input type="date" id="cad-tarefa-dt_entrega" name="dt_entrega" min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-tarefa-id_colaborador">Responsável</label>
                                         <select id="cad-tarefa-id_colaborador" name="id_colaborador" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-tarefa-id_plano_acao">Plano de ação</label>
                                         <select id="cad-tarefa-id_plano_acao" name="id_plano_acao" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="botoes-modal">
@@ -292,14 +240,17 @@
                         <div class="modal-fundo">
                             <div class="modal modal-grande">
                                 <h2>Editar tarefa</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../tarefa-servlet">
+                                    <input type="hidden" name="acao" value="atualizar">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-tarefa" value="">
                                     <div class="campo">
                                         <label for="edi-tarefa-titulo">Título</label>
                                         <input type="text" id="edi-tarefa-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="edi-tarefa-descricao">Descrição</label>
-                                        <textarea id="edi-tarefa-descricao" name="descricao" rows="3"></textarea>
+                                        <textarea id="edi-tarefa-descricao" name="descricao" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-tarefa-prioridade">Prioridade</label>
@@ -319,22 +270,24 @@
                                     </div>
                                     <div class="campo">
                                         <label for="edi-tarefa-dt_inicio">Data de início</label>
-                                        <input type="date" id="edi-tarefa-dt_inicio" name="dt_inicio" required>
+                                        <input type="date" id="edi-tarefa-dt_inicio" name="dt_inicio" required min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-tarefa-dt_entrega">Data de entrega</label>
-                                        <input type="date" id="edi-tarefa-dt_entrega" name="dt_entrega">
+                                        <input type="date" id="edi-tarefa-dt_entrega" name="dt_entrega" min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-tarefa-id_colaborador">Responsável</label>
                                         <select id="edi-tarefa-id_colaborador" name="id_colaborador" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-tarefa-id_plano_acao">Plano de ação</label>
                                         <select id="edi-tarefa-id_plano_acao" name="id_plano_acao" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="botoes-modal">
@@ -351,10 +304,15 @@
                             <div class="modal modal-exclusao">
                                 <h2>Excluir tarefa</h2>
                                 <p>Tem certeza que deseja excluir esta tarefa?</p>
-                                <div class="botoes-modal">
+                                <form method="post" action="../tarefa-servlet">
+                                    <input type="hidden" name="acao" value="excluir">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-tarefa" value="">
+                                    <div class="botoes-modal">
                                     <a href="#tarefa" class="botao botao-cancelar">Cancelar</a>
-                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                    <button type="submit" class="botao botao-excluir">Confirmar exclusão</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </section>

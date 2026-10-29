@@ -251,10 +251,12 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         endereco.setComplemento(rs.getString("complemento"));
         endereco.setUnidade(rs.getString("unidade"));
         endereco.setNome_empresa(rs.getString("nome_empresa"));
+        endereco.setId_empresa(rs.getLong("id_empresa"));
         return endereco;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_endereco",
             "rua", "rua",
             "bairro", "bairro",
             "cidade", "cidade",
