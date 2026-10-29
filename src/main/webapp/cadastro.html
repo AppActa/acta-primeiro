@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/images/logo_compacta.svg" type="image/x-icon">
+    <link rel="stylesheet" href="assets/css/cadastro.css">
+    <title>Cadastro</title>
+</head>
+<body>
+    <main class="login-pagina">
+        <div class="login-sair">
+            <img src="assets/images/icone_voltar.svg" alt="">
+            <a href="login.html">Voltar</a>
+        </div>
+
+        <div class="login-cartao">
+            <!-- Coluna da esquerda -->
+            <aside class="login-visual">
+                <img src="assets/images/logo_compacta_escura.svg" alt="" class="login-logo">
+                <p class="login-slogan">
+                    ACTA, seu app de PDCA
+                    <strong>
+                        O ciclo de melhoria <br>começa aqui!
+                    </strong>
+                </p>
+            </aside>
+
+            <!--- Coluna da direita -->
+            <section class="login-area">
+                <h1>Cadastro </h1>
+                <p class="login-descricao">
+                    Junte-se ao ACTA e dê início a um novo ciclo em sua carreira por meio da metodologia PDCA
+                </p>
+
+                <p class="login-erro" hidden>email/senha incorretos*</p>
+
+                <form class="login-form" method="post" action="#">
+                    <div class="login-campo">
+                        <label for="cadastro-nome">Nome</label>
+                        <input type="text" id="cadastro-nome" name="nome" maxlength="50" autocomplete="name" required>
+                    </div>
+
+                    <div class="login-campo">
+                        <label for="cadastro-email">Email</label>
+                        <input type="email" id="cadastro-email" name="email" maxlength="80" autocomplete="email" required>
+                    </div>
+
+                    <div class="login-campo">
+                        <label for="cadastro-senha">Senha</label>
+                        <input type="password" id="cadastro-senha" name="senha" maxlength="100" autocomplete="new-password" required>
+                    </div>
+
+                    <div class="login-campo">
+                        <label for="cadastro-telefone">Telefone</label>
+                        <input type="tel" id="cadastro-telefone" name="telefone" maxlength="11" inputmode="numeric" pattern="\d{11}" placeholder="DDD + número" autocomplete="tel-national" required>
+                    </div>
+
+                    <button type="submit" class="login-botao">Concluído</button>
+                </form>
+
+                <a href="login.html" class="login-esqueceu">Já tem cadastro?</a>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

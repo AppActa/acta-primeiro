@@ -1,0 +1,1075 @@
+:root {
+    --cor-primaria: #027373;
+    --cor-fundo: #EDF0F0;
+    --cor-card: #FFFFFF;
+    --cor-texto: #027373;
+    --cor-texto-suave: #015454;
+    --cor-texto-tabela: #EDF0F0;
+    --cor-borda: #04BFAD;
+    --cor-perigo: #CA1D1D;
+    --cor-primaria-hover: #025A8A;
+}
+ 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Montserrat, sans-serif;
+}
+ 
+body {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+}
+ 
+.sistema {
+    display: flex;
+    min-height: 100vh;
+}
+ 
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: var(--cor-card);
+    border-right: 1px solid var(--cor-borda);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    align-self: flex-start;
+    overflow-y: auto;
+}
+ 
+.sidebar-logo {
+    padding: 20px;
+    text-align:left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+ 
+.sidebar-logo img {
+    max-width: 140px;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 3%;
+}
+ 
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: var(--cor-texto);
+    text-decoration: none;
+    font-size: 14px;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+}
+ 
+.menu-item:hover {
+    background-color: var(--cor-fundo);
+    color: var(--cor-primaria);
+}
+ 
+.menu-item img {
+    width: 40px;
+    height: 20px;
+}
+ 
+/* Destaque dinâmico na Sidebar para a aba ativa usando CSS :target */
+body:has(#empresas:target) .menu-item[href="#empresas"],
+body:has(#empresas :target) .menu-item[href="#empresas"],
+body:has(#endereco:target) .menu-item[href="#endereco"],
+body:has(#endereco :target) .menu-item[href="#endereco"],
+body:has(#colaborador:target) .menu-item[href="#colaborador"],
+body:has(#colaborador :target) .menu-item[href="#colaborador"],
+body:has(#tarefa:target) .menu-item[href="#tarefa"],
+body:has(#tarefa :target) .menu-item[href="#tarefa"],
+body:has(#plano:target) .menu-item[href="#plano"],
+body:has(#plano :target) .menu-item[href="#plano"],
+body:has(#ciclos:target) .menu-item[href="#ciclos"],
+body:has(#ciclos :target) .menu-item[href="#ciclos"],
+body:has(#licoes:target) .menu-item[href="#licoes"],
+body:has(#licoes :target) .menu-item[href="#licoes"],
+body:has(#metas:target) .menu-item[href="#metas"],
+body:has(#metas :target) .menu-item[href="#metas"],
+body:has(#problemas:target) .menu-item[href="#problemas"],
+body:has(#problemas :target) .menu-item[href="#problemas"],
+body:has(#perfil-administrador:target) .menu-item[href="#empresas"],
+body:has(#editar-perfil:target) .menu-item[href="#empresas"],
+body:has(#alterar-senha:target) .menu-item[href="#empresas"],
+body:not(:has(:target)) .menu-item[href="#empresas"] {
+    background-color: #cedede;
+    color: var(--cor-primaria);
+    border-left-color: var(--cor-primaria);
+    font-weight: bold;
+}
+ 
+/* Perfil do administrador (parte inferior da sidebar) */
+.perfil-barra {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid var(--cor-borda);
+    padding-right: 14px;
+}
+
+.perfil-admin {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 12px 16px 20px;
+    text-decoration: none;
+    color: var(--cor-texto);
+    transition: background-color 0.2s ease;
+}
+
+.perfil-admin:hover {
+    background-color: var(--cor-fundo);
+}
+
+.perfil-foto {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--cor-borda);
+}
+
+.perfil-foto img,
+.perfil-foto-grande img,
+.perfil-foto-edicao img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.perfil-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.perfil-nome {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.perfil-email {
+    font-size: 11px;
+    opacity: 0.75;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Conteúdo */
+.conteudo {
+    flex: 1;
+    min-width: 0; /* responsivo: impede que a tabela estoure a largura da página */
+    padding: 30px;
+    position: relative;
+}
+ 
+/* Controle de visibilidade das páginas via hash/target */
+.pagina {
+    display: none;
+}
+
+.pagina:target,
+.pagina:has(:target){
+    display: block;
+}
+
+/* Página padrão (Empresas) quando nenhuma hash está ativa */
+body:not(:has(:target)) #empresas,
+body:has(#perfil-administrador:target) #empresas,
+body:has(#editar-perfil:target) #empresas,
+body:has(#alterar-senha:target) #empresas {
+    display: block;
+}
+ 
+.pagina h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--cor-texto);
+}
+ 
+/* Barra de Ações */
+.barra-acoes {
+    display: flex;
+    flex-wrap: wrap; /* responsivo: botões descem para a linha de baixo quando faltar espaço */
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+ 
+.pesquisa {
+    flex: 1;
+    min-width: 200px; /* responsivo: a pesquisa nunca fica espremida demais */
+}
+ 
+.pesquisa input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    outline: none;
+}
+ 
+.filtro-container select.botao-filtro {
+    padding: 10px 14px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    background-color: var(--cor-card);
+    color: var(--cor-texto);
+    cursor: pointer;
+}
+ 
+.botao {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+ 
+.botao-principal {
+    background-color: var(--cor-primaria);
+    color: #fff;
+}
+ 
+.botao-principal:hover {
+    background-color: var(--cor-primaria-hover);
+}
+ 
+.botao-cancelar {
+    background-color: #E0E0E0;
+    color: var(--cor-texto);
+}
+ 
+.botao-excluir {
+    background-color: var(--cor-perigo);
+    color: #fff;
+}
+
+.botao-sair {
+    background-color: transparent;
+    color: var(--cor-texto);
+    border: 1px solid var(--cor-texto);
+    padding: 4px 10px;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.botao-sair:hover {
+    background-color: var(--cor-fundo);
+}
+
+.botao-secundario {
+    background-color: transparent;
+    color: var(--cor-primaria);
+    border: 1px solid var(--cor-primaria);
+}
+
+.botao-secundario:hover {
+    background-color: var(--cor-fundo);
+}
+
+.botao-senha {
+    align-self: flex-start;
+}
+
+/* Botão "Filtros" da barra de ações (abre o modal de filtros) */
+.botao-filtro {
+    background-color: var(--cor-card);
+    color: var(--cor-texto);
+    border: 1px solid var(--cor-borda);
+}
+
+.botao-filtro:hover {
+    background-color: var(--cor-fundo);
+}
+
+.header-conteudo{
+    display: flex;
+    flex-wrap: wrap; /* responsivo */
+    gap: 10px; /* responsivo */
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+ 
+/* Tabela */
+.tabela-container {
+    background-color: var(--cor-card);
+    border-radius: 8px;
+    border: 1px solid var(--cor-borda);
+    overflow-x: auto; /* responsivo: a tabela rola na horizontal em telas pequenas */
+    -webkit-overflow-scrolling: touch;
+}
+ 
+table {
+    width: 100%;
+    min-width: 640px; /* responsivo: evita colunas amassadas; a rolagem entra em ação */
+    border-collapse: collapse;
+    text-align: left;
+}
+ 
+th, td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--cor-borda);
+    font-size: 14px;
+}
+ 
+th {
+    background-color: #04BFAD;
+    color: var(--cor-texto-tabela);
+    font-weight: 600;
+}
+ 
+.icone-acao {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+}
+ 
+.icone-acao img {
+    width: 18px;
+    height: 18px;
+}
+
+/* Colunas de ação (Ver / Excluir): ícone centralizado sob o título */
+th.coluna-acao,
+td.coluna-acao {
+    text-align: center;
+    width: 70px;
+}
+
+.coluna-acao .icone-acao {
+    display: inline-flex;
+    justify-content: center;
+}
+ 
+/* Modais */
+.modal-pagina {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh; /* responsivo: respeita a barra do navegador no celular */
+    z-index: 1000;
+}
+ 
+.modal-fundo {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(1px);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+ 
+.modal {
+    background: var(--cor-card);
+    padding: 25px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    max-height: 90dvh; /* responsivo */
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal médio (7 a 9 campos): 2 colunas */
+.modal-grande {
+    max-width: 720px;
+}
+
+/* Modal largo (10+ campos, ex: Colaborador): 3 colunas */
+.modal-larga {
+    max-width: 980px;
+}
+ 
+/* Modal de visualização (Ver) */
+.modal-ver .modal-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.modal-ver .modal-topo h2 {
+    margin-bottom: 0;
+}
+
+.modal-fechar {
+    font-size: 28px;
+    line-height: 1;
+    padding: 0 8px;
+    border-radius: 4px;
+    color: var(--cor-texto);
+    text-decoration: none;
+}
+
+.modal-fechar:hover {
+    background-color: var(--cor-fundo);
+    color: var(--cor-perigo);
+}
+
+.detalhes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 16px;
+}
+
+.modal-larga .detalhes {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.detalhe {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--cor-fundo);
+}
+
+.detalhe-largo {
+    grid-column: 1 / -1;
+}
+
+.detalhe-label {
+    font-size: 12px;
+    color: var(--cor-texto-suave);
+}
+
+.detalhe-valor {
+    font-size: 14px;
+    color: var(--cor-texto);
+    word-break: break-word;
+}
+
+/* Modal de perfil do administrador */
+.modal-perfil {
+    max-width: 420px;
+}
+
+.perfil-modal-conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.perfil-foto-grande {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--cor-borda);
+    margin-bottom: 8px;
+}
+
+.perfil-modal-nome {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.perfil-modal-email {
+    font-size: 14px;
+    opacity: 0.75;
+}
+
+.perfil-empresas {
+    width: 100%;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--cor-borda);
+    text-align: left;
+}
+
+.perfil-empresas h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.lista-empresas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+}
+
+.lista-empresas li {
+    background-color: #cedede;
+    color: var(--cor-primaria);
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 999px;
+}
+
+/* Troca de foto no modal de editar perfil */
+.foto-editar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.perfil-foto-edicao {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--cor-borda);
+}
+
+.campo input[type="file"] {
+    flex: 1;
+    min-width: 0;
+    padding: 6px;
+    font-size: 13px;
+}
+
+.campo input[type="file"]::file-selector-button {
+    margin-right: 12px;
+    padding: 6px 12px;
+    border: 1px solid var(--cor-primaria);
+    border-radius: 6px;
+    background-color: transparent;
+    color: var(--cor-primaria);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.campo input[type="file"]::file-selector-button:hover {
+    background-color: var(--cor-fundo);
+}
+
+/* Modal de filtros */
+.modal-filtros {
+    max-width: 420px;
+}
+
+.rotulo-campo {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: var(--cor-texto-suave);
+}
+
+.grupo-radio {
+    display: flex;
+    gap: 10px;
+}
+
+.opcao-radio {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--cor-texto);
+    cursor: pointer;
+}
+
+.opcao-radio input {
+    accent-color: var(--cor-primaria);
+}
+
+.opcao-radio:has(input:checked) {
+    background-color: #cedede;
+    font-weight: 600;
+}
+
+.grupo-checkbox {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.opcao-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--cor-texto);
+    cursor: pointer;
+}
+
+.opcao-check input {
+    accent-color: var(--cor-primaria);
+}
+
+.opcao-check:has(input:checked) {
+    background-color: #cedede;
+    font-weight: 600;
+}
+
+.modal h2 {
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    font-size: 18px;
+}
+
+.modal-exclusao p {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+ 
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-grande .formulario,
+.modal-larga .formulario {
+    display: grid;
+    gap: 12px 16px;
+}
+
+.modal-grande .formulario {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.modal-larga .formulario {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Itens que ocupam a linha inteira da grade */
+.modal-grande .campo-largo,
+.modal-grande .grupo-titulo,
+.modal-grande .botoes-modal,
+.modal-larga .campo-largo,
+.modal-larga .grupo-titulo,
+.modal-larga .botoes-modal {
+    grid-column: 1 / -1;
+}
+
+.grupo-titulo {
+    font-size: 14px;
+    padding-top: 8px;
+    border-top: 1px solid var(--cor-borda);
+}
+ 
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+ 
+.campo label {
+    font-size: 12px;
+    color: var(--cor-texto-suave);
+}
+
+.campo select{
+    padding: 8px 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+
+.campo select[multiple] {
+    padding: 6px;
+}
+
+.campo input {
+    padding: 8px 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+
+.campo textarea {
+    padding: 8px 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    outline: 2px solid var(--cor-borda);
+}
+ 
+.botoes-modal {
+    display: flex;
+    flex-wrap: wrap; /* responsivo: botões do modal descem de linha se faltar espaço */
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Tablet: modal largo (Colaborador) passa de 3 para 2 colunas */
+@media (min-width: 761px) and (max-width: 1024px) {
+    .modal-larga {
+        max-width: 760px;
+    }
+
+    .modal-larga .formulario,
+    .modal-larga .detalhes {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Telas pequenas: modais voltam para 1 coluna */
+@media (max-width: 760px) {
+    .modal-grande .formulario,
+    .modal-larga .formulario,
+    .detalhes,
+    .modal-larga .detalhes {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Ajustes para páginas separadas */
+/* A seção principal de cada página fica sempre visível e os modais continuam via :target */
+.conteudo > .pagina:not(.modal-pagina) {
+    display: block;
+}
+
+/* Destaque do item atual do menu (cada página marca o seu link com a classe "ativo") */
+.menu-item.ativo {
+    background-color: #cedede;
+    color: var(--cor-primaria);
+    border-left-color: var(--cor-primaria);
+    font-weight: bold;
+}
+
+.conteudo-config {
+    padding: 30px;
+}
+ 
+/* Página em duas colunas: dados à esquerda, cartão verde ocupando toda a direita */
+.config {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 30px;
+    min-height: calc(100vh - 60px);
+}
+ 
+/* Chaves invisíveis que controlam os modos de edição.
+   Ficam "fixed" no canto da tela: assim, clicar em Editar nunca rola a página. */
+.config-toggle {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+ 
+/* Coluna da esquerda (mais afastada da sidebar) */
+.config-principal {
+    padding: 18px 40px 0 70px;
+}
+ 
+/* Título com linha embaixo */
+.config .config-titulo {
+    width: 370px;
+    max-width: 100%;
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--cor-primaria);
+    padding-bottom: 8px;
+    margin-bottom: 55px;
+    border-bottom: 1px solid var(--cor-primaria);
+}
+ 
+/* Perfil: troca entre visualização e edição, mantendo tudo no mesmo lugar */
+.config-edicao {
+    display: none;
+}
+ 
+.config:has(#config-editar-perfil:checked) .config-leitura {
+    display: none;
+}
+ 
+.config:has(#config-editar-perfil:checked) .config-edicao {
+    display: block;
+}
+ 
+/* Foto de perfil grande e botão da câmera */
+.config-foto {
+    position: relative;
+    width: 155px;
+    height: 155px;
+    margin: 0 0 90px 30px;
+}
+ 
+.config-foto > img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 50%;
+    object-fit: cover;
+}
+ 
+.config-camera {
+    position: absolute;
+    right: 4px;
+    bottom: 6px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #C4C4C4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+ 
+.config-camera:hover {
+    background-color: #A9A9A9;
+}
+ 
+.config-camera img {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+ 
+/* Campos: o texto (visualização) e o input (edição) têm exatamente a mesma altura */
+.config-campo {
+    margin-bottom: 19px;
+}
+ 
+.config-rotulo {
+    display: block;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 27px;
+    color: var(--cor-primaria);
+    margin-bottom: 5px;
+}
+ 
+.config-valor {
+    display: flex;
+    align-items: center;
+    height: 38px;
+    font-size: 16px;
+    line-height: 20px;
+    color: var(--cor-texto);
+    word-break: break-all;
+}
+ 
+.config-valor a {
+    color: var(--cor-texto);
+    text-decoration: underline;
+}
+ 
+/* Inputs no mesmo formato dos formulários de cadastrar (borda verde, cantos 4px) */
+.config-edicao input[type="text"],
+.config-edicao input[type="email"],
+.config-edicao input[type="password"] {
+    display: block;
+    width: 268px;
+    max-width: 100%;
+    height: 38px;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+ 
+.config-edicao input:focus {
+    outline: 2px solid var(--cor-borda);
+}
+ 
+/* Botões arredondados (usam as cores do sistema: .botao-principal e .botao-cancelar) */
+.botao-pilula {
+    height: 36px;
+    min-width: 96px;
+    padding: 0 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    user-select: none;
+}
+ 
+.botao-pilula-sm {
+    height: 34px;
+    min-width: 88px;
+    padding: 0 18px;
+}
+ 
+.config-botoes {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+}
+ 
+/* ---------- Cartão de contato: o "quadradão" verde da direita ---------- */
+.config-contato {
+    display: flex;
+    flex-direction: column;
+    padding: 36px 40px 40px;
+    background-color: #8CBBBB;
+    border-radius: 16px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+    color: var(--cor-texto-suave);
+}
+ 
+.config-contato-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+ 
+/* Linha de cima: título + lápis (ou Salvar/Cancelar) no canto superior direito */
+.config-contato-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    height: 40px;
+    margin-bottom: 24px;
+}
+ 
+.config-contato h2 {
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 35px;
+}
+ 
+.config-contato-lapis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--cor-fundo);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+ 
+.config-contato-lapis:hover {
+    background-color: var(--cor-card);
+}
+ 
+.config-contato-lapis img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+ 
+.config-contato-botoes {
+    display: none;
+    gap: 10px;
+}
+ 
+.config:has(#config-editar-contato:checked) .config-contato-lapis {
+    display: none;
+}
+ 
+.config:has(#config-editar-contato:checked) .config-contato-botoes {
+    display: flex;
+}
+ 
+/* Linhas de informação: texto e input com a mesma altura */
+.config-contato-linha {
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
+ 
+.config-contato-linha p {
+    font-size: 18px;
+    line-height: 24px;
+}
+ 
+.config-contato a {
+    color: var(--cor-texto);
+    text-decoration: underline;
+}
+ 
+.config-contato-linha input {
+    display: none;
+    width: 100%;
+    height: 40px;
+    padding: 8px 12px;
+    font-size: 18px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+ 
+.config-contato-linha input:focus {
+    outline: 2px solid var(--cor-borda);
+}
+ 
+.config:has(#config-editar-contato:checked) .contato-leitura {
+    display: none;
+}
+ 
+.config:has(#config-editar-contato:checked) .config-contato-linha input {
+    display: block;
+}
+ 
+/* Mapa: ocupa toda a largura do cartão e o espaço que sobra na altura */
+.config-contato iframe {
+    display: block;
+    width: 100%;
+    flex: 1;
+    min-height: 300px;
+    margin: 13px 0 17px;
+    border: 0;
+    border-radius: 10px;
+}
+ 
+.config-contato-grupo .config-contato-linha + .config-contato-linha {
+    margin-top: 6px;
+}
+ 
+/* Telas menores: cartão vai para baixo dos dados */
+@media (max-width: 1100px) {
+    .config {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+ 
+    .config-principal {
+        padding: 18px 0 0 20px;
+    }
+ 
+    .config-contato {
+        min-height: 520px;
+    }
+}

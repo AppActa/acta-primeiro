@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
+        <link rel="stylesheet" href="../assets/css/crud.css">
+        <title>Área Restrita</title>
+    </head>
+    <body>
+        <div class="sistema">
+            <aside class="sidebar">
+                <div class="sidebar-logo">
+                    <img src="../assets/images/logo_oficial.svg" alt="ACTA">
+                </div>
+                <nav class="menu">
+                    <a href="empresas.html" class="menu-item ativo">
+                        <img src="../assets/images/icone_empresas.svg" alt="">
+                        <span>Empresas</span>
+                    </a>
+                    <a href="endereco.html" class="menu-item">
+                        <img src="../assets/images/icone_endereco.svg" alt="">
+                        <span>Endereço</span>
+                    </a>
+                    <a href="colaborador.html" class="menu-item">
+                        <img src="../assets/images/icone_colaborador.svg" alt="">
+                        <span>Colaborador</span>
+                    </a>
+                    <a href="tarefa.html" class="menu-item">
+                        <img src="../assets/images/icone_tarefa.svg" alt="">
+                        <span>Tarefa</span>
+                    </a>
+                    <a href="plano.html" class="menu-item">
+                        <img src="../assets/images/icone_plano_de_acao.svg" alt="">
+                        <span>Plano de ação</span>
+                    </a>
+                    <a href="ciclos.html" class="menu-item">
+                        <img src="../assets/images/icone_ciclos.svg" alt="">
+                        <span>Ciclos</span>
+                    </a>
+                    <a href="licoes.html" class="menu-item">
+                        <img src="../assets/images/icone_licoes_aprendidas.svg" alt="">
+                        <span>Lições Aprendidas</span>
+                    </a>
+                    <a href="metas.html" class="menu-item">
+                        <img src="../assets/images/icone_metas.svg" alt="">
+                        <span>Metas</span>
+                    </a>
+                    <a href="problemas.html" class="menu-item">
+                        <img src="../assets/images/icone_problemas.svg" alt="">
+                        <span>Problemas</span>
+                    </a>
+                </nav>
+                <div class="perfil-barra">
+                    <a href="configurações.html" class="perfil-admin">
+                        <div class="perfil-foto">
+                            <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
+                        </div>
+                        <div class="perfil-info">
+                            <span class="perfil-nome">Nome Sobrenome</span>
+                            <span class="perfil-email">email@email.com</span>
+                        </div>
+                    </a>
+                    <a href="../login.html" class="botao botao-sair">Sair</a>
+                </div>
+            </aside>
+            <main class="conteudo">
+
+                <!-- Página Empresas -->
+                <section id="empresas" class="pagina">
+                    <h1>Empresas</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por empresa">
+                        </div>
+                        <div class="filtro-container">
+                            <a href="#filtros-empresas" class="botao botao-filtro">Filtros</a>
+                        </div>
+                        <a href="#cadastrar-empresa" class="botao botao-principal">Cadastrar</a>
+                    </div>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Setor</th>
+                                    <th>CNPJ</th>
+                                    <th>Unidade</th>
+                                    <th>Status</th>
+                                    <th>Tamanho</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
+                                    <th class="coluna-acao">Excluir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Flora</td>
+                                    <td>Cosméticos</td>
+                                    <td>13.425.674/8967-4</td>
+                                    <td>Matriz</td>
+                                    <td>Ativo</td>
+                                    <td>Grande</td>
+                                    <td class="coluna-acao">
+                                        <a href="#ver-empresa" class="icone-acao">
+                                            <img src="../assets/images/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-empresa" class="icone-acao">
+                                            <img src="../assets/images/icone_editar.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#excluir-empresa" class="icone-acao">
+                                            <img src="../assets/images/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <section id="filtros-empresas" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#empresas" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#empresas">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="nome">
+                                                Nome
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="setor">
+                                                Setor
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="cnpj">
+                                                CNPJ
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="unidade">
+                                                Unidade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="status">
+                                                Status
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="tamanho">
+                                                Tamanho
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <section id="ver-empresa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver">
+                                <div class="modal-topo">
+                                    <h2>Detalhes da empresa</h2>
+                                    <a href="#empresas" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Nome</span>
+                                        <span class="detalhe-valor">Flora</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Setor</span>
+                                        <span class="detalhe-valor">Cosméticos</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">CNPJ</span>
+                                        <span class="detalhe-valor">13.425.674/8967-4</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Unidade</span>
+                                        <span class="detalhe-valor">Matriz</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Status</span>
+                                        <span class="detalhe-valor">Ativa</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Tamanho</span>
+                                        <span class="detalhe-valor">Grande</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="cadastrar-empresa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal">
+                                <h2>Cadastrar empresa</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-empresa-nome">Nome</label>
+                                        <input type="text" id="cad-empresa-nome" name="nome" maxlength="50" placeholder="Digite o nome" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-empresa-setor">Setor</label>
+                                        <input type="text" id="cad-empresa-setor" name="setor" maxlength="30" placeholder="Digite o setor" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-empresa-cnpj">CNPJ</label>
+                                        <input type="text" id="cad-empresa-cnpj" name="cnpj" maxlength="14" inputmode="numeric" pattern="\d{14}" placeholder="Somente números (14 dígitos)" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-empresa-unidade">Unidade</label>
+                                        <input type="text" id="cad-empresa-unidade" name="unidade" maxlength="30" placeholder="Digite a unidade" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-empresa-status">Status</label>
+                                        <select id="cad-empresa-status" name="status" required>
+                                            <option value="ATIVA">Ativa</option>
+                                            <option value="INATIVA">Inativa</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-empresa-tamanho">Tamanho</label>
+                                        <select id="cad-empresa-tamanho" name="tamanho" required>
+                                            <option value="GRANDE">Grande</option>
+                                            <option value="MEDIA">Média</option>
+                                            <option value="PEQUENA">Pequena</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-empresa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal">
+                                <h2>Editar empresa</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-empresa-nome">Nome</label>
+                                        <input type="text" id="edi-empresa-nome" name="nome" maxlength="50" placeholder="Digite o nome" value="Flora" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-empresa-setor">Setor</label>
+                                        <input type="text" id="edi-empresa-setor" name="setor" maxlength="30" placeholder="Digite o setor" value="Cosméticos" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-empresa-cnpj">CNPJ</label>
+                                        <input type="text" id="edi-empresa-cnpj" name="cnpj" maxlength="14" inputmode="numeric" pattern="\d{14}" placeholder="Somente números (14 dígitos)" value="13425674896704" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-empresa-unidade">Unidade</label>
+                                        <input type="text" id="edi-empresa-unidade" name="unidade" maxlength="30" placeholder="Digite a unidade" value="Matriz" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-empresa-status">Status</label>
+                                        <select id="edi-empresa-status" name="status" required>
+                                            <option value="ATIVA" selected>Ativa</option>
+                                            <option value="INATIVA">Inativa</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-empresa-tamanho">Tamanho</label>
+                                        <select id="edi-empresa-tamanho" name="tamanho" required>
+                                            <option value="GRANDE" selected>Grande</option>
+                                            <option value="MEDIA">Média</option>
+                                            <option value="PEQUENA">Pequena</option>
+                                        </select>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-empresa" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir empresa</h2>
+                                <p>Tem certeza que deseja excluir esta empresa?</p>
+                                <div class="botoes-modal">
+                                    <a href="#empresas" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+            </main>
+        </div>
+    </body>
+</html>

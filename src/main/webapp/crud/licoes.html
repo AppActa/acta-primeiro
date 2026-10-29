@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
+        <link rel="stylesheet" href="../assets/css/crud.css">
+        <title>Área Restrita</title>
+    </head>
+    <body>
+        <div class="sistema">
+            <aside class="sidebar">
+                <div class="sidebar-logo">
+                    <img src="../assets/images/logo_oficial.svg" alt="ACTA">
+                </div>
+                <nav class="menu">
+                    <a href="empresas.html" class="menu-item">
+                        <img src="../assets/images/icone_empresas.svg" alt="">
+                        <span>Empresas</span>
+                    </a>
+                    <a href="endereco.html" class="menu-item">
+                        <img src="../assets/images/icone_endereco.svg" alt="">
+                        <span>Endereço</span>
+                    </a>
+                    <a href="colaborador.html" class="menu-item">
+                        <img src="../assets/images/icone_colaborador.svg" alt="">
+                        <span>Colaborador</span>
+                    </a>
+                    <a href="tarefa.html" class="menu-item">
+                        <img src="../assets/images/icone_tarefa.svg" alt="">
+                        <span>Tarefa</span>
+                    </a>
+                    <a href="plano.html" class="menu-item">
+                        <img src="../assets/images/icone_plano_de_acao.svg" alt="">
+                        <span>Plano de ação</span>
+                    </a>
+                    <a href="ciclos.html" class="menu-item">
+                        <img src="../assets/images/icone_ciclos.svg" alt="">
+                        <span>Ciclos</span>
+                    </a>
+                    <a href="licoes.html" class="menu-item ativo">
+                        <img src="../assets/images/icone_licoes_aprendidas.svg" alt="">
+                        <span>Lições Aprendidas</span>
+                    </a>
+                    <a href="metas.html" class="menu-item">
+                        <img src="../assets/images/icone_metas.svg" alt="">
+                        <span>Metas</span>
+                    </a>
+                    <a href="problemas.html" class="menu-item">
+                        <img src="../assets/images/icone_problemas.svg" alt="">
+                        <span>Problemas</span>
+                    </a>
+                </nav>
+                <div class="perfil-barra">
+                    <a href="configurações.html" class="perfil-admin">
+                        <div class="perfil-foto">
+                            <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
+                        </div>
+                        <div class="perfil-info">
+                            <span class="perfil-nome">Nome Sobrenome</span>
+                            <span class="perfil-email">email@email.com</span>
+                        </div>
+                    </a>
+                    <a href="../login.html" class="botao botao-sair">Sair</a>
+                </div>
+            </aside>
+            <main class="conteudo">
+
+                <!-- Página Lições Aprendidas -->
+                <section id="licoes" class="pagina">
+                    <h1>Lições Aprendidas</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por lição aprendida">
+                        </div>
+                        <div class="filtro-container">
+                            <a href="#filtros-licoes" class="botao botao-filtro">Filtros</a>
+                        </div>
+                        <a href="#cadastrar-lição-aprendida" class="botao botao-principal">Cadastrar</a>
+                    </div>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Categoria</th>
+                                    <th>Área</th>
+                                    <th>Ciclo</th>
+                                    <th>Fase de origem</th>
+                                    <th>Severidade</th>
+                                    <th>Data</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
+                                    <th class="coluna-acao">Excluir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Título da lição</td>
+                                    <td>Categoria</td>
+                                    <td>Área</td>
+                                    <td>Ciclo 1</td>
+                                    <td>Plan</td>
+                                    <td>Médio</td>
+                                    <td>00/00/0000</td>
+                                    <td class="coluna-acao">
+                                        <a href="#ver-lição-aprendida" class="icone-acao">
+                                            <img src="../assets/images/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-lição-aprendida" class="icone-acao">
+                                            <img src="../assets/images/icone_editar.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#excluir-lição-aprendida" class="icone-acao">
+                                            <img src="../assets/images/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <section id="filtros-licoes" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#licoes" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#licoes">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="titulo">
+                                                Título
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="categoria">
+                                                Categoria
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="area">
+                                                Área
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="ciclo">
+                                                Ciclo
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="fase_origem">
+                                                Fase de origem
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="severidade">
+                                                Severidade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="data">
+                                                Data
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <section id="ver-lição-aprendida" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver">
+                                <div class="modal-topo">
+                                    <h2>Detalhes da lição aprendida</h2>
+                                    <a href="#licoes" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Título</span>
+                                        <span class="detalhe-valor">Título da lição</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Ciclo</span>
+                                        <span class="detalhe-valor">Ciclo 1</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Área</span>
+                                        <span class="detalhe-valor">Área</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Categoria</span>
+                                        <span class="detalhe-valor">Categoria</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Fase de origem</span>
+                                        <span class="detalhe-valor">Plan</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Severidade</span>
+                                        <span class="detalhe-valor">Médio</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Data</span>
+                                        <span class="detalhe-valor">00/00/0000</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Aprendizado</span>
+                                        <span class="detalhe-valor">Aprendizado obtido</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Descrição</span>
+                                        <span class="detalhe-valor">Descrição da lição</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="cadastrar-lição-aprendida" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Cadastrar lição aprendida</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-titulo">Título</label>
+                                        <input type="text" id="cad-lição-aprendida-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-id_ciclo">Ciclo</label>
+                                        <select id="cad-lição-aprendida-id_ciclo" name="id_ciclo" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-area">Área</label>
+                                        <input type="text" id="cad-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-categoria">Categoria</label>
+                                        <input type="text" id="cad-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-fase_origem">Fase de origem</label>
+                                        <select id="cad-lição-aprendida-fase_origem" name="fase_origem" required>
+                                            <option value="PLAN">Plan</option>
+                                            <option value="DO">Do</option>
+                                            <option value="CHECK">Check</option>
+                                            <option value="ACT">Act</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-lição-aprendida-severidade">Severidade</label>
+                                        <select id="cad-lição-aprendida-severidade" name="severidade" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-lição-aprendida-aprendizado">Aprendizado</label>
+                                        <textarea id="cad-lição-aprendida-aprendizado" name="aprendizado" rows="3" required></textarea>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-lição-aprendida-descricao">Descrição</label>
+                                        <textarea id="cad-lição-aprendida-descricao" name="descricao" rows="3"></textarea>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#licoes" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-lição-aprendida" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Editar lição aprendida</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-titulo">Título</label>
+                                        <input type="text" id="edi-lição-aprendida-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-id_ciclo">Ciclo</label>
+                                        <select id="edi-lição-aprendida-id_ciclo" name="id_ciclo" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-area">Área</label>
+                                        <input type="text" id="edi-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-categoria">Categoria</label>
+                                        <input type="text" id="edi-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-fase_origem">Fase de origem</label>
+                                        <select id="edi-lição-aprendida-fase_origem" name="fase_origem" required>
+                                            <option value="PLAN">Plan</option>
+                                            <option value="DO">Do</option>
+                                            <option value="CHECK">Check</option>
+                                            <option value="ACT">Act</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-lição-aprendida-severidade">Severidade</label>
+                                        <select id="edi-lição-aprendida-severidade" name="severidade" required>
+                                            <option value="ALTO">Alto</option>
+                                            <option value="MEDIO">Médio</option>
+                                            <option value="BAIXO">Baixo</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-lição-aprendida-aprendizado">Aprendizado</label>
+                                        <textarea id="edi-lição-aprendida-aprendizado" name="aprendizado" rows="3" required></textarea>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-lição-aprendida-descricao">Descrição</label>
+                                        <textarea id="edi-lição-aprendida-descricao" name="descricao" rows="3"></textarea>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#licoes" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-lição-aprendida" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir lição aprendida</h2>
+                                <p>Tem certeza que deseja excluir esta lição aprendida?</p>
+                                <div class="botoes-modal">
+                                    <a href="#licoes" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+                
+            </main>
+        </div>
+    </body>
+</html>
