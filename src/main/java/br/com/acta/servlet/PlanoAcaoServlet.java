@@ -26,7 +26,7 @@ import java.util.List;
 
 @WebServlet(name = "PlanoAcao", value = "/planoAcao-servlet")
 public class PlanoAcaoServlet extends HttpServlet {
-    private static final String PAGINA_PLANOACAO = "/planoAcao.jsp";
+    private static final String PAGINA_PLANOACAO = "/crud/planoAcao.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final PlanoAcaoDAO DAO = new PlanoAcaoDAO();
 
