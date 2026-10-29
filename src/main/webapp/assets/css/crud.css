@@ -1073,3 +1073,64 @@ td.coluna-acao {
         min-height: 520px;
     }
 }
+
+/* Componentes das telas CRUD: filtros, períodos e ordenação. */
+.crud-admin .barra-acoes { position: relative; align-items: flex-start; }
+.crud-admin .barra-acoes > .filtro-container {
+    position: static;
+    flex: 0 0 auto;
+    height: 38px;
+    min-width: 0;
+    max-width: 100%;
+    overflow: visible;
+}
+.crud-admin .filtros-painel {
+    position: fixed;
+    width: min(420px, calc(100vw - 24px));
+    z-index: 1001;
+}
+.crud-admin .filtros-painel[hidden] { display: none; }
+.crud-admin .filtros-painel .modal-filtros {
+    max-width: none;
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+    border: 1px solid var(--cor-borda);
+}
+.crud-admin .filtros-painel .campo,
+.crud-admin .filtros-painel input,
+.crud-admin .filtros-painel select { min-width: 0; max-width: 100%; }
+.crud-admin .filtros-painel .modal-fechar { border: 0; background: transparent; cursor: pointer; }
+.crud-admin .datas-linha { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.crud-admin .datas-linha .campo { min-width: 0; }
+.crud-admin .datas-linha input { width: 100%; min-width: 0; padding: 8px 4px; }
+.crud-admin .filtros-painel .formulario { gap: 18px; }
+.crud-admin .filtros-painel .formulario > .campo > label,
+.crud-admin .filtros-painel .periodo-datas > .rotulo-campo {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+.crud-admin .filtros-painel .periodo-datas > .rotulo-campo { margin-bottom: 8px; }
+.crud-admin .filtros-painel .datas-linha label { font-size: 12px; font-weight: 400; }
+.crud-admin .filtros-painel h2 { font-size: 18px; }
+.crud-admin .filtros-painel .modal-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.crud-admin .botao-ordenacao { font: inherit; color: inherit; padding: 0; border: 0; background: transparent; cursor: pointer; text-align: left; }
+.crud-admin .botao-ordenacao:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.crud-admin th[aria-sort="ascending"] button[data-ordenar] span::after { content: " ▲"; }
+.crud-admin th[aria-sort="descending"] button[data-ordenar] span::after { content: " ▼"; }
+
+.crud-admin a.botao-ordenacao { display: inline-block; text-decoration: none; }
+.crud-admin .mensagem {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    background-color: var(--cor-card);
+}
+.crud-admin .mensagem-erro { border-color: var(--cor-perigo); color: var(--cor-perigo); }
+.crud-admin .detalhe-valor { white-space: pre-wrap; }
