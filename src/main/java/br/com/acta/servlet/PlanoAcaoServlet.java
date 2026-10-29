@@ -1,5 +1,9 @@
 package br.com.acta.servlet;
 
+import br.com.acta.dao.ColaboradorDAO;
+
+import br.com.acta.dao.CicloDAO;
+
 import br.com.acta.dao.PlanoAcaoDAO;
 import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
@@ -117,7 +121,6 @@ public class PlanoAcaoServlet extends HttpServlet {
         }
     }
 
-
     //CRUD
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PlanoAcao planoAcao = new PlanoAcao();
@@ -150,6 +153,8 @@ public class PlanoAcaoServlet extends HttpServlet {
         }
 
         req.setAttribute("planoAcaoList", List.of(planoAcao));
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
         req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
     }
 
@@ -169,6 +174,8 @@ public class PlanoAcaoServlet extends HttpServlet {
         List<PlanoAcao> planosAcoes = DAO.buscaFiltrada(busca, status, prioridade, ordem, direcao);
 
         req.setAttribute("planoAcaoList", planosAcoes);
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
         req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
     }
 
@@ -238,17 +245,25 @@ public class PlanoAcaoServlet extends HttpServlet {
             List<PlanoAcao> planosAcoes = DAO.buscar();
 
             req.setAttribute("planoAcaoList", planosAcoes);
+            req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+            req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
         } catch (RuntimeException ex) {
             ex.printStackTrace();
             req.setAttribute("planoAcaoList", List.of());
+            req.setAttribute("cicloOpcoes", List.of());
+            req.setAttribute("colaboradorOpcoes", List.of());
         }
         req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<PlanoAcao> planosAcoes = DAO.buscar();
 
         req.setAttribute("planoAcaoList", planosAcoes);
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
         req.getRequestDispatcher(PAGINA_PLANOACAO).forward(req, resp);
     }
+
 }
