@@ -42,4 +42,12 @@ build/
 ### Mac OS ###
 .DS_Store
 
-*.env
+# Contexto e instruções do Codex
+/AGENTS.md
+/CONTEXTO_ACTA.md
+/PLANO_DE_EXECUCAO.md
+/INDICE_FONTES.md
+/COMECE_AQUI.md
+/PROMPT_INICIAL.txt
+/PROMPT_POR_ENTIDADE.txt
+/fontes/

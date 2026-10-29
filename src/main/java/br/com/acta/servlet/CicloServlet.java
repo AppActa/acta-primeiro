@@ -1,5 +1,9 @@
 package br.com.acta.servlet;
 
+import br.com.acta.dao.EmpresaDAO;
+
+import br.com.acta.dao.ColaboradorDAO;
+
 import br.com.acta.dao.CicloDAO;
 import br.com.acta.model.Ciclo;
 import br.com.acta.enums.EtapaCiclo;
@@ -152,6 +156,8 @@ public class CicloServlet extends HttpServlet {
         }
 
         req.setAttribute("cicloList", List.of(ciclo));
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
         req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
     }
 
@@ -187,6 +193,8 @@ public class CicloServlet extends HttpServlet {
         List<Ciclo> ciclos = cicloDAO.buscaFiltrada(busca, etapa, status, dataInicial, dataFinal, criadoDe, criadoAte, ordem, direcao);
 
         req.setAttribute("cicloList", ciclos);
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
         req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
     }
 
@@ -262,18 +270,25 @@ public class CicloServlet extends HttpServlet {
             List<Ciclo> ciclos = cicloDAO.buscar();
 
             req.setAttribute("cicloList", ciclos);
+            req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
+            req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
         } catch (RuntimeException ex) {
             ex.printStackTrace();
             req.setAttribute("cicloList", List.of());
+            req.setAttribute("empresaOpcoes", List.of());
+            req.setAttribute("colaboradorOpcoes", List.of());
         }
         req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
     }
 
-
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Ciclo> ciclos = cicloDAO.buscar();
 
         req.setAttribute("cicloList", ciclos);
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
         req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
     }
+
 }

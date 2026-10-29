@@ -20,8 +20,8 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
     @Override
     public int inserir(Tarefa tarefa) {
         String sql = """
-                INSERT INTO tarefa (titulo, descricao, prioridade, dt_entrega, status, dt_inicio, id_colaborador)
-                VALUES (?, ?, ?, ?, ?, ?, ?);
+                INSERT INTO tarefa (titulo, descricao, prioridade, dt_entrega, status, dt_inicio, id_colaborador, id_plano_acao)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
                 """;
 
         try (Connection conn = Conexao.conectar();
@@ -29,11 +29,12 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
 
             pstmt.setString(1, tarefa.getTitulo());
             pstmt.setString(2, tarefa.getDescricao());
-            pstmt.setString(3, tarefa.getPrioridade().name());
+            pstmt.setObject(3, tarefa.getPrioridade().name(), Types.OTHER);
             pstmt.setDate(4, tarefa.getDt_entrega());
-            pstmt.setString(5, tarefa.getStatus().name());
+            pstmt.setObject(5, tarefa.getStatus().name(), Types.OTHER);
             pstmt.setDate(6, tarefa.getDt_inicio());
             pstmt.setLong(7, tarefa.getId_colaborador());
+            pstmt.setLong(8, tarefa.getId_plano_acao());
 
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
@@ -107,7 +108,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
-        if (temBusca) sql.append(" AND (titulo ILIKE ? OR nome_colaborador ILIKE ?)");
+        if (temBusca) sql.append(" AND (titulo ILIKE ? OR nome_colaborador ILIKE ? OR nome_plano_acao ILIKE ?)");
         if (temPrioridade) sql.append(" AND prioridade = ?");
         if (temStatus) sql.append(" AND status = ?");
         if (temDataInicial) sql.append(" AND dt_entrega >= ?");
@@ -125,9 +126,10 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
                 String termo = "%" + busca.trim() + "%";
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
             }
-            if (temPrioridade) pstmt.setString(i++, prioridade.name());
-            if (temStatus) pstmt.setString(i++, status.name());
+            if (temPrioridade) pstmt.setObject(i++, prioridade.name(), Types.OTHER);
+            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
             if (temDataInicial) pstmt.setDate(i++, dataInicial);
             if (temDataFinal) pstmt.setDate(i++, dataFinal);
 
@@ -146,19 +148,20 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
     // UPDATE
     @Override
     public int atualizar(Tarefa tarefa) {
-        String sql = "UPDATE tarefa SET titulo = ?, descricao = ?, prioridade = ?, dt_entrega = ?, status = ?, dt_inicio = ?, id_colaborador = ? WHERE id_tarefa = ?;";
+        String sql = "UPDATE tarefa SET titulo = ?, descricao = ?, prioridade = ?, dt_entrega = ?, status = ?, dt_inicio = ?, id_colaborador = ?, id_plano_acao = ? WHERE id_tarefa = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, tarefa.getTitulo());
             pstmt.setString(2, tarefa.getDescricao());
-            pstmt.setString(3, tarefa.getPrioridade().name());
+            pstmt.setObject(3, tarefa.getPrioridade().name(), Types.OTHER);
             pstmt.setDate(4, tarefa.getDt_entrega());
-            pstmt.setString(5, tarefa.getStatus().name());
+            pstmt.setObject(5, tarefa.getStatus().name(), Types.OTHER);
             pstmt.setDate(6, tarefa.getDt_inicio());
             pstmt.setLong(7, tarefa.getId_colaborador());
-            pstmt.setLong(8, tarefa.getId_tarefa());
+            pstmt.setLong(8, tarefa.getId_plano_acao());
+            pstmt.setLong(9, tarefa.getId_tarefa());
 
             if (pstmt.executeUpdate() > 0) return 1;
 
@@ -233,16 +236,20 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         tarefa.setStatus(Situacao.valueOf(rs.getString("status")));
         tarefa.setDt_inicio(rs.getDate("dt_inicio"));
         tarefa.setNome_colaborador(rs.getString("nome_colaborador"));
+        tarefa.setNome_plano_acao(rs.getString("nome_plano_acao"));
+        tarefa.setId_colaborador(rs.getLong("id_colaborador"));
+        tarefa.setId_plano_acao(rs.getLong("id_plano_acao"));
         return tarefa;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_tarefa",
             "titulo", "titulo",
             "prioridade", "prioridade",
             "entrega", "dt_entrega",
             "status", "status",
             "inicio", "dt_inicio",
-            "colaborador", "nome_colaborador"
+            "colaborador", "nome_colaborador",
+            "plano_acao", "nome_plano_acao"
     );
-
 }

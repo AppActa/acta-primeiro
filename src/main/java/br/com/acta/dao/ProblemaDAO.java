@@ -29,9 +29,9 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
 
             pstmt.setString(1, problema.getTitulo());
             pstmt.setString(2, problema.getDescricao());
-            pstmt.setString(3, problema.getPeso().name());
+            pstmt.setObject(3, problema.getPeso().name(), Types.OTHER);
             pstmt.setString(4, problema.getSolucao());
-            pstmt.setString(5, problema.getStatus().name());
+            pstmt.setObject(5, problema.getStatus().name(), Types.OTHER);
             pstmt.setString(6, problema.getOrigem());
             pstmt.setDate(7, problema.getEncontrado_em());
             pstmt.setLong(8, problema.getId_ciclo());
@@ -59,7 +59,7 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
     // READ
     @Override
     public Problema buscar(Long id) {
-        String sql = "SELECT * FROM problema WHERE id_problema = ?;";
+        String sql = "SELECT * FROM vw_problema WHERE id_problema = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -81,7 +81,7 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
     @Override
     public List<Problema> buscar() {
         List<Problema> lista = new ArrayList<>();
-        String sql = "SELECT * FROM problema;";
+        String sql = "SELECT * FROM vw_problema;";
 
         try (Connection conn = Conexao.conectar();
              Statement stmt = conn.createStatement();
@@ -133,8 +133,8 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
-            if (temPeso) pstmt.setString(i++, peso.name());
-            if (temStatus) pstmt.setString(i++, status.name());
+            if (temPeso) pstmt.setObject(i++, peso.name(), Types.OTHER);
+            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
             if (temOrigem) pstmt.setString(i++, origem.trim());
             if (temDataInicial) pstmt.setDate(i++, dataInicial);
             if (temDataFinal) pstmt.setDate(i++, dataFinal);
@@ -151,6 +151,24 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
         }
     }
 
+    public List<String> buscarOrigem() {
+        List<String> origens = new ArrayList<>();
+        String sql = "SELECT DISTINCT origem FROM problema ORDER BY origem;";
+
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                origens.add(rs.getString("origem"));
+            }
+            return origens;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // UPDATE
     @Override
     public int atualizar(Problema problema) {
@@ -161,9 +179,9 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
 
             pstmt.setString(1, problema.getTitulo());
             pstmt.setString(2, problema.getDescricao());
-            pstmt.setString(3, problema.getPeso().name());
+            pstmt.setObject(3, problema.getPeso().name(), Types.OTHER);
             pstmt.setString(4, problema.getSolucao());
-            pstmt.setString(5, problema.getStatus().name());
+            pstmt.setObject(5, problema.getStatus().name(), Types.OTHER);
             pstmt.setString(6, problema.getOrigem());
             pstmt.setDate(7, problema.getEncontrado_em());
             pstmt.setLong(8, problema.getId_ciclo());
@@ -246,17 +264,41 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
         problema.setEncontrado_em(rs.getDate("encontrado_em"));
         problema.setNome_ciclo(rs.getString("nome_ciclo"));
         problema.setNome_plano_acao(rs.getString("nome_plano_acao"));
-        problema.setNome_ciclo(rs.getString("nome_ciclo"));
+        problema.setNome_colaborador(rs.getString("nome_colaborador"));
+        problema.setId_ciclo(rs.getLong("id_ciclo"));
+        problema.setId_plano_acao(rs.getObject("id_plano_acao", Long.class));
+        problema.setId_colaborador(rs.getObject("id_colaborador", Long.class));
         return problema;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_problema",
             "titulo", "titulo",
             "peso", "peso",
             "status", "status",
             "origem", "origem",
-            "data", "encontrado_em",
+            "encontrado_em", "encontrado_em",
             "ciclo", "nome_ciclo",
-            "plano", "nome_plano_acao"
+            "plano_acao", "nome_plano_acao"
     );
+
+    public String buscarOrigemExistente(String origem) {
+        String sql = "SELECT origem FROM problema WHERE LOWER(origem) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, origem);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs. next()) {
+                    return rs.getString("origem");
+                }
+                return null;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -32,8 +32,8 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
             pstmt.setString(3, licoesAprendidas.getAprendizado());
             pstmt.setString(4, licoesAprendidas.getCategoria());
             pstmt.setString(5, licoesAprendidas.getDescricao());
-            pstmt.setString(6, licoesAprendidas.getFase_origem().name());
-            pstmt.setString(7, licoesAprendidas.getSeveridade().name());
+            pstmt.setObject(6, licoesAprendidas.getFase_origem().name(), Types.OTHER);
+            pstmt.setObject(7, licoesAprendidas.getSeveridade().name(), Types.OTHER);
             pstmt.setLong(8, licoesAprendidas.getId_ciclo());
 
             if (pstmt.executeUpdate() > 0) return 1;
@@ -128,8 +128,8 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
-            if (temFase) pstmt.setString(i++, fase.name());
-            if (temSeveridade) pstmt.setString(i++, severidade.name());
+            if (temFase) pstmt.setObject(i++, fase.name(), Types.OTHER);
+            if (temSeveridade) pstmt.setObject(i++, severidade.name(), Types.OTHER);
             if (temArea) pstmt.setString(i++, area.trim());
             if (temCategoria) pstmt.setString(i++, categoria.trim());
 
@@ -142,6 +142,42 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
+        }
+    }
+
+    public List<String> buscarArea() {
+        List<String> areas = new ArrayList<>();
+        String sql = "SELECT DISTINCT area FROM licoes_aprendidas ORDER BY area;";
+
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                areas.add(rs.getString("area"));
+            }
+            return areas;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<String> buscarCategoria() {
+        List<String> categorias = new ArrayList<>();
+        String sql = "SELECT DISTINCT categoria FROM licoes_aprendidas ORDER BY categoria;";
+
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                categorias.add(rs.getString("categoria"));
+            }
+            return categorias;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -158,8 +194,8 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
             pstmt.setString(3, licoesAprendidas.getAprendizado());
             pstmt.setString(4, licoesAprendidas.getCategoria());
             pstmt.setString(5, licoesAprendidas.getDescricao());
-            pstmt.setString(6, licoesAprendidas.getFase_origem().name());
-            pstmt.setString(7, licoesAprendidas.getSeveridade().name());
+            pstmt.setObject(6, licoesAprendidas.getFase_origem().name(), Types.OTHER);
+            pstmt.setObject(7, licoesAprendidas.getSeveridade().name(), Types.OTHER);
             pstmt.setLong(8, licoesAprendidas.getId_ciclo());
             pstmt.setLong(9, licoesAprendidas.getId_licao());
 
@@ -237,10 +273,12 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         licoesAprendidas.setFase_origem(EtapaCiclo.valueOf(rs.getString("fase_origem")));
         licoesAprendidas.setSeveridade(Intensidade.valueOf(rs.getString("severidade")));
         licoesAprendidas.setNome_ciclo(rs.getString("nome_ciclo"));
+        licoesAprendidas.setId_ciclo(rs.getLong("id_ciclo"));
         return licoesAprendidas;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_licao",
             "titulo", "titulo",
             "area", "area",
             "categoria", "categoria",
@@ -249,4 +287,43 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
             "ciclo", "nome_ciclo"
     );
 
+    public String buscarAreaExistente(String area) {
+        String sql = "SELECT area FROM licoes_aprendidas WHERE LOWER(area) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, area);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs. next()) {
+                    return rs.getString("area");
+                }
+                return null;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String buscarCategoriaExistente(String categoria) {
+        String sql = "SELECT categoria FROM licoes_aprendidas WHERE LOWER(categoria) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, categoria);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs. next()) {
+                    return rs.getString("categoria");
+                }
+                return null;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

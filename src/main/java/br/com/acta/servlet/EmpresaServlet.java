@@ -1,6 +1,5 @@
 package br.com.acta.servlet;
 
-
 import br.com.acta.dao.EmpresaDAO;
 import br.com.acta.model.Empresa;
 import br.com.acta.enums.Status;
@@ -20,13 +19,11 @@ import br.com.acta.utils.Validador;
 import java.io.IOException;
 import java.util.List;
 
-
 @WebServlet(name = "EmpresaServlet", value = "/empresa-servlet")
 public class EmpresaServlet extends HttpServlet {
     private static final String PAGINA_EMPRESA = "/empresa.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private static final EmpresaDAO DAO = new EmpresaDAO();
-
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -77,8 +74,16 @@ public class EmpresaServlet extends HttpServlet {
                     atualizar(req, resp);
                     break;
 
+                case "atualizarPorCnpj":
+                    atualizarPorCnpj(req, resp);
+                    break;
+
                 case "excluir":
                     excluir(req, resp);
+                    break;
+
+                case "excluirPorCnpj":
+                    excluirPorCnpj(req, resp);
                     break;
 
                 default:
@@ -152,6 +157,7 @@ public class EmpresaServlet extends HttpServlet {
 
         req.setAttribute("empresaList", List.of(empresa));
         req.setAttribute("setorList", DAO.buscarSetor());
+
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req,resp);
     }
 
@@ -175,6 +181,7 @@ public class EmpresaServlet extends HttpServlet {
         List<Empresa> empresas = DAO.buscaFiltrada(busca, setor, status, tamanho, ordem, direcao);
         req.setAttribute("empresaList", empresas);
         req.setAttribute("setorList", DAO.buscarSetor());
+
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req,resp);
     }
 
@@ -203,6 +210,31 @@ public class EmpresaServlet extends HttpServlet {
 
         if (resultado == 1) enviarPaginaCerta(req, resp);
         else enviarErro(req, resp, "A empresa não pode ser excluída");
+    }
+
+    private void atualizarPorCnpj(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        String cnpjAtual = Validador.cnpj(req.getParameter("cnpj-atual"));
+        Empresa empresa = new Empresa();
+
+        empresa.setNome(Validador.texto(req.getParameter("nome"), "Nome", 50));
+        empresa.setCnpj(Validador.cnpj(req.getParameter("cnpj")));
+        empresa.setStatus(Validador.opcao(Status.class, req.getParameter("status"), "Status"));
+        empresa.setTamanho(Validador.opcao(TamanhoEmpresa.class, req.getParameter("tamanho"), "Tamanho"));
+        empresa.setSetor(normalizarSetor(Validador.texto(req.getParameter("setor"), "Setor", 30)));
+
+        int resultado = DAO.atualizarPorCnpj(empresa, cnpjAtual);
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "A empresa não pode ser atualizada pelo CNPJ.");
+    }
+
+    private void excluirPorCnpj(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        String cnpj = Validador.cnpj(req.getParameter("cnpj-exclusao"));
+        int resultado = DAO.excluirPorCnpj(cnpj);
+
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "A empresa não pode ser excluída pelo CNPJ.");
     }
 
     //UTILITARIOS
@@ -260,12 +292,14 @@ public class EmpresaServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req, resp);
     }
 
-
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Empresa> empresas = DAO.buscar();
 
         req.setAttribute("empresaList", empresas);
         req.setAttribute("setorList", DAO.buscarSetor());
+
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req, resp);
     }
+
 }

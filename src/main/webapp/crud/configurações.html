@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
+        <link rel="stylesheet" href="../assets/css/crud.css">
+        <title>Área Restrita</title>
+    </head>
+    <body>
+        <div class="sistema">
+            <aside class="sidebar">
+                <div class="sidebar-logo">
+                    <img src="../assets/images/logo_oficial.svg" alt="ACTA">
+                </div>
+                <nav class="menu">
+                    <a href="empresas.html" class="menu-item">
+                        <img src="../assets/images/icone_empresas.svg" alt="">
+                        <span>Empresas</span>
+                    </a>
+                    <a href="endereco.html" class="menu-item">
+                        <img src="../assets/images/icone_endereco.svg" alt="">
+                        <span>Endereço</span>
+                    </a>
+                    <a href="colaborador.html" class="menu-item">
+                        <img src="../assets/images/icone_colaborador.svg" alt="">
+                        <span>Colaborador</span>
+                    </a>
+                    <a href="tarefa.html" class="menu-item">
+                        <img src="../assets/images/icone_tarefa.svg" alt="">
+                        <span>Tarefa</span>
+                    </a>
+                    <a href="plano.html" class="menu-item">
+                        <img src="../assets/images/icone_plano_de_acao.svg" alt="">
+                        <span>Plano de ação</span>
+                    </a>
+                    <a href="ciclos.html" class="menu-item">
+                        <img src="../assets/images/icone_ciclos.svg" alt="">
+                        <span>Ciclos</span>
+                    </a>
+                    <a href="licoes.html" class="menu-item">
+                        <img src="../assets/images/icone_licoes_aprendidas.svg" alt="">
+                        <span>Lições Aprendidas</span>
+                    </a>
+                    <a href="metas.html" class="menu-item">
+                        <img src="../assets/images/icone_metas.svg" alt="">
+                        <span>Metas</span>
+                    </a>
+                    <a href="problemas.html" class="menu-item">
+                        <img src="../assets/images/icone_problemas.svg" alt="">
+                        <span>Problemas</span>
+                    </a>
+                </nav>
+                <div class="perfil-barra">
+                    <a href="configuracoes.html" class="perfil-admin">
+                        <div class="perfil-foto">
+                            <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
+                        </div>
+                        <div class="perfil-info">
+                            <span class="perfil-nome">Nome Sobrenome</span>
+                            <span class="perfil-email">email@email.com</span>
+                        </div>
+                    </a>
+                    <a href="../login.html" target="_self" class="botao botao-sair">Sair</a>
+                </div>
+            </aside>
+
+            <main class="conteudo conteudo-config">
+                <section class="config">
+
+                    <!-- Chaves dos modos de edição (acionadas pelos <label for="..."> abaixo) -->
+                    <input type="checkbox" id="config-editar-perfil" class="config-toggle" aria-label="Editar perfil">
+                    <input type="checkbox" id="config-editar-contato" class="config-toggle" aria-label="Editar contato">
+
+                    <!-- Coluna da esquerda -->
+                    <div class="config-principal">
+                        <h1 class="config-titulo">Configurações</h1>
+
+                        <!-- Modo visualização -->
+                        <div class="config-leitura">
+                            <div class="config-foto">
+                                <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
+                                <label for="config-editar-perfil" class="config-camera" aria-label="Alterar foto">
+                                    <img src="../assets/images/icone_camera.svg" alt="">
+                                </label>
+                            </div>
+
+                            <div class="config-campo">
+                                <span class="config-rotulo">Nome</span>
+                                <p class="config-valor">Daniel de Freitas</p>
+                            </div>
+
+                            <div class="config-campo">
+                                <span class="config-rotulo">E-mail</span>
+                                <p class="config-valor"><a href="mailto:danielfrei@gmail.com">danielfrei@gmail.com</a></p>
+                            </div>
+
+                            <div class="config-campo">
+                                <span class="config-rotulo">Senha</span>
+                                <p class="config-valor">********</p>
+                            </div>
+
+                            <div class="config-botoes">
+                                <label for="config-editar-perfil" class="botao botao-principal botao-pilula">Editar</label>
+                            </div>
+                        </div>
+
+                        <!-- Modo edição -->
+                        <form class="config-edicao" id="form-perfil" method="post" action="#" enctype="multipart/form-data">
+                            <div class="config-foto">
+                                <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
+                                <label for="config-foto-arquivo" class="config-camera" aria-label="Alterar foto">
+                                    <img src="../assets/images/icone_camera.svg" alt="">
+                                </label>
+                                <input type="file" id="config-foto-arquivo" name="foto" accept="image/png, image/jpeg, image/webp" hidden>
+                            </div>
+
+                            <div class="config-campo">
+                                <label for="config-nome" class="config-rotulo">Nome</label>
+                                <input type="text" id="config-nome" name="nome" maxlength="50" value="Daniel de Freitas" autocomplete="name" required>
+                            </div>
+
+                            <div class="config-campo">
+                                <label for="config-email" class="config-rotulo">E-mail</label>
+                                <input type="email" id="config-email" name="email" maxlength="80" value="danielfrei@gmail.com" autocomplete="email" required>
+                            </div>
+
+                            <div class="config-campo">
+                                <label for="config-senha" class="config-rotulo">Senha</label>
+                                <!-- Em branco = manter a senha atual (o Servlet só gera novo hash se vier preenchida) -->
+                                <input type="password" id="config-senha" name="senha" maxlength="100" placeholder="********" autocomplete="new-password">
+                            </div>
+
+                            <div class="config-botoes">
+                                <button type="submit" class="botao botao-principal botao-pilula">Salvar</button>
+                                <label for="config-editar-perfil" class="botao botao-cancelar botao-pilula">Cancelar</label>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Cartão de contato (ocupa toda a direita) -->
+                    <aside class="config-contato">
+                        <form class="config-contato-form" id="form-contato" method="post" action="#">
+                            <div class="config-contato-topo">
+                                <h2>Contato</h2>
+
+                                <!-- Canetinha: entra no modo de edição do cartão -->
+                                <label for="config-editar-contato" class="config-contato-lapis" title="Editar contato">
+                                    <img src="../assets/images/icone_editar.svg" alt="Editar contato">
+                                </label>
+
+                                <!-- Aparecem só no modo de edição -->
+                                <div class="config-contato-botoes">
+                                    <button type="submit" class="botao botao-principal botao-pilula botao-pilula-sm">Salvar</button>
+                                    <label for="config-editar-contato" class="botao botao-cancelar botao-pilula botao-pilula-sm">Cancelar</label>
+                                </div>
+                            </div>
+
+                            <div class="config-contato-linha">
+                                <p class="contato-leitura">Rua Irineu José Bordon, 355</p>
+                                <input type="text" name="endereco" maxlength="100" value="Rua Irineu José Bordon, 355" aria-label="Endereço">
+                            </div>
+
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3658.541775564263!2d-46.73433032489266!3d-23.51300877883297!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cef8dcf138b295%3A0xd94d466ade5d39a9!2sR.%20Irineu%20Jos%C3%A9%20Bordon%2C%20335%20-%20Vila%20Jaguara%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2005120-060!5e0!3m2!1spt-BR!2sbr!4v1793186571714!5m2!1spt-BR!2sbr" title="Mapa: Rua Irineu José Bordon, 355" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+
+                            <div class="config-contato-grupo">
+                                <div class="config-contato-linha">
+                                    <p class="contato-leitura">(11) 86934-5699</p>
+                                    <input type="tel" name="telefone" maxlength="20" value="(11) 86934-5699" aria-label="Telefone">
+                                </div>
+                                <div class="config-contato-linha">
+                                    <p class="contato-leitura"><a href="mailto:acta.institutojef@gmail.com">acta.institutojef@gmail.com</a></p>
+                                    <input type="email" name="email" maxlength="80" value="acta.institutojef@gmail.com" aria-label="E-mail de contato">
+                                </div>
+                            </div>
+                        </form>
+                    </aside>
+
+                </section>
+            </main>
+        </div>
+    </body>
+</html>

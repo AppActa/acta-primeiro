@@ -30,7 +30,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setString(1, colaborador.getNome());
             pstmt.setString(2, colaborador.getSobrenome());
             pstmt.setBoolean(3, colaborador.getPermissao_gestor());
-            pstmt.setString(4, colaborador.getStatus().name());
+            pstmt.setObject(4, colaborador.getStatus().name(), Types.OTHER);
             pstmt.setString(5, colaborador.getArea());
             pstmt.setString(6, colaborador.getCargo());
             pstmt.setDate(7, colaborador.getDt_contratacao());
@@ -99,13 +99,14 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
-    public List<Colaborador> buscaFiltrada(String busca, Status status, String area, Boolean permissaoGestor, Date dataInicial, Date dataFinal, String ordem, String direcao) {
+    public List<Colaborador> buscaFiltrada(String busca, Status status, String area, String cargo, Boolean permissaoGestor, Date dataInicial, Date dataFinal, String ordem, String direcao) {
         List<Colaborador> colaboradores = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_colaborador WHERE 1=1");
 
         boolean temBusca = busca != null && !busca.isBlank();
         boolean temStatus = status != null;
         boolean temArea = area != null && !area.isBlank();
+        boolean temCargo = cargo != null && !cargo.isBlank();
         boolean temGestor = permissaoGestor != null;
         boolean temDataInicial = dataInicial != null;
         boolean temDataFinal = dataFinal != null;
@@ -113,9 +114,10 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
-        if (temBusca) sql.append(" AND (nome ILIKE ? OR sobrenome ILIKE ? OR CONCAT_WS(' ', nome, sobrenome) OR email ILIKE ?)");
+        if (temBusca) sql.append(" AND (nome ILIKE ? OR sobrenome ILIKE ? OR CONCAT_WS(' ', nome, sobrenome) ILIKE ? OR email ILIKE ? OR nome_empresa ILIKE ? OR cpf ILIKE ? OR telefone ILIKE ?)");
         if (temStatus) sql.append(" AND status = ?");
         if (temArea) sql.append(" AND area = ?");
+        if (temCargo) sql.append(" AND cargo = ?");
         if (temGestor) sql.append(" AND permissao_gestor = ?");
         if (temDataInicial) sql.append(" AND dt_contratacao >= ?");
         if (temDataFinal) sql.append(" AND dt_contratacao <= ?");
@@ -134,9 +136,13 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
             }
-            if (temStatus) pstmt.setString(i++, status.name());
+            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
             if (temArea) pstmt.setString(i++, area);
+            if (temCargo) pstmt.setString(i++, cargo);
             if (temGestor) pstmt.setBoolean(i++, permissaoGestor);
             if (temDataInicial) pstmt.setDate(i++, dataInicial);
             if (temDataFinal) pstmt.setDate(i++, dataFinal);
@@ -170,6 +176,24 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
+    public List<String> buscarCargos() {
+        List<String> cargos = new ArrayList<>();
+        String sql = "SELECT DISTINCT cargo FROM colaborador ORDER BY cargo;";
+
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                cargos.add(rs.getString("cargo"));
+            }
+            return cargos;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // UPDATE
     @Override
     public int atualizar(Colaborador colaborador) {
@@ -181,7 +205,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setString(1, colaborador.getNome());
             pstmt.setString(2, colaborador.getSobrenome());
             pstmt.setBoolean(3, colaborador.getPermissao_gestor());
-            pstmt.setString(4, colaborador.getStatus().name());
+            pstmt.setObject(4, colaborador.getStatus().name(), Types.OTHER);
             pstmt.setString(5, colaborador.getArea());
             pstmt.setString(6, colaborador.getCargo());
             pstmt.setDate(7, colaborador.getDt_contratacao());
@@ -220,6 +244,53 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
+    /**
+     * Atualiza os dados de um colaborador localizando o registro pelo CPF atual.
+     * O parâmetro cpfAtual identifica o registro antes da alteração; o CPF novo
+     * vem de colaborador.getCpf().
+     */
+    public int atualizarPorCpf(Colaborador colaborador, String cpfAtual) {
+        String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, status = ?, area = ?, cargo = ?, dt_contratacao = ?, email = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE cpf = ?;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, colaborador.getNome());
+            pstmt.setString(2, colaborador.getSobrenome());
+            pstmt.setBoolean(3, colaborador.getPermissao_gestor());
+            pstmt.setObject(4, colaborador.getStatus().name(), Types.OTHER);
+            pstmt.setString(5, colaborador.getArea());
+            pstmt.setString(6, colaborador.getCargo());
+            pstmt.setDate(7, colaborador.getDt_contratacao());
+            pstmt.setString(8, colaborador.getEmail());
+            pstmt.setString(9, colaborador.getTelefone());
+            pstmt.setString(10, colaborador.getCpf());
+            pstmt.setLong(11, colaborador.getId_empresa());
+            pstmt.setString(12, cpfAtual);
+
+            if (pstmt.executeUpdate() > 0) return 1;
+            throw new RegistroNaoEncontradoException(
+                    "Colaborador não encontrado para atualização pelo CPF informado."
+            );
+
+        } catch (SQLException e) {
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException(
+                        "Já existe um colaborador com esse e-mail ou CPF.", e
+                );
+            }
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Referência inválida na atualização do colaborador.", e
+                );
+            }
+            throw new DaoException("Erro ao atualizar colaborador pelo CPF.", e);
+
+        } catch (ClassNotFoundException e) {
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
+        }
+    }
+
     // DELETE
     @Override
     public int excluir(Long id) {
@@ -251,12 +322,41 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
-    // PASSWORD
-    public Colaborador autenticar(String email, String senha) {
-        String sql = "SELECT * FROM vw_colaborador WHERE email = ?";
+    /** Exclui um colaborador usando o e-mail único como identificador. */
+    public int excluirPorEmail(String email) {
+        String sql = "DELETE FROM colaborador WHERE email = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, email);
+
+            if (pstmt.executeUpdate() > 0) return 1;
+            throw new RegistroNaoEncontradoException(
+                    "Colaborador não encontrado para exclusão pelo e-mail informado."
+            );
+
+        } catch (SQLException e) {
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Não é possível excluir o colaborador porque existem registros vinculados.", e
+                );
+            }
+            throw new DaoException("Erro ao excluir colaborador pelo e-mail.", e);
+
+        } catch (ClassNotFoundException e) {
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
+        }
+    }
+
+    // PASSWORD
+    public Colaborador autenticar(String email, String senha) {
+        String sql = "SELECT * FROM vw_colaborador WHERE email = ?;";
+        String sqlSenha = "SELECT senha FROM colaborador WHERE email = ?;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             PreparedStatement pstmtSenha = conn.prepareStatement(sqlSenha)) {
 
             pstmt.setString(1, email);
 
@@ -264,8 +364,16 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 if (rs.next()) {
                     Colaborador colaborador = mapearColaborador(rs);
 
-                    if (PasswordUtils.verificarSenha(senha, colaborador.getSenha())) {
-                        return colaborador;
+                    pstmtSenha.setString(1, email);
+
+                    try (ResultSet rsSenha = pstmtSenha.executeQuery()) {
+                        if (rsSenha.next()) {
+                            String senhaBanco = rsSenha.getString("senha");
+
+                            if (PasswordUtils.verificarSenha(senha, senhaBanco)) {
+                                return colaborador;
+                            }
+                        }
                     }
                 }
                 return null;
@@ -349,23 +457,24 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         colaborador.setCargo(rs.getString("cargo"));
         colaborador.setDt_contratacao(rs.getDate("dt_contratacao"));
         colaborador.setEmail(rs.getString("email"));
-        colaborador.setSenha(rs.getString("senha"));
         colaborador.setTelefone(rs.getString("telefone"));
         colaborador.setCpf(rs.getString("cpf"));
         colaborador.setNome_empresa(rs.getString("nome_empresa"));
+        colaborador.setId_empresa(rs.getLong("id_empresa"));
         return colaborador;
     }
 
     // Whitelist de ordenação
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_colaborador",
             "nome", "nome",
             "sobrenome", "sobrenome",
             "email", "email",
             "area", "area",
             "cargo", "cargo",
             "status", "status",
-            "gestor", "permissao_gestor",
-            "data", "dt_contratacao",
+            "permissao", "permissao_gestor",
+            "contratacao", "dt_contratacao",
             "empresa", "nome_empresa"
     );
 
@@ -387,6 +496,26 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
+        }
+    }
+
+    public String buscarCargoExistente(String cargo) {
+        String sql = "SELECT cargo FROM colaborador WHERE LOWER(cargo) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, cargo);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("cargo");
+                }
+                return null;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
