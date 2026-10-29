@@ -307,7 +307,8 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         empresa.setSetor(rs.getString("setor"));
         empresa.setCnpj(rs.getString("cnpj"));
         empresa.setStatus(Status.valueOf(rs.getString("status")));
-        empresa.setTamanho(TamanhoEmpresa.valueOf(rs.getString("tamanho")));
+        String tamanho = rs.getString("tamanho");
+        empresa.setTamanho(tamanho == null ? null : TamanhoEmpresa.valueOf(tamanho));
         return empresa;
     }
 
