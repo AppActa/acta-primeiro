@@ -126,6 +126,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
+            if (temSetor) pstmt.setString(i++, setor);
             if (temStatus) pstmt.setString(i++, status.name());
             if (temTamanho) pstmt.setString(i++, tamanho.name());
 
