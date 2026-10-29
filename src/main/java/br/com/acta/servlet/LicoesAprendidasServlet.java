@@ -1,5 +1,7 @@
 package br.com.acta.servlet;
 
+import br.com.acta.dao.CicloDAO;
+
 import br.com.acta.dao.LicoesAprendidasDAO;
 import br.com.acta.model.LicoesAprendidas;
 import br.com.acta.enums.EtapaCiclo;
@@ -137,6 +139,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         req.setAttribute("licoesAprendidasList", List.of(licoesAprendidas));
         req.setAttribute("areaList", DAO.buscarArea());
         req.setAttribute("categoriaList", DAO.buscarCategoria());
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
@@ -160,6 +163,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         req.setAttribute("licoesAprendidasList", licoesAprendidas);
         req.setAttribute("areaList", DAO.buscarArea());
         req.setAttribute("categoriaList", DAO.buscarCategoria());
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
@@ -249,19 +253,28 @@ public class LicoesAprendidasServlet extends HttpServlet {
             List<LicoesAprendidas> licoesAprendidas = DAO.buscar();
 
             req.setAttribute("licoesAprendidasList", licoesAprendidas);
+            req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+            req.setAttribute("areaList", DAO.buscarArea());
+            req.setAttribute("categoriaList", DAO.buscarCategoria());
         } catch (RuntimeException ex) {
             ex.printStackTrace();
             req.setAttribute("licoesAprendidasList", List.of());
+            req.setAttribute("cicloOpcoes", List.of());
+            req.setAttribute("areaList", List.of());
+            req.setAttribute("categoriaList", List.of());
         }
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<LicoesAprendidas> licoesAprendidas = DAO.buscar();
 
         req.setAttribute("licoesAprendidasList", licoesAprendidas);
         req.setAttribute("areaList", DAO.buscarArea());
         req.setAttribute("categoriaList", DAO.buscarCategoria());
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
+
 }
