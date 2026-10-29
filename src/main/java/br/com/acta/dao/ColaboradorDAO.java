@@ -139,6 +139,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
+                pstmt.setString(i++, termo);
             }
             if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
             if (temArea) pstmt.setString(i++, area);
@@ -244,6 +245,53 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
+    /**
+     * Atualiza os dados de um colaborador localizando o registro pelo CPF atual.
+     * O parâmetro cpfAtual identifica o registro antes da alteração; o CPF novo
+     * vem de colaborador.getCpf().
+     */
+    public int atualizarPorCpf(Colaborador colaborador, String cpfAtual) {
+        String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, status = ?, area = ?, cargo = ?, dt_contratacao = ?, email = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE cpf = ?;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, colaborador.getNome());
+            pstmt.setString(2, colaborador.getSobrenome());
+            pstmt.setBoolean(3, colaborador.getPermissao_gestor());
+            pstmt.setObject(4, colaborador.getStatus().name(), Types.OTHER);
+            pstmt.setString(5, colaborador.getArea());
+            pstmt.setString(6, colaborador.getCargo());
+            pstmt.setDate(7, colaborador.getDt_contratacao());
+            pstmt.setString(8, colaborador.getEmail());
+            pstmt.setString(9, colaborador.getTelefone());
+            pstmt.setString(10, colaborador.getCpf());
+            pstmt.setLong(11, colaborador.getId_empresa());
+            pstmt.setString(12, cpfAtual);
+
+            if (pstmt.executeUpdate() > 0) return 1;
+            throw new RegistroNaoEncontradoException(
+                    "Colaborador não encontrado para atualização pelo CPF informado."
+            );
+
+        } catch (SQLException e) {
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException(
+                        "Já existe um colaborador com esse e-mail ou CPF.", e
+                );
+            }
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Referência inválida na atualização do colaborador.", e
+                );
+            }
+            throw new DaoException("Erro ao atualizar colaborador pelo CPF.", e);
+
+        } catch (ClassNotFoundException e) {
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
+        }
+    }
+
     // DELETE
     @Override
     public int excluir(Long id) {
@@ -272,6 +320,33 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             throw new DaoException(
                     "Erro ao conectar no banco de dados.", e
             );
+        }
+    }
+
+    /** Exclui um colaborador usando o e-mail único como identificador. */
+    public int excluirPorEmail(String email) {
+        String sql = "DELETE FROM colaborador WHERE email = ?;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, email);
+
+            if (pstmt.executeUpdate() > 0) return 1;
+            throw new RegistroNaoEncontradoException(
+                    "Colaborador não encontrado para exclusão pelo e-mail informado."
+            );
+
+        } catch (SQLException e) {
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Não é possível excluir o colaborador porque existem registros vinculados.", e
+                );
+            }
+            throw new DaoException("Erro ao excluir colaborador pelo e-mail.", e);
+
+        } catch (ClassNotFoundException e) {
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
