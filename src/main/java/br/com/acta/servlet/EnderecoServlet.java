@@ -1,5 +1,7 @@
 package br.com.acta.servlet;
 
+import br.com.acta.dao.EmpresaDAO;
+
 import br.com.acta.dao.EnderecoDAO;
 import br.com.acta.model.Endereco;
 import br.com.acta.excecoes.DaoException;
@@ -134,6 +136,7 @@ public class EnderecoServlet extends HttpServlet {
 
         req.setAttribute("enderecoList", List.of(endereco));
         req.setAttribute("cidadeList", DAO.buscarCidade());
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
 
@@ -148,6 +151,7 @@ public class EnderecoServlet extends HttpServlet {
 
         req.setAttribute("enderecoList", lista);
         req.setAttribute("cidadeList", DAO.buscarCidade());
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
 
@@ -228,19 +232,26 @@ public class EnderecoServlet extends HttpServlet {
             List<Endereco> lista = DAO.buscar();
 
             req.setAttribute("enderecoList", lista);
+            req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
+            req.setAttribute("cidadeList", DAO.buscarCidade());
         } catch (RuntimeException ex) {
             ex.printStackTrace();
             req.setAttribute("enderecoList", List.of());
+            req.setAttribute("empresaOpcoes", List.of());
+            req.setAttribute("cidadeList", List.of());
         }
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Endereco> lista = DAO.buscar();
 
         req.setAttribute("enderecoList", lista);
         req.setAttribute("cidadeList", DAO.buscarCidade());
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
         req.getRequestDispatcher(PAGINA_ENDERECO).forward(req, resp);
     }
+
 
 }
