@@ -27,7 +27,7 @@ import java.util.List;
 
 @WebServlet(name = "CicloServlet", value = "/ciclo-servlet")
 public class CicloServlet extends HttpServlet {
-    private static final String PAGINA_CICLO = "/ciclo.jsp";
+    private static final String PAGINA_CICLO = "/crud/ciclo.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final CicloDAO cicloDAO = new CicloDAO();
 

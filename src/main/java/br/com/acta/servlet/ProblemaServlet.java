@@ -28,7 +28,7 @@ import java.util.List;
 
 @WebServlet(name = "ProblemaServlet", value = "/problema-servlet")
 public class ProblemaServlet extends HttpServlet {
-    private static final String PAGINA_PROBLEMA = "/problema.jsp";
+    private static final String PAGINA_PROBLEMA = "/crud/problema.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final ProblemaDAO DAO = new ProblemaDAO();
     private final CicloDAO CICLO_DAO = new CicloDAO();

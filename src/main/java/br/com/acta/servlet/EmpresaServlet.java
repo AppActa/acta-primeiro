@@ -21,7 +21,7 @@ import java.util.List;
 
 @WebServlet(name = "EmpresaServlet", value = "/empresa-servlet")
 public class EmpresaServlet extends HttpServlet {
-    private static final String PAGINA_EMPRESA = "/empresa.jsp";
+    private static final String PAGINA_EMPRESA = "/crud/empresa.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private static final EmpresaDAO DAO = new EmpresaDAO();
 
