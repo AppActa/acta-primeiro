@@ -24,7 +24,7 @@ import java.util.List;
 
 @WebServlet(name = "ColaboradorServlet", value = "/colaborador-servlet")
 public class ColaboradorServlet extends HttpServlet {
-    private static final String PAGINA_COLABORADORES = "/colaborador.jsp";
+    private static final String PAGINA_COLABORADORES = "/crud/colaborador.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final ColaboradorDAO DAO = new ColaboradorDAO();
 
