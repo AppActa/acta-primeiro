@@ -3,8 +3,6 @@ package br.com.acta.model;
 import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
 
-import java.sql.Date;
-
 public class PlanoAcao {
 
     //Atributos

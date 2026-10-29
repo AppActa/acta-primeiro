@@ -1,5 +1,9 @@
 package br.com.acta.servlet;
 
+import br.com.acta.dao.PlanoAcaoDAO;
+
+import br.com.acta.dao.ColaboradorDAO;
+
 import br.com.acta.dao.TarefaDAO;
 import br.com.acta.model.Tarefa;
 import br.com.acta.enums.Intensidade;
@@ -66,20 +70,16 @@ public class TarefaServlet extends HttpServlet {
                         HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-
             switch (acao) {
                 case "inserir":
                     inserir(req, resp);
                     break;
-
                 case "atualizar":
                     atualizar(req, resp);
                     break;
-
                 case "excluir":
                     excluir(req, resp);
                     break;
-
                 default:
                     enviarErro(req, resp, "Ação não existente.",
                             HttpServletResponse.SC_BAD_REQUEST);
@@ -128,6 +128,7 @@ public class TarefaServlet extends HttpServlet {
         tarefa.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
         tarefa.setDt_inicio(Validador.data(req.getParameter("dt_inicio"), "Data de início"));
         tarefa.setId_colaborador(Validador.id(req.getParameter("id_colaborador"), "Colaborador"));
+        tarefa.setId_plano_acao(Validador.id(req.getParameter("id_plano_acao"), "Plano de ação"));
 
         Validador.periodo(tarefa.getDt_inicio(), tarefa.getDt_entrega(), "A data de entrega");
         int resultado = DAO.inserir(tarefa);
@@ -150,6 +151,8 @@ public class TarefaServlet extends HttpServlet {
         }
 
         req.setAttribute("tarefaList", List.of(tarefa));
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
+        req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
         req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
 
@@ -177,6 +180,8 @@ public class TarefaServlet extends HttpServlet {
         List<Tarefa> tarefas = DAO.buscaFiltrada(busca, prioridade, status, dataInicial, dataFinal, ordem, direcao);
 
         req.setAttribute("tarefaList", tarefas);
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
+        req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
         req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
 
@@ -192,6 +197,7 @@ public class TarefaServlet extends HttpServlet {
         tarefa.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
         tarefa.setDt_inicio(Validador.data(req.getParameter("dt_inicio"), "Data de início"));
         tarefa.setId_colaborador(Validador.id(req.getParameter("id_colaborador"), "Colaborador"));
+        tarefa.setId_plano_acao(Validador.id(req.getParameter("id_plano_acao"), "Plano de ação"));
 
         Validador.periodo(tarefa.getDt_inicio(), tarefa.getDt_entrega(), "A data de entrega");
         int resultado = DAO.atualizar(tarefa);
@@ -250,18 +256,24 @@ public class TarefaServlet extends HttpServlet {
             List<Tarefa> tarefas = DAO.buscar();
 
             req.setAttribute("tarefaList", tarefas);
+            req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
+            req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
         } catch (RuntimeException ex) {
             ex.printStackTrace();
             req.setAttribute("tarefaList", List.of());
+            req.setAttribute("colaboradorOpcoes", List.of());
+            req.setAttribute("planoAcaoOpcoes", List.of());
         }
         req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
 
-
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Tarefa> tarefas = DAO.buscar();
 
         req.setAttribute("tarefaList", tarefas);
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
+        req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
         req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
 }

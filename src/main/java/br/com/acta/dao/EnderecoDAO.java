@@ -139,6 +139,24 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         }
     }
 
+    public List<String> buscarCidade() {
+        List<String> cidades = new ArrayList<>();
+        String sql = "SELECT DISTINCT cidade FROM endereco ORDER BY cidade;";
+
+        try (Connection conn = Conexao.conectar();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                cidades.add(rs.getString("cidade"));
+            }
+            return cidades;
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // UPDATE
     @Override
     public int atualizar(Endereco endereco) {
@@ -233,10 +251,12 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         endereco.setComplemento(rs.getString("complemento"));
         endereco.setUnidade(rs.getString("unidade"));
         endereco.setNome_empresa(rs.getString("nome_empresa"));
+        endereco.setId_empresa(rs.getLong("id_empresa"));
         return endereco;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_endereco",
             "rua", "rua",
             "bairro", "bairro",
             "cidade", "cidade",
@@ -245,4 +265,23 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
             "empresa", "nome_empresa"
     );
 
+    public String buscarCidadeExistente(String cidade) {
+        String sql = "SELECT cidade FROM endereco WHERE LOWER(cidade) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, cidade);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs. next()) {
+                    return rs.getString("cidade");
+                }
+                return null;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

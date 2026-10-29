@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+<!-- Estrutura HTML alinhada ao backend. Dados, mensagens e IDs serão preenchidos na futura conversão para JSP. -->
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
         <link rel="stylesheet" href="../assets/css/crud.css">
-        <title>Área Restrita</title>
+        <title>ACTA — Plano de Ação</title>
+        <script src="../assets/js/crud.js" defer></script>
     </head>
-    <body>
+    <body class="crud-admin">
         <div class="sistema">
             <aside class="sidebar">
                 <div class="sidebar-logo">
@@ -52,7 +54,7 @@
                     </a>
                 </nav>
                 <div class="perfil-barra">
-                    <a href="#perfil-administrador" class="perfil-admin">
+                    <a href="configurações.html" class="perfil-admin">
                         <div class="perfil-foto">
                             <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
                         </div>
@@ -69,12 +71,51 @@
                 <!-- Página Plano de Ação -->
                 <section id="plano" class="pagina">
                     <h1>Plano de Ação</h1>
+                    <!-- Mensagens serão preenchidas pelo Servlet na futura JSP. -->
+                    <p id="mensagem-erro" role="alert" hidden></p>
+                    <p id="mensagem-sucesso" role="status" hidden></p>
                     <div class="barra-acoes">
                         <div class="pesquisa">
-                            <input type="text" placeholder="Pesquisar por plano de ação">
+                            <input type="search" name="busca" id="pesquisa-plano" form="filtros-plano-form" placeholder="Pesquisar" aria-label="Pesquisar registros">
                         </div>
                         <div class="filtro-container">
-                            <a href="#filtros-plano" class="botao botao-filtro">Filtros</a>
+                            <button type="button" class="botao botao-filtro" data-abrir-filtros aria-controls="filtros-plano" aria-expanded="false">Filtros</button>
+                            <section id="filtros-plano" class="filtros-painel" aria-label="Filtros" hidden>
+                                <div class="filtros-corpo">
+                                    <div class="modal modal-ver modal-filtros">
+                                        <div class="modal-topo">
+                                            <h2>Filtros</h2>
+                                                <button type="button" class="modal-fechar" data-fechar-filtros aria-label="Fechar filtros">&times;</button>
+                                        </div>
+                                        <form class="formulario" id="filtros-plano-form" method="get" action="../planoAcao-servlet">
+                                            <div class="campo">
+                                                <label for="filtros-plano-status">Status</label>
+                                                <select id="filtros-plano-status" name="status">
+                                                    <option value="">Todos</option>
+                                                    <option value="NAO_INICIADO">Não iniciado</option>
+                                                    <option value="INICIADO">Iniciado</option>
+                                                    <option value="FINALIZADO">Finalizado</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-plano-prioridade">Prioridade</label>
+                                                <select id="filtros-plano-prioridade" name="prioridade">
+                                                    <option value="">Todos</option>
+                                                    <option value="ALTO">Alto</option>
+                                                    <option value="MEDIO">Médio</option>
+                                                    <option value="BAIXO">Baixo</option>
+                                                </select>
+                                            </div>
+                                            <input type="hidden" name="ordem" value="">
+                                            <input type="hidden" name="direcao" value="ASC">
+                                            <div class="botoes-modal">
+                                                <a href="plano.html#plano" class="botao botao-cancelar">Limpar filtros</a>
+                                                <button type="submit" class="botao botao-principal">Aplicar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                         <a href="#cadastrar-plano-de-ação" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -82,102 +123,27 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Plano</th>
-                                    <th>Ciclo</th>
-                                    <th>Criador</th>
-                                    <th>Prioridade</th>
-                                    <th>Status</th>
-                                    <th>Prazo</th>
-                                    <th class="coluna-acao">Ver</th>
-                                    <th class="coluna-acao">Editar</th>
-                                    <th class="coluna-acao">Excluir</th>
+                                    <!-- Na integração JSP, incluir a chave id na whitelist de ordenação do DAO. -->
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="id" aria-label="Ordenar por ID">#<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="nome" aria-label="Ordenar por Nome">Nome<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="ciclo" aria-label="Ordenar por Ciclo">Ciclo<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="criador" aria-label="Ordenar por Criador">Criador<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="prioridade" aria-label="Ordenar por Prioridade">Prioridade<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="status" aria-label="Ordenar por Status">Status<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-acao">Ver</th>
+                                    <th scope="col" class="coluna-acao">Editar</th>
+                                    <th scope="col" class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Nome do plano</td>
-                                    <td>Ciclo 1</td>
-                                    <td>Responsável</td>
-                                    <td>Médio</td>
-                                    <td>Em andamento</td>
-                                    <td>00/00/0000</td>
-                                    <td class="coluna-acao">
-                                        <a href="#ver-plano-de-ação" class="icone-acao">
-                                            <img src="../assets/images/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#editar-plano-de-ação" class="icone-acao">
-                                            <img src="../assets/images/icone_editar.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#excluir-plano-de-ação" class="icone-acao">
-                                            <img src="../assets/images/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
-                                </tr>
+                                <!-- Na conversão futura, percorrer request.getAttribute("planoAcaoList"); exibir o ID na coluna # e utilizá-lo nas ações. -->
+                                <tr><td colspan="9">Nenhum registro carregado.</td></tr>
+
+                                <!-- Modelo inerte: preencher com dados reais e vincular o ID às ações na futura JSP. -->
+                                <template id="modelo-linha-plano"><tr><td data-campo="id_plano_acao"></td><td data-campo="nome"></td><td data-campo="nome_ciclo"></td><td data-campo="nome_criador"></td><td data-campo="prioridade"></td><td data-campo="status"></td><td class="coluna-acao"><a href="#ver-plano-de-ação" class="icone-acao" aria-label="Ver"><img src="../assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-plano-de-ação" class="icone-acao" aria-label="Editar"><img src="../assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-plano-de-ação" class="icone-acao" aria-label="Excluir"><img src="../assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr></template>
                             </tbody>
                         </table>
                     </div>
-
-                    <section id="filtros-plano" class="pagina modal-pagina">
-                        <div class="modal-fundo">
-                            <div class="modal modal-ver modal-filtros">
-                                <div class="modal-topo">
-                                    <h2>Filtros</h2>
-                                    <a href="#plano" class="modal-fechar" aria-label="Fechar">&times;</a>
-                                </div>
-                                <form class="formulario" method="get" action="#plano">
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
-                                        <div class="grupo-checkbox">
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="nome">
-                                                Plano
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="ciclo">
-                                                Ciclo
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="criador">
-                                                Criador
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="prioridade">
-                                                Prioridade
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="status">
-                                                Status
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="prazo">
-                                                Prazo
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordem</span>
-                                        <div class="grupo-radio">
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="asc" checked>
-                                                Crescente (A → Z)
-                                            </label>
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="desc">
-                                                Decrescente (Z → A)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="botoes-modal">
-                                        <button type="submit" class="botao botao-principal">Aplicar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
 
                     <section id="ver-plano-de-ação" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -187,58 +153,12 @@
                                     <a href="#plano" class="modal-fechar" aria-label="Fechar">&times;</a>
                                 </div>
                                 <div class="detalhes">
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Nome</span>
-                                        <span class="detalhe-valor">Nome do plano</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Ciclo</span>
-                                        <span class="detalhe-valor">Ciclo 1</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Criador</span>
-                                        <span class="detalhe-valor">Responsável</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Status</span>
-                                        <span class="detalhe-valor">Iniciado</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Prioridade</span>
-                                        <span class="detalhe-valor">Médio</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Prazo (When)</span>
-                                        <span class="detalhe-valor">00/00/0000</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Descrição</span>
-                                        <span class="detalhe-valor">Descrição do plano</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">What (O quê)</span>
-                                        <span class="detalhe-valor">O que será feito</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Why (Por quê)</span>
-                                        <span class="detalhe-valor">Por que será feito</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Where (Onde)</span>
-                                        <span class="detalhe-valor">Onde será feito</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Who (Quem)</span>
-                                        <span class="detalhe-valor">Responsável</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">How much (Quanto custa)</span>
-                                        <span class="detalhe-valor">R$ 0,00</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">How (Como)</span>
-                                        <span class="detalhe-valor">Como será feito</span>
-                                    </div>
+                                    <div class="detalhe"><span class="detalhe-label">Nome</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Ciclo</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Criador</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Prioridade</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Status</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe detalhe-largo"><span class="detalhe-label">Descrição</span><span class="detalhe-valor">—</span></div>
                                 </div>
                             </div>
                         </div>
@@ -248,7 +168,8 @@
                         <div class="modal-fundo">
                             <div class="modal modal-larga">
                                 <h2>Cadastrar plano de ação</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../planoAcao-servlet">
+                                    <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-plano-de-ação-nome">Nome</label>
                                         <input type="text" id="cad-plano-de-ação-nome" name="nome" maxlength="100" placeholder="Digite nome" required>
@@ -256,12 +177,13 @@
                                     <div class="campo">
                                         <label for="cad-plano-de-ação-id_ciclo">Ciclo</label>
                                         <select id="cad-plano-de-ação-id_ciclo" name="id_ciclo" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="cad-plano-de-ação-descricao">Descrição</label>
-                                        <textarea id="cad-plano-de-ação-descricao" name="descricao" rows="3"></textarea>
+                                        <textarea id="cad-plano-de-ação-descricao" name="descricao" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-plano-de-ação-status">Status</label>
@@ -282,40 +204,11 @@
                                     <div class="campo">
                                         <label for="cad-plano-de-ação-id_criador">Criador</label>
                                         <select id="cad-plano-de-ação-id_criador" name="id_criador" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
-                                    <h3 class="grupo-titulo">5W2H</h3>
-                                    <div class="campo campo-largo">
-                                        <label for="cad-plano-de-ação-what">What (O quê)</label>
-                                        <textarea id="cad-plano-de-ação-what" name="what" rows="3" required></textarea>
-                                    </div>
-                                    <div class="campo campo-largo">
-                                        <label for="cad-plano-de-ação-why">Why (Por quê)</label>
-                                        <textarea id="cad-plano-de-ação-why" name="why" rows="3"></textarea>
-                                    </div>
-                                    <div class="campo campo-largo">
-                                        <label for="cad-plano-de-ação-where">Where (Onde)</label>
-                                        <textarea id="cad-plano-de-ação-where" name="where" rows="3"></textarea>
-                                    </div>
-                                    <div class="campo">
-                                        <label for="cad-plano-de-ação-when">When (Quando)</label>
-                                        <input type="date" id="cad-plano-de-ação-when" name="when">
-                                    </div>
-                                    <div class="campo">
-                                        <label for="cad-plano-de-ação-who">Who (Quem)</label>
-                                        <select id="cad-plano-de-ação-who" name="who" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
-                                        </select>
-                                    </div>
-                                    <div class="campo">
-                                        <label for="cad-plano-de-ação-how_much">How much (Quanto custa)</label>
-                                        <input type="number" id="cad-plano-de-ação-how_much" name="how_much" step="0.01" min="0" placeholder="0,00">
-                                    </div>
-                                    <div class="campo campo-largo">
-                                        <label for="cad-plano-de-ação-how">How (Como)</label>
-                                        <textarea id="cad-plano-de-ação-how" name="how" rows="3"></textarea>
-                                    </div>
+
                                     <div class="botoes-modal">
                                         <a href="#plano" class="botao botao-cancelar">Cancelar</a>
                                         <button type="submit" class="botao botao-principal">Cadastrar</button>
@@ -329,7 +222,10 @@
                         <div class="modal-fundo">
                             <div class="modal modal-larga">
                                 <h2>Editar plano de ação</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../planoAcao-servlet">
+                                    <input type="hidden" name="acao" value="atualizar">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-planoAcao" value="">
                                     <div class="campo">
                                         <label for="edi-plano-de-ação-nome">Nome</label>
                                         <input type="text" id="edi-plano-de-ação-nome" name="nome" maxlength="100" placeholder="Digite nome" required>
@@ -337,12 +233,13 @@
                                     <div class="campo">
                                         <label for="edi-plano-de-ação-id_ciclo">Ciclo</label>
                                         <select id="edi-plano-de-ação-id_ciclo" name="id_ciclo" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="edi-plano-de-ação-descricao">Descrição</label>
-                                        <textarea id="edi-plano-de-ação-descricao" name="descricao" rows="3"></textarea>
+                                        <textarea id="edi-plano-de-ação-descricao" name="descricao" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-plano-de-ação-status">Status</label>
@@ -363,40 +260,11 @@
                                     <div class="campo">
                                         <label for="edi-plano-de-ação-id_criador">Criador</label>
                                         <select id="edi-plano-de-ação-id_criador" name="id_criador" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
-                                    <h3 class="grupo-titulo">5W2H</h3>
-                                    <div class="campo campo-largo">
-                                        <label for="edi-plano-de-ação-what">What (O quê)</label>
-                                        <textarea id="edi-plano-de-ação-what" name="what" rows="3" required></textarea>
-                                    </div>
-                                    <div class="campo campo-largo">
-                                        <label for="edi-plano-de-ação-why">Why (Por quê)</label>
-                                        <textarea id="edi-plano-de-ação-why" name="why" rows="3"></textarea>
-                                    </div>
-                                    <div class="campo campo-largo">
-                                        <label for="edi-plano-de-ação-where">Where (Onde)</label>
-                                        <textarea id="edi-plano-de-ação-where" name="where" rows="3"></textarea>
-                                    </div>
-                                    <div class="campo">
-                                        <label for="edi-plano-de-ação-when">When (Quando)</label>
-                                        <input type="date" id="edi-plano-de-ação-when" name="when">
-                                    </div>
-                                    <div class="campo">
-                                        <label for="edi-plano-de-ação-who">Who (Quem)</label>
-                                        <select id="edi-plano-de-ação-who" name="who" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
-                                        </select>
-                                    </div>
-                                    <div class="campo">
-                                        <label for="edi-plano-de-ação-how_much">How much (Quanto custa)</label>
-                                        <input type="number" id="edi-plano-de-ação-how_much" name="how_much" step="0.01" min="0" placeholder="0,00">
-                                    </div>
-                                    <div class="campo campo-largo">
-                                        <label for="edi-plano-de-ação-how">How (Como)</label>
-                                        <textarea id="edi-plano-de-ação-how" name="how" rows="3"></textarea>
-                                    </div>
+
                                     <div class="botoes-modal">
                                         <a href="#plano" class="botao botao-cancelar">Cancelar</a>
                                         <button type="submit" class="botao botao-principal">Confirmar edição</button>
@@ -411,104 +279,20 @@
                             <div class="modal modal-exclusao">
                                 <h2>Excluir plano de ação</h2>
                                 <p>Tem certeza que deseja excluir este plano de ação?</p>
-                                <div class="botoes-modal">
+                                <form method="post" action="../planoAcao-servlet">
+                                    <input type="hidden" name="acao" value="excluir">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-planoAcao" value="">
+                                    <div class="botoes-modal">
                                     <a href="#plano" class="botao botao-cancelar">Cancelar</a>
-                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                    <button type="submit" class="botao botao-excluir">Confirmar exclusão</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </section>
                 </section>
 
-                <!-- Modal Perfil do Administrador -->
-                <section id="perfil-administrador" class="pagina modal-pagina">
-                    <div class="modal-fundo">
-                        <div class="modal modal-ver modal-perfil">
-                            <div class="modal-topo">
-                                <h2>Meu perfil</h2>
-                                <a href="#plano" class="modal-fechar" aria-label="Fechar">&times;</a>
-                            </div>
-                            <div class="perfil-modal-conteudo">
-                                <div class="perfil-foto-grande">
-                                    <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
-                                </div>
-                                <span class="perfil-modal-nome">Nome Sobrenome</span>
-                                <span class="perfil-modal-email">email@email.com</span>
-                                <div class="perfil-empresas">
-                                    <h3>Empresas que administra</h3>
-                                    <ul class="lista-empresas">
-                                        <li>Flora</li>
-                                    </ul>
-                                </div>
-                                <div class="botoes-modal">
-                                    <a href="#editar-perfil" class="botao botao-principal">Editar perfil</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Modal Editar Perfil do Administrador -->
-                <section id="editar-perfil" class="pagina modal-pagina">
-                    <div class="modal-fundo">
-                        <div class="modal modal-grande">
-                            <h2>Editar perfil</h2>
-                            <form class="formulario">
-                                <div class="campo">
-                                    <label for="edi-perfil-nome">Nome</label>
-                                    <input type="text" id="edi-perfil-nome" name="nome" maxlength="50" placeholder="Digite nome" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="edi-perfil-email">Email</label>
-                                    <input type="email" id="edi-perfil-email" name="email" maxlength="80" placeholder="Digite o novo email" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="edi-perfil-telefone">Telefone</label>
-                                    <input type="tel" id="edi-perfil-telefone" name="telefone" maxlength="11" inputmode="numeric" pattern="\d{11}" placeholder="DDD + número" required>
-                                </div>
-                                <div class="campo">
-                                    <label>Senha</label>
-                                    <a href="#alterar-senha" class="botao botao-secundario botao-senha">Alterar senha</a>
-                                </div>
-                                <div class="campo campo-largo">
-                                    <label for="edi-perfil-empresas">Quais empresas administra?</label>
-                                    <select id="edi-perfil-empresas" name="empresas" multiple size="4"></select>
-                                </div>
-                                <div class="botoes-modal">
-                                    <a href="#perfil-administrador" class="botao botao-cancelar">Cancelar</a>
-                                    <button type="submit" class="botao botao-principal">Confirmar edição</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Modal Alterar Senha -->
-                <section id="alterar-senha" class="pagina modal-pagina">
-                    <div class="modal-fundo">
-                        <div class="modal">
-                            <h2>Alterar senha</h2>
-                            <form class="formulario">
-                                <div class="campo">
-                                    <label for="alt-senha-antiga">Senha antiga</label>
-                                    <input type="password" id="alt-senha-antiga" name="senha_antiga" maxlength="100" autocomplete="current-password" placeholder="Digite a senha antiga" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="alt-senha-nova">Nova senha</label>
-                                    <input type="password" id="alt-senha-nova" name="senha_nova" maxlength="100" autocomplete="new-password" placeholder="Digite a nova senha" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="alt-senha-confirmar">Confirmar nova senha</label>
-                                    <input type="password" id="alt-senha-confirmar" name="senha_confirmar" maxlength="100" autocomplete="new-password" required>
-                                </div>
-                                <div class="botoes-modal">
-                                    <a href="#editar-perfil" class="botao botao-cancelar">Cancelar</a>
-                                    <button type="submit" class="botao botao-principal">Confirmar</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
             </main>
         </div>
     </body>

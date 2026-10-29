@@ -31,9 +31,9 @@ public class MetaDAO implements MetodosCrud<Meta> {
             pstmt.setString(1, meta.getMeta());
             pstmt.setString(2, meta.getDescricao_meta());
             pstmt.setString(3, meta.getObjetivo());
-            pstmt.setString(4, meta.getPrioridade().name());
+            pstmt.setObject(4, meta.getPrioridade().name(), Types.OTHER);
             pstmt.setDate(5, meta.getPrazo());
-            pstmt.setString(6, meta.getStatus().name());
+            pstmt.setObject(6, meta.getStatus().name(), Types.OTHER);
             pstmt.setLong(7, meta.getId_ciclo());
             pstmt.setObject(8, meta.getId_plano_acao(), java.sql.Types.BIGINT);
 
@@ -134,8 +134,8 @@ public class MetaDAO implements MetodosCrud<Meta> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
-            if (temPrioridade) pstmt.setString(i++, prioridade.name());
-            if (temStatus) pstmt.setString(i++, status.name());
+            if (temPrioridade) pstmt.setObject(i++, prioridade.name(), Types.OTHER);
+            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
             if (temDataInicial) pstmt.setDate(i++, dataInicial);
             if (temDataFinal) pstmt.setDate(i++, dataFinal);
             if (temCriadoDe) pstmt.setDate(i++, criadoDe);
@@ -164,9 +164,9 @@ public class MetaDAO implements MetodosCrud<Meta> {
             pstmt.setString(1, meta.getMeta());
             pstmt.setString(2, meta.getDescricao_meta());
             pstmt.setString(3, meta.getObjetivo());
-            pstmt.setString(4, meta.getPrioridade().name());
+            pstmt.setObject(4, meta.getPrioridade().name(), Types.OTHER);
             pstmt.setDate(5, meta.getPrazo());
-            pstmt.setString(6, meta.getStatus().name());
+            pstmt.setObject(6, meta.getStatus().name(), Types.OTHER);
             pstmt.setLong(7, meta.getId_ciclo());
             pstmt.setObject(8, meta.getId_plano_acao(), java.sql.Types.BIGINT);
             pstmt.setLong(9, meta.getId_meta());
@@ -243,20 +243,23 @@ public class MetaDAO implements MetodosCrud<Meta> {
         meta.setPrioridade(Intensidade.valueOf(rs.getString("prioridade")));
         meta.setPrazo(rs.getDate("prazo"));
         meta.setStatus(StatusMeta.valueOf(rs.getString("status")));
-        meta.setCriando_em(rs.getObject("criando_em", OffsetDateTime.class));
+        meta.setCriando_em(rs.getObject("criado_em", OffsetDateTime.class));
         meta.setNome_ciclo(rs.getString("nome_ciclo"));
         meta.setNome_plano_acao(rs.getString("nome_plano_acao"));
+        meta.setId_ciclo(rs.getLong("id_ciclo"));
+        meta.setId_plano_acao(rs.getObject("id_plano_acao", Long.class));
         return meta;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_meta",
             "meta", "meta",
             "prioridade", "prioridade",
             "prazo", "prazo",
             "status", "status",
-            "criado", "criando_em",
+            "criado_em", "criado_em",
             "ciclo", "nome_ciclo",
-            "plano", "nome_plano_acao"
+            "plano_acao", "nome_plano_acao"
     );
 
 }

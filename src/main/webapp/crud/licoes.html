@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+<!-- Estrutura HTML alinhada ao backend. Dados, mensagens e IDs serão preenchidos na futura conversão para JSP. -->
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
         <link rel="stylesheet" href="../assets/css/crud.css">
-        <title>Área Restrita</title>
+        <title>ACTA — Lições Aprendidas</title>
+        <script src="../assets/js/crud.js" defer></script>
     </head>
-    <body>
+    <body class="crud-admin">
         <div class="sistema">
             <aside class="sidebar">
                 <div class="sidebar-logo">
@@ -52,7 +54,7 @@
                     </a>
                 </nav>
                 <div class="perfil-barra">
-                    <a href="#perfil-administrador" class="perfil-admin">
+                    <a href="configurações.html" class="perfil-admin">
                         <div class="perfil-foto">
                             <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
                         </div>
@@ -69,12 +71,60 @@
                 <!-- Página Lições Aprendidas -->
                 <section id="licoes" class="pagina">
                     <h1>Lições Aprendidas</h1>
+                    <!-- Mensagens serão preenchidas pelo Servlet na futura JSP. -->
+                    <p id="mensagem-erro" role="alert" hidden></p>
+                    <p id="mensagem-sucesso" role="status" hidden></p>
                     <div class="barra-acoes">
                         <div class="pesquisa">
-                            <input type="text" placeholder="Pesquisar por lição aprendida">
+                            <input type="search" name="busca" id="pesquisa-licoes" form="filtros-licoes-form" placeholder="Pesquisar" aria-label="Pesquisar registros">
                         </div>
                         <div class="filtro-container">
-                            <a href="#filtros-licoes" class="botao botao-filtro">Filtros</a>
+                            <button type="button" class="botao botao-filtro" data-abrir-filtros aria-controls="filtros-licoes" aria-expanded="false">Filtros</button>
+                            <section id="filtros-licoes" class="filtros-painel" aria-label="Filtros" hidden>
+                                <div class="filtros-corpo">
+                                    <div class="modal modal-ver modal-filtros">
+                                        <div class="modal-topo">
+                                            <h2>Filtros</h2>
+                                                <button type="button" class="modal-fechar" data-fechar-filtros aria-label="Fechar filtros">&times;</button>
+                                        </div>
+                                        <form class="formulario" id="filtros-licoes-form" method="get" action="../licoes-aprendidas-servlet">
+                                            <div class="campo">
+                                                <label for="filtros-licoes-fase">Fase de origem</label>
+                                                <select id="filtros-licoes-fase" name="fase">
+                                                    <option value="">Todos</option>
+                                                    <option value="PLAN">PLAN</option>
+                                                    <option value="DO">DO</option>
+                                                    <option value="CHECK">CHECK</option>
+                                                    <option value="ACT">ACT</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-licoes-severidade">Severidade</label>
+                                                <select id="filtros-licoes-severidade" name="severidade">
+                                                    <option value="">Todos</option>
+                                                    <option value="ALTO">Alto</option>
+                                                    <option value="MEDIO">Médio</option>
+                                                    <option value="BAIXO">Baixo</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-licoes-area">Área</label>
+                                                <input type="text" id="filtros-licoes-area" name="area" list="sugestoes-licoes-area" maxlength="30">
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-licoes-categoria">Categoria</label>
+                                                <input type="text" id="filtros-licoes-categoria" name="categoria" list="sugestoes-licoes-categoria" maxlength="30">
+                                            </div>
+                                            <input type="hidden" name="ordem" value="">
+                                            <input type="hidden" name="direcao" value="ASC">
+                                            <div class="botoes-modal">
+                                                <a href="licoes.html#licoes" class="botao botao-cancelar">Limpar filtros</a>
+                                                <button type="submit" class="botao botao-principal">Aplicar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                         <a href="#cadastrar-lição-aprendida" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -82,109 +132,29 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Título</th>
-                                    <th>Categoria</th>
-                                    <th>Área</th>
-                                    <th>Ciclo</th>
-                                    <th>Fase de origem</th>
-                                    <th>Severidade</th>
-                                    <th>Data</th>
-                                    <th class="coluna-acao">Ver</th>
-                                    <th class="coluna-acao">Editar</th>
-                                    <th class="coluna-acao">Excluir</th>
+                                    <!-- Na integração JSP, incluir a chave id na whitelist de ordenação do DAO. -->
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="id" aria-label="Ordenar por ID">#<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="titulo" aria-label="Ordenar por Título">Título<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="categoria" aria-label="Ordenar por Categoria">Categoria<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="area" aria-label="Ordenar por Área">Área<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="ciclo" aria-label="Ordenar por Ciclo">Ciclo<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="fase" aria-label="Ordenar por Fase de origem">Fase de origem<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="severidade" aria-label="Ordenar por Severidade">Severidade<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-acao">Ver</th>
+                                    <th scope="col" class="coluna-acao">Editar</th>
+                                    <th scope="col" class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Título da lição</td>
-                                    <td>Categoria</td>
-                                    <td>Área</td>
-                                    <td>Ciclo 1</td>
-                                    <td>Plan</td>
-                                    <td>Médio</td>
-                                    <td>00/00/0000</td>
-                                    <td class="coluna-acao">
-                                        <a href="#ver-lição-aprendida" class="icone-acao">
-                                            <img src="../assets/images/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#editar-lição-aprendida" class="icone-acao">
-                                            <img src="../assets/images/icone_editar.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#excluir-lição-aprendida" class="icone-acao">
-                                            <img src="../assets/images/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
-                                </tr>
+                                <!-- Na conversão futura, percorrer request.getAttribute("licoesAprendidasList"); exibir o ID na coluna # e utilizá-lo nas ações. -->
+                                <tr><td colspan="10">Nenhum registro carregado.</td></tr>
+
+                                <!-- Modelo inerte: preencher com dados reais e vincular o ID às ações na futura JSP. -->
+                                <template id="modelo-linha-licoes"><tr><td data-campo="id_licao"></td><td data-campo="titulo"></td><td data-campo="categoria"></td><td data-campo="area"></td><td data-campo="nome_ciclo"></td><td data-campo="fase_origem"></td><td data-campo="severidade"></td><td class="coluna-acao"><a href="#ver-lição-aprendida" class="icone-acao" aria-label="Ver"><img src="../assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-lição-aprendida" class="icone-acao" aria-label="Editar"><img src="../assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-lição-aprendida" class="icone-acao" aria-label="Excluir"><img src="../assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr></template>
                             </tbody>
                         </table>
                     </div>
 
-                    <section id="filtros-licoes" class="pagina modal-pagina">
-                        <div class="modal-fundo">
-                            <div class="modal modal-ver modal-filtros">
-                                <div class="modal-topo">
-                                    <h2>Filtros</h2>
-                                    <a href="#licoes" class="modal-fechar" aria-label="Fechar">&times;</a>
-                                </div>
-                                <form class="formulario" method="get" action="#licoes">
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
-                                        <div class="grupo-checkbox">
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="titulo">
-                                                Título
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="categoria">
-                                                Categoria
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="area">
-                                                Área
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="ciclo">
-                                                Ciclo
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="fase_origem">
-                                                Fase de origem
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="severidade">
-                                                Severidade
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="data">
-                                                Data
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordem</span>
-                                        <div class="grupo-radio">
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="asc" checked>
-                                                Crescente (A → Z)
-                                            </label>
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="desc">
-                                                Decrescente (Z → A)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="botoes-modal">
-                                        <button type="submit" class="botao botao-principal">Aplicar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
-                    
                     <section id="ver-lição-aprendida" class="pagina modal-pagina">
                         <div class="modal-fundo">
                             <div class="modal modal-ver">
@@ -193,42 +163,14 @@
                                     <a href="#licoes" class="modal-fechar" aria-label="Fechar">&times;</a>
                                 </div>
                                 <div class="detalhes">
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Título</span>
-                                        <span class="detalhe-valor">Título da lição</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Ciclo</span>
-                                        <span class="detalhe-valor">Ciclo 1</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Área</span>
-                                        <span class="detalhe-valor">Área</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Categoria</span>
-                                        <span class="detalhe-valor">Categoria</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Fase de origem</span>
-                                        <span class="detalhe-valor">Plan</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Severidade</span>
-                                        <span class="detalhe-valor">Médio</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Data</span>
-                                        <span class="detalhe-valor">00/00/0000</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Aprendizado</span>
-                                        <span class="detalhe-valor">Aprendizado obtido</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Descrição</span>
-                                        <span class="detalhe-valor">Descrição da lição</span>
-                                    </div>
+                                    <div class="detalhe"><span class="detalhe-label">Título</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Categoria</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Área</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Ciclo</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Fase de origem</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Severidade</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe detalhe-largo"><span class="detalhe-label">Aprendizado</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe detalhe-largo"><span class="detalhe-label">Descrição</span><span class="detalhe-valor">—</span></div>
                                 </div>
                             </div>
                         </div>
@@ -238,7 +180,8 @@
                         <div class="modal-fundo">
                             <div class="modal modal-grande">
                                 <h2>Cadastrar lição aprendida</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../licoes-aprendidas-servlet">
+                                    <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-titulo">Título</label>
                                         <input type="text" id="cad-lição-aprendida-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
@@ -246,24 +189,25 @@
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-id_ciclo">Ciclo</label>
                                         <select id="cad-lição-aprendida-id_ciclo" name="id_ciclo" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-area">Área</label>
-                                        <input type="text" id="cad-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área">
+                                        <input type="text" id="cad-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área" list="sugestoes-licoes-area">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-categoria">Categoria</label>
-                                        <input type="text" id="cad-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria">
+                                        <input type="text" id="cad-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria" list="sugestoes-licoes-categoria">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-fase_origem">Fase de origem</label>
                                         <select id="cad-lição-aprendida-fase_origem" name="fase_origem" required>
-                                            <option value="PLAN">Plan</option>
-                                            <option value="DO">Do</option>
-                                            <option value="CHECK">Check</option>
-                                            <option value="ACT">Act</option>
+                                            <option value="PLAN">PLAN</option>
+                                            <option value="DO">DO</option>
+                                            <option value="CHECK">CHECK</option>
+                                            <option value="ACT">ACT</option>
                                         </select>
                                     </div>
                                     <div class="campo">
@@ -276,11 +220,11 @@
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="cad-lição-aprendida-aprendizado">Aprendizado</label>
-                                        <textarea id="cad-lição-aprendida-aprendizado" name="aprendizado" rows="3" required></textarea>
+                                        <textarea id="cad-lição-aprendida-aprendizado" name="aprendizado" rows="3" required maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="cad-lição-aprendida-descricao">Descrição</label>
-                                        <textarea id="cad-lição-aprendida-descricao" name="descricao" rows="3"></textarea>
+                                        <textarea id="cad-lição-aprendida-descricao" name="descricao" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="botoes-modal">
                                         <a href="#licoes" class="botao botao-cancelar">Cancelar</a>
@@ -295,7 +239,10 @@
                         <div class="modal-fundo">
                             <div class="modal modal-grande">
                                 <h2>Editar lição aprendida</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../licoes-aprendidas-servlet">
+                                    <input type="hidden" name="acao" value="atualizar">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-licoesAprendidas" value="">
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-titulo">Título</label>
                                         <input type="text" id="edi-lição-aprendida-titulo" name="titulo" maxlength="100" placeholder="Digite título" required>
@@ -303,24 +250,25 @@
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-id_ciclo">Ciclo</label>
                                         <select id="edi-lição-aprendida-id_ciclo" name="id_ciclo" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-area">Área</label>
-                                        <input type="text" id="edi-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área">
+                                        <input type="text" id="edi-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área" list="sugestoes-licoes-area">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-categoria">Categoria</label>
-                                        <input type="text" id="edi-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria">
+                                        <input type="text" id="edi-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria" list="sugestoes-licoes-categoria">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-fase_origem">Fase de origem</label>
                                         <select id="edi-lição-aprendida-fase_origem" name="fase_origem" required>
-                                            <option value="PLAN">Plan</option>
-                                            <option value="DO">Do</option>
-                                            <option value="CHECK">Check</option>
-                                            <option value="ACT">Act</option>
+                                            <option value="PLAN">PLAN</option>
+                                            <option value="DO">DO</option>
+                                            <option value="CHECK">CHECK</option>
+                                            <option value="ACT">ACT</option>
                                         </select>
                                     </div>
                                     <div class="campo">
@@ -333,11 +281,11 @@
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="edi-lição-aprendida-aprendizado">Aprendizado</label>
-                                        <textarea id="edi-lição-aprendida-aprendizado" name="aprendizado" rows="3" required></textarea>
+                                        <textarea id="edi-lição-aprendida-aprendizado" name="aprendizado" rows="3" required maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="edi-lição-aprendida-descricao">Descrição</label>
-                                        <textarea id="edi-lição-aprendida-descricao" name="descricao" rows="3"></textarea>
+                                        <textarea id="edi-lição-aprendida-descricao" name="descricao" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="botoes-modal">
                                         <a href="#licoes" class="botao botao-cancelar">Cancelar</a>
@@ -353,104 +301,26 @@
                             <div class="modal modal-exclusao">
                                 <h2>Excluir lição aprendida</h2>
                                 <p>Tem certeza que deseja excluir esta lição aprendida?</p>
-                                <div class="botoes-modal">
+                                <form method="post" action="../licoes-aprendidas-servlet">
+                                    <input type="hidden" name="acao" value="excluir">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-licoesAprendidas" value="">
+                                    <div class="botoes-modal">
                                     <a href="#licoes" class="botao botao-cancelar">Cancelar</a>
-                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                    <button type="submit" class="botao botao-excluir">Confirmar exclusão</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </section>
                 </section>
 
-                <!-- Modal Perfil do Administrador -->
-                <section id="perfil-administrador" class="pagina modal-pagina">
-                    <div class="modal-fundo">
-                        <div class="modal modal-ver modal-perfil">
-                            <div class="modal-topo">
-                                <h2>Meu perfil</h2>
-                                <a href="#licoes" class="modal-fechar" aria-label="Fechar">&times;</a>
-                            </div>
-                            <div class="perfil-modal-conteudo">
-                                <div class="perfil-foto-grande">
-                                    <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
-                                </div>
-                                <span class="perfil-modal-nome">Nome Sobrenome</span>
-                                <span class="perfil-modal-email">email@email.com</span>
-                                <div class="perfil-empresas">
-                                    <h3>Empresas que administra</h3>
-                                    <ul class="lista-empresas">
-                                        <li>Flora</li>
-                                    </ul>
-                                </div>
-                                <div class="botoes-modal">
-                                    <a href="#editar-perfil" class="botao botao-principal">Editar perfil</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Modal Editar Perfil do Administrador -->
-                <section id="editar-perfil" class="pagina modal-pagina">
-                    <div class="modal-fundo">
-                        <div class="modal modal-grande">
-                            <h2>Editar perfil</h2>
-                            <form class="formulario">
-                                <div class="campo">
-                                    <label for="edi-perfil-nome">Nome</label>
-                                    <input type="text" id="edi-perfil-nome" name="nome" maxlength="50" placeholder="Digite nome" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="edi-perfil-email">Email</label>
-                                    <input type="email" id="edi-perfil-email" name="email" maxlength="80" placeholder="Digite o novo email" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="edi-perfil-telefone">Telefone</label>
-                                    <input type="tel" id="edi-perfil-telefone" name="telefone" maxlength="11" inputmode="numeric" pattern="\d{11}" placeholder="DDD + número" required>
-                                </div>
-                                <div class="campo">
-                                    <label>Senha</label>
-                                    <a href="#alterar-senha" class="botao botao-secundario botao-senha">Alterar senha</a>
-                                </div>
-                                <div class="campo campo-largo">
-                                    <label for="edi-perfil-empresas">Quais empresas administra?</label>
-                                    <select id="edi-perfil-empresas" name="empresas" multiple size="4"></select>
-                                </div>
-                                <div class="botoes-modal">
-                                    <a href="#perfil-administrador" class="botao botao-cancelar">Cancelar</a>
-                                    <button type="submit" class="botao botao-principal">Confirmar edição</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Modal Alterar Senha -->
-                <section id="alterar-senha" class="pagina modal-pagina">
-                    <div class="modal-fundo">
-                        <div class="modal">
-                            <h2>Alterar senha</h2>
-                            <form class="formulario">
-                                <div class="campo">
-                                    <label for="alt-senha-antiga">Senha antiga</label>
-                                    <input type="password" id="alt-senha-antiga" name="senha_antiga" maxlength="100" autocomplete="current-password" placeholder="Digite a senha antiga" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="alt-senha-nova">Nova senha</label>
-                                    <input type="password" id="alt-senha-nova" name="senha_nova" maxlength="100" autocomplete="new-password" placeholder="Digite a nova senha" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="alt-senha-confirmar">Confirmar nova senha</label>
-                                    <input type="password" id="alt-senha-confirmar" name="senha_confirmar" maxlength="100" autocomplete="new-password" required>
-                                </div>
-                                <div class="botoes-modal">
-                                    <a href="#editar-perfil" class="botao botao-cancelar">Cancelar</a>
-                                    <button type="submit" class="botao botao-principal">Confirmar</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
+                <datalist id="sugestoes-licoes-area">
+                    <!-- Preencher futuramente com request.getAttribute("areaList"); não inserir opções fictícias. -->
+                </datalist>
+                <datalist id="sugestoes-licoes-categoria">
+                    <!-- Preencher futuramente com request.getAttribute("categoriaList"); não inserir opções fictícias. -->
+                </datalist>
             </main>
         </div>
     </body>

@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+<!-- Estrutura HTML alinhada ao backend. Dados, mensagens e IDs serão preenchidos na futura conversão para JSP. -->
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
         <link rel="stylesheet" href="../assets/css/crud.css">
-        <title>Área Restrita</title>
+        <title>ACTA — Colaborador</title>
+        <script src="../assets/js/crud.js" defer></script>
     </head>
-    <body>
+    <body class="crud-admin">
         <div class="sistema">
             <aside class="sidebar">
                 <div class="sidebar-logo">
@@ -52,7 +54,7 @@
                     </a>
                 </nav>
                 <div class="perfil-barra">
-                    <a href="#perfil-administrador" class="perfil-admin">
+                    <a href="configurações.html" class="perfil-admin">
                         <div class="perfil-foto">
                             <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
                         </div>
@@ -69,12 +71,64 @@
                 <!-- Página Colaborador -->
                 <section id="colaborador" class="pagina">
                     <h1>Colaborador</h1>
+                    <!-- Mensagens serão preenchidas pelo Servlet na futura JSP. -->
+                    <p id="mensagem-erro" role="alert" hidden></p>
+                    <p id="mensagem-sucesso" role="status" hidden></p>
                     <div class="barra-acoes">
                         <div class="pesquisa">
-                            <input type="text" placeholder="Pesquisar por colaborador">
+                            <input type="search" name="busca" id="pesquisa-colaborador" form="filtros-colaborador-form" placeholder="Pesquisar" aria-label="Pesquisar registros">
                         </div>
                         <div class="filtro-container">
-                            <a href="#filtros-colaborador" class="botao botao-filtro">Filtros</a>
+                            <button type="button" class="botao botao-filtro" data-abrir-filtros aria-controls="filtros-colaborador" aria-expanded="false">Filtros</button>
+                            <section id="filtros-colaborador" class="filtros-painel" aria-label="Filtros" hidden>
+                                <div class="filtros-corpo">
+                                    <div class="modal modal-ver modal-filtros">
+                                        <div class="modal-topo">
+                                            <h2>Filtros</h2>
+                                                <button type="button" class="modal-fechar" data-fechar-filtros aria-label="Fechar filtros">&times;</button>
+                                        </div>
+                                        <form class="formulario" id="filtros-colaborador-form" method="get" action="../colaborador-servlet">
+                                            <div class="campo">
+                                                <label for="filtros-colaborador-status">Status</label>
+                                                <select id="filtros-colaborador-status" name="status">
+                                                    <option value="">Todos</option>
+                                                    <option value="ATIVA">Ativa</option>
+                                                    <option value="INATIVA">Inativa</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-colaborador-area">Área</label>
+                                                <input type="text" id="filtros-colaborador-area" name="area" list="sugestoes-colaborador-area" maxlength="30">
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-colaborador-cargo">Cargo</label>
+                                                <input type="text" id="filtros-colaborador-cargo" name="cargo" list="sugestoes-colaborador-cargo" maxlength="100">
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-colaborador-gestor">Permissão de gestor</label>
+                                                <select id="filtros-colaborador-gestor" name="gestor">
+                                                    <option value="">Todos</option>
+                                                    <option value="true">Sim</option>
+                                                    <option value="false">Não</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo periodo-datas">
+                                                <span class="rotulo-campo">Contratação</span>
+                                                <div class="datas-linha">
+                                                    <div class="campo"><label for="filtros-colaborador-dataInicial">De</label><input type="date" id="filtros-colaborador-dataInicial" name="dataInicial" min="1900-01-01" max="2100-12-31"></div>
+                                                    <div class="campo"><label for="filtros-colaborador-dataFinal">Até</label><input type="date" id="filtros-colaborador-dataFinal" name="dataFinal" min="1900-01-01" max="2100-12-31"></div>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="ordem" value="">
+                                            <input type="hidden" name="direcao" value="ASC">
+                                            <div class="botoes-modal">
+                                                <a href="colaborador.html#colaborador" class="botao botao-cancelar">Limpar filtros</a>
+                                                <button type="submit" class="botao botao-principal">Aplicar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                         <a href="#cadastrar-colaborador" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -82,115 +136,34 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Nome</th>
-                                    <th>Sobrenome</th>
-                                    <th>Área</th>
-                                    <th>Cargo</th>
-                                    <th>Telefone</th>
-                                    <th>CPF</th>
-                                    <th>Email</th>
-                                    <th>Status</th>
-                                    <th class="coluna-acao">Ver</th>
-                                    <th class="coluna-acao">Editar</th>
-                                    <th class="coluna-acao">Excluir</th>
+                                    <!-- Na integração JSP, incluir a chave id na whitelist de ordenação do DAO. -->
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="id" aria-label="Ordenar por ID">#<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="nome" aria-label="Ordenar por Nome">Nome<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="sobrenome" aria-label="Ordenar por Sobrenome">Sobrenome<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="area" aria-label="Ordenar por Área">Área<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="cargo" aria-label="Ordenar por Cargo">Cargo<span aria-hidden="true"></span></button></th>
+                                    <th scope="col">Telefone</th>
+                                    <th scope="col">CPF</th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="email" aria-label="Ordenar por Email">Email<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="status" aria-label="Ordenar por Status">Status<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="empresa" aria-label="Ordenar por Empresa">Empresa<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="permissao" aria-label="Ordenar por Permissão de gestor">Permissão de gestor<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="contratacao" aria-label="Ordenar por Data de contratação">Data de contratação<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-acao">Ver</th>
+                                    <th scope="col" class="coluna-acao">Editar</th>
+                                    <th scope="col" class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Nome</td>
-                                    <td>Sobrenome</td>
-                                    <td>Área</td>
-                                    <td>Cargo</td>
-                                    <td>(00) 00000-0000</td>
-                                    <td>000.000.000-00</td>
-                                    <td>email@email.com</td>
-                                    <td>Ativa</td>
-                                    <td class="coluna-acao">
-                                        <a href="#ver-colaborador" class="icone-acao">
-                                            <img src="../assets/images/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#editar-colaborador" class="icone-acao">
-                                            <img src="../assets/images/icone_editar.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#excluir-colaborador" class="icone-acao">
-                                            <img src="../assets/images/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
-                                </tr>
+                                <!-- Na conversão futura, percorrer request.getAttribute("colaboradorList"); exibir o ID na coluna # e utilizá-lo nas ações. -->
+                                <tr><td colspan="15">Nenhum registro carregado.</td></tr>
+
+                                <!-- Modelo inerte: preencher com dados reais e vincular o ID às ações na futura JSP. -->
+                                <template id="modelo-linha-colaborador"><tr><td data-campo="id_colaborador"></td><td data-campo="nome"></td><td data-campo="sobrenome"></td><td data-campo="area"></td><td data-campo="cargo"></td><td data-campo="telefone"></td><td data-campo="cpf"></td><td data-campo="email"></td><td data-campo="status"></td><td data-campo="nome_empresa"></td><td data-campo="permissao_gestor"></td><td data-campo="dt_contratacao"></td><td class="coluna-acao"><a href="#ver-colaborador" class="icone-acao" aria-label="Ver"><img src="../assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-colaborador" class="icone-acao" aria-label="Editar"><img src="../assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-colaborador" class="icone-acao" aria-label="Excluir"><img src="../assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr></template>
                             </tbody>
                         </table>
                     </div>
 
-                    <section id="filtros-colaborador" class="pagina modal-pagina">
-                        <div class="modal-fundo">
-                            <div class="modal modal-ver modal-filtros">
-                                <div class="modal-topo">
-                                    <h2>Filtros</h2>
-                                    <a href="#colaborador" class="modal-fechar" aria-label="Fechar">&times;</a>
-                                </div>
-                                <form class="formulario" method="get" action="#colaborador">
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
-                                        <div class="grupo-checkbox">
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="nome">
-                                                Nome
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="sobrenome">
-                                                Sobrenome
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="area">
-                                                Área
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="cargo">
-                                                Cargo
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="telefone">
-                                                Telefone
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="cpf">
-                                                CPF
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="email">
-                                                Email
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="status">
-                                                Status
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordem</span>
-                                        <div class="grupo-radio">
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="asc" checked>
-                                                Crescente (A → Z)
-                                            </label>
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="desc">
-                                                Decrescente (Z → A)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="botoes-modal">
-                                        <button type="submit" class="botao botao-principal">Aplicar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
-                    
                     <section id="ver-colaborador" class="pagina modal-pagina">
                         <div class="modal-fundo">
                             <div class="modal modal-ver modal-larga">
@@ -199,50 +172,17 @@
                                     <a href="#colaborador" class="modal-fechar" aria-label="Fechar">&times;</a>
                                 </div>
                                 <div class="detalhes">
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Nome</span>
-                                        <span class="detalhe-valor">Nome</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Sobrenome</span>
-                                        <span class="detalhe-valor">Sobrenome</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Área</span>
-                                        <span class="detalhe-valor">Área</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Cargo</span>
-                                        <span class="detalhe-valor">Cargo</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Data de contratação</span>
-                                        <span class="detalhe-valor">00/00/0000</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Email</span>
-                                        <span class="detalhe-valor">email@email.com</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Telefone</span>
-                                        <span class="detalhe-valor">(00) 00000-0000</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">CPF</span>
-                                        <span class="detalhe-valor">000.000.000-00</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Status</span>
-                                        <span class="detalhe-valor">Ativa</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Permissão de gestor</span>
-                                        <span class="detalhe-valor">Não</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Empresa</span>
-                                        <span class="detalhe-valor">Flora</span>
-                                    </div>
+                                    <div class="detalhe"><span class="detalhe-label">Nome</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Sobrenome</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Área</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Cargo</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Telefone</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">CPF</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Email</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Status</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Empresa</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Permissão de gestor</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Data de contratação</span><span class="detalhe-valor">—</span></div>
                                 </div>
                             </div>
                         </div>
@@ -252,22 +192,44 @@
                         <div class="modal-fundo">
                             <div class="modal modal-larga">
                                 <h2>Cadastrar colaborador</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../colaborador-servlet">
+                                    <input type="hidden" name="acao" value="inserir">
+                                    <div class="campo">
+                                        <label for="cad-colaborador-nome">Nome</label>
+                                        <input type="text" id="cad-colaborador-nome" name="nome" required maxlength="50">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-sobrenome">Sobrenome</label>
+                                        <input type="text" id="cad-colaborador-sobrenome" name="sobrenome" required maxlength="50">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-telefone">Telefone</label>
+                                        <input type="tel" id="cad-colaborador-telefone" name="telefone" required maxlength="11" inputmode="numeric" pattern="[0-9]{11}">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-cpf">CPF</label>
+                                        <input type="text" id="cad-colaborador-cpf" name="cpf" required maxlength="11" inputmode="numeric" pattern="[0-9]{11}">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-colaborador-senha">Senha</label>
+                                        <input type="password" id="cad-colaborador-senha" name="senha" required maxlength="100" minlength="8" autocomplete="new-password">
+                                    </div>
+
                                     <div class="campo">
                                         <label for="cad-colaborador-email">Email</label>
                                         <input type="email" id="cad-colaborador-email" name="email" maxlength="80" placeholder="Digite email" required>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-area">Área</label>
-                                        <input type="text" id="cad-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required>
+                                        <input type="text" id="cad-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required list="sugestoes-colaborador-area">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-cargo">Cargo</label>
-                                        <input type="text" id="cad-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required>
+                                        <input type="text" id="cad-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required list="sugestoes-colaborador-cargo">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-dt_contratacao">Data de contratação</label>
-                                        <input type="date" id="cad-colaborador-dt_contratacao" name="dt_contratacao" required>
+                                        <input type="date" id="cad-colaborador-dt_contratacao" name="dt_contratacao" required min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-status">Status</label>
@@ -286,7 +248,8 @@
                                     <div class="campo">
                                         <label for="cad-colaborador-id_empresa">Empresa</label>
                                         <select id="cad-colaborador-id_empresa" name="id_empresa" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="botoes-modal">
@@ -302,20 +265,48 @@
                         <div class="modal-fundo">
                             <div class="modal modal-larga">
                                 <h2>Editar colaborador</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../colaborador-servlet">
+                                    <input type="hidden" name="acao" value="atualizar">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-colaborador" value="">
+                                    <div class="campo">
+                                        <label for="edi-colaborador-nome">Nome</label>
+                                        <input type="text" id="edi-colaborador-nome" name="nome" required maxlength="50">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-sobrenome">Sobrenome</label>
+                                        <input type="text" id="edi-colaborador-sobrenome" name="sobrenome" required maxlength="50">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-email">Email</label>
+                                        <input type="email" id="edi-colaborador-email" name="email" required maxlength="80">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-telefone">Telefone</label>
+                                        <input type="tel" id="edi-colaborador-telefone" name="telefone" required maxlength="11" inputmode="numeric" pattern="[0-9]{11}">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-cpf">CPF</label>
+                                        <input type="text" id="edi-colaborador-cpf" name="cpf" required maxlength="11" inputmode="numeric" pattern="[0-9]{11}">
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-colaborador-dt_contratacao">Data de contratação</label>
+                                        <input type="date" id="edi-colaborador-dt_contratacao" name="dt_contratacao" required min="1900-01-01" max="2100-12-31">
+                                    </div>
+
                                     <div class="campo">
                                         <label for="edi-colaborador-area">Área</label>
-                                        <input type="text" id="edi-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required>
+                                        <input type="text" id="edi-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required list="sugestoes-colaborador-area">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-cargo">Cargo</label>
-                                        <input type="text" id="edi-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required>
+                                        <input type="text" id="edi-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required list="sugestoes-colaborador-cargo">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-status">Status</label>
                                         <select id="edi-colaborador-status" name="status" required>
-                                            <option value="ATIVO">Ativo</option>
-                                            <option value="INATIVO">Inativo</option>
+                                            <option value="ATIVA">Ativa</option>
+                                            <option value="INATIVA">Inativa</option>
                                         </select>
                                     </div>
                                     <div class="campo">
@@ -328,7 +319,8 @@
                                     <div class="campo">
                                         <label for="edi-colaborador-id_empresa">Empresa</label>
                                         <select id="edi-colaborador-id_empresa" name="id_empresa" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="botoes-modal">
@@ -345,104 +337,26 @@
                             <div class="modal modal-exclusao">
                                 <h2>Excluir colaborador</h2>
                                 <p>Tem certeza que deseja excluir este colaborador?</p>
-                                <div class="botoes-modal">
+                                <form method="post" action="../colaborador-servlet">
+                                    <input type="hidden" name="acao" value="excluir">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-colaborador" value="">
+                                    <div class="botoes-modal">
                                     <a href="#colaborador" class="botao botao-cancelar">Cancelar</a>
-                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                    <button type="submit" class="botao botao-excluir">Confirmar exclusão</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </section>
                 </section>
 
-                <!-- Modal Perfil do Administrador -->
-                <section id="perfil-administrador" class="pagina modal-pagina">
-                    <div class="modal-fundo">
-                        <div class="modal modal-ver modal-perfil">
-                            <div class="modal-topo">
-                                <h2>Meu perfil</h2>
-                                <a href="#colaborador" class="modal-fechar" aria-label="Fechar">&times;</a>
-                            </div>
-                            <div class="perfil-modal-conteudo">
-                                <div class="perfil-foto-grande">
-                                    <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
-                                </div>
-                                <span class="perfil-modal-nome">Nome Sobrenome</span>
-                                <span class="perfil-modal-email">email@email.com</span>
-                                <div class="perfil-empresas">
-                                    <h3>Empresas que administra</h3>
-                                    <ul class="lista-empresas">
-                                        <li>Flora</li>
-                                    </ul>
-                                </div>
-                                <div class="botoes-modal">
-                                    <a href="#editar-perfil" class="botao botao-principal">Editar perfil</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Modal Editar Perfil do Administrador -->
-                <section id="editar-perfil" class="pagina modal-pagina">
-                    <div class="modal-fundo">
-                        <div class="modal modal-grande">
-                            <h2>Editar perfil</h2>
-                            <form class="formulario">
-                                <div class="campo">
-                                    <label for="edi-perfil-nome">Nome</label>
-                                    <input type="text" id="edi-perfil-nome" name="nome" maxlength="50" placeholder="Digite nome" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="edi-perfil-email">Email</label>
-                                    <input type="email" id="edi-perfil-email" name="email" maxlength="80" placeholder="Digite o novo email" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="edi-perfil-telefone">Telefone</label>
-                                    <input type="tel" id="edi-perfil-telefone" name="telefone" maxlength="11" inputmode="numeric" pattern="\d{11}" placeholder="DDD + número" required>
-                                </div>
-                                <div class="campo">
-                                    <label>Senha</label>
-                                    <a href="#alterar-senha" class="botao botao-secundario botao-senha">Alterar senha</a>
-                                </div>
-                                <div class="campo campo-largo">
-                                    <label for="edi-perfil-empresas">Quais empresas administra?</label>
-                                    <select id="edi-perfil-empresas" name="empresas" multiple size="4"></select>
-                                </div>
-                                <div class="botoes-modal">
-                                    <a href="#perfil-administrador" class="botao botao-cancelar">Cancelar</a>
-                                    <button type="submit" class="botao botao-principal">Confirmar edição</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Modal Alterar Senha -->
-                <section id="alterar-senha" class="pagina modal-pagina">
-                    <div class="modal-fundo">
-                        <div class="modal">
-                            <h2>Alterar senha</h2>
-                            <form class="formulario">
-                                <div class="campo">
-                                    <label for="alt-senha-antiga">Senha antiga</label>
-                                    <input type="password" id="alt-senha-antiga" name="senha_antiga" maxlength="100" autocomplete="current-password" placeholder="Digite a senha antiga" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="alt-senha-nova">Nova senha</label>
-                                    <input type="password" id="alt-senha-nova" name="senha_nova" maxlength="100" autocomplete="new-password" placeholder="Digite a nova senha" required>
-                                </div>
-                                <div class="campo">
-                                    <label for="alt-senha-confirmar">Confirmar nova senha</label>
-                                    <input type="password" id="alt-senha-confirmar" name="senha_confirmar" maxlength="100" autocomplete="new-password" required>
-                                </div>
-                                <div class="botoes-modal">
-                                    <a href="#editar-perfil" class="botao botao-cancelar">Cancelar</a>
-                                    <button type="submit" class="botao botao-principal">Confirmar</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
+                <datalist id="sugestoes-colaborador-area">
+                    <!-- Preencher futuramente com request.getAttribute("areaList"); não inserir opções fictícias. -->
+                </datalist>
+                <datalist id="sugestoes-colaborador-cargo">
+                    <!-- Preencher futuramente com request.getAttribute("cargoList"); não inserir opções fictícias. -->
+                </datalist>
             </main>
         </div>
     </body>

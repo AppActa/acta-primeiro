@@ -1,5 +1,7 @@
 package br.com.acta.servlet;
 
+import br.com.acta.dao.EmpresaDAO;
+
 import br.com.acta.dao.ColaboradorDAO;
 import br.com.acta.model.Colaborador;
 import br.com.acta.enums.Status;
@@ -75,8 +77,16 @@ public class ColaboradorServlet extends HttpServlet {
                     atualizar(req, resp);
                     break;
 
+                case "atualizarPorCpf":
+                    atualizarPorCpf(req, resp);
+                    break;
+
                 case "excluir":
                     excluir(req, resp);
+                    break;
+
+                case "excluirPorEmail":
+                    excluirPorEmail(req, resp);
                     break;
 
                 default:
@@ -125,7 +135,7 @@ public class ColaboradorServlet extends HttpServlet {
         colaborador.setSobrenome(Validador.nomePessoa(req.getParameter("sobrenome"), "Sobrenome", 50));
         colaborador.setPermissao_gestor(Validador.booleano(req.getParameter("permissao_gestor")));
         colaborador.setStatus(Validador.opcao(Status.class, req.getParameter("status"), "Status"));
-        colaborador.setCargo(Validador.texto(req.getParameter("cargo"), "Cargo", 100));
+        colaborador.setCargo(normalizarCargo(Validador.texto(req.getParameter("cargo"), "Cargo", 100)));
         colaborador.setDt_contratacao(Validador.dataNaoFutura(req.getParameter("dt_contratacao"), "Data de contratação"));
         colaborador.setEmail(Validador.email(req.getParameter("email")));
         colaborador.setSenha(Validador.senha(req.getParameter("senha")));
@@ -157,6 +167,8 @@ public class ColaboradorServlet extends HttpServlet {
 
         req.setAttribute("colaboradorList", List.of(colaborador));
         req.setAttribute("areaList", DAO.buscarAreas());
+        req.setAttribute("cargoList", DAO.buscarCargos());
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 
@@ -164,6 +176,7 @@ public class ColaboradorServlet extends HttpServlet {
         String busca = req.getParameter("busca");
         String statusParam = req.getParameter("status");
         String area = req.getParameter("area");
+        String cargo = req.getParameter("cargo");
         String gestorParam = req.getParameter("gestor");
         String dataInicialParam = req.getParameter("dataInicial");
         String dataFinalParam = req.getParameter("dataFinal");
@@ -190,11 +203,13 @@ public class ColaboradorServlet extends HttpServlet {
             dataFinal = Date.valueOf(dataFinalParam);
         }
 
-        List<Colaborador> colaboradores = DAO.buscaFiltrada(busca, status, area, permissaoGestor,
+        List<Colaborador> colaboradores = DAO.buscaFiltrada(busca, status, area, cargo, permissaoGestor,
                 dataInicial, dataFinal, ordem, direcao);
 
         req.setAttribute("colaboradorList", colaboradores);
         req.setAttribute("areaList", DAO.buscarAreas());
+        req.setAttribute("cargoList", DAO.buscarCargos());
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 
@@ -207,7 +222,7 @@ public class ColaboradorServlet extends HttpServlet {
         colaborador.setSobrenome(Validador.nomePessoa(req.getParameter("sobrenome"), "Sobrenome", 50));
         colaborador.setPermissao_gestor(Validador.booleano(req.getParameter("permissao_gestor")));
         colaborador.setStatus(Validador.opcao(Status.class, req.getParameter("status"), "Status"));
-        colaborador.setCargo(Validador.texto(req.getParameter("cargo"), "Cargo", 100));
+        colaborador.setCargo(normalizarCargo(Validador.texto(req.getParameter("cargo"), "Cargo", 100)));
         colaborador.setDt_contratacao(Validador.dataNaoFutura(req.getParameter("dt_contratacao"), "Data de contratação"));
         colaborador.setEmail(Validador.email(req.getParameter("email")));
         colaborador.setTelefone(Validador.telefone(req.getParameter("telefone")));
@@ -230,10 +245,48 @@ public class ColaboradorServlet extends HttpServlet {
         else enviarErro(req, resp, "O colaborador não pode ser excluído");
     }
 
+    private void atualizarPorCpf(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        String cpfAtual = Validador.cpf(req.getParameter("cpf-atual"));
+        Colaborador colaborador = new Colaborador();
+
+        colaborador.setNome(Validador.nomePessoa(req.getParameter("nome"), "Nome", 50));
+        colaborador.setSobrenome(Validador.nomePessoa(req.getParameter("sobrenome"), "Sobrenome", 50));
+        colaborador.setPermissao_gestor(Validador.booleano(req.getParameter("permissao_gestor")));
+        colaborador.setStatus(Validador.opcao(Status.class, req.getParameter("status"), "Status"));
+        colaborador.setCargo(normalizarCargo(Validador.texto(req.getParameter("cargo"), "Cargo", 100)));
+        colaborador.setDt_contratacao(Validador.dataNaoFutura(
+                req.getParameter("dt_contratacao"), "Data de contratação"));
+        colaborador.setEmail(Validador.email(req.getParameter("email")));
+        colaborador.setTelefone(Validador.telefone(req.getParameter("telefone")));
+        colaborador.setCpf(Validador.cpf(req.getParameter("cpf")));
+        colaborador.setId_empresa(Validador.id(req.getParameter("id_empresa"), "Empresa"));
+        colaborador.setArea(normalizarArea(Validador.texto(req.getParameter("area"), "Área", 30)));
+
+        int resultado = DAO.atualizarPorCpf(colaborador, cpfAtual);
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "O colaborador não pode ser atualizado pelo CPF.");
+    }
+
+    private void excluirPorEmail(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        String email = Validador.email(req.getParameter("email-exclusao"));
+        int resultado = DAO.excluirPorEmail(email);
+
+        if (resultado == 1) enviarPaginaCerta(req, resp);
+        else enviarErro(req, resp, "O colaborador não pode ser excluído pelo e-mail.");
+    }
+
     // UTILITARIOS
     private String normalizarArea(String area) {
         String limpa = area.trim().replaceAll("\\s+", " ");
         String existente = DAO.buscarAreaExistente(limpa);
+        return existente != null ? existente : limpa;
+    }
+
+    private String normalizarCargo(String cargo) {
+        String limpa = cargo.trim().replaceAll("\\s+", " ");
+        String existente = DAO.buscarCargoExistente(limpa);
         return existente != null ? existente : limpa;
     }
 
@@ -279,19 +332,26 @@ public class ColaboradorServlet extends HttpServlet {
 
             req.setAttribute("colaboradorList", colaboradores);
             req.setAttribute("areaList", DAO.buscarAreas());
+            req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
+            req.setAttribute("cargoList", DAO.buscarCargos());
         } catch (RuntimeException ex) {
             ex.printStackTrace();
             req.setAttribute("colaboradorList", List.of());
             req.setAttribute("areaList", List.of());
+            req.setAttribute("empresaOpcoes", List.of());
+            req.setAttribute("cargoList", List.of());
         }
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Colaborador> colaboradores = DAO.buscar();
 
         req.setAttribute("colaboradorList", colaboradores);
         req.setAttribute("areaList", DAO.buscarAreas());
+        req.setAttribute("cargoList", DAO.buscarCargos());
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 }
