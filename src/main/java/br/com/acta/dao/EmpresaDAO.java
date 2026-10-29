@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -32,13 +31,13 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
                 """;
 
         try (Connection conn = Conexao.conectar();
-        PreparedStatement pstmt = conn.prepareStatement(sql)){
+             PreparedStatement pstmt = conn.prepareStatement(sql)){
 
             pstmt.setString(1,empresa.getNome());
             pstmt.setString(2,empresa.getSetor());
             pstmt.setString(3,empresa.getCnpj());
-            pstmt.setObject(4, empresa.getStatus().name(), Types.OTHER);
-            pstmt.setObject(5,empresa.getTamanho().name(), Types.OTHER);
+            pstmt.setString(4, empresa.getStatus().name());
+            pstmt.setString(5,empresa.getTamanho().name());
 
             if (pstmt.executeUpdate() > 0) return 1;
             else return 0;
@@ -85,8 +84,8 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String sql = "SELECT * FROM empresa";
 
         try (Connection conn = Conexao.conectar();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql)) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()){
                 empresas.add(mapearEmpresa(rs));
@@ -112,7 +111,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         if (temBusca) sql.append(" AND (nome ILIKE ? OR cnpj ILIKE ?)");
         if (temSetor) sql.append(" AND setor ILIKE ?");
         if (temStatus) sql.append(" AND status = ?");
-        if (temTamanho) sql.append(" AND tamanho = ?");
+        if  (temTamanho) sql.append(" AND tamanho = ?");
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
             sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
@@ -127,9 +126,8 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
-            if (temSetor) pstmt.setString(i++, setor);
-            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
-            if (temTamanho) pstmt.setObject(i++, tamanho.name(), Types.OTHER);
+            if (temStatus) pstmt.setString(i++, status.name());
+            if (temTamanho) pstmt.setString(i++, tamanho.name());
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -170,8 +168,8 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             pstmt.setString(1, empresa.getNome());
             pstmt.setString(2, empresa.getSetor());
             pstmt.setString(3, empresa.getCnpj());
-            pstmt.setObject(4, empresa.getStatus().name(), Types.OTHER);
-            pstmt.setObject(5, empresa.getTamanho().name(), Types.OTHER);
+            pstmt.setString(4, empresa.getStatus().name());
+            pstmt.setString(5, empresa.getTamanho().name());
             pstmt.setLong(6, empresa.getId_empresa()); //localizando o id
 
             if (pstmt.executeUpdate() > 0) return 1;
@@ -200,6 +198,44 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             throw new DaoException(
                     "Erro ao conectar no banco de dados.", e
             );
+        }
+    }
+
+    /**
+     * Atualiza uma empresa localizando-a pelo CNPJ atual.
+     * O CNPJ que será salvo é o de empresa.getCnpj().
+     */
+    public int atualizarPorCnpj(Empresa empresa, String cnpjAtual) {
+        String sql = "UPDATE empresa SET nome = ?, setor = ?, cnpj = ?, status = ?, tamanho = ? WHERE cnpj = ?;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, empresa.getNome());
+            pstmt.setString(2, empresa.getSetor());
+            pstmt.setString(3, empresa.getCnpj());
+            pstmt.setString(4, empresa.getStatus().name());
+            pstmt.setString(5, empresa.getTamanho().name());
+            pstmt.setString(6, cnpjAtual);
+
+            if (pstmt.executeUpdate() > 0) return 1;
+            throw new RegistroNaoEncontradoException(
+                    "Empresa não encontrada para atualização pelo CNPJ informado."
+            );
+
+        } catch (SQLException e) {
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException("Já existe uma empresa com esse CNPJ.", e);
+            }
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Referência inválida na atualização da empresa.", e
+                );
+            }
+            throw new DaoException("Erro ao atualizar empresa pelo CNPJ.", e);
+
+        } catch (ClassNotFoundException e) {
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -235,6 +271,33 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         }
     }
 
+    /** Exclui uma empresa usando o CNPJ único como identificador. */
+    public int excluirPorCnpj(String cnpj) {
+        String sql = "DELETE FROM empresa WHERE cnpj = ?;";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, cnpj);
+
+            if (pstmt.executeUpdate() > 0) return 1;
+            throw new RegistroNaoEncontradoException(
+                    "Empresa não encontrada para exclusão pelo CNPJ informado."
+            );
+
+        } catch (SQLException e) {
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException(
+                        "Não é possível excluir a empresa porque existem registros vinculados.", e
+                );
+            }
+            throw new DaoException("Erro ao excluir empresa pelo CNPJ.", e);
+
+        } catch (ClassNotFoundException e) {
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
+        }
+    }
+
     private static Empresa mapearEmpresa(ResultSet rs) throws SQLException {
         Empresa empresa = new Empresa();
         empresa.setId_empresa(rs.getLong("id_empresa"));
@@ -242,8 +305,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         empresa.setSetor(rs.getString("setor"));
         empresa.setCnpj(rs.getString("cnpj"));
         empresa.setStatus(Status.valueOf(rs.getString("status")));
-        String tamanho = rs.getString("tamanho");
-        empresa.setTamanho(tamanho == null ? null : TamanhoEmpresa.valueOf(tamanho));
+        empresa.setTamanho(TamanhoEmpresa.valueOf(rs.getString("tamanho")));
         return empresa;
     }
 
