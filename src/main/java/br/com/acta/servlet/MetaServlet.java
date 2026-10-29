@@ -1,5 +1,9 @@
 package br.com.acta.servlet;
 
+import br.com.acta.dao.PlanoAcaoDAO;
+
+import br.com.acta.dao.CicloDAO;
+
 import br.com.acta.dao.MetaDAO;
 import br.com.acta.enums.Intensidade;
 import br.com.acta.model.Meta;
@@ -26,7 +30,6 @@ public class MetaServlet extends HttpServlet {
     private static final String PAGINA_META = "/meta.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final MetaDAO DAO = new MetaDAO();
-
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -152,6 +155,8 @@ public class MetaServlet extends HttpServlet {
         }
 
         req.setAttribute("metaList", List.of(meta));
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+        req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
         req.getRequestDispatcher(PAGINA_META).forward(req, resp);
     }
 
@@ -187,6 +192,8 @@ public class MetaServlet extends HttpServlet {
         List<Meta> metas = DAO.buscaFiltrada(busca, prioridade, status, dataInicial, dataFinal, criadoDe, criadoAte, ordem, direcao);
 
         req.setAttribute("metaList", metas);
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+        req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
         req.getRequestDispatcher(PAGINA_META).forward(req, resp);
     }
 
@@ -260,17 +267,25 @@ public class MetaServlet extends HttpServlet {
             List<Meta> metas = DAO.buscar();
 
             req.setAttribute("metaList", metas);
+            req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+            req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
         } catch (RuntimeException ex) {
             ex.printStackTrace();
             req.setAttribute("metaList", List.of());
+            req.setAttribute("cicloOpcoes", List.of());
+            req.setAttribute("planoAcaoOpcoes", List.of());
         }
         req.getRequestDispatcher(PAGINA_META).forward(req, resp);
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Meta> metas = DAO.buscar();
 
         req.setAttribute("metaList", metas);
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+        req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
         req.getRequestDispatcher(PAGINA_META).forward(req, resp);
     }
+
 }
