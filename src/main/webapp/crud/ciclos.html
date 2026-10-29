@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+<!-- Estrutura HTML alinhada ao backend. Dados, mensagens e IDs serão preenchidos na futura conversão para JSP. -->
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
         <link rel="stylesheet" href="../assets/css/crud.css">
-        <title>Área Restrita</title>
+        <title>ACTA — Ciclos</title>
+        <script src="../assets/js/crud.js" defer></script>
     </head>
-    <body>
+    <body class="crud-admin">
         <div class="sistema">
             <aside class="sidebar">
                 <div class="sidebar-logo">
@@ -69,12 +71,66 @@
                 <!-- Página Ciclos -->
                 <section id="ciclos" class="pagina">
                     <h1>Ciclos</h1>
+                    <!-- Mensagens serão preenchidas pelo Servlet na futura JSP. -->
+                    <p id="mensagem-erro" role="alert" hidden></p>
+                    <p id="mensagem-sucesso" role="status" hidden></p>
                     <div class="barra-acoes">
                         <div class="pesquisa">
-                            <input type="text" placeholder="Pesquisar por ciclo">
+                            <input type="search" name="busca" id="pesquisa-ciclos" form="filtros-ciclos-form" placeholder="Pesquisar" aria-label="Pesquisar registros">
                         </div>
                         <div class="filtro-container">
-                            <a href="#filtros-ciclos" class="botao botao-filtro">Filtros</a>
+                            <button type="button" class="botao botao-filtro" data-abrir-filtros aria-controls="filtros-ciclos" aria-expanded="false">Filtros</button>
+                            <section id="filtros-ciclos" class="filtros-painel" aria-label="Filtros" hidden>
+                                <div class="filtros-corpo">
+                                    <div class="modal modal-ver modal-filtros">
+                                        <div class="modal-topo">
+                                            <h2>Filtros</h2>
+                                                <button type="button" class="modal-fechar" data-fechar-filtros aria-label="Fechar filtros">&times;</button>
+                                        </div>
+                                        <form class="formulario" id="filtros-ciclos-form" method="get" action="../ciclo-servlet">
+                                            <div class="campo">
+                                                <label for="filtros-ciclos-etapa">Etapa atual</label>
+                                                <select id="filtros-ciclos-etapa" name="etapa">
+                                                    <option value="">Todos</option>
+                                                    <option value="PLAN">PLAN</option>
+                                                    <option value="DO">DO</option>
+                                                    <option value="CHECK">CHECK</option>
+                                                    <option value="ACT">ACT</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-ciclos-status">Status</label>
+                                                <select id="filtros-ciclos-status" name="status">
+                                                    <option value="">Todos</option>
+                                                    <option value="NAO_INICIADO">Não iniciado</option>
+                                                    <option value="INICIADO">Iniciado</option>
+                                                    <option value="FINALIZADO">Finalizado</option>
+                                                </select>
+                                            </div>
+                                            <div class="campo periodo-datas">
+                                                <span class="rotulo-campo">Início do ciclo</span>
+                                                <div class="datas-linha">
+                                                    <div class="campo"><label for="filtros-ciclos-dataInicial">De</label><input type="date" id="filtros-ciclos-dataInicial" name="dataInicial" min="1900-01-01" max="2100-12-31"></div>
+                                                    <div class="campo"><label for="filtros-ciclos-dataFinal">Até</label><input type="date" id="filtros-ciclos-dataFinal" name="dataFinal" min="1900-01-01" max="2100-12-31"></div>
+                                                </div>
+                                            </div>
+                                            <div class="campo periodo-datas">
+                                                <span class="rotulo-campo">Criado em</span>
+                                                <div class="datas-linha">
+                                                    <div class="campo"><label for="filtros-ciclos-criadoDe">De</label><input type="date" id="filtros-ciclos-criadoDe" name="criadoDe" min="1900-01-01" max="2100-12-31"></div>
+                                                    <div class="campo"><label for="filtros-ciclos-criadoAte">Até</label><input type="date" id="filtros-ciclos-criadoAte" name="criadoAte" min="1900-01-01" max="2100-12-31"></div>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="ordem" value="">
+                                            <input type="hidden" name="direcao" value="ASC">
+                                            <div class="botoes-modal">
+                                                <a href="ciclos.html#ciclos" class="botao botao-cancelar">Limpar filtros</a>
+                                                <button type="submit" class="botao botao-principal">Aplicar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                         <a href="#cadastrar-ciclo" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -82,109 +138,31 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Ciclo</th>
-                                    <th>Empresa</th>
-                                    <th>Responsável</th>
-                                    <th>Etapa</th>
-                                    <th>Status</th>
-                                    <th>Início</th>
-                                    <th>Fim</th>
-                                    <th class="coluna-acao">Ver</th>
-                                    <th class="coluna-acao">Editar</th>
-                                    <th class="coluna-acao">Excluir</th>
+                                    <!-- Na integração JSP, incluir a chave id na whitelist de ordenação do DAO. -->
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="id" aria-label="Ordenar por ID">#<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="nome" aria-label="Ordenar por Nome">Nome<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="empresa" aria-label="Ordenar por Empresa">Empresa<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="responsavel" aria-label="Ordenar por Responsável">Responsável<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="etapa" aria-label="Ordenar por Etapa atual">Etapa atual<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="status" aria-label="Ordenar por Status">Status<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="inicio" aria-label="Ordenar por Data de início">Data de início<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="fim" aria-label="Ordenar por Data de fim">Data de fim<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="criado_em" aria-label="Ordenar por Criado em">Criado em<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-acao">Ver</th>
+                                    <th scope="col" class="coluna-acao">Editar</th>
+                                    <th scope="col" class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Ciclo 1</td>
-                                    <td>Flora</td>
-                                    <td>Responsável</td>
-                                    <td>Plan</td>
-                                    <td>Iniciado</td>
-                                    <td>00/00/0000</td>
-                                    <td>00/00/0000</td>
-                                    <td class="coluna-acao">
-                                        <a href="#ver-ciclo" class="icone-acao">
-                                            <img src="../assets/images/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#editar-ciclo" class="icone-acao">
-                                            <img src="../assets/images/icone_editar.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#excluir-ciclo" class="icone-acao">
-                                            <img src="../assets/images/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
-                                </tr>
+                                <!-- Na conversão futura, percorrer request.getAttribute("cicloList"); exibir o ID na coluna # e utilizá-lo nas ações. -->
+                                <tr><td colspan="12">Nenhum registro carregado.</td></tr>
+
+                                <!-- Modelo inerte: preencher com dados reais e vincular o ID às ações na futura JSP. -->
+                                <template id="modelo-linha-ciclos"><tr><td data-campo="id_ciclo"></td><td data-campo="nome"></td><td data-campo="nome_empresa"></td><td data-campo="nome_responsavel"></td><td data-campo="etapa_atual"></td><td data-campo="status"></td><td data-campo="dt_inicio"></td><td data-campo="dt_fim"></td><td data-campo="criado_em"></td><td class="coluna-acao"><a href="#ver-ciclo" class="icone-acao" aria-label="Ver"><img src="../assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-ciclo" class="icone-acao" aria-label="Editar"><img src="../assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-ciclo" class="icone-acao" aria-label="Excluir"><img src="../assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr></template>
                             </tbody>
                         </table>
                     </div>
 
-                    <section id="filtros-ciclos" class="pagina modal-pagina">
-                        <div class="modal-fundo">
-                            <div class="modal modal-ver modal-filtros">
-                                <div class="modal-topo">
-                                    <h2>Filtros</h2>
-                                    <a href="#ciclos" class="modal-fechar" aria-label="Fechar">&times;</a>
-                                </div>
-                                <form class="formulario" method="get" action="#ciclos">
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
-                                        <div class="grupo-checkbox">
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="nome">
-                                                Ciclo
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="empresa">
-                                                Empresa
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="responsavel">
-                                                Responsável
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="etapa_atual">
-                                                Etapa
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="status">
-                                                Status
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="dt_inicio">
-                                                Início
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="dt_fim">
-                                                Fim
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordem</span>
-                                        <div class="grupo-radio">
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="asc" checked>
-                                                Crescente (A → Z)
-                                            </label>
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="desc">
-                                                Decrescente (Z → A)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="botoes-modal">
-                                        <button type="submit" class="botao botao-principal">Aplicar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
-                    
                     <section id="ver-ciclo" class="pagina modal-pagina">
                         <div class="modal-fundo">
                             <div class="modal modal-ver">
@@ -193,42 +171,15 @@
                                     <a href="#ciclos" class="modal-fechar" aria-label="Fechar">&times;</a>
                                 </div>
                                 <div class="detalhes">
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Nome</span>
-                                        <span class="detalhe-valor">Ciclo 1</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Empresa</span>
-                                        <span class="detalhe-valor">Flora</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Responsável</span>
-                                        <span class="detalhe-valor">Responsável</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Etapa atual</span>
-                                        <span class="detalhe-valor">Plan</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Status</span>
-                                        <span class="detalhe-valor">Iniciado</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Data de início</span>
-                                        <span class="detalhe-valor">00/00/0000</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Data de fim</span>
-                                        <span class="detalhe-valor">00/00/0000</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Colaboradores do ciclo</span>
-                                        <span class="detalhe-valor">Nome, Nome</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Descrição</span>
-                                        <span class="detalhe-valor">Descrição do ciclo</span>
-                                    </div>
+                                    <div class="detalhe"><span class="detalhe-label">Nome</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Empresa</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Responsável</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Etapa atual</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Status</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Data de início</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Data de fim</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Criado em</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe detalhe-largo"><span class="detalhe-label">Descrição</span><span class="detalhe-valor">—</span></div>
                                 </div>
                             </div>
                         </div>
@@ -238,22 +189,23 @@
                         <div class="modal-fundo">
                             <div class="modal modal-grande">
                                 <h2>Cadastrar ciclo</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../ciclo-servlet">
+                                    <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-ciclo-nome">Nome</label>
                                         <input type="text" id="cad-ciclo-nome" name="nome" maxlength="100" placeholder="Digite nome" required>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="cad-ciclo-descricao">Descrição</label>
-                                        <textarea id="cad-ciclo-descricao" name="descricao" rows="3"></textarea>
+                                        <textarea id="cad-ciclo-descricao" name="descricao" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-ciclo-etapa_atual">Etapa atual</label>
                                         <select id="cad-ciclo-etapa_atual" name="etapa_atual" required>
-                                            <option value="PLAN">Plan</option>
-                                            <option value="DO">Do</option>
-                                            <option value="CHECK">Check</option>
-                                            <option value="ACT">Act</option>
+                                            <option value="PLAN">PLAN</option>
+                                            <option value="DO">DO</option>
+                                            <option value="CHECK">CHECK</option>
+                                            <option value="ACT">ACT</option>
                                         </select>
                                     </div>
                                     <div class="campo">
@@ -266,28 +218,27 @@
                                     </div>
                                     <div class="campo">
                                         <label for="cad-ciclo-dt_inicio">Data de início</label>
-                                        <input type="date" id="cad-ciclo-dt_inicio" name="dt_inicio" required>
+                                        <input type="date" id="cad-ciclo-dt_inicio" name="dt_inicio" required min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-ciclo-dt_fim">Data de fim</label>
-                                        <input type="date" id="cad-ciclo-dt_fim" name="dt_fim">
+                                        <input type="date" id="cad-ciclo-dt_fim" name="dt_fim" min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-ciclo-id_empresa">Empresa</label>
                                         <select id="cad-ciclo-id_empresa" name="id_empresa" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-ciclo-id_responsavel">Responsável</label>
                                         <select id="cad-ciclo-id_responsavel" name="id_responsavel" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
-                                    <div class="campo campo-largo">
-                                        <label for="cad-ciclo-colaboradores">Colaboradores do ciclo</label>
-                                        <select id="cad-ciclo-colaboradores" name="colaboradores" multiple size="4"></select>
-                                    </div>
+
                                     <div class="botoes-modal">
                                         <a href="#ciclos" class="botao botao-cancelar">Cancelar</a>
                                         <button type="submit" class="botao botao-principal">Cadastrar</button>
@@ -301,22 +252,25 @@
                         <div class="modal-fundo">
                             <div class="modal modal-grande">
                                 <h2>Editar ciclo</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../ciclo-servlet">
+                                    <input type="hidden" name="acao" value="atualizar">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-ciclo" value="">
                                     <div class="campo">
                                         <label for="edi-ciclo-nome">Nome</label>
                                         <input type="text" id="edi-ciclo-nome" name="nome" maxlength="100" placeholder="Digite nome" required>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="edi-ciclo-descricao">Descrição</label>
-                                        <textarea id="edi-ciclo-descricao" name="descricao" rows="3"></textarea>
+                                        <textarea id="edi-ciclo-descricao" name="descricao" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-ciclo-etapa_atual">Etapa atual</label>
                                         <select id="edi-ciclo-etapa_atual" name="etapa_atual" required>
-                                            <option value="PLAN">Plan</option>
-                                            <option value="DO">Do</option>
-                                            <option value="CHECK">Check</option>
-                                            <option value="ACT">Act</option>
+                                            <option value="PLAN">PLAN</option>
+                                            <option value="DO">DO</option>
+                                            <option value="CHECK">CHECK</option>
+                                            <option value="ACT">ACT</option>
                                         </select>
                                     </div>
                                     <div class="campo">
@@ -329,28 +283,27 @@
                                     </div>
                                     <div class="campo">
                                         <label for="edi-ciclo-dt_inicio">Data de início</label>
-                                        <input type="date" id="edi-ciclo-dt_inicio" name="dt_inicio" required>
+                                        <input type="date" id="edi-ciclo-dt_inicio" name="dt_inicio" required min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-ciclo-dt_fim">Data de fim</label>
-                                        <input type="date" id="edi-ciclo-dt_fim" name="dt_fim">
+                                        <input type="date" id="edi-ciclo-dt_fim" name="dt_fim" min="1900-01-01" max="2100-12-31">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-ciclo-id_empresa">Empresa</label>
                                         <select id="edi-ciclo-id_empresa" name="id_empresa" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-ciclo-id_responsavel">Responsável</label>
                                         <select id="edi-ciclo-id_responsavel" name="id_responsavel" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
-                                    <div class="campo campo-largo">
-                                        <label for="edi-ciclo-colaboradores">Colaboradores do ciclo</label>
-                                        <select id="edi-ciclo-colaboradores" name="colaboradores" multiple size="4"></select>
-                                    </div>
+
                                     <div class="botoes-modal">
                                         <a href="#ciclos" class="botao botao-cancelar">Cancelar</a>
                                         <button type="submit" class="botao botao-principal">Confirmar edição</button>
@@ -365,10 +318,15 @@
                             <div class="modal modal-exclusao">
                                 <h2>Excluir ciclo</h2>
                                 <p>Tem certeza que deseja excluir este ciclo?</p>
-                                <div class="botoes-modal">
+                                <form method="post" action="../ciclo-servlet">
+                                    <input type="hidden" name="acao" value="excluir">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-ciclo" value="">
+                                    <div class="botoes-modal">
                                     <a href="#ciclos" class="botao botao-cancelar">Cancelar</a>
-                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                    <button type="submit" class="botao botao-excluir">Confirmar exclusão</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </section>
