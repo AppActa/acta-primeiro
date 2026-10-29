@@ -460,11 +460,13 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         colaborador.setTelefone(rs.getString("telefone"));
         colaborador.setCpf(rs.getString("cpf"));
         colaborador.setNome_empresa(rs.getString("nome_empresa"));
+        colaborador.setId_empresa(rs.getLong("id_empresa"));
         return colaborador;
     }
 
     // Whitelist de ordenação
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_colaborador",
             "nome", "nome",
             "sobrenome", "sobrenome",
             "email", "email",

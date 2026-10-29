@@ -1,5 +1,7 @@
 package br.com.acta.servlet;
 
+import br.com.acta.dao.EmpresaDAO;
+
 import br.com.acta.dao.ColaboradorDAO;
 import br.com.acta.model.Colaborador;
 import br.com.acta.enums.Status;
@@ -166,6 +168,7 @@ public class ColaboradorServlet extends HttpServlet {
         req.setAttribute("colaboradorList", List.of(colaborador));
         req.setAttribute("areaList", DAO.buscarAreas());
         req.setAttribute("cargoList", DAO.buscarCargos());
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 
@@ -206,6 +209,7 @@ public class ColaboradorServlet extends HttpServlet {
         req.setAttribute("colaboradorList", colaboradores);
         req.setAttribute("areaList", DAO.buscarAreas());
         req.setAttribute("cargoList", DAO.buscarCargos());
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 
@@ -328,20 +332,26 @@ public class ColaboradorServlet extends HttpServlet {
 
             req.setAttribute("colaboradorList", colaboradores);
             req.setAttribute("areaList", DAO.buscarAreas());
+            req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
+            req.setAttribute("cargoList", DAO.buscarCargos());
         } catch (RuntimeException ex) {
             ex.printStackTrace();
             req.setAttribute("colaboradorList", List.of());
             req.setAttribute("areaList", List.of());
+            req.setAttribute("empresaOpcoes", List.of());
+            req.setAttribute("cargoList", List.of());
         }
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Colaborador> colaboradores = DAO.buscar();
 
         req.setAttribute("colaboradorList", colaboradores);
         req.setAttribute("areaList", DAO.buscarAreas());
         req.setAttribute("cargoList", DAO.buscarCargos());
+        req.setAttribute("empresaOpcoes", new EmpresaDAO().buscar());
         req.getRequestDispatcher(PAGINA_COLABORADORES).forward(req, resp);
     }
 }
