@@ -273,10 +273,12 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         licoesAprendidas.setFase_origem(EtapaCiclo.valueOf(rs.getString("fase_origem")));
         licoesAprendidas.setSeveridade(Intensidade.valueOf(rs.getString("severidade")));
         licoesAprendidas.setNome_ciclo(rs.getString("nome_ciclo"));
+        licoesAprendidas.setId_ciclo(rs.getLong("id_ciclo"));
         return licoesAprendidas;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_licao",
             "titulo", "titulo",
             "area", "area",
             "categoria", "categoria",
