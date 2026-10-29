@@ -27,7 +27,7 @@ import java.util.List;
 
 @WebServlet(name = "MetaServlet", value = "/meta-servlet")
 public class MetaServlet extends HttpServlet {
-    private static final String PAGINA_META = "/meta.jsp";
+    private static final String PAGINA_META = "/crud/meta.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final MetaDAO DAO = new MetaDAO();
 

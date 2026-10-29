@@ -22,7 +22,7 @@ import java.util.List;
 
 @WebServlet(name = "EnderecoServlet", value = "/endereco-servlet")
 public class EnderecoServlet extends HttpServlet {
-    private static final String PAGINA_ENDERECO = "/endereco.jsp";
+    private static final String PAGINA_ENDERECO = "/crud/endereco.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final EnderecoDAO DAO = new EnderecoDAO();
 
