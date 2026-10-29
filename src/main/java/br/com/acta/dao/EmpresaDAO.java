@@ -313,6 +313,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_empresa",
             "nome", "nome",
             "setor", "setor",
             "status", "status",

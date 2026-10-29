@@ -1,6 +1,5 @@
 package br.com.acta.servlet;
 
-
 import br.com.acta.dao.EmpresaDAO;
 import br.com.acta.model.Empresa;
 import br.com.acta.enums.Status;
@@ -20,13 +19,11 @@ import br.com.acta.utils.Validador;
 import java.io.IOException;
 import java.util.List;
 
-
 @WebServlet(name = "EmpresaServlet", value = "/empresa-servlet")
 public class EmpresaServlet extends HttpServlet {
     private static final String PAGINA_EMPRESA = "/empresa.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private static final EmpresaDAO DAO = new EmpresaDAO();
-
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -160,6 +157,7 @@ public class EmpresaServlet extends HttpServlet {
 
         req.setAttribute("empresaList", List.of(empresa));
         req.setAttribute("setorList", DAO.buscarSetor());
+
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req,resp);
     }
 
@@ -183,6 +181,7 @@ public class EmpresaServlet extends HttpServlet {
         List<Empresa> empresas = DAO.buscaFiltrada(busca, setor, status, tamanho, ordem, direcao);
         req.setAttribute("empresaList", empresas);
         req.setAttribute("setorList", DAO.buscarSetor());
+
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req,resp);
     }
 
@@ -293,12 +292,14 @@ public class EmpresaServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req, resp);
     }
 
-
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Empresa> empresas = DAO.buscar();
 
         req.setAttribute("empresaList", empresas);
         req.setAttribute("setorList", DAO.buscarSetor());
+
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req, resp);
     }
+
 }

@@ -1,5 +1,9 @@
 package br.com.acta.servlet;
 
+import br.com.acta.dao.PlanoAcaoDAO;
+
+import br.com.acta.dao.ColaboradorDAO;
+
 import br.com.acta.dao.ProblemaDAO;
 import br.com.acta.dao.CicloDAO;
 import br.com.acta.enums.Intensidade;
@@ -140,6 +144,9 @@ public class ProblemaServlet extends HttpServlet {
 
         req.setAttribute("problemaList", List.of(problema));
         req.setAttribute("origemList", DAO.buscarOrigem());
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+        req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
 
@@ -169,6 +176,9 @@ public class ProblemaServlet extends HttpServlet {
 
         req.setAttribute("problemaList", problemas);
         req.setAttribute("origemList", DAO.buscarOrigem());
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+        req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
 
@@ -251,18 +261,31 @@ public class ProblemaServlet extends HttpServlet {
             List<Problema> problemas = DAO.buscar();
 
             req.setAttribute("problemaList", problemas);
+            req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+            req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
+            req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
+            req.setAttribute("origemList", DAO.buscarOrigem());
         } catch (RuntimeException ex) {
             ex.printStackTrace();
             req.setAttribute("problemaList", List.of());
+            req.setAttribute("cicloOpcoes", List.of());
+            req.setAttribute("planoAcaoOpcoes", List.of());
+            req.setAttribute("colaboradorOpcoes", List.of());
+            req.setAttribute("origemList", List.of());
         }
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
 
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Problema> problemas = DAO.buscar();
 
         req.setAttribute("problemaList", problemas);
         req.setAttribute("origemList", DAO.buscarOrigem());
+        req.setAttribute("cicloOpcoes", new CicloDAO().buscar());
+        req.setAttribute("planoAcaoOpcoes", new PlanoAcaoDAO().buscar());
+        req.setAttribute("colaboradorOpcoes", new ColaboradorDAO().buscar());
         req.getRequestDispatcher(PAGINA_PROBLEMA).forward(req, resp);
     }
+
 }

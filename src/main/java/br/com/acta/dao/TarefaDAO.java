@@ -237,10 +237,13 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         tarefa.setDt_inicio(rs.getDate("dt_inicio"));
         tarefa.setNome_colaborador(rs.getString("nome_colaborador"));
         tarefa.setNome_plano_acao(rs.getString("nome_plano_acao"));
+        tarefa.setId_colaborador(rs.getLong("id_colaborador"));
+        tarefa.setId_plano_acao(rs.getLong("id_plano_acao"));
         return tarefa;
     }
 
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_tarefa",
             "titulo", "titulo",
             "prioridade", "prioridade",
             "entrega", "dt_entrega",

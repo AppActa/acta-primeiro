@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+<!-- Estrutura HTML alinhada ao backend. Dados, mensagens e IDs serão preenchidos na futura conversão para JSP. -->
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
         <link rel="stylesheet" href="../assets/css/crud.css">
-        <title>Área Restrita</title>
+        <title>ACTA — Endereço</title>
+        <script src="../assets/js/crud.js" defer></script>
     </head>
-    <body>
+    <body class="crud-admin">
         <div class="sistema">
             <aside class="sidebar">
                 <div class="sidebar-logo">
@@ -69,12 +71,41 @@
                 <!-- Página Endereço -->
                 <section id="endereco" class="pagina">
                     <h1>Endereço</h1>
+                    <!-- Mensagens serão preenchidas pelo Servlet na futura JSP. -->
+                    <p id="mensagem-erro" role="alert" hidden></p>
+                    <p id="mensagem-sucesso" role="status" hidden></p>
                     <div class="barra-acoes">
                         <div class="pesquisa">
-                            <input type="text" placeholder="Pesquisar por endereço">
+                            <input type="search" name="busca" id="pesquisa-endereco" form="filtros-endereco-form" placeholder="Pesquisar" aria-label="Pesquisar registros">
                         </div>
                         <div class="filtro-container">
-                            <a href="#filtros-endereco" class="botao botao-filtro">Filtros</a>
+                            <button type="button" class="botao botao-filtro" data-abrir-filtros aria-controls="filtros-endereco" aria-expanded="false">Filtros</button>
+                            <section id="filtros-endereco" class="filtros-painel" aria-label="Filtros" hidden>
+                                <div class="filtros-corpo">
+                                    <div class="modal modal-ver modal-filtros">
+                                        <div class="modal-topo">
+                                            <h2>Filtros</h2>
+                                                <button type="button" class="modal-fechar" data-fechar-filtros aria-label="Fechar filtros">&times;</button>
+                                        </div>
+                                        <form class="formulario" id="filtros-endereco-form" method="get" action="../endereco-servlet">
+                                            <div class="campo">
+                                                <label for="filtros-endereco-estado">Estado</label>
+                                                <input type="text" id="filtros-endereco-estado" name="estado" maxlength="2" pattern="[A-Za-z]{2}" placeholder="Ex: SP">
+                                            </div>
+                                            <div class="campo">
+                                                <label for="filtros-endereco-cidade">Cidade</label>
+                                                <input type="text" id="filtros-endereco-cidade" name="cidade" list="sugestoes-endereco-cidade" maxlength="30">
+                                            </div>
+                                            <input type="hidden" name="ordem" value="">
+                                            <input type="hidden" name="direcao" value="ASC">
+                                            <div class="botoes-modal">
+                                                <a href="endereco.html#endereco" class="botao botao-cancelar">Limpar filtros</a>
+                                                <button type="submit" class="botao botao-principal">Aplicar</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                         <a href="#cadastrar-endereco" class="botao botao-principal">Cadastrar</a>
                     </div>
@@ -82,114 +113,30 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Empresa</th>
-                                    <th>Unidade</th>
-                                    <th>Rua</th>
-                                    <th>Número</th>
-                                    <th>Bairro</th>
-                                    <th>Cidade</th>
-                                    <th>Estado</th>
-                                    <th>CEP</th>
-                                    <th class="coluna-acao">Ver</th>
-                                    <th class="coluna-acao">Editar</th>
-                                    <th class="coluna-acao">Excluir</th>
+                                    <!-- Na integração JSP, incluir a chave id na whitelist de ordenação do DAO. -->
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="id" aria-label="Ordenar por ID">#<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="empresa" aria-label="Ordenar por Empresa">Empresa<span aria-hidden="true"></span></button></th>
+                                    <th scope="col">Unidade</th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="rua" aria-label="Ordenar por Rua">Rua<span aria-hidden="true"></span></button></th>
+                                    <th scope="col">Número</th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="bairro" aria-label="Ordenar por Bairro">Bairro<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="cidade" aria-label="Ordenar por Cidade">Cidade<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="estado" aria-label="Ordenar por Estado">Estado<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-ordenavel"><button type="button" class="botao-ordenacao" data-ordenar="cep" aria-label="Ordenar por CEP">CEP<span aria-hidden="true"></span></button></th>
+                                    <th scope="col" class="coluna-acao">Ver</th>
+                                    <th scope="col" class="coluna-acao">Editar</th>
+                                    <th scope="col" class="coluna-acao">Excluir</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Flora</td>
-                                    <td>Matriz</td>
-                                    <td>Rua Exemplo</td>
-                                    <td>123</td>
-                                    <td>Centro</td>
-                                    <td>São Paulo</td>
-                                    <td>SP</td>
-                                    <td>00000-000</td>
-                                    <td class="coluna-acao">
-                                        <a href="#ver-endereco" class="icone-acao">
-                                            <img src="../assets/images/icone_ver.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#editar-endereco" class="icone-acao">
-                                            <img src="../assets/images/icone_editar.svg" alt="">
-                                        </a>
-                                    </td>
-                                    <td class="coluna-acao">
-                                        <a href="#excluir-endereco" class="icone-acao">
-                                            <img src="../assets/images/icone_excluir.svg" alt="">
-                                        </a>
-                                    </td>
-                                </tr>
+                                <!-- Na conversão futura, percorrer request.getAttribute("enderecoList"); exibir o ID na coluna # e utilizá-lo nas ações. -->
+                                <tr><td colspan="12">Nenhum registro carregado.</td></tr>
+
+                                <!-- Modelo inerte: preencher com dados reais e vincular o ID às ações na futura JSP. -->
+                                <template id="modelo-linha-endereco"><tr><td data-campo="id_endereco"></td><td data-campo="nome_empresa"></td><td data-campo="unidade"></td><td data-campo="rua"></td><td data-campo="numero"></td><td data-campo="bairro"></td><td data-campo="cidade"></td><td data-campo="estado"></td><td data-campo="cep"></td><td class="coluna-acao"><a href="#ver-endereco" class="icone-acao" aria-label="Ver"><img src="../assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-endereco" class="icone-acao" aria-label="Editar"><img src="../assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-endereco" class="icone-acao" aria-label="Excluir"><img src="../assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr></template>
                             </tbody>
                         </table>
                     </div>
-
-                    <section id="filtros-endereco" class="pagina modal-pagina">
-                        <div class="modal-fundo">
-                            <div class="modal modal-ver modal-filtros">
-                                <div class="modal-topo">
-                                    <h2>Filtros</h2>
-                                    <a href="#endereco" class="modal-fechar" aria-label="Fechar">&times;</a>
-                                </div>
-                                <form class="formulario" method="get" action="#endereco">
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
-                                        <div class="grupo-checkbox">
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="empresa">
-                                                Empresa
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="unidade">
-                                                Unidade
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="rua">
-                                                Rua
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="numero">
-                                                Número
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="bairro">
-                                                Bairro
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="cidade">
-                                                Cidade
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="estado">
-                                                Estado
-                                            </label>
-                                            <label class="opcao-check">
-                                                <input type="checkbox" name="ordenar_por" value="cep">
-                                                CEP
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="campo-ordem">
-                                        <span class="rotulo-campo">Ordem</span>
-                                        <div class="grupo-radio">
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="asc" checked>
-                                                Crescente (A → Z)
-                                            </label>
-                                            <label class="opcao-radio">
-                                                <input type="radio" name="ordem" value="desc">
-                                                Decrescente (Z → A)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="botoes-modal">
-                                        <button type="submit" class="botao botao-principal">Aplicar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </section>
 
                     <section id="ver-endereco" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -199,42 +146,15 @@
                                     <a href="#endereco" class="modal-fechar" aria-label="Fechar">&times;</a>
                                 </div>
                                 <div class="detalhes">
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Empresa</span>
-                                        <span class="detalhe-valor">Flora</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Unidade</span>
-                                        <span class="detalhe-valor">Matriz</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">CEP</span>
-                                        <span class="detalhe-valor">00000-000</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Rua</span>
-                                        <span class="detalhe-valor">Rua Exemplo</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Número</span>
-                                        <span class="detalhe-valor">123</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Bairro</span>
-                                        <span class="detalhe-valor">Centro</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Cidade</span>
-                                        <span class="detalhe-valor">São Paulo</span>
-                                    </div>
-                                    <div class="detalhe">
-                                        <span class="detalhe-label">Estado</span>
-                                        <span class="detalhe-valor">SP</span>
-                                    </div>
-                                    <div class="detalhe detalhe-largo">
-                                        <span class="detalhe-label">Complemento</span>
-                                        <span class="detalhe-valor">Complemento do endereço</span>
-                                    </div>
+                                    <div class="detalhe"><span class="detalhe-label">Empresa</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Unidade</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Rua</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Número</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Bairro</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Cidade</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Estado</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe"><span class="detalhe-label">CEP</span><span class="detalhe-valor">—</span></div>
+                                    <div class="detalhe detalhe-largo"><span class="detalhe-label">Complemento</span><span class="detalhe-valor">—</span></div>
                                 </div>
                             </div>
                         </div>
@@ -244,11 +164,13 @@
                         <div class="modal-fundo">
                             <div class="modal modal-grande">
                                 <h2>Cadastrar endereço</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../endereco-servlet">
+                                    <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-endereco-id_empresa">Empresa</label>
                                         <select id="cad-endereco-id_empresa" name="id_empresa" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
@@ -273,7 +195,7 @@
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-cidade">Cidade</label>
-                                        <input type="text" id="cad-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required>
+                                        <input type="text" id="cad-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required list="sugestoes-endereco-cidade">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-estado">Estado (UF)</label>
@@ -281,7 +203,7 @@
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="cad-endereco-complemento">Complemento</label>
-                                        <textarea id="cad-endereco-complemento" name="complemento" rows="3"></textarea>
+                                        <textarea id="cad-endereco-complemento" name="complemento" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="botoes-modal">
                                         <a href="#endereco" class="botao botao-cancelar">Cancelar</a>
@@ -296,11 +218,15 @@
                         <div class="modal-fundo">
                             <div class="modal modal-grande">
                                 <h2>Editar endereço</h2>
-                                <form class="formulario">
+                                <form class="formulario" method="post" action="../endereco-servlet">
+                                    <input type="hidden" name="acao" value="atualizar">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-endereco" value="">
                                     <div class="campo">
                                         <label for="edi-endereco-id_empresa">Empresa</label>
                                         <select id="edi-endereco-id_empresa" name="id_empresa" required>
-                                            <option value="" disabled selected hidden>Selecione</option>
+                                            <option value="">Selecione</option>
+                                            <!-- Preencher com IDs nos values e nomes dos registros nos rótulos, na futura JSP. -->
                                         </select>
                                     </div>
                                     <div class="campo">
@@ -325,7 +251,7 @@
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-cidade">Cidade</label>
-                                        <input type="text" id="edi-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required>
+                                        <input type="text" id="edi-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required list="sugestoes-endereco-cidade">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-estado">Estado (UF)</label>
@@ -333,7 +259,7 @@
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="edi-endereco-complemento">Complemento</label>
-                                        <textarea id="edi-endereco-complemento" name="complemento" rows="3"></textarea>
+                                        <textarea id="edi-endereco-complemento" name="complemento" rows="3" maxlength="2000"></textarea>
                                     </div>
                                     <div class="botoes-modal">
                                         <a href="#endereco" class="botao botao-cancelar">Cancelar</a>
@@ -349,14 +275,22 @@
                             <div class="modal modal-exclusao">
                                 <h2>Excluir endereço</h2>
                                 <p>Tem certeza que deseja excluir este endereço?</p>
-                                <div class="botoes-modal">
+                                <form method="post" action="../endereco-servlet">
+                                    <input type="hidden" name="acao" value="excluir">
+                                    <!-- Preencher com o ID do registro na conversão para JSP. -->
+                                    <input type="hidden" name="id-endereco" value="">
+                                    <div class="botoes-modal">
                                     <a href="#endereco" class="botao botao-cancelar">Cancelar</a>
-                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                    <button type="submit" class="botao botao-excluir">Confirmar exclusão</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </section>
                 </section>
+                <datalist id="sugestoes-endereco-cidade">
+                    <!-- Preencher futuramente com request.getAttribute("cidadeList"); não inserir opções fictícias. -->
+                </datalist>
             </main>
         </div>
     </body>
