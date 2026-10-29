@@ -3,24 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ACTA | Gestão contínua que gera resultados</title>
+  <title>ACTA</title>
   <meta name="description" content="ACTA: a plataforma PDCA que transforma planejamento em ação, acompanhamento em aprendizado e resultados em crescimento.">
   <link rel="shortcut icon" href="assets/images/logo_compacta.svg" type="image/x-icon">
-
-  <!-- Fonte oficial do projeto -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- Folha de estilos principal -->
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
-  <!-- =====================================================
-       HEADER / MENU SUPERIOR
-       Logo, navegação (âncoras da SPA) e botão "Entrar"
-       ===================================================== -->
+  <!-- HEADER / MENU SUPERIOR -->
   <header class="header">
     <a href="#inicio" class="header__logo" aria-label="ACTA - Início">
       <img src="assets/images/logo_oficial.svg" alt="Logo oficial do ACTA">
@@ -33,17 +26,13 @@
       <a href="#sobre-nos">Sobre nós</a>
     </nav>
 
-    <!-- Botão de destaque (troque o href pela URL de login do app) -->
-    <a href="empresa-servlet" class="btn btn--pequeno">Entrar</a>
+    <a href="login.html" class="btn btn--pequeno">Entrar</a>
   </header>
 
 
   <main>
 
-    <!-- =====================================================
-         PÁGINA 1: INÍCIO
-         Contém: Hero, Ciclo PDCA, Resultados e Recursos
-         ===================================================== -->
+    <!-- PÁGINA 1: INÍCIO -->
     <div id="inicio" class="pagina">
 
       <!-- Seção Hero / Inicial -->
@@ -55,7 +44,7 @@
         </div>
 
         <div class="hero__mockups">
-          <!-- Imagem única com os dois celulares inclinados (já inclui a sombra) -->
+          <!-- Imagem única com os dois celulares inclinados -->
           <img class="hero__celulares" src="assets/images/mockup_celulares.png" alt="Telas do app ACTA: abertura 'O ciclo da melhoria começa aqui!' e tela de login">
         </div>
       </section>
@@ -66,7 +55,7 @@
         <h2 class="titulo-secao">O ciclo <span>PDCA</span> no ACTA</h2>
         <p class="subtitulo-secao">Cada etapa da metodologia otimizada em um único lugar</p>
 
-        <!-- Cada SVG já é o card completo (ícone, número, título e descrição) -->
+        <!-- Cada SVG já é o card completo -->
         <ol class="pdca__lista">
           <li class="pdca__card">
             <img src="assets/images/icone_pdca_planeje.svg" alt="1. Planeje: defina objetivos, metas e planos de ação alinhados à estratégia.">
@@ -100,7 +89,7 @@
 
         <div class="resultados__grid">
 
-          <!-- Card 1: Entenda e planeje (largo, verde) -->
+          <!-- Card 1: Entenda e planeje -->
           <article class="card-resultado card-resultado--entenda">
             <img src="assets/images/card_celular_entenda.png" alt="Celular mostrando a tela de planejamento do ciclo">
             <div class="card-resultado__texto">
@@ -109,19 +98,19 @@
             </div>
           </article>
 
-          <!-- Card 2: Coloque em prática (estreito, escuro) -->
+          <!-- Card 2: Coloque em prática -->
           <article class="card-resultado card-resultado--pratica">
             <h3>Coloque em prática</h3>
             <img src="assets/images/card_celular_pratica.png" alt="Celular mostrando a tela de execução das ações">
           </article>
 
-          <!-- Card 3: Acompanhe os resultados (estreito, escuro) -->
+          <!-- Card 3: Acompanhe os resultados -->
           <article class="card-resultado card-resultado--acompanhe">
             <h3>Acompanhe os resultados</h3>
             <img src="assets/images/card_celular_acompanhe.png" alt="Celular mostrando a visão geral do ciclo">
           </article>
 
-          <!-- Card 4: Transforme e evolua (largo, verde) -->
+          <!-- Card 4: Transforme e evolua -->
           <article class="card-resultado card-resultado--transforme">
             <div class="card-resultado__texto">
               <h3>Transforme e evolua</h3>
@@ -180,10 +169,7 @@
     <!-- /PÁGINA 1: INÍCIO -->
 
 
-    <!-- =====================================================
-         PÁGINA 2: PLANOS
-         Contém: Planos e FAQ
-         ===================================================== -->
+    <!-- PÁGINA 2: PLANOS -->
     <div id="planos" class="pagina">
 
       <!-- Seção Planos -->
@@ -255,7 +241,7 @@
       </section>
 
 
-      <!-- Seção FAQ / Perguntas Frequentes (accordion nativo com <details>) -->
+      <!-- Seção FAQ / Perguntas Frequentes -->
       <section id="faq" class="faq">
         <h2 class="titulo-secao">Perguntas <span>frequentes</span></h2>
 
@@ -286,10 +272,7 @@
     <!-- /PÁGINA 2: PLANOS -->
 
 
-    <!-- =====================================================
-         PÁGINA 3: SOBRE NÓS
-         Contém: Sobre, Equipe, IA (Cato) e Valores
-         ===================================================== -->
+    <!-- PÁGINA 3: SOBRE NÓS -->
     <div id="sobre-nos" class="pagina">
 
       <!-- Seção Hero da página Sobre nós -->
@@ -308,19 +291,17 @@
       <!-- Seção Como surgiu o ACTA -->
       <section class="origem">
         <h2 class="titulo-secao">Como surgiu o <span>ACTA</span></h2>
-        <p class="origem__texto">O ACTA surgiu a partir de um projeto interdisciplinar da nossa escola, com foco na ODS 12 (Consumo e Produção Responsáveis). O objetivo era utilizar a tecnologia para tornar empresas e indústrias mais eficientes, responsáveis e sustentáveis. Durante o projeto, identificamos um problema comum: a falta de ferramentas práticas para gerenciar problemas e implementar melhorias de forma mais eficiente.</p>
+        <p class="origem__texto">O ACTA surgiu a partir de um projeto interdisciplinar do Germinare Tech, com foco na ODS 12 (Consumo e Produção Responsáveis). O objetivo era utilizar a tecnologia para tornar empresas e indústrias mais eficientes, responsáveis e sustentáveis. Durante o projeto, identificamos um problema comum: a falta de ferramentas práticas para gerenciar problemas e implementar melhorias de forma mais eficiente.</p>
       </section>
 
 
-      <!-- Seção Equipe: um carrossel com rolagem horizontal por ano.
-           Ao passar o mouse, a foto escurece e aparece "Nome (Função)" no canto inferior esquerdo. -->
+      <!-- Seção Equipe -->
       <section class="equipe">
         <h2 class="titulo-secao">Nos conheça <span>melhor</span></h2>
 
         <!-- Carrossel do 1º ano -->
         <div class="equipe__grupo">
           <h3 class="equipe__ano">1º ano</h3>
-          <!-- TODO: trocar "Nome do Integrante (Função)" pelo nome real de quem está sem legenda -->
           <div class="equipe__galeria" tabindex="0" aria-label="Integrantes do 1º ano (role para o lado)">
             <figure class="membro">
               <img src="assets/images/foto_equipe_1ano_01.jpg" alt="Foto do integrante 1 do 1º ano" draggable="false">
@@ -378,7 +359,7 @@
       </section>
 
 
-      <!-- Seção Inteligência Artificial (Cato) -->
+      <!-- Seção Inteligência Artificial -->
       <section id="ia-cato" class="ia">
         <div class="ia__cabecalho">
           <h2>Conheça a IA do <span>ACTA</span></h2>
@@ -433,13 +414,10 @@
 
     </div>
     <!-- /PÁGINA 3: SOBRE NÓS -->
-
   </main>
 
 
-  <!-- =====================================================
-       FOOTER / RODAPÉ (compartilhado entre todas as páginas)
-       ===================================================== -->
+  <!-- FOOTER / RODAPÉ -->
   <footer class="footer">
     <div class="footer__conteudo">
       <img class="footer__logo" src="assets/images/logo_rodape.svg" alt="Logo ACTA">
@@ -462,8 +440,8 @@
           <li><a href="mailto:acta.institutojef@gmail.com">acta.institutojef@gmail.com</a></li>
           <li><a href="https://www.instagram.com/acta.app_" target="_blank" rel="noopener">@acta.app_</a></li>
           <li>
-            <!-- Ícone de cadeado (acesso restrito) -->
-            <a href="#inicio" class="footer__cadeado" aria-label="Acesso restrito">
+            <!-- Ícone de cadeado -->
+            <a href="login.html" class="footer__cadeado" aria-label="Acesso restrito">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
             </a>
           </li>
