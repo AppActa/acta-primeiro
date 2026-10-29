@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
+        <link rel="stylesheet" href="../assets/css/crud.css">
+        <title>Área Restrita</title>
+    </head>
+    <body>
+        <div class="sistema">
+            <aside class="sidebar">
+                <div class="sidebar-logo">
+                    <img src="../assets/images/logo_oficial.svg" alt="ACTA">
+                </div>
+                <nav class="menu">
+                    <a href="empresas.html" class="menu-item">
+                        <img src="../assets/images/icone_empresas.svg" alt="">
+                        <span>Empresas</span>
+                    </a>
+                    <a href="endereco.html" class="menu-item ativo">
+                        <img src="../assets/images/icone_endereco.svg" alt="">
+                        <span>Endereço</span>
+                    </a>
+                    <a href="colaborador.html" class="menu-item">
+                        <img src="../assets/images/icone_colaborador.svg" alt="">
+                        <span>Colaborador</span>
+                    </a>
+                    <a href="tarefa.html" class="menu-item">
+                        <img src="../assets/images/icone_tarefa.svg" alt="">
+                        <span>Tarefa</span>
+                    </a>
+                    <a href="plano.html" class="menu-item">
+                        <img src="../assets/images/icone_plano_de_acao.svg" alt="">
+                        <span>Plano de ação</span>
+                    </a>
+                    <a href="ciclos.html" class="menu-item">
+                        <img src="../assets/images/icone_ciclos.svg" alt="">
+                        <span>Ciclos</span>
+                    </a>
+                    <a href="licoes.html" class="menu-item">
+                        <img src="../assets/images/icone_licoes_aprendidas.svg" alt="">
+                        <span>Lições Aprendidas</span>
+                    </a>
+                    <a href="metas.html" class="menu-item">
+                        <img src="../assets/images/icone_metas.svg" alt="">
+                        <span>Metas</span>
+                    </a>
+                    <a href="problemas.html" class="menu-item">
+                        <img src="../assets/images/icone_problemas.svg" alt="">
+                        <span>Problemas</span>
+                    </a>
+                </nav>
+                <div class="perfil-barra">
+                    <a href="configurações.html" class="perfil-admin">
+                        <div class="perfil-foto">
+                            <img src="../assets/images/foto_perfil.svg" alt="Foto de perfil">
+                        </div>
+                        <div class="perfil-info">
+                            <span class="perfil-nome">Nome Sobrenome</span>
+                            <span class="perfil-email">email@email.com</span>
+                        </div>
+                    </a>
+                    <a href="../login.html" class="botao botao-sair">Sair</a>
+                </div>
+            </aside>
+            <main class="conteudo">
+
+                <!-- Página Endereço -->
+                <section id="endereco" class="pagina">
+                    <h1>Endereço</h1>
+                    <div class="barra-acoes">
+                        <div class="pesquisa">
+                            <input type="text" placeholder="Pesquisar por endereço">
+                        </div>
+                        <div class="filtro-container">
+                            <a href="#filtros-endereco" class="botao botao-filtro">Filtros</a>
+                        </div>
+                        <a href="#cadastrar-endereco" class="botao botao-principal">Cadastrar</a>
+                    </div>
+                    <div class="tabela-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Empresa</th>
+                                    <th>Unidade</th>
+                                    <th>Rua</th>
+                                    <th>Número</th>
+                                    <th>Bairro</th>
+                                    <th>Cidade</th>
+                                    <th>Estado</th>
+                                    <th>CEP</th>
+                                    <th class="coluna-acao">Ver</th>
+                                    <th class="coluna-acao">Editar</th>
+                                    <th class="coluna-acao">Excluir</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Flora</td>
+                                    <td>Matriz</td>
+                                    <td>Rua Exemplo</td>
+                                    <td>123</td>
+                                    <td>Centro</td>
+                                    <td>São Paulo</td>
+                                    <td>SP</td>
+                                    <td>00000-000</td>
+                                    <td class="coluna-acao">
+                                        <a href="#ver-endereco" class="icone-acao">
+                                            <img src="../assets/images/icone_ver.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#editar-endereco" class="icone-acao">
+                                            <img src="../assets/images/icone_editar.svg" alt="">
+                                        </a>
+                                    </td>
+                                    <td class="coluna-acao">
+                                        <a href="#excluir-endereco" class="icone-acao">
+                                            <img src="../assets/images/icone_excluir.svg" alt="">
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <section id="filtros-endereco" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver modal-filtros">
+                                <div class="modal-topo">
+                                    <h2>Filtros</h2>
+                                    <a href="#endereco" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <form class="formulario" method="get" action="#endereco">
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordenar por (marque uma ou mais)</span>
+                                        <div class="grupo-checkbox">
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="empresa">
+                                                Empresa
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="unidade">
+                                                Unidade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="rua">
+                                                Rua
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="numero">
+                                                Número
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="bairro">
+                                                Bairro
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="cidade">
+                                                Cidade
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="estado">
+                                                Estado
+                                            </label>
+                                            <label class="opcao-check">
+                                                <input type="checkbox" name="ordenar_por" value="cep">
+                                                CEP
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="campo-ordem">
+                                        <span class="rotulo-campo">Ordem</span>
+                                        <div class="grupo-radio">
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="asc" checked>
+                                                Crescente (A → Z)
+                                            </label>
+                                            <label class="opcao-radio">
+                                                <input type="radio" name="ordem" value="desc">
+                                                Decrescente (Z → A)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <button type="submit" class="botao botao-principal">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="ver-endereco" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-ver">
+                                <div class="modal-topo">
+                                    <h2>Detalhes do endereço</h2>
+                                    <a href="#endereco" class="modal-fechar" aria-label="Fechar">&times;</a>
+                                </div>
+                                <div class="detalhes">
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Empresa</span>
+                                        <span class="detalhe-valor">Flora</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Unidade</span>
+                                        <span class="detalhe-valor">Matriz</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">CEP</span>
+                                        <span class="detalhe-valor">00000-000</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Rua</span>
+                                        <span class="detalhe-valor">Rua Exemplo</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Número</span>
+                                        <span class="detalhe-valor">123</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Bairro</span>
+                                        <span class="detalhe-valor">Centro</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Cidade</span>
+                                        <span class="detalhe-valor">São Paulo</span>
+                                    </div>
+                                    <div class="detalhe">
+                                        <span class="detalhe-label">Estado</span>
+                                        <span class="detalhe-valor">SP</span>
+                                    </div>
+                                    <div class="detalhe detalhe-largo">
+                                        <span class="detalhe-label">Complemento</span>
+                                        <span class="detalhe-valor">Complemento do endereço</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="cadastrar-endereco" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Cadastrar endereço</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="cad-endereco-id_empresa">Empresa</label>
+                                        <select id="cad-endereco-id_empresa" name="id_empresa" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-unidade">Unidade</label>
+                                        <input type="text" id="cad-endereco-unidade" name="unidade" maxlength="30" placeholder="Digite unidade" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-cep">CEP</label>
+                                        <input type="text" id="cad-endereco-cep" name="cep" maxlength="8" inputmode="numeric" pattern="\d{8}" placeholder="Somente números (8 dígitos)" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-rua">Rua</label>
+                                        <input type="text" id="cad-endereco-rua" name="rua" maxlength="50" placeholder="Digite rua" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-numero">Número</label>
+                                        <input type="text" id="cad-endereco-numero" name="numero" maxlength="10" placeholder="Digite número" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-bairro">Bairro</label>
+                                        <input type="text" id="cad-endereco-bairro" name="bairro" maxlength="30" placeholder="Digite bairro" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-cidade">Cidade</label>
+                                        <input type="text" id="cad-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="cad-endereco-estado">Estado (UF)</label>
+                                        <input type="text" id="cad-endereco-estado" name="estado" maxlength="2" pattern="[A-Za-z]{2}" placeholder="Ex: SP" required>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="cad-endereco-complemento">Complemento</label>
+                                        <textarea id="cad-endereco-complemento" name="complemento" rows="3"></textarea>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#endereco" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Cadastrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="editar-endereco" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-grande">
+                                <h2>Editar endereço</h2>
+                                <form class="formulario">
+                                    <div class="campo">
+                                        <label for="edi-endereco-id_empresa">Empresa</label>
+                                        <select id="edi-endereco-id_empresa" name="id_empresa" required>
+                                            <option value="" disabled selected hidden>Selecione</option>
+                                        </select>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-unidade">Unidade</label>
+                                        <input type="text" id="edi-endereco-unidade" name="unidade" maxlength="30" placeholder="Digite unidade" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-cep">CEP</label>
+                                        <input type="text" id="edi-endereco-cep" name="cep" maxlength="8" inputmode="numeric" pattern="\d{8}" placeholder="Somente números (8 dígitos)" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-rua">Rua</label>
+                                        <input type="text" id="edi-endereco-rua" name="rua" maxlength="50" placeholder="Digite rua" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-numero">Número</label>
+                                        <input type="text" id="edi-endereco-numero" name="numero" maxlength="10" placeholder="Digite número" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-bairro">Bairro</label>
+                                        <input type="text" id="edi-endereco-bairro" name="bairro" maxlength="30" placeholder="Digite bairro" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-cidade">Cidade</label>
+                                        <input type="text" id="edi-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required>
+                                    </div>
+                                    <div class="campo">
+                                        <label for="edi-endereco-estado">Estado (UF)</label>
+                                        <input type="text" id="edi-endereco-estado" name="estado" maxlength="2" pattern="[A-Za-z]{2}" placeholder="Ex: SP" required>
+                                    </div>
+                                    <div class="campo campo-largo">
+                                        <label for="edi-endereco-complemento">Complemento</label>
+                                        <textarea id="edi-endereco-complemento" name="complemento" rows="3"></textarea>
+                                    </div>
+                                    <div class="botoes-modal">
+                                        <a href="#endereco" class="botao botao-cancelar">Cancelar</a>
+                                        <button type="submit" class="botao botao-principal">Confirmar edição</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="excluir-endereco" class="pagina modal-pagina">
+                        <div class="modal-fundo">
+                            <div class="modal modal-exclusao">
+                                <h2>Excluir endereço</h2>
+                                <p>Tem certeza que deseja excluir este endereço?</p>
+                                <div class="botoes-modal">
+                                    <a href="#endereco" class="botao botao-cancelar">Cancelar</a>
+                                    <button class="botao botao-excluir">Confirmar exclusão</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+            </main>
+        </div>
+    </body>
+</html>

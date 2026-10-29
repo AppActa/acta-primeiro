@@ -1,5 +1,8 @@
 package br.com.acta.model;
 
+import br.com.acta.enums.EtapaCiclo;
+import br.com.acta.enums.Situacao;
+
 import java.sql.Date;
 import java.time.OffsetDateTime;
 
@@ -15,6 +18,8 @@ public class Ciclo {
     private OffsetDateTime criado_em;
     private Long id_empresa;
     private Long id_responsavel;
+    private String nome_empresa;
+    private String nome_responsavel;
 
     public Ciclo() {}
 
@@ -125,4 +130,12 @@ public class Ciclo {
     public void setId_responsavel(Long id_responsavel) {
         this.id_responsavel = id_responsavel;
     }
+
+    public String getNome_empresa() {return nome_empresa;}
+
+    public void setNome_empresa(String nome_empresa) {this.nome_empresa = nome_empresa;}
+
+    public String getNome_responsavel() {return nome_responsavel;}
+
+    public void setNome_responsavel(String nome_responsavel) {this.nome_responsavel = nome_responsavel;}
 }

@@ -145,36 +145,36 @@ INSERT INTO meta (meta, descricao_meta, objetivo, prazo, id_ciclo)
 VALUES ('índice de fraudes em transações', 'redução de transações fraudulentas identificadas na plataforma', 'Reduzir fraudes em 30%', '2026-12-30', 5);
 
 -- Tarefa
-INSERT INTO tarefa (titulo, descricao, dt_entrega, id_colaborador, id_plano_acao)
-VALUES ('Inspecionar transformador', 'Verificar estado dos transformadores da subestação', '2026-09-22', 1, 1);
+INSERT INTO tarefa (titulo, descricao, dt_inicio, dt_entrega, id_colaborador, id_plano_acao)
+VALUES ('Inspecionar transformador', 'Verificar estado dos transformadores da subestação', '2026-09-22', '2026-09-22', 1, 1);
 
-INSERT INTO tarefa (titulo, descricao, dt_entrega, id_colaborador, id_plano_acao)
-VALUES ('Vistoriar EPI', 'Checar uso correto de EPI pelos operadores da linha de abate', '2026-09-19', 2, 2);
+INSERT INTO tarefa (titulo, descricao, dt_inicio, dt_entrega, id_colaborador, id_plano_acao)
+VALUES ('Vistoriar EPI', 'Checar uso correto de EPI pelos operadores da linha de abate', '2026-09-19', '2026-09-19', 2, 2);
 
-INSERT INTO tarefa (titulo, descricao, dt_entrega, id_colaborador, id_plano_acao)
-VALUES ('Revisar linha 2', 'Ajustar máquinas de corte para reduzir desperdício', '2026-09-20', 3, 3);
+INSERT INTO tarefa (titulo, descricao, dt_inicio, dt_entrega, id_colaborador, id_plano_acao)
+VALUES ('Revisar linha 2', 'Ajustar máquinas de corte para reduzir desperdício', '2026-09-20', '2026-09-20', 3, 3);
 
-INSERT INTO tarefa (titulo, descricao, dt_entrega, id_colaborador, id_plano_acao)
-VALUES ('Digitalizar documentos', 'Implementar sistema de digitalização de documentos de exportação', '2026-09-25', 4, 4);
+INSERT INTO tarefa (titulo, descricao, dt_inicio, dt_entrega, id_colaborador, id_plano_acao)
+VALUES ('Digitalizar documentos', 'Implementar sistema de digitalização de documentos de exportação', '2026-09-25', '2026-09-25', 4, 4);
 
-INSERT INTO tarefa (titulo, descricao, dt_entrega, id_colaborador, id_plano_acao)
-VALUES ('Implementar scoring antifraude', 'Desenvolver e testar modelo de machine learning para detecção de fraudes', '2026-10-05', 5, 5);
+INSERT INTO tarefa (titulo, descricao, dt_inicio, dt_entrega, id_colaborador, id_plano_acao)
+VALUES ('Implementar scoring antifraude', 'Desenvolver e testar modelo de machine learning para detecção de fraudes', '2026-10-05', '2026-10-05', 5, 5);
 
 -- Lições Aprendidas
 INSERT INTO licoes_aprendidas (titulo, area, aprendizado, categoria, descricao, fase_origem, severidade, id_ciclo)
-VALUES ('Falha de monitoramento', 'Elétrica', 'Necessário monitoramento contínuo de tensão', 'Processo', 'Oscilações não foram detectadas a tempo', 'DO', 'Alta', 1);
+VALUES ('Falha de monitoramento', 'Elétrica', 'Necessário monitoramento contínuo de tensão', 'Processo', 'Oscilações não foram detectadas a tempo', 'DO', 'ALTO', 1);
 
 INSERT INTO licoes_aprendidas (titulo, area, aprendizado, categoria, descricao, fase_origem, severidade, id_ciclo)
-VALUES ('Uso irregular de EPI', 'Segurança', 'Fiscalização precisa ser diária e não semanal', 'Segurança do Trabalho', 'Vistorias semanais não identificaram uso incorreto a tempo', 'PLAN', 'Alta', 2);
+VALUES ('Uso irregular de EPI', 'Segurança', 'Fiscalização precisa ser diária e não semanal', 'Segurança do Trabalho', 'Vistorias semanais não identificaram uso incorreto a tempo', 'PLAN', 'ALTO', 2);
 
 INSERT INTO licoes_aprendidas (titulo, area, aprendizado, categoria, descricao, fase_origem, severidade, id_ciclo)
-VALUES ('Desperdício por má calibração', 'Produção', 'Necessário calibrar máquinas semanalmente', 'Processo', 'Máquinas descalibradas geravam perdas de matéria-prima', 'CHECK', 'Média', 3);
+VALUES ('Desperdício por má calibração', 'Produção', 'Necessário calibrar máquinas semanalmente', 'Processo', 'Máquinas descalibradas geravam perdas de matéria-prima', 'CHECK', 'MEDIO', 3);
 
 INSERT INTO licoes_aprendidas (titulo, area, aprendizado, categoria, descricao, fase_origem, severidade, id_ciclo)
-VALUES ('Atraso em documentação', 'Exportação', 'Processos manuais geravam atrasos na liberação', 'Processo', 'Documentos físicos causavam gargalos na exportação', 'PLAN', 'Média', 4);
+VALUES ('Atraso em documentação', 'Exportação', 'Processos manuais geravam atrasos na liberação', 'Processo', 'Documentos físicos causavam gargalos na exportação', 'PLAN', 'MEDIO', 4);
 
 INSERT INTO licoes_aprendidas (titulo, area, aprendizado, categoria, descricao, fase_origem, severidade, id_ciclo)
-VALUES ('Falha na detecção precoce', 'Risco e Compliance', 'Modelo antigo não identificava novos padrões de fraude', 'Tecnologia', 'Regras estáticas não acompanhavam evolução das fraudes', 'CHECK', 'Alta', 5);
+VALUES ('Falha na detecção precoce', 'Risco e Compliance', 'Modelo antigo não identificava novos padrões de fraude', 'Tecnologia', 'Regras estáticas não acompanhavam evolução das fraudes', 'CHECK', 'ALTO', 5);
 
 -- Problema
 INSERT INTO problema (titulo, descricao, solucao, status, origem, encontrado_em, id_ciclo, id_plano_acao, id_colaborador)
