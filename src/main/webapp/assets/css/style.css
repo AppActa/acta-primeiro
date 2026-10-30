@@ -241,12 +241,14 @@ body:not(:has(:target)) #inicio {
   position: relative;
   max-width: 1400px;
   min-height: 460px;
-  padding: 40px 48px;
+  padding: 85px 48px;
 }
 .hero--sobre::before {
   content: "";
   position: absolute;
-  top: 24px; right: 0; bottom: 24px;
+  top: 24px; 
+  right: 0; 
+  bottom: 24px;
   width: 90%;
   border-radius: 0 60px 80px 0;
   background: linear-gradient(120deg, rgba(236, 236, 236, 0) 19%, #7fdde2 40%, #08c4cf 75%, #027373 100%);
@@ -259,9 +261,12 @@ body:not(:has(:target)) #inicio {
 }
 
 .hero__texto{
-  left: 40%;
+  left: 14.5%;
 }
 
+.hero--sobre .hero__texto h1{
+  font-size: clamp(34px, 4.3vw, 58px);
+}
 .hero__mockups--sobre { 
   height: 450px; 
 }
@@ -272,14 +277,14 @@ body:not(:has(:target)) #inicio {
   filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.25));
 }
 .sobre__celular--fundo  { 
-  width: 225px; 
+  width: 275px; 
   left: 10%; 
-  top: 0px; 
+  top: -55px; 
 }
 .sobre__celular--frente { 
-  width: 190px; 
-  right: 44%; 
-  top: 115px; 
+  width: 255px; 
+  right: 25%; 
+  top: 100px; 
 }
 
 
@@ -525,9 +530,9 @@ body:not(:has(:target)) #inicio {
 /* Fundo degradê atrás dos cards */
 .planos__fundo {
   position: relative;
-  margin: 24px -48px 0;
-  padding: 48px 48px 64px;
-  background: linear-gradient(180deg, rgba(236, 236, 236, 0) 0%, #7fe3e3 30%, #08c4cf 55%, #007a7a 90%);
+  margin: 0 -190px 0;
+  padding: 0 48px 64px;
+  background: linear-gradient(180deg, rgba(236, 236, 236, 0) 0%, #7fe3e3 30%, #08c4cf 50%, #007a7a 90%);
   border-radius: 0 0 48px 48px;
 }
 .planos__fundo::before {
@@ -544,26 +549,31 @@ body:not(:has(:target)) #inicio {
 }
 
 .planos__recomendado {
-  margin-left: 33%;
+  margin-left: 37.5%;
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 4px;
+  top: 65px;
 }
 
 .planos__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 38px;
-  align-items: end;
+  align-items: stretch;
+  bottom: -110px;
+  max-width: 1004px;
+  margin: 0 auto;
 }
 
 /* Card de plano */
 .plano {
+  display: flex;
+  flex-direction: column;
   background: var(--cor-fundo);
   border: 2px solid var(--cor-verde-escuro);
   border-radius: 16px;
-  padding: 24px 22px 26px;
-  box-shadow: var(--sombra-suave);
+  padding: 26px 22px 26px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .plano:hover { 
@@ -596,7 +606,7 @@ body:not(:has(:target)) #inicio {
 }
 
 .plano__preco { 
-  margin: 28px 0 16px; 
+  margin: auto 0 16px; 
 }
 .plano__preco span { 
   display: block; 
@@ -622,10 +632,11 @@ body:not(:has(:target)) #inicio {
 
 /* Plano recomendado */
 .plano--destaque {
+  margin: -40px 0 0;
   background: var(--cor-escuro);
   color: #fff;
-  padding-top: 30px;
-  padding-bottom: 32px;
+  padding-top: 40px;
+  padding-bottom: 26px;
 }
 .plano--destaque .plano__nome,
 .plano--destaque .plano__preco { 
@@ -821,8 +832,8 @@ body:not(:has(:target)) #inicio {
   margin: 0 auto; 
 }
 .ia__cabecalho h2 { 
-  font-size: clamp(28px, 4vw, 36px); 
-  font-weight: 700; 
+  font-size: clamp(38px, 5vw, 46px); 
+  font-weight: 800; 
 }
 .ia__cabecalho h2 span { 
   color: var(--cor-escuro); 
@@ -830,7 +841,7 @@ body:not(:has(:target)) #inicio {
 .ia__cabecalho p { 
   font-size: 14px; 
   font-weight: 700; 
-  margin-left: 6px; 
+  margin-left: 10px; 
 }
 
 .ia__conteudo {
@@ -844,13 +855,13 @@ body:not(:has(:target)) #inicio {
 }
 
 .ia__textos { 
-  padding-left: 10px; 
+  padding-left: 20px; 
 }
 .ia__textos p { 
-  font-size: 20px; 
+  font-size: 145%; 
   font-weight: 600; 
   line-height: 1.50; 
-  max-width: 360px; 
+  max-width: 500px; 
 }
 .ia__textos p + p { 
   margin-top: 48px; 
@@ -888,7 +899,7 @@ body:not(:has(:target)) #inicio {
   content: "";
   position: absolute;
   left: 10%; right: 10%;
-  bottom: -40px;
+  bottom: -45px;
   height: 26px;
   background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.28), transparent 70%);
   filter: blur(6px);
@@ -1120,6 +1131,10 @@ body:not(:has(:target)) #inicio {
 
   .planos { 
     padding: 56px 24px 32px; 
+  }
+
+  .plano--destaque{
+    margin: 0;
   }
   .planos__fundo { 
     margin: 24px -24px 0; 
