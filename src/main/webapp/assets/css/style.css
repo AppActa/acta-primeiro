@@ -241,12 +241,14 @@ body:not(:has(:target)) #inicio {
   position: relative;
   max-width: 1400px;
   min-height: 460px;
-  padding: 40px 48px;
+  padding: 85px 48px;
 }
 .hero--sobre::before {
   content: "";
   position: absolute;
-  top: 24px; right: 0; bottom: 24px;
+  top: 24px; 
+  right: 0; 
+  bottom: 24px;
   width: 90%;
   border-radius: 0 60px 80px 0;
   background: linear-gradient(120deg, rgba(236, 236, 236, 0) 19%, #7fdde2 40%, #08c4cf 75%, #027373 100%);
@@ -259,9 +261,12 @@ body:not(:has(:target)) #inicio {
 }
 
 .hero__texto{
-  left: 40%;
+  left: 14.5%;
 }
 
+.hero--sobre .hero__texto h1{
+  font-size: clamp(44px, 5.6vw, 68px);
+}
 .hero__mockups--sobre { 
   height: 450px; 
 }
@@ -272,14 +277,14 @@ body:not(:has(:target)) #inicio {
   filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.25));
 }
 .sobre__celular--fundo  { 
-  width: 225px; 
+  width: 275px; 
   left: 10%; 
-  top: 0px; 
+  top: -55px; 
 }
 .sobre__celular--frente { 
-  width: 190px; 
-  right: 44%; 
-  top: 115px; 
+  width: 255px; 
+  right: 25%; 
+  top: 100px; 
 }
 
 
