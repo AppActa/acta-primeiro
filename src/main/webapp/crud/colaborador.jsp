@@ -154,19 +154,16 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-colaborador-area">Área</label>
-                                                <input type="text" id="filtros-colaborador-area" name="area" list="sugestoes-colaborador-area" maxlength="30" value="<%= h(filtroArea) %>">
+                                                <input type="text" id="filtros-colaborador-area" name="area" data-lista="sugestoes-colaborador-area-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroArea) %>">
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-colaborador-cargo">Cargo</label>
-                                                <input type="text" id="filtros-colaborador-cargo" name="cargo" list="sugestoes-colaborador-cargo" maxlength="100" value="<%= h(filtroCargo) %>">
+                                                <input type="text" id="filtros-colaborador-cargo" name="cargo" data-lista="sugestoes-colaborador-cargo-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroCargo) %>">
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-colaborador-gestor">Permissão de gestor</label>
-                                                <select id="filtros-colaborador-gestor" name="gestor">
-                                                    <option value="" <%= "".equals(filtroGestor) ? "selected" : "" %>>Todos</option>
-                                                    <option value="true" <%= "true".equals(filtroGestor) ? "selected" : "" %>>Sim</option>
-                                                    <option value="false" <%= "false".equals(filtroGestor) ? "selected" : "" %>>Não</option>
-                                                </select>
+                                                <input type="text" id="filtros-colaborador-gestor" data-lista="sugestoes-permissao-gestor-lista" data-validar-lista data-campo-valor="filtros-colaborador-gestor-valor" autocomplete="off" placeholder="Todos">
+<input type="hidden" id="filtros-colaborador-gestor-valor" name="gestor" value="<%= h(filtroGestor) %>">
                                             </div>
                                             <div class="campo periodo-datas">
                                                 <span class="rotulo-campo">Contratação</span>
@@ -463,11 +460,11 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-area">Área</label>
-                                        <input type="text" id="cad-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required list="sugestoes-colaborador-area" value="<%= h(recuperarCadastro ? request.getParameter("area") : "") %>">
+                                        <input type="text" id="cad-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required data-lista="sugestoes-colaborador-area-lista" value="<%= h(recuperarCadastro ? request.getParameter("area") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-cargo">Cargo</label>
-                                        <input type="text" id="cad-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required list="sugestoes-colaborador-cargo" value="<%= h(recuperarCadastro ? request.getParameter("cargo") : "") %>">
+                                        <input type="text" id="cad-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required data-lista="sugestoes-colaborador-cargo-lista" value="<%= h(recuperarCadastro ? request.getParameter("cargo") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-dt_contratacao">Data de contratação</label>
@@ -482,19 +479,13 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-permissao_gestor">Permissão de gestor</label>
-                                        <select id="cad-colaborador-permissao_gestor" name="permissao_gestor" required>
-                                            <option value="false" <%= "false".equals(valorPermissaoGestorCadastro) ? "selected" : "" %>>Não</option>
-                                            <option value="true" <%= "true".equals(valorPermissaoGestorCadastro) ? "selected" : "" %>>Sim</option>
-                                        </select>
+                                        <input type="text" id="cad-colaborador-permissao_gestor" data-lista="sugestoes-permissao-gestor-lista" data-validar-lista data-campo-valor="cad-colaborador-permissao_gestor-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-colaborador-permissao_gestor-valor" name="permissao_gestor" value="<%= h(valorPermissaoGestorCadastro == null || valorPermissaoGestorCadastro.isBlank() ? "false" : valorPermissaoGestorCadastro) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-id_empresa">Empresa</label>
-                                        <select id="cad-colaborador-id_empresa" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaCadastro) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-colaborador-id_empresa" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="cad-colaborador-id_empresa-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-colaborador-id_empresa-valor" name="id_empresa" value="<%= h(valorIdEmpresaCadastro) %>">
                                     </div>
                                     <div class="botoes-modal">
                                         <a href="#colaborador" class="botao botao-cancelar">Cancelar</a>
@@ -562,11 +553,11 @@ if (recuperarEdicao) {
 
                                     <div class="campo">
                                         <label for="edi-colaborador-area-<%= colaborador.getId_colaborador() %>">Área</label>
-                                        <input type="text" id="edi-colaborador-area-<%= colaborador.getId_colaborador() %>" name="area" maxlength="30" placeholder="Digite área" required list="sugestoes-colaborador-area" value="<%= h(recuperarEdicao ? request.getParameter("area") : colaborador.getArea()) %>">
+                                        <input type="text" id="edi-colaborador-area-<%= colaborador.getId_colaborador() %>" name="area" maxlength="30" placeholder="Digite área" required data-lista="sugestoes-colaborador-area-lista" value="<%= h(recuperarEdicao ? request.getParameter("area") : colaborador.getArea()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-cargo-<%= colaborador.getId_colaborador() %>">Cargo</label>
-                                        <input type="text" id="edi-colaborador-cargo-<%= colaborador.getId_colaborador() %>" name="cargo" maxlength="100" placeholder="Digite cargo" required list="sugestoes-colaborador-cargo" value="<%= h(recuperarEdicao ? request.getParameter("cargo") : colaborador.getCargo()) %>">
+                                        <input type="text" id="edi-colaborador-cargo-<%= colaborador.getId_colaborador() %>" name="cargo" maxlength="100" placeholder="Digite cargo" required data-lista="sugestoes-colaborador-cargo-lista" value="<%= h(recuperarEdicao ? request.getParameter("cargo") : colaborador.getCargo()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-status-<%= colaborador.getId_colaborador() %>">Status</label>
@@ -577,19 +568,13 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>">Permissão de gestor</label>
-                                        <select id="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>" name="permissao_gestor" required>
-                                            <option value="false" <%= "false".equals(valorPermissaoGestorEdicao) ? "selected" : "" %>>Não</option>
-                                            <option value="true" <%= "true".equals(valorPermissaoGestorEdicao) ? "selected" : "" %>>Sim</option>
-                                        </select>
+                                        <input type="text" id="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>" data-lista="sugestoes-permissao-gestor-lista" data-validar-lista data-campo-valor="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>-valor" name="permissao_gestor" value="<%= h(valorPermissaoGestorEdicao == null || valorPermissaoGestorEdicao.isBlank() ? "false" : valorPermissaoGestorEdicao) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-id_empresa-<%= colaborador.getId_colaborador() %>">Empresa</label>
-                                        <select id="edi-colaborador-id_empresa-<%= colaborador.getId_colaborador() %>" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaEdicao) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-colaborador-id_empresa-<%= colaborador.getId_colaborador() %>" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="edi-colaborador-id_empresa-<%= colaborador.getId_colaborador() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-colaborador-id_empresa-<%= colaborador.getId_colaborador() %>-valor" name="id_empresa" value="<%= h(valorIdEmpresaEdicao) %>">
                                     </div>
                                     <div class="botoes-modal">
                                         <a href="#colaborador" class="botao botao-cancelar">Cancelar</a>
@@ -623,20 +608,50 @@ if (recuperarEdicao) {
 <% } %>
                 </section>
 
-                <datalist id="sugestoes-colaborador-area">
+
+<div id="sugestoes-colaborador-area-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : areaList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
-                <datalist id="sugestoes-colaborador-cargo">
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+
+<div id="sugestoes-colaborador-cargo-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : cargoList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-empresa-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Empresa opcao : empresaOpcoes) {
+    String nomeOpcao = opcao.getNome();
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Empresa outra : empresaOpcoes) {
+            String outroNome = outra.getNome();
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_empresa() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_empresa() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-permissao-gestor-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (boolean opcao : new boolean[]{false, true}) { %>
+<button type="button" role="option" data-valor="<%= opcao %>"><%= opcao ? "Sim" : "Não" %></button>
+<% } %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
             </main>
         </div>
     </body>

@@ -1161,19 +1161,40 @@ td.coluna-acao {
     align-items: center;
     margin-bottom: 15px;
 }
-.crud-admin .botao-ordenacao { 
-    font: inherit; 
-    color: inherit; 
-    padding: 0; 
-    border: 0; 
-    background: transparent; 
-    cursor: pointer; 
-    text-align: left; 
+.crud-admin thead th {
+    height: 48px;
+    line-height: 20px;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
 }
-.crud-admin .botao-ordenacao:focus-visible { 
-    outline: 2px solid currentColor; 
-    outline-offset: 3px; 
+.crud-admin thead th.coluna-acao { text-align: center; }
+.crud-admin th.coluna-ordenavel { position: relative; padding: 0; }
+.crud-admin th.coluna-ordenavel form { margin: 0; }
+.crud-admin .botao-ordenacao {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 32px 12px 16px;
+    font: inherit;
+    line-height: 20px;
+    color: inherit;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
 }
+.crud-admin .botao-ordenacao > span {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.crud-admin .botao-ordenacao::before { content: ""; position: absolute; inset: 0; }
+.crud-admin .botao-ordenacao:focus-visible { outline: 2px solid currentColor; outline-offset: -3px; }
 .crud-admin th[aria-sort="ascending"] button[data-ordenar] span::after { 
     content: " ▲"; 
 }
@@ -1182,7 +1203,6 @@ td.coluna-acao {
 }
 
 .crud-admin a.botao-ordenacao { 
-    display: inline-block; 
     text-decoration: none; 
 }
 .crud-admin .mensagem {
@@ -1199,3 +1219,37 @@ td.coluna-acao {
 .crud-admin .detalhe-valor { 
     white-space: pre-wrap; 
 }
+
+/* Listas geradas pelos JSPs, alinhadas aos campos de pesquisa. */
+.crud-admin .lista-escolhas {
+    position: fixed;
+    z-index: 2000;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4px;
+    background: var(--cor-card);
+    color: var(--cor-texto);
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.crud-admin .lista-escolhas button {
+    display: block;
+    width: 100%;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+}
+.crud-admin .lista-escolhas button:hover,
+.crud-admin .lista-escolhas .opcao-ativa { background: var(--cor-fundo); }
+.crud-admin .lista-vazia { padding: 9px 12px; font-size: 13px; }
+.crud-admin .lista-escolhas[hidden],
+.crud-admin .lista-escolhas [hidden] { display: none; }
