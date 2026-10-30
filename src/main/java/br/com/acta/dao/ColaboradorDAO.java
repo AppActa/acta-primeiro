@@ -132,13 +132,18 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
+                String documento = busca.trim();
+                if (documento.matches("[0-9.()\\s-]+")) {
+                    String limpo = documento.replaceAll("\\D", "");
+                    if (!limpo.isEmpty()) documento = limpo;
+                }
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
-                pstmt.setString(i++, termo);
-                pstmt.setString(i++, termo);
+                pstmt.setString(i++, "%" + documento + "%");
+                pstmt.setString(i++, "%" + documento + "%");
             }
             if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
             if (temArea) pstmt.setString(i++, area);

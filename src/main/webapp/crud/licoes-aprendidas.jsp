@@ -53,9 +53,9 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Lições Aprendidas</title>
-        <script src="<%= request.getContextPath() %>/assets/js/crud.js" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=391bad5325" defer></script>
     </head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
