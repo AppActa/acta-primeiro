@@ -265,7 +265,7 @@ body:not(:has(:target)) #inicio {
 }
 
 .hero--sobre .hero__texto h1{
-  font-size: clamp(44px, 5.6vw, 68px);
+  font-size: clamp(34px, 4.3vw, 58px);
 }
 .hero__mockups--sobre { 
   height: 450px; 
@@ -832,8 +832,8 @@ body:not(:has(:target)) #inicio {
   margin: 0 auto; 
 }
 .ia__cabecalho h2 { 
-  font-size: clamp(28px, 4vw, 36px); 
-  font-weight: 700; 
+  font-size: clamp(38px, 5vw, 46px); 
+  font-weight: 800; 
 }
 .ia__cabecalho h2 span { 
   color: var(--cor-escuro); 
@@ -841,7 +841,7 @@ body:not(:has(:target)) #inicio {
 .ia__cabecalho p { 
   font-size: 14px; 
   font-weight: 700; 
-  margin-left: 6px; 
+  margin-left: 10px; 
 }
 
 .ia__conteudo {
@@ -855,13 +855,13 @@ body:not(:has(:target)) #inicio {
 }
 
 .ia__textos { 
-  padding-left: 10px; 
+  padding-left: 20px; 
 }
 .ia__textos p { 
-  font-size: 20px; 
+  font-size: 145%; 
   font-weight: 600; 
   line-height: 1.50; 
-  max-width: 360px; 
+  max-width: 500px; 
 }
 .ia__textos p + p { 
   margin-top: 48px; 
@@ -899,7 +899,7 @@ body:not(:has(:target)) #inicio {
   content: "";
   position: absolute;
   left: 10%; right: 10%;
-  bottom: -40px;
+  bottom: -45px;
   height: 26px;
   background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.28), transparent 70%);
   filter: blur(6px);
