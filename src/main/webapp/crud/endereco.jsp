@@ -139,7 +139,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-endereco-cidade">Cidade</label>
-                                                <input type="text" id="filtros-endereco-cidade" name="cidade" list="sugestoes-endereco-cidade" maxlength="30" value="<%= h(filtroCidade) %>">
+                                                <input type="text" id="filtros-endereco-cidade" name="cidade" data-lista="sugestoes-endereco-cidade-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroCidade) %>">
                                             </div>
                                             <input type="hidden" name="ordem" value="<%= h(ordem) %>">
                                             <input type="hidden" name="direcao" value="<%= h(direcao) %>">
@@ -300,12 +300,8 @@ if (recuperarCadastro) {
                                     <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-endereco-id_empresa">Empresa</label>
-                                        <select id="cad-endereco-id_empresa" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaCadastro) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-endereco-id_empresa" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="cad-endereco-id_empresa-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-endereco-id_empresa-valor" name="id_empresa" value="<%= h(valorIdEmpresaCadastro) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-unidade">Unidade</label>
@@ -329,7 +325,7 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-cidade">Cidade</label>
-                                        <input type="text" id="cad-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required list="sugestoes-endereco-cidade" value="<%= h(recuperarCadastro ? request.getParameter("cidade") : "") %>">
+                                        <input type="text" id="cad-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required data-lista="sugestoes-endereco-cidade-lista" value="<%= h(recuperarCadastro ? request.getParameter("cidade") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-estado">Estado (UF)</label>
@@ -368,12 +364,8 @@ if (recuperarEdicao) {
                                     <input type="hidden" name="id-endereco" value="<%= endereco.getId_endereco() %>">
                                     <div class="campo">
                                         <label for="edi-endereco-id_empresa-<%= endereco.getId_endereco() %>">Empresa</label>
-                                        <select id="edi-endereco-id_empresa-<%= endereco.getId_endereco() %>" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaEdicao) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-endereco-id_empresa-<%= endereco.getId_endereco() %>" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="edi-endereco-id_empresa-<%= endereco.getId_endereco() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-endereco-id_empresa-<%= endereco.getId_endereco() %>-valor" name="id_empresa" value="<%= h(valorIdEmpresaEdicao) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-unidade-<%= endereco.getId_endereco() %>">Unidade</label>
@@ -397,7 +389,7 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-cidade-<%= endereco.getId_endereco() %>">Cidade</label>
-                                        <input type="text" id="edi-endereco-cidade-<%= endereco.getId_endereco() %>" name="cidade" maxlength="30" placeholder="Digite cidade" required list="sugestoes-endereco-cidade" value="<%= h(recuperarEdicao ? request.getParameter("cidade") : endereco.getCidade()) %>">
+                                        <input type="text" id="edi-endereco-cidade-<%= endereco.getId_endereco() %>" name="cidade" maxlength="30" placeholder="Digite cidade" required data-lista="sugestoes-endereco-cidade-lista" value="<%= h(recuperarEdicao ? request.getParameter("cidade") : endereco.getCidade()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-estado-<%= endereco.getId_endereco() %>">Estado (UF)</label>
@@ -438,13 +430,33 @@ if (recuperarEdicao) {
                     </section>
 <% } %>
                 </section>
-                <datalist id="sugestoes-endereco-cidade">
+
+<div id="sugestoes-endereco-cidade-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : cidadeList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-empresa-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Empresa opcao : empresaOpcoes) {
+    String nomeOpcao = opcao.getNome();
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Empresa outra : empresaOpcoes) {
+            String outroNome = outra.getNome();
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_empresa() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_empresa() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
             </main>
         </div>
     </body>
