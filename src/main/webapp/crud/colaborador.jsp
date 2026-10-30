@@ -58,9 +58,10 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Colaborador</title>
-        <script src="<%= request.getContextPath() %>/assets/js/crud.js" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=391bad5325" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/regex.js?v=7c47ef420f" defer></script>
     </head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
@@ -365,7 +366,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
 <tr><td colspan="15">Nenhum registro encontrado.</td></tr>
 <% } %>
 <% for (Colaborador colaborador : colaboradores) { %>
-<tr><td><%= h(colaborador.getId_colaborador()) %></td><td><%= h(colaborador.getNome() == null || colaborador.getNome().isBlank() ? "—" : colaborador.getNome()) %></td><td><%= h(colaborador.getSobrenome() == null || colaborador.getSobrenome().isBlank() ? "—" : colaborador.getSobrenome()) %></td><td><%= h(colaborador.getArea() == null || colaborador.getArea().isBlank() ? "—" : colaborador.getArea()) %></td><td><%= h(colaborador.getCargo() == null || colaborador.getCargo().isBlank() ? "—" : colaborador.getCargo()) %></td><td><%= h(colaborador.getTelefone() == null || colaborador.getTelefone().isBlank() ? "—" : colaborador.getTelefone()) %></td><td><%= h(colaborador.getCpf() == null || colaborador.getCpf().isBlank() ? "—" : colaborador.getCpf()) %></td><td><%= h(colaborador.getEmail() == null || colaborador.getEmail().isBlank() ? "—" : colaborador.getEmail()) %></td><td><%
+<tr><td><%= h(colaborador.getId_colaborador()) %></td><td><%= h(colaborador.getNome() == null || colaborador.getNome().isBlank() ? "—" : colaborador.getNome()) %></td><td><%= h(colaborador.getSobrenome() == null || colaborador.getSobrenome().isBlank() ? "—" : colaborador.getSobrenome()) %></td><td><%= h(colaborador.getArea() == null || colaborador.getArea().isBlank() ? "—" : colaborador.getArea()) %></td><td><%= h(colaborador.getCargo() == null || colaborador.getCargo().isBlank() ? "—" : colaborador.getCargo()) %></td><td data-formato="telefone"><%= h(colaborador.getTelefone() == null || colaborador.getTelefone().isBlank() ? "—" : colaborador.getTelefone()) %></td><td data-formato="cpf"><%= h(colaborador.getCpf() == null || colaborador.getCpf().isBlank() ? "—" : colaborador.getCpf()) %></td><td><%= h(colaborador.getEmail() == null || colaborador.getEmail().isBlank() ? "—" : colaborador.getEmail()) %></td><td><%
 String textoStatus = "—";
 if (colaborador.getStatus() == Status.ATIVA) {
     textoStatus = "Ativa";
@@ -393,8 +394,8 @@ else if (colaborador.getStatus() == Status.INATIVA) {
                                     <div class="detalhe"><span class="detalhe-label">Sobrenome</span><span class="detalhe-valor"><%= h(colaborador.getSobrenome() == null || colaborador.getSobrenome().isBlank() ? "—" : colaborador.getSobrenome()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Área</span><span class="detalhe-valor"><%= h(colaborador.getArea() == null || colaborador.getArea().isBlank() ? "—" : colaborador.getArea()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Cargo</span><span class="detalhe-valor"><%= h(colaborador.getCargo() == null || colaborador.getCargo().isBlank() ? "—" : colaborador.getCargo()) %></span></div>
-                                    <div class="detalhe"><span class="detalhe-label">Telefone</span><span class="detalhe-valor"><%= h(colaborador.getTelefone() == null || colaborador.getTelefone().isBlank() ? "—" : colaborador.getTelefone()) %></span></div>
-                                    <div class="detalhe"><span class="detalhe-label">CPF</span><span class="detalhe-valor"><%= h(colaborador.getCpf() == null || colaborador.getCpf().isBlank() ? "—" : colaborador.getCpf()) %></span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Telefone</span><span class="detalhe-valor" data-formato="telefone"><%= h(colaborador.getTelefone() == null || colaborador.getTelefone().isBlank() ? "—" : colaborador.getTelefone()) %></span></div>
+                                    <div class="detalhe"><span class="detalhe-label">CPF</span><span class="detalhe-valor" data-formato="cpf"><%= h(colaborador.getCpf() == null || colaborador.getCpf().isBlank() ? "—" : colaborador.getCpf()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Email</span><span class="detalhe-valor"><%= h(colaborador.getEmail() == null || colaborador.getEmail().isBlank() ? "—" : colaborador.getEmail()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Status</span><span class="detalhe-valor"><%
 String textoStatus = "—";
@@ -446,11 +447,11 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-telefone">Telefone</label>
-                                        <input type="tel" id="cad-colaborador-telefone" name="telefone" required maxlength="15" inputmode="numeric" pattern="^(?:\([0-9]{2}\)|[0-9]{2}) ?[0-9]{5}-?[0-9]{4}$" value="<%= h(recuperarCadastro ? request.getParameter("telefone") : "") %>">
+                                        <input type="tel" id="cad-colaborador-telefone" name="telefone" data-mascara="telefone" required maxlength="15" inputmode="numeric" pattern="^(?:\([0-9]{2}\)|[0-9]{2}) ?[0-9]{4,5}-?[0-9]{4}$" value="<%= h(recuperarCadastro ? request.getParameter("telefone") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-cpf">CPF</label>
-                                        <input type="text" id="cad-colaborador-cpf" name="cpf" required maxlength="14" inputmode="numeric" pattern="^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2}$" value="<%= h(recuperarCadastro ? request.getParameter("cpf") : "") %>">
+                                        <input type="text" id="cad-colaborador-cpf" name="cpf" data-mascara="cpf" required maxlength="14" inputmode="numeric" pattern="^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2}$" value="<%= h(recuperarCadastro ? request.getParameter("cpf") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-senha">Senha</label>
@@ -549,11 +550,11 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-telefone-<%= colaborador.getId_colaborador() %>">Telefone</label>
-                                        <input type="tel" id="edi-colaborador-telefone-<%= colaborador.getId_colaborador() %>" name="telefone" required maxlength="15" inputmode="numeric" pattern="^(?:\([0-9]{2}\)|[0-9]{2}) ?[0-9]{5}-?[0-9]{4}$" value="<%= h(recuperarEdicao ? request.getParameter("telefone") : colaborador.getTelefone()) %>">
+                                        <input type="tel" id="edi-colaborador-telefone-<%= colaborador.getId_colaborador() %>" name="telefone" data-mascara="telefone" required maxlength="15" inputmode="numeric" pattern="^(?:\([0-9]{2}\)|[0-9]{2}) ?[0-9]{4,5}-?[0-9]{4}$" value="<%= h(recuperarEdicao ? request.getParameter("telefone") : colaborador.getTelefone()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-cpf-<%= colaborador.getId_colaborador() %>">CPF</label>
-                                        <input type="text" id="edi-colaborador-cpf-<%= colaborador.getId_colaborador() %>" name="cpf" required maxlength="14" inputmode="numeric" pattern="^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2}$" value="<%= h(recuperarEdicao ? request.getParameter("cpf") : colaborador.getCpf()) %>">
+                                        <input type="text" id="edi-colaborador-cpf-<%= colaborador.getId_colaborador() %>" name="cpf" data-mascara="cpf" required maxlength="14" inputmode="numeric" pattern="^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2}$" value="<%= h(recuperarEdicao ? request.getParameter("cpf") : colaborador.getCpf()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-dt_contratacao-<%= colaborador.getId_colaborador() %>">Data de contratação</label>

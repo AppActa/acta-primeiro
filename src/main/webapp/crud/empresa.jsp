@@ -47,9 +47,10 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Empresas</title>
-        <script src="<%= request.getContextPath() %>/assets/js/crud.js" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=391bad5325" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/regex.js?v=7c47ef420f" defer></script>
     </head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
@@ -248,7 +249,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
 <tr><td colspan="9">Nenhum registro encontrado.</td></tr>
 <% } %>
 <% for (Empresa empresa : empresas) { %>
-<tr><td><%= h(empresa.getId_empresa()) %></td><td><%= h(empresa.getNome() == null || empresa.getNome().isBlank() ? "—" : empresa.getNome()) %></td><td><%= h(empresa.getSetor() == null || empresa.getSetor().isBlank() ? "—" : empresa.getSetor()) %></td><td><%= h(empresa.getCnpj() == null || empresa.getCnpj().isBlank() ? "—" : empresa.getCnpj()) %></td><td><%
+<tr><td><%= h(empresa.getId_empresa()) %></td><td><%= h(empresa.getNome() == null || empresa.getNome().isBlank() ? "—" : empresa.getNome()) %></td><td><%= h(empresa.getSetor() == null || empresa.getSetor().isBlank() ? "—" : empresa.getSetor()) %></td><td data-formato="cnpj"><%= h(empresa.getCnpj() == null || empresa.getCnpj().isBlank() ? "—" : empresa.getCnpj()) %></td><td><%
 String textoStatus = "—";
 if (empresa.getStatus() == Status.ATIVA) {
     textoStatus = "Ativa";
@@ -286,7 +287,7 @@ else if (empresa.getTamanho() == TamanhoEmpresa.MEDIA) {
                                 <div class="detalhes">
                                     <div class="detalhe"><span class="detalhe-label">Nome</span><span class="detalhe-valor"><%= h(empresa.getNome() == null || empresa.getNome().isBlank() ? "—" : empresa.getNome()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Setor</span><span class="detalhe-valor"><%= h(empresa.getSetor() == null || empresa.getSetor().isBlank() ? "—" : empresa.getSetor()) %></span></div>
-                                    <div class="detalhe"><span class="detalhe-label">CNPJ</span><span class="detalhe-valor"><%= h(empresa.getCnpj() == null || empresa.getCnpj().isBlank() ? "—" : empresa.getCnpj()) %></span></div>
+                                    <div class="detalhe"><span class="detalhe-label">CNPJ</span><span class="detalhe-valor" data-formato="cnpj"><%= h(empresa.getCnpj() == null || empresa.getCnpj().isBlank() ? "—" : empresa.getCnpj()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Status</span><span class="detalhe-valor"><%
 String textoStatus = "—";
 if (empresa.getStatus() == Status.ATIVA) {
@@ -343,7 +344,7 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-empresa-cnpj">CNPJ</label>
-                                        <input type="text" id="cad-empresa-cnpj" name="cnpj" maxlength="18" placeholder="CNPJ com ou sem pontuação" required pattern="^[A-Za-z0-9]{2}\.?[A-Za-z0-9]{3}\.?[A-Za-z0-9]{3}/?[A-Za-z0-9]{4}-?[0-9]{2}$" value="<%= h(recuperarCadastro ? request.getParameter("cnpj") : "") %>">
+                                        <input type="text" id="cad-empresa-cnpj" name="cnpj" data-mascara="cnpj" maxlength="18" placeholder="CNPJ com ou sem pontuação" required pattern="^[A-Za-z0-9]{2}\.?[A-Za-z0-9]{3}\.?[A-Za-z0-9]{3}/?[A-Za-z0-9]{4}-?[0-9]{2}$" value="<%= h(recuperarCadastro ? request.getParameter("cnpj") : "") %>">
                                     </div>
 
                                     <div class="campo">
@@ -404,7 +405,7 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-empresa-cnpj-<%= empresa.getId_empresa() %>">CNPJ</label>
-                                        <input type="text" id="edi-empresa-cnpj-<%= empresa.getId_empresa() %>" name="cnpj" maxlength="18" placeholder="CNPJ com ou sem pontuação" required pattern="^[A-Za-z0-9]{2}\.?[A-Za-z0-9]{3}\.?[A-Za-z0-9]{3}/?[A-Za-z0-9]{4}-?[0-9]{2}$" value="<%= h(recuperarEdicao ? request.getParameter("cnpj") : empresa.getCnpj()) %>">
+                                        <input type="text" id="edi-empresa-cnpj-<%= empresa.getId_empresa() %>" name="cnpj" data-mascara="cnpj" maxlength="18" placeholder="CNPJ com ou sem pontuação" required pattern="^[A-Za-z0-9]{2}\.?[A-Za-z0-9]{3}\.?[A-Za-z0-9]{3}/?[A-Za-z0-9]{4}-?[0-9]{2}$" value="<%= h(recuperarEdicao ? request.getParameter("cnpj") : empresa.getCnpj()) %>">
                                     </div>
 
                                     <div class="campo">
