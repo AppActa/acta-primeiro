@@ -53,9 +53,9 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Lições Aprendidas</title>
-        <script src="<%= request.getContextPath() %>/assets/js/crud.js" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=391bad5325" defer></script>
     </head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
@@ -160,11 +160,11 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-licoes-area">Área</label>
-                                                <input type="text" id="filtros-licoes-area" name="area" list="sugestoes-licoes-area" maxlength="30" value="<%= h(filtroArea) %>">
+                                                <input type="text" id="filtros-licoes-area" name="area" data-lista="sugestoes-licoes-area-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroArea) %>">
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-licoes-categoria">Categoria</label>
-                                                <input type="text" id="filtros-licoes-categoria" name="categoria" list="sugestoes-licoes-categoria" maxlength="30" value="<%= h(filtroCategoria) %>">
+                                                <input type="text" id="filtros-licoes-categoria" name="categoria" data-lista="sugestoes-licoes-categoria-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroCategoria) %>">
                                             </div>
                                             <input type="hidden" name="ordem" value="<%= h(ordem) %>">
                                             <input type="hidden" name="direcao" value="<%= h(direcao) %>">
@@ -402,20 +402,16 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-id_ciclo">Ciclo</label>
-                                        <select id="cad-lição-aprendida-id_ciclo" name="id_ciclo" required>
-<option value="">Selecione</option>
-<% for (Ciclo opcao : cicloOpcoes) { %>
-<option value="<%= opcao.getId_ciclo() %>" <%= String.valueOf(opcao.getId_ciclo()).equals(valorIdCicloCadastro) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-lição-aprendida-id_ciclo" data-lista="sugestoes-fk-ciclo-lista" data-validar-lista data-campo-valor="cad-lição-aprendida-id_ciclo-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-lição-aprendida-id_ciclo-valor" name="id_ciclo" value="<%= h(valorIdCicloCadastro) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-area">Área</label>
-                                        <input type="text" id="cad-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área" list="sugestoes-licoes-area" value="<%= h(recuperarCadastro ? request.getParameter("area") : "") %>">
+                                        <input type="text" id="cad-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área" data-lista="sugestoes-licoes-area-lista" value="<%= h(recuperarCadastro ? request.getParameter("area") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-categoria">Categoria</label>
-                                        <input type="text" id="cad-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria" list="sugestoes-licoes-categoria" value="<%= h(recuperarCadastro ? request.getParameter("categoria") : "") %>">
+                                        <input type="text" id="cad-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria" data-lista="sugestoes-licoes-categoria-lista" value="<%= h(recuperarCadastro ? request.getParameter("categoria") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-fase_origem">Fase de origem</label>
@@ -487,20 +483,16 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-id_ciclo-<%= licao.getId_licao() %>">Ciclo</label>
-                                        <select id="edi-lição-aprendida-id_ciclo-<%= licao.getId_licao() %>" name="id_ciclo" required>
-<option value="">Selecione</option>
-<% for (Ciclo opcao : cicloOpcoes) { %>
-<option value="<%= opcao.getId_ciclo() %>" <%= String.valueOf(opcao.getId_ciclo()).equals(valorIdCicloEdicao) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-lição-aprendida-id_ciclo-<%= licao.getId_licao() %>" data-lista="sugestoes-fk-ciclo-lista" data-validar-lista data-campo-valor="edi-lição-aprendida-id_ciclo-<%= licao.getId_licao() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-lição-aprendida-id_ciclo-<%= licao.getId_licao() %>-valor" name="id_ciclo" value="<%= h(valorIdCicloEdicao) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-area-<%= licao.getId_licao() %>">Área</label>
-                                        <input type="text" id="edi-lição-aprendida-area-<%= licao.getId_licao() %>" name="area" maxlength="30" placeholder="Digite área" list="sugestoes-licoes-area" value="<%= h(recuperarEdicao ? request.getParameter("area") : licao.getArea()) %>">
+                                        <input type="text" id="edi-lição-aprendida-area-<%= licao.getId_licao() %>" name="area" maxlength="30" placeholder="Digite área" data-lista="sugestoes-licoes-area-lista" value="<%= h(recuperarEdicao ? request.getParameter("area") : licao.getArea()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-categoria-<%= licao.getId_licao() %>">Categoria</label>
-                                        <input type="text" id="edi-lição-aprendida-categoria-<%= licao.getId_licao() %>" name="categoria" maxlength="30" placeholder="Digite categoria" list="sugestoes-licoes-categoria" value="<%= h(recuperarEdicao ? request.getParameter("categoria") : licao.getCategoria()) %>">
+                                        <input type="text" id="edi-lição-aprendida-categoria-<%= licao.getId_licao() %>" name="categoria" maxlength="30" placeholder="Digite categoria" data-lista="sugestoes-licoes-categoria-lista" value="<%= h(recuperarEdicao ? request.getParameter("categoria") : licao.getCategoria()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-fase_origem-<%= licao.getId_licao() %>">Fase de origem</label>
@@ -559,20 +551,43 @@ if (recuperarEdicao) {
 <% } %>
                 </section>
 
-                <datalist id="sugestoes-licoes-area">
+
+<div id="sugestoes-licoes-area-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : areaList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
-                <datalist id="sugestoes-licoes-categoria">
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+
+<div id="sugestoes-licoes-categoria-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : categoriaList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-ciclo-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Ciclo opcao : cicloOpcoes) {
+    String nomeOpcao = opcao.getNome();
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Ciclo outra : cicloOpcoes) {
+            String outroNome = outra.getNome();
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_ciclo() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_ciclo() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
             </main>
         </div>
     </body>
