@@ -34,8 +34,8 @@ public class Validador {
     // CEP: 5 dígitos, hífen opcional, 3 dígitos
     private static final Pattern CEP = Pattern.compile("^[0-9]{5}-?[0-9]{3}$");
 
-    // Celular: DDD com parênteses OU sem, espaço opcional, 5 dígitos, hífen opcional, 4 dígitos
-    private static final Pattern TELEFONE = Pattern.compile("^(?:\\([0-9]{2}\\)|[0-9]{2}) ?[0-9]{5}-?[0-9]{4}$");
+    // Telefone: DDD com parênteses OU sem, espaço opcional, 4 ou 5 dígitos, hífen opcional, 4 dígitos
+    private static final Pattern TELEFONE = Pattern.compile("^(?:\\([0-9]{2}\\)|[0-9]{2}) ?[0-9]{4,5}-?[0-9]{4}$");
 
     // CPF: 000.000.000-00 (pontos e hífen opcionais). O ponto precisa de \\. senão "." casa com QUALQUER caractere.
     private static final Pattern CPF = Pattern.compile("^[0-9]{3}\\.?[0-9]{3}\\.?[0-9]{3}-?[0-9]{2}$");
@@ -104,15 +104,15 @@ public class Validador {
         return somenteDigitos(v);
     }
 
-    /** Devolve o celular só com dígitos (CHAR(11) no banco): DDD (2) + 9 + 8 dígitos. */
+    /** Devolve o telefone só com dígitos: DDD + fixo (8) ou celular (9). */
     public static String telefone(String valor) {
         String v = obrigatorio(valor, "Telefone");
         if (!TELEFONE.matcher(v).matches()) {
-            throw new ValidacaoException("Telefone inválido. Use (11) 98765-4321.");
+            throw new ValidacaoException("Telefone inválido. Use (11) 3456-7890 ou (11) 98765-4321.");
         }
         String digitos = somenteDigitos(v);
-        if (!digitos.matches("[1-9]{2}9\\d{8}")) {        // DDD sem zero + 9 + 8 dígitos
-            throw new ValidacaoException("Telefone inválido: informe DDD + celular com 9 dígitos.");
+        if (!digitos.matches("[1-9]{2}(?:\\d{8}|9\\d{8})")) {        // DDD sem zero; celular continua começando com 9
+            throw new ValidacaoException("Telefone inválido: informe DDD + fixo com 8 dígitos ou celular com 9 dígitos.");
         }
         return digitos;
     }

@@ -47,9 +47,10 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Endereço</title>
-        <script src="<%= request.getContextPath() %>/assets/js/crud.js" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=391bad5325" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/regex.js?v=7c47ef420f" defer></script>
     </head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
@@ -255,7 +256,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
 <tr><td colspan="12">Nenhum registro encontrado.</td></tr>
 <% } %>
 <% for (Endereco endereco : enderecos) { %>
-<tr><td><%= h(endereco.getId_endereco()) %></td><td><%= h(endereco.getNome_empresa() == null || endereco.getNome_empresa().isBlank() ? "—" : endereco.getNome_empresa()) %></td><td><%= h(endereco.getUnidade() == null || endereco.getUnidade().isBlank() ? "—" : endereco.getUnidade()) %></td><td><%= h(endereco.getRua() == null || endereco.getRua().isBlank() ? "—" : endereco.getRua()) %></td><td><%= h(endereco.getNumero() == null || endereco.getNumero().isBlank() ? "—" : endereco.getNumero()) %></td><td><%= h(endereco.getBairro() == null || endereco.getBairro().isBlank() ? "—" : endereco.getBairro()) %></td><td><%= h(endereco.getCidade() == null || endereco.getCidade().isBlank() ? "—" : endereco.getCidade()) %></td><td><%= h(endereco.getEstado() == null || endereco.getEstado().isBlank() ? "—" : endereco.getEstado()) %></td><td><%= h(endereco.getCep() == null || endereco.getCep().isBlank() ? "—" : endereco.getCep()) %></td><td class="coluna-acao"><a href="#ver-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Ver"><img src="<%= request.getContextPath() %>/assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Editar"><img src="<%= request.getContextPath() %>/assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Excluir"><img src="<%= request.getContextPath() %>/assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr>
+<tr><td><%= h(endereco.getId_endereco()) %></td><td><%= h(endereco.getNome_empresa() == null || endereco.getNome_empresa().isBlank() ? "—" : endereco.getNome_empresa()) %></td><td><%= h(endereco.getUnidade() == null || endereco.getUnidade().isBlank() ? "—" : endereco.getUnidade()) %></td><td><%= h(endereco.getRua() == null || endereco.getRua().isBlank() ? "—" : endereco.getRua()) %></td><td><%= h(endereco.getNumero() == null || endereco.getNumero().isBlank() ? "—" : endereco.getNumero()) %></td><td><%= h(endereco.getBairro() == null || endereco.getBairro().isBlank() ? "—" : endereco.getBairro()) %></td><td><%= h(endereco.getCidade() == null || endereco.getCidade().isBlank() ? "—" : endereco.getCidade()) %></td><td><%= h(endereco.getEstado() == null || endereco.getEstado().isBlank() ? "—" : endereco.getEstado()) %></td><td data-formato="cep"><%= h(endereco.getCep() == null || endereco.getCep().isBlank() ? "—" : endereco.getCep()) %></td><td class="coluna-acao"><a href="#ver-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Ver"><img src="<%= request.getContextPath() %>/assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Editar"><img src="<%= request.getContextPath() %>/assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Excluir"><img src="<%= request.getContextPath() %>/assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr>
 <% } %>
 </tbody>
                         </table>
@@ -277,7 +278,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                     <div class="detalhe"><span class="detalhe-label">Bairro</span><span class="detalhe-valor"><%= h(endereco.getBairro() == null || endereco.getBairro().isBlank() ? "—" : endereco.getBairro()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Cidade</span><span class="detalhe-valor"><%= h(endereco.getCidade() == null || endereco.getCidade().isBlank() ? "—" : endereco.getCidade()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Estado</span><span class="detalhe-valor"><%= h(endereco.getEstado() == null || endereco.getEstado().isBlank() ? "—" : endereco.getEstado()) %></span></div>
-                                    <div class="detalhe"><span class="detalhe-label">CEP</span><span class="detalhe-valor"><%= h(endereco.getCep() == null || endereco.getCep().isBlank() ? "—" : endereco.getCep()) %></span></div>
+                                    <div class="detalhe"><span class="detalhe-label">CEP</span><span class="detalhe-valor" data-formato="cep"><%= h(endereco.getCep() == null || endereco.getCep().isBlank() ? "—" : endereco.getCep()) %></span></div>
                                     <div class="detalhe detalhe-largo"><span class="detalhe-label">Complemento</span><span class="detalhe-valor"><%= h(endereco.getComplemento() == null || endereco.getComplemento().isBlank() ? "—" : endereco.getComplemento()) %></span></div>
                                 </div>
                             </div>
@@ -313,7 +314,8 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-cep">CEP</label>
-                                        <input type="text" id="cad-endereco-cep" name="cep" maxlength="9" inputmode="numeric" placeholder="Somente números (8 dígitos)" required pattern="^[0-9]{5}-?[0-9]{3}$" value="<%= h(recuperarCadastro ? request.getParameter("cep") : "") %>">
+                                        <input type="text" id="cad-endereco-cep" name="cep" data-mascara="cep" maxlength="9" inputmode="numeric" placeholder="00000-000" required pattern="^[0-9]{5}-?[0-9]{3}$" value="<%= h(recuperarCadastro ? request.getParameter("cep") : "") %>">
+                                        <small data-viacep-status role="status" hidden></small>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-rua">Rua</label>
@@ -381,7 +383,8 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-cep-<%= endereco.getId_endereco() %>">CEP</label>
-                                        <input type="text" id="edi-endereco-cep-<%= endereco.getId_endereco() %>" name="cep" maxlength="9" inputmode="numeric" placeholder="Somente números (8 dígitos)" required pattern="^[0-9]{5}-?[0-9]{3}$" value="<%= h(recuperarEdicao ? request.getParameter("cep") : endereco.getCep()) %>">
+                                        <input type="text" id="edi-endereco-cep-<%= endereco.getId_endereco() %>" name="cep" data-mascara="cep" maxlength="9" inputmode="numeric" placeholder="00000-000" required pattern="^[0-9]{5}-?[0-9]{3}$" value="<%= h(recuperarEdicao ? request.getParameter("cep") : endereco.getCep()) %>">
+                                        <small data-viacep-status role="status" hidden></small>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-rua-<%= endereco.getId_endereco() %>">Rua</label>
