@@ -135,7 +135,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                         <form class="formulario" id="filtros-empresas-form" method="get" action="<%= request.getContextPath() %>/empresa-servlet">
                                             <div class="campo">
                                                 <label for="filtros-empresas-setor">Setor</label>
-                                                <input type="text" id="filtros-empresas-setor" name="setor" list="sugestoes-empresas-setor" maxlength="30" value="<%= h(filtroSetor) %>">
+                                                <input type="text" id="filtros-empresas-setor" name="setor" data-lista="sugestoes-empresas-setor-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroSetor) %>">
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-empresas-status">Status</label>
@@ -339,7 +339,7 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-empresa-setor">Setor</label>
-                                        <input type="text" id="cad-empresa-setor" name="setor" maxlength="30" placeholder="Digite o setor" required list="sugestoes-empresas-setor" value="<%= h(recuperarCadastro ? request.getParameter("setor") : "") %>">
+                                        <input type="text" id="cad-empresa-setor" name="setor" maxlength="30" placeholder="Digite o setor" required data-lista="sugestoes-empresas-setor-lista" value="<%= h(recuperarCadastro ? request.getParameter("setor") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-empresa-cnpj">CNPJ</label>
@@ -400,7 +400,7 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-empresa-setor-<%= empresa.getId_empresa() %>">Setor</label>
-                                        <input type="text" id="edi-empresa-setor-<%= empresa.getId_empresa() %>" name="setor" maxlength="30" placeholder="Digite o setor" required list="sugestoes-empresas-setor" value="<%= h(recuperarEdicao ? request.getParameter("setor") : empresa.getSetor()) %>">
+                                        <input type="text" id="edi-empresa-setor-<%= empresa.getId_empresa() %>" name="setor" maxlength="30" placeholder="Digite o setor" required data-lista="sugestoes-empresas-setor-lista" value="<%= h(recuperarEdicao ? request.getParameter("setor") : empresa.getSetor()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-empresa-cnpj-<%= empresa.getId_empresa() %>">CNPJ</label>
@@ -454,13 +454,16 @@ if (recuperarEdicao) {
 <% } %>
                 </section>
 
-                <datalist id="sugestoes-empresas-setor">
+
+<div id="sugestoes-empresas-setor-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : setorList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
             </main>
         </div>
     </body>
