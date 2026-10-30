@@ -266,8 +266,10 @@ public class ProblemaDAO implements MetodosCrud<Problema> {
         problema.setNome_plano_acao(rs.getString("nome_plano_acao"));
         problema.setNome_colaborador(rs.getString("nome_colaborador"));
         problema.setId_ciclo(rs.getLong("id_ciclo"));
-        problema.setId_plano_acao(rs.getObject("id_plano_acao", Long.class));
-        problema.setId_colaborador(rs.getObject("id_colaborador", Long.class));
+        long idPlanoAcao = rs.getLong("id_plano_acao");
+        problema.setId_plano_acao(rs.wasNull() ? null : idPlanoAcao);
+        long idColaborador = rs.getLong("id_colaborador");
+        problema.setId_colaborador(rs.wasNull() ? null : idColaborador);
         return problema;
     }
 
