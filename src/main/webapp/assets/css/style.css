@@ -525,9 +525,9 @@ body:not(:has(:target)) #inicio {
 /* Fundo degradê atrás dos cards */
 .planos__fundo {
   position: relative;
-  margin: 24px -48px 0;
-  padding: 48px 48px 64px;
-  background: linear-gradient(180deg, rgba(236, 236, 236, 0) 0%, #7fe3e3 30%, #08c4cf 55%, #007a7a 90%);
+  margin: 0 -190px 0;
+  padding: 0 48px 64px;
+  background: linear-gradient(180deg, rgba(236, 236, 236, 0) 0%, #7fe3e3 30%, #08c4cf 50%, #007a7a 90%);
   border-radius: 0 0 48px 48px;
 }
 .planos__fundo::before {
@@ -544,26 +544,31 @@ body:not(:has(:target)) #inicio {
 }
 
 .planos__recomendado {
-  margin-left: 33%;
+  margin-left: 37.5%;
   font-size: 16px;
   font-weight: 500;
   margin-bottom: 4px;
+  top: 65px;
 }
 
 .planos__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 38px;
-  align-items: end;
+  align-items: stretch;
+  bottom: -110px;
+  max-width: 1004px;
+  margin: 0 auto;
 }
 
 /* Card de plano */
 .plano {
+  display: flex;
+  flex-direction: column;
   background: var(--cor-fundo);
   border: 2px solid var(--cor-verde-escuro);
   border-radius: 16px;
-  padding: 24px 22px 26px;
-  box-shadow: var(--sombra-suave);
+  padding: 26px 22px 26px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .plano:hover { 
@@ -596,7 +601,7 @@ body:not(:has(:target)) #inicio {
 }
 
 .plano__preco { 
-  margin: 28px 0 16px; 
+  margin: auto 0 16px; 
 }
 .plano__preco span { 
   display: block; 
@@ -622,10 +627,11 @@ body:not(:has(:target)) #inicio {
 
 /* Plano recomendado */
 .plano--destaque {
+  margin: -40px 0 0;
   background: var(--cor-escuro);
   color: #fff;
-  padding-top: 30px;
-  padding-bottom: 32px;
+  padding-top: 40px;
+  padding-bottom: 26px;
 }
 .plano--destaque .plano__nome,
 .plano--destaque .plano__preco { 
@@ -1120,6 +1126,10 @@ body:not(:has(:target)) #inicio {
 
   .planos { 
     padding: 56px 24px 32px; 
+  }
+
+  .plano--destaque{
+    margin: 0;
   }
   .planos__fundo { 
     margin: 24px -24px 0; 
