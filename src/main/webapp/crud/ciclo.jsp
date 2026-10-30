@@ -492,21 +492,13 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-ciclo-id_empresa">Empresa</label>
-                                        <select id="cad-ciclo-id_empresa" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaCadastro) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-ciclo-id_empresa" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="cad-ciclo-id_empresa-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-ciclo-id_empresa-valor" name="id_empresa" value="<%= h(valorIdEmpresaCadastro) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-ciclo-id_responsavel">Responsável</label>
-                                        <select id="cad-ciclo-id_responsavel" name="id_responsavel" required>
-<option value="">Selecione</option>
-<% for (Colaborador opcao : colaboradorOpcoes) { %>
-<option value="<%= opcao.getId_colaborador() %>" <%= String.valueOf(opcao.getId_colaborador()).equals(valorIdResponsavelCadastro) ? "selected" : "" %>><%= h(opcao.getNome() + " " + opcao.getSobrenome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-ciclo-id_responsavel" data-lista="sugestoes-fk-colaborador-lista" data-validar-lista data-campo-valor="cad-ciclo-id_responsavel-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-ciclo-id_responsavel-valor" name="id_responsavel" value="<%= h(valorIdResponsavelCadastro) %>">
                                     </div>
 
                                     <div class="botoes-modal">
@@ -589,21 +581,13 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-ciclo-id_empresa-<%= ciclo.getId_ciclo() %>">Empresa</label>
-                                        <select id="edi-ciclo-id_empresa-<%= ciclo.getId_ciclo() %>" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaEdicao) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-ciclo-id_empresa-<%= ciclo.getId_ciclo() %>" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="edi-ciclo-id_empresa-<%= ciclo.getId_ciclo() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-ciclo-id_empresa-<%= ciclo.getId_ciclo() %>-valor" name="id_empresa" value="<%= h(valorIdEmpresaEdicao) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-ciclo-id_responsavel-<%= ciclo.getId_ciclo() %>">Responsável</label>
-                                        <select id="edi-ciclo-id_responsavel-<%= ciclo.getId_ciclo() %>" name="id_responsavel" required>
-<option value="">Selecione</option>
-<% for (Colaborador opcao : colaboradorOpcoes) { %>
-<option value="<%= opcao.getId_colaborador() %>" <%= String.valueOf(opcao.getId_colaborador()).equals(valorIdResponsavelEdicao) ? "selected" : "" %>><%= h(opcao.getNome() + " " + opcao.getSobrenome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-ciclo-id_responsavel-<%= ciclo.getId_ciclo() %>" data-lista="sugestoes-fk-colaborador-lista" data-validar-lista data-campo-valor="edi-ciclo-id_responsavel-<%= ciclo.getId_ciclo() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-ciclo-id_responsavel-<%= ciclo.getId_ciclo() %>-valor" name="id_responsavel" value="<%= h(valorIdResponsavelEdicao) %>">
                                     </div>
 
                                     <div class="botoes-modal">
@@ -638,6 +622,40 @@ if (recuperarEdicao) {
 <% } %>
                 </section>
 
+                <div id="sugestoes-fk-empresa-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Empresa opcao : empresaOpcoes) {
+    String nomeOpcao = opcao.getNome();
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Empresa outra : empresaOpcoes) {
+            String outroNome = outra.getNome();
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_empresa() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_empresa() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-colaborador-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Colaborador opcao : colaboradorOpcoes) {
+    String nomeOpcao = (opcao.getNome() == null ? "" : opcao.getNome()) + " " + (opcao.getSobrenome() == null ? "" : opcao.getSobrenome());
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Colaborador outra : colaboradorOpcoes) {
+            String outroNome = (outra.getNome() == null ? "" : outra.getNome()) + " " + (outra.getSobrenome() == null ? "" : outra.getSobrenome());
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_colaborador() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_colaborador() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
             </main>
         </div>
     </body>
