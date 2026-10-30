@@ -1,9 +1,8 @@
 package br.com.acta.servlet;
 
 import br.com.acta.dao.AdministradorGeralDAO;
-import br.com.acta.dao.ColaboradorDAO;
+import br.com.acta.excecoes.DaoException;
 import br.com.acta.model.AdministradorGeral;
-import br.com.acta.model.Colaborador;
 import br.com.acta.excecoes.ValidacaoException;
 import br.com.acta.utils.Validador;
 import jakarta.servlet.RequestDispatcher;
@@ -20,7 +19,6 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
     private static final String PAGINA_LOGIN = "/login.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
-    private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
     private final AdministradorGeralDAO ADMINISTRADOR_DAO = new AdministradorGeralDAO();
 
     @Override
@@ -44,8 +42,11 @@ public class LoginServlet extends HttpServlet {
 
         } catch (ValidacaoException e) {
             enviarErroLogin(req, resp, e.getMessage());
-
+        } catch (DaoException e) {
+            e.printStackTrace(); // ou logger
+            enviarErroLogin(req, resp, "Erro ao acessar o banco de dados. Tente novamente.");
         } catch (Exception e) {
+            e.printStackTrace();
             enviarErro(req, resp, "Não foi possível concluir");
         }
     }
@@ -54,28 +55,17 @@ public class LoginServlet extends HttpServlet {
         String email = Validador.obrigatorio(req.getParameter("email"), "E-mail");
         String senha = Validador.obrigatorio(req.getParameter("senha"), "Senha");
 
-        AdministradorGeral administradorGeral = ADMINISTRADOR_DAO.autenticar(email, senha);
-        if (administradorGeral != null) {
-            administradorGeral.setSenha(null);
-            HttpSession sessao = req.getSession(true);
-            req.changeSessionId();
-            sessao.setAttribute("usuarioLogado", administradorGeral);
-            sessao.setAttribute("tipoUsuario", "ADMINISTRADOR_GERAL");
-            resp.sendRedirect(req.getContextPath() + "/empresa-servlet");
+        AdministradorGeral adm = ADMINISTRADOR_DAO.autenticar(email, senha);
+        if (adm == null) {
+            enviarErroLogin(req, resp, "Email ou senha inválidos");
             return;
         }
 
-        Colaborador colaborador = COLABORADOR_DAO.autenticar(email, senha);
-        if (colaborador != null) {
-            HttpSession sessao = req.getSession(true);
-            req.changeSessionId();
-            sessao.setAttribute("usuarioLogado", colaborador);
-            sessao.setAttribute("tipoUsuario", "COLABORADOR");
-            resp.sendRedirect(req.getContextPath() + "/-servlet");
-            return;
-        }
-
-        enviarErroLogin(req, resp, "Email ou senha inválidos");
+        adm.setSenha(null);
+        req.getSession(true);
+        req.changeSessionId();
+        req.getSession().setAttribute("usuarioLogado", adm);
+        resp.sendRedirect(req.getContextPath() + "/empresa-servlet"); // tela que existe
     }
 
     // erro específico do login
