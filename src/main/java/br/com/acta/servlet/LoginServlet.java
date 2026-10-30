@@ -61,7 +61,7 @@ public class LoginServlet extends HttpServlet {
             req.changeSessionId();
             sessao.setAttribute("usuarioLogado", administradorGeral);
             sessao.setAttribute("tipoUsuario", "ADMINISTRADOR_GERAL");
-            resp.sendRedirect(req.getContextPath() + "/home-servlet");
+            resp.sendRedirect(req.getContextPath() + "/empresa-servlet");
             return;
         }
 
@@ -71,7 +71,7 @@ public class LoginServlet extends HttpServlet {
             req.changeSessionId();
             sessao.setAttribute("usuarioLogado", colaborador);
             sessao.setAttribute("tipoUsuario", "COLABORADOR");
-            resp.sendRedirect(req.getContextPath() + "/home-servlet");
+            resp.sendRedirect(req.getContextPath() + "/-servlet");
             return;
         }
 
