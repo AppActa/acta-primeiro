@@ -47,9 +47,10 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Endereço</title>
-        <script src="<%= request.getContextPath() %>/assets/js/crud.js" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=391bad5325" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/regex.js?v=7c47ef420f" defer></script>
     </head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
@@ -139,7 +140,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-endereco-cidade">Cidade</label>
-                                                <input type="text" id="filtros-endereco-cidade" name="cidade" list="sugestoes-endereco-cidade" maxlength="30" value="<%= h(filtroCidade) %>">
+                                                <input type="text" id="filtros-endereco-cidade" name="cidade" data-lista="sugestoes-endereco-cidade-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroCidade) %>">
                                             </div>
                                             <input type="hidden" name="ordem" value="<%= h(ordem) %>">
                                             <input type="hidden" name="direcao" value="<%= h(direcao) %>">
@@ -255,7 +256,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
 <tr><td colspan="12">Nenhum registro encontrado.</td></tr>
 <% } %>
 <% for (Endereco endereco : enderecos) { %>
-<tr><td><%= h(endereco.getId_endereco()) %></td><td><%= h(endereco.getNome_empresa() == null || endereco.getNome_empresa().isBlank() ? "—" : endereco.getNome_empresa()) %></td><td><%= h(endereco.getUnidade() == null || endereco.getUnidade().isBlank() ? "—" : endereco.getUnidade()) %></td><td><%= h(endereco.getRua() == null || endereco.getRua().isBlank() ? "—" : endereco.getRua()) %></td><td><%= h(endereco.getNumero() == null || endereco.getNumero().isBlank() ? "—" : endereco.getNumero()) %></td><td><%= h(endereco.getBairro() == null || endereco.getBairro().isBlank() ? "—" : endereco.getBairro()) %></td><td><%= h(endereco.getCidade() == null || endereco.getCidade().isBlank() ? "—" : endereco.getCidade()) %></td><td><%= h(endereco.getEstado() == null || endereco.getEstado().isBlank() ? "—" : endereco.getEstado()) %></td><td><%= h(endereco.getCep() == null || endereco.getCep().isBlank() ? "—" : endereco.getCep()) %></td><td class="coluna-acao"><a href="#ver-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Ver"><img src="<%= request.getContextPath() %>/assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Editar"><img src="<%= request.getContextPath() %>/assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Excluir"><img src="<%= request.getContextPath() %>/assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr>
+<tr><td><%= h(endereco.getId_endereco()) %></td><td><%= h(endereco.getNome_empresa() == null || endereco.getNome_empresa().isBlank() ? "—" : endereco.getNome_empresa()) %></td><td><%= h(endereco.getUnidade() == null || endereco.getUnidade().isBlank() ? "—" : endereco.getUnidade()) %></td><td><%= h(endereco.getRua() == null || endereco.getRua().isBlank() ? "—" : endereco.getRua()) %></td><td><%= h(endereco.getNumero() == null || endereco.getNumero().isBlank() ? "—" : endereco.getNumero()) %></td><td><%= h(endereco.getBairro() == null || endereco.getBairro().isBlank() ? "—" : endereco.getBairro()) %></td><td><%= h(endereco.getCidade() == null || endereco.getCidade().isBlank() ? "—" : endereco.getCidade()) %></td><td><%= h(endereco.getEstado() == null || endereco.getEstado().isBlank() ? "—" : endereco.getEstado()) %></td><td data-formato="cep"><%= h(endereco.getCep() == null || endereco.getCep().isBlank() ? "—" : endereco.getCep()) %></td><td class="coluna-acao"><a href="#ver-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Ver"><img src="<%= request.getContextPath() %>/assets/images/icone_ver.svg" alt="Ver"></a></td><td class="coluna-acao"><a href="#editar-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Editar"><img src="<%= request.getContextPath() %>/assets/images/icone_editar.svg" alt="Editar"></a></td><td class="coluna-acao"><a href="#excluir-endereco-<%= endereco.getId_endereco() %>" class="icone-acao" aria-label="Excluir"><img src="<%= request.getContextPath() %>/assets/images/icone_excluir.svg" alt="Excluir"></a></td></tr>
 <% } %>
 </tbody>
                         </table>
@@ -277,7 +278,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                     <div class="detalhe"><span class="detalhe-label">Bairro</span><span class="detalhe-valor"><%= h(endereco.getBairro() == null || endereco.getBairro().isBlank() ? "—" : endereco.getBairro()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Cidade</span><span class="detalhe-valor"><%= h(endereco.getCidade() == null || endereco.getCidade().isBlank() ? "—" : endereco.getCidade()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Estado</span><span class="detalhe-valor"><%= h(endereco.getEstado() == null || endereco.getEstado().isBlank() ? "—" : endereco.getEstado()) %></span></div>
-                                    <div class="detalhe"><span class="detalhe-label">CEP</span><span class="detalhe-valor"><%= h(endereco.getCep() == null || endereco.getCep().isBlank() ? "—" : endereco.getCep()) %></span></div>
+                                    <div class="detalhe"><span class="detalhe-label">CEP</span><span class="detalhe-valor" data-formato="cep"><%= h(endereco.getCep() == null || endereco.getCep().isBlank() ? "—" : endereco.getCep()) %></span></div>
                                     <div class="detalhe detalhe-largo"><span class="detalhe-label">Complemento</span><span class="detalhe-valor"><%= h(endereco.getComplemento() == null || endereco.getComplemento().isBlank() ? "—" : endereco.getComplemento()) %></span></div>
                                 </div>
                             </div>
@@ -300,12 +301,8 @@ if (recuperarCadastro) {
                                     <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-endereco-id_empresa">Empresa</label>
-                                        <select id="cad-endereco-id_empresa" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaCadastro) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-endereco-id_empresa" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="cad-endereco-id_empresa-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-endereco-id_empresa-valor" name="id_empresa" value="<%= h(valorIdEmpresaCadastro) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-unidade">Unidade</label>
@@ -313,7 +310,8 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-cep">CEP</label>
-                                        <input type="text" id="cad-endereco-cep" name="cep" maxlength="9" inputmode="numeric" placeholder="Somente números (8 dígitos)" required pattern="^[0-9]{5}-?[0-9]{3}$" value="<%= h(recuperarCadastro ? request.getParameter("cep") : "") %>">
+                                        <input type="text" id="cad-endereco-cep" name="cep" data-mascara="cep" maxlength="9" inputmode="numeric" placeholder="00000-000" required pattern="^[0-9]{5}-?[0-9]{3}$" value="<%= h(recuperarCadastro ? request.getParameter("cep") : "") %>">
+                                        <small data-viacep-status role="status" hidden></small>
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-rua">Rua</label>
@@ -329,7 +327,7 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-cidade">Cidade</label>
-                                        <input type="text" id="cad-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required list="sugestoes-endereco-cidade" value="<%= h(recuperarCadastro ? request.getParameter("cidade") : "") %>">
+                                        <input type="text" id="cad-endereco-cidade" name="cidade" maxlength="30" placeholder="Digite cidade" required data-lista="sugestoes-endereco-cidade-lista" value="<%= h(recuperarCadastro ? request.getParameter("cidade") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-estado">Estado (UF)</label>
@@ -368,12 +366,8 @@ if (recuperarEdicao) {
                                     <input type="hidden" name="id-endereco" value="<%= endereco.getId_endereco() %>">
                                     <div class="campo">
                                         <label for="edi-endereco-id_empresa-<%= endereco.getId_endereco() %>">Empresa</label>
-                                        <select id="edi-endereco-id_empresa-<%= endereco.getId_endereco() %>" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaEdicao) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-endereco-id_empresa-<%= endereco.getId_endereco() %>" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="edi-endereco-id_empresa-<%= endereco.getId_endereco() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-endereco-id_empresa-<%= endereco.getId_endereco() %>-valor" name="id_empresa" value="<%= h(valorIdEmpresaEdicao) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-unidade-<%= endereco.getId_endereco() %>">Unidade</label>
@@ -381,7 +375,8 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-cep-<%= endereco.getId_endereco() %>">CEP</label>
-                                        <input type="text" id="edi-endereco-cep-<%= endereco.getId_endereco() %>" name="cep" maxlength="9" inputmode="numeric" placeholder="Somente números (8 dígitos)" required pattern="^[0-9]{5}-?[0-9]{3}$" value="<%= h(recuperarEdicao ? request.getParameter("cep") : endereco.getCep()) %>">
+                                        <input type="text" id="edi-endereco-cep-<%= endereco.getId_endereco() %>" name="cep" data-mascara="cep" maxlength="9" inputmode="numeric" placeholder="00000-000" required pattern="^[0-9]{5}-?[0-9]{3}$" value="<%= h(recuperarEdicao ? request.getParameter("cep") : endereco.getCep()) %>">
+                                        <small data-viacep-status role="status" hidden></small>
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-rua-<%= endereco.getId_endereco() %>">Rua</label>
@@ -397,7 +392,7 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-cidade-<%= endereco.getId_endereco() %>">Cidade</label>
-                                        <input type="text" id="edi-endereco-cidade-<%= endereco.getId_endereco() %>" name="cidade" maxlength="30" placeholder="Digite cidade" required list="sugestoes-endereco-cidade" value="<%= h(recuperarEdicao ? request.getParameter("cidade") : endereco.getCidade()) %>">
+                                        <input type="text" id="edi-endereco-cidade-<%= endereco.getId_endereco() %>" name="cidade" maxlength="30" placeholder="Digite cidade" required data-lista="sugestoes-endereco-cidade-lista" value="<%= h(recuperarEdicao ? request.getParameter("cidade") : endereco.getCidade()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-estado-<%= endereco.getId_endereco() %>">Estado (UF)</label>
@@ -438,13 +433,33 @@ if (recuperarEdicao) {
                     </section>
 <% } %>
                 </section>
-                <datalist id="sugestoes-endereco-cidade">
+
+<div id="sugestoes-endereco-cidade-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : cidadeList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-empresa-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Empresa opcao : empresaOpcoes) {
+    String nomeOpcao = opcao.getNome();
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Empresa outra : empresaOpcoes) {
+            String outroNome = outra.getNome();
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_empresa() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_empresa() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
             </main>
         </div>
     </body>

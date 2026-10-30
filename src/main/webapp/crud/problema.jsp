@@ -58,9 +58,9 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Problemas</title>
-        <script src="<%= request.getContextPath() %>/assets/js/crud.js" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=391bad5325" defer></script>
     </head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
@@ -164,7 +164,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-problemas-origem">Origem</label>
-                                                <input type="text" id="filtros-problemas-origem" name="origem" list="sugestoes-problemas-origem" value="<%= h(filtroOrigem) %>">
+                                                <input type="text" id="filtros-problemas-origem" name="origem" data-lista="sugestoes-problemas-origem-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroOrigem) %>">
                                             </div>
                                             <div class="campo periodo-datas">
                                                 <span class="rotulo-campo">Encontrado em</span>
@@ -469,30 +469,18 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-problema-id_ciclo">Ciclo</label>
-                                        <select id="cad-problema-id_ciclo" name="id_ciclo" required>
-<option value="">Selecione</option>
-<% for (Ciclo opcao : cicloOpcoes) { %>
-<option value="<%= opcao.getId_ciclo() %>" <%= String.valueOf(opcao.getId_ciclo()).equals(valorIdCicloCadastro) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-problema-id_ciclo" data-lista="sugestoes-fk-ciclo-lista" data-validar-lista data-campo-valor="cad-problema-id_ciclo-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-problema-id_ciclo-valor" name="id_ciclo" value="<%= h(valorIdCicloCadastro) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-problema-id_plano_acao">Plano de ação</label>
-                                        <select id="cad-problema-id_plano_acao" name="id_plano_acao">
-<option value="">Sem vínculo</option>
-<% for (PlanoAcao opcao : planoAcaoOpcoes) { %>
-<option value="<%= opcao.getId_plano_acao() %>" <%= String.valueOf(opcao.getId_plano_acao()).equals(valorIdPlanoAcaoCadastro) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-problema-id_plano_acao" data-lista="sugestoes-fk-planoacao-lista" data-validar-lista data-campo-valor="cad-problema-id_plano_acao-valor" autocomplete="off" placeholder="Sem vínculo">
+<input type="hidden" id="cad-problema-id_plano_acao-valor" name="id_plano_acao" value="<%= h(valorIdPlanoAcaoCadastro) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-problema-id_colaborador">Colaborador</label>
-                                        <select id="cad-problema-id_colaborador" name="id_colaborador">
-<option value="">Sem vínculo</option>
-<% for (Colaborador opcao : colaboradorOpcoes) { %>
-<option value="<%= opcao.getId_colaborador() %>" <%= String.valueOf(opcao.getId_colaborador()).equals(valorIdColaboradorCadastro) ? "selected" : "" %>><%= h(opcao.getNome() + " " + opcao.getSobrenome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-problema-id_colaborador" data-lista="sugestoes-fk-colaborador-lista" data-validar-lista data-campo-valor="cad-problema-id_colaborador-valor" autocomplete="off" placeholder="Sem vínculo">
+<input type="hidden" id="cad-problema-id_colaborador-valor" name="id_colaborador" value="<%= h(valorIdColaboradorCadastro) %>">
                                     </div>
                                     <div class="botoes-modal">
                                         <a href="#problemas" class="botao botao-cancelar">Cancelar</a>
@@ -583,30 +571,18 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-problema-id_ciclo-<%= problema.getId_problema() %>">Ciclo</label>
-                                        <select id="edi-problema-id_ciclo-<%= problema.getId_problema() %>" name="id_ciclo" required>
-<option value="">Selecione</option>
-<% for (Ciclo opcao : cicloOpcoes) { %>
-<option value="<%= opcao.getId_ciclo() %>" <%= String.valueOf(opcao.getId_ciclo()).equals(valorIdCicloEdicao) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-problema-id_ciclo-<%= problema.getId_problema() %>" data-lista="sugestoes-fk-ciclo-lista" data-validar-lista data-campo-valor="edi-problema-id_ciclo-<%= problema.getId_problema() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-problema-id_ciclo-<%= problema.getId_problema() %>-valor" name="id_ciclo" value="<%= h(valorIdCicloEdicao) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-problema-id_plano_acao-<%= problema.getId_problema() %>">Plano de ação</label>
-                                        <select id="edi-problema-id_plano_acao-<%= problema.getId_problema() %>" name="id_plano_acao">
-<option value="">Sem vínculo</option>
-<% for (PlanoAcao opcao : planoAcaoOpcoes) { %>
-<option value="<%= opcao.getId_plano_acao() %>" <%= String.valueOf(opcao.getId_plano_acao()).equals(valorIdPlanoAcaoEdicao) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-problema-id_plano_acao-<%= problema.getId_problema() %>" data-lista="sugestoes-fk-planoacao-lista" data-validar-lista data-campo-valor="edi-problema-id_plano_acao-<%= problema.getId_problema() %>-valor" autocomplete="off" placeholder="Sem vínculo">
+<input type="hidden" id="edi-problema-id_plano_acao-<%= problema.getId_problema() %>-valor" name="id_plano_acao" value="<%= h(valorIdPlanoAcaoEdicao) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-problema-id_colaborador-<%= problema.getId_problema() %>">Colaborador</label>
-                                        <select id="edi-problema-id_colaborador-<%= problema.getId_problema() %>" name="id_colaborador">
-<option value="">Sem vínculo</option>
-<% for (Colaborador opcao : colaboradorOpcoes) { %>
-<option value="<%= opcao.getId_colaborador() %>" <%= String.valueOf(opcao.getId_colaborador()).equals(valorIdColaboradorEdicao) ? "selected" : "" %>><%= h(opcao.getNome() + " " + opcao.getSobrenome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-problema-id_colaborador-<%= problema.getId_problema() %>" data-lista="sugestoes-fk-colaborador-lista" data-validar-lista data-campo-valor="edi-problema-id_colaborador-<%= problema.getId_problema() %>-valor" autocomplete="off" placeholder="Sem vínculo">
+<input type="hidden" id="edi-problema-id_colaborador-<%= problema.getId_problema() %>-valor" name="id_colaborador" value="<%= h(valorIdColaboradorEdicao) %>">
                                     </div>
                                     <div class="botoes-modal">
                                         <a href="#problemas" class="botao botao-cancelar">Cancelar</a>
@@ -640,13 +616,66 @@ if (recuperarEdicao) {
 <% } %>
                 </section>
 
-                <datalist id="sugestoes-problemas-origem">
+                <div id="sugestoes-problemas-origem-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : origemList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-ciclo-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Ciclo opcao : cicloOpcoes) {
+    String nomeOpcao = opcao.getNome();
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Ciclo outra : cicloOpcoes) {
+            String outroNome = outra.getNome();
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_ciclo() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_ciclo() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-planoacao-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (PlanoAcao opcao : planoAcaoOpcoes) {
+    String nomeOpcao = opcao.getNome();
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (PlanoAcao outra : planoAcaoOpcoes) {
+            String outroNome = outra.getNome();
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_plano_acao() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_plano_acao() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-colaborador-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Colaborador opcao : colaboradorOpcoes) {
+    String nomeOpcao = (opcao.getNome() == null ? "" : opcao.getNome()) + " " + (opcao.getSobrenome() == null ? "" : opcao.getSobrenome());
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Colaborador outra : colaboradorOpcoes) {
+            String outroNome = (outra.getNome() == null ? "" : outra.getNome()) + " " + (outra.getSobrenome() == null ? "" : outra.getSobrenome());
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_colaborador() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_colaborador() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
             </main>
         </div>
     </body>

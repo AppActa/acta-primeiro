@@ -247,7 +247,8 @@ public class MetaDAO implements MetodosCrud<Meta> {
         meta.setNome_ciclo(rs.getString("nome_ciclo"));
         meta.setNome_plano_acao(rs.getString("nome_plano_acao"));
         meta.setId_ciclo(rs.getLong("id_ciclo"));
-        meta.setId_plano_acao(rs.getObject("id_plano_acao", Long.class));
+        long idPlanoAcao = rs.getLong("id_plano_acao");
+        meta.setId_plano_acao(rs.wasNull() ? null : idPlanoAcao);
         return meta;
     }
 

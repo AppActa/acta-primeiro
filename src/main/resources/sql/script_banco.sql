@@ -198,7 +198,7 @@ ALTER TABLE endereco
     ADD CONSTRAINT chk_endereco_cep_tamanho CHECK (length(cep) = 8);
 
 ALTER TABLE administrador_geral
-    ADD CONSTRAINT chk_adm_telefone_tamanho CHECK (length(telefone) = 11);
+    ADD CONSTRAINT chk_adm_telefone_tamanho CHECK (length(telefone) IN (10, 11));
 
 ALTER TABLE empresa
     ADD CONSTRAINT chk_empresa_cnpj_tamanho CHECK (length(cnpj) = 14);
@@ -207,7 +207,7 @@ ALTER TABLE colaborador
     ADD CONSTRAINT chk_colab_cpf_tamanho CHECK (length(cpf) = 11);
 
 ALTER TABLE colaborador
-    ADD CONSTRAINT chk_colab_telefone_tamanho CHECK (length(telefone) = 11);
+    ADD CONSTRAINT chk_colab_telefone_tamanho CHECK (length(telefone) IN (10, 11));
 
 ALTER TABLE colaborador
     ADD CONSTRAINT chk_colab_dt_contratacao CHECK (dt_contratacao <= current_date);
