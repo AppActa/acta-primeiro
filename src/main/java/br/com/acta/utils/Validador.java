@@ -74,7 +74,7 @@ public class Validador {
         String v = obrigatorio(valor, campo);
         try {
             long numero = Long.parseLong(v);
-            if (numero <= 0) {
+            if (numero <= 0 || numero > Integer.MAX_VALUE) {
                 throw new ValidacaoException(campo + " inválido.");
             }
             return numero;
