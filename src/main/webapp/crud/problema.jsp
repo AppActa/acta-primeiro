@@ -112,8 +112,10 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                             <img src="<%= request.getContextPath() %>/assets/images/foto_perfil.svg" alt="Foto de perfil">
                         </div>
                         <div class="perfil-info">
-                            <span class="perfil-nome">Área administrativa</span>
-                            <span class="perfil-email">ACTA</span>
+                            <% br.com.acta.model.AdministradorGeral adm =
+                                    (br.com.acta.model.AdministradorGeral) session.getAttribute("usuarioLogado"); %>
+                            <span class="perfil-nome"><%= adm != null ? adm.getNome() : "Administrador" %></span>
+                            <span class="perfil-email"><%= adm != null ? adm.getEmail() : "" %></span>
                         </div>
                     </a>
                     <a href="<%= request.getContextPath() %>/login.html" class="botao botao-sair">Sair</a>
