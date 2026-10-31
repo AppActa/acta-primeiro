@@ -17,11 +17,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
 @WebServlet(name = "AdministradorGeralServlet", value = "/administrador-geral-servlet")
 public class AdministradorGeralServlet extends HttpServlet {
     private static final String PAGINA_ADMINISTRADOR_GERAL = "/administrador-geral.jsp";
+    private static final String PAGINA_CONFIGURACOES = "/crud/configuracoes.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final AdministradorGeralDAO DAO = new AdministradorGeralDAO();
 
@@ -169,29 +171,80 @@ public class AdministradorGeralServlet extends HttpServlet {
     }
 
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        AdministradorGeral logado = obterAdministradorLogado(req, resp);
+        if (logado == null) return;
         Long id = Validador.id(req.getParameter("id-adm-geral"), "Id do administrador");
+        if (!id.equals(logado.getAdm_geral_id())) {
+            enviarErro(req, resp, "Não é permitido atualizar outro administrador.", HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
         AdministradorGeral administradorGeral = new AdministradorGeral();
 
         administradorGeral.setAdm_geral_id(id);
         administradorGeral.setNome(Validador.nomePessoa(req.getParameter("nome"), "Nome", 50));
         administradorGeral.setEmail(Validador.email(req.getParameter("email")));
         administradorGeral.setTelefone(Validador.telefone(req.getParameter("telefone")));
+        administradorGeral.setImagem(validarImagemCloudinary(req.getParameter("imagem")));
 
         int resultado = DAO.atualizar(administradorGeral);
 
-        if (resultado == 1) enviarPaginaCerta(req, resp);
+        if (resultado == 1) {
+            logado.setNome(administradorGeral.getNome());
+            logado.setEmail(administradorGeral.getEmail());
+            logado.setTelefone(administradorGeral.getTelefone());
+            logado.setImagem(administradorGeral.getImagem());
+            req.getSession(false).setAttribute("usuarioLogado", logado);
+            resp.sendRedirect(req.getContextPath() + PAGINA_CONFIGURACOES);
+        }
         else enviarErro(req, resp, "O administrador geral não pode ser atualizado");
     }
 
     private void atualizarSenha(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        AdministradorGeral logado = obterAdministradorLogado(req, resp);
+        if (logado == null) return;
         String email = Validador.email(req.getParameter("email"));
+        if (!email.equalsIgnoreCase(logado.getEmail())) {
+            enviarErro(req, resp, "Não é permitido alterar a senha de outro administrador.", HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
         String senhaAntiga = Validador.obrigatorio(req.getParameter("senha_antiga"), "Senha atual");
         String senhaNova = Validador.senha(req.getParameter("senha_nova"));
+        String senhaConfirmar = Validador.obrigatorio(req.getParameter("senha_confirmar"), "Confirmação da senha");
+        if (!senhaNova.equals(senhaConfirmar)) {
+            enviarErro(req, resp, "A confirmação da nova senha não confere.", HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
 
         int resultado = DAO.atualizarSenha(email, senhaAntiga, senhaNova);
 
-        if (resultado == 1) enviarPaginaCerta(req, resp);
+        if (resultado == 1) resp.sendRedirect(req.getContextPath() + PAGINA_CONFIGURACOES);
         else enviarErro(req, resp, "A senha não pode ser atualizada");
+    }
+
+    private AdministradorGeral obterAdministradorLogado(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession sessao = req.getSession(false);
+        AdministradorGeral logado = sessao == null ? null : (AdministradorGeral) sessao.getAttribute("usuarioLogado");
+        if (logado == null) {
+            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+            return null;
+        }
+        return logado;
+    }
+
+    private String validarImagemCloudinary(String valor) {
+        if (valor == null || valor.isBlank()) return null;
+        try {
+            URI uri = URI.create(valor.trim());
+            if ("https".equalsIgnoreCase(uri.getScheme())
+                    && "res.cloudinary.com".equalsIgnoreCase(uri.getHost())
+                    && uri.getPath() != null
+                    && uri.getPath().contains("/image/upload/")) {
+                return uri.toString();
+            }
+        } catch (IllegalArgumentException ignored) {
+            // URL inválida; cai na validação abaixo.
+        }
+        throw new ValidacaoException("A foto precisa ser uma URL HTTPS válida do Cloudinary.");
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -219,7 +272,7 @@ public class AdministradorGeralServlet extends HttpServlet {
 
         HttpSession sessao = req.getSession(true);
         req.changeSessionId();
-        sessao.setAttribute("administradorGeralLogado", administradorGeral);
+        sessao.setAttribute("usuarioLogado", administradorGeral);
 
         enviarPaginaCerta(req, resp);
     }
