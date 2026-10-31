@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.List,java.util.ArrayList,java.time.ZoneId,java.time.format.DateTimeFormatter,br.com.acta.model.*,br.com.acta.enums.*" %>
+﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.List,java.util.ArrayList,java.time.ZoneId,java.time.format.DateTimeFormatter,br.com.acta.model.*,br.com.acta.enums.*" %>
 <%!
     private String h(Object valor) {
         if (valor == null) return "";
@@ -118,7 +118,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                             <span class="perfil-email"><%= adm != null ? adm.getEmail() : "" %></span>
                         </div>
                     </a>
-                    <a href="<%= request.getContextPath() %>/login.html" class="botao botao-sair">Sair</a>
+                    <a href="<%= request.getContextPath() %>/logout-servlet" class="botao botao-sair">Sair</a>
                 </div>
             </aside>
             <main class="conteudo">

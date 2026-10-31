@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="br.com.acta.model.AdministradorGeral" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.List,br.com.acta.model.AdministradorGeral,br.com.acta.dao.AdministradorGeralDAO" %>
 <%!
     private String h(Object valor) {
         if (valor == null) return "";
@@ -15,6 +15,7 @@ if (administrador == null) {
 String nome = administrador.getNome() == null ? "" : administrador.getNome();
 String email = administrador.getEmail() == null ? "" : administrador.getEmail();
 String telefone = administrador.getTelefone() == null ? "" : administrador.getTelefone();
+List<String> empresasVinculadas = new AdministradorGeralDAO().buscarEmpresasAtivas(administrador.getAdm_geral_id());
 %>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -68,7 +69,18 @@ String telefone = administrador.getTelefone() == null ? "" : administrador.getTe
                     <div class="config-campo"><label for="config-email" class="config-rotulo">E-mail</label><p class="config-valor editavel"><a href="mailto:<%= h(email) %>"><%= h(email) %></a></p><input type="email" id="config-email" name="email" maxlength="80" value="<%= h(email) %>" autocomplete="email" placeholder="Digite o e-mail" required></div>
                     <div class="config-campo"><label for="config-telefone" class="config-rotulo">Telefone</label><p class="config-valor editavel" data-formato="telefone"><%= h(telefone) %></p><input type="tel" id="config-telefone" name="telefone" data-mascara="telefone" maxlength="15" pattern="^(?:\([0-9]{2}\)|[0-9]{2}) ?[0-9]{4,5}-?[0-9]{4}$" inputmode="numeric" value="<%= h(telefone) %>" autocomplete="tel-national" required></div>
                     <div class="config-campo"><span class="config-rotulo">Senha</span><p class="config-valor editavel">********</p><div class="config-senha-acao"><label for="config-modal-senha" class="botao botao-secundario">Alterar senha</label></div></div>
-                    <div class="config-campo config-campo-largo"><span class="config-rotulo">Empresas que administra</span><p class="config-vazio">Nenhuma empresa ativa vinculada.</p></div>
+                    <div class="config-campo config-campo-largo">
+                        <span class="config-rotulo">Empresas que administra</span>
+                        <% if (empresasVinculadas.isEmpty()) { %>
+                        <p class="config-vazio">Nenhuma empresa ativa vinculada.</p>
+                        <% } else { %>
+                        <ul class="lista-empresas">
+                            <% for (String nomeEmpresa : empresasVinculadas) { %>
+                            <li><%= h(nomeEmpresa) %></li>
+                            <% } %>
+                        </ul>
+                        <% } %>
+                    </div>
                 </div>
                 <div class="botoes-modal config-dados-botoes"><input type="hidden" name="acao" value="atualizar"><input type="hidden" name="id-adm-geral" value="<%= administrador.getAdm_geral_id() %>"><label for="config-editar-perfil" class="botao botao-cancelar">Cancelar</label><button type="submit" class="botao botao-principal">Confirmar edição</button></div>
             </form>

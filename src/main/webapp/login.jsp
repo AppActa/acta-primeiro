@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
     // Se já há sessão ativa, redireciona para home
     if (session != null && session.getAttribute("usuarioLogado") != null) {
@@ -20,7 +20,7 @@
     <main class="login-pagina">
         <div class="login-sair">
             <img src="<%= request.getContextPath() %>/assets/images/icone_voltar.svg" alt="">
-            <a href="<%= request.getContextPath() %>/index.html">Tela inicial</a>
+            <a href="<%= request.getContextPath() %>/index.jsp">Tela inicial</a>
         </div>
 
         <div class="login-cartao">
