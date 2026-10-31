@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
 @WebServlet(name = "AdministradorGeralServlet", value = "/administrador-geral-servlet")
@@ -183,6 +184,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         administradorGeral.setNome(Validador.nomePessoa(req.getParameter("nome"), "Nome", 50));
         administradorGeral.setEmail(Validador.email(req.getParameter("email")));
         administradorGeral.setTelefone(Validador.telefone(req.getParameter("telefone")));
+        administradorGeral.setImagem(validarImagemCloudinary(req.getParameter("imagem")));
 
         int resultado = DAO.atualizar(administradorGeral);
 
@@ -190,6 +192,7 @@ public class AdministradorGeralServlet extends HttpServlet {
             logado.setNome(administradorGeral.getNome());
             logado.setEmail(administradorGeral.getEmail());
             logado.setTelefone(administradorGeral.getTelefone());
+            logado.setImagem(administradorGeral.getImagem());
             req.getSession(false).setAttribute("usuarioLogado", logado);
             resp.sendRedirect(req.getContextPath() + PAGINA_CONFIGURACOES);
         }
@@ -226,6 +229,22 @@ public class AdministradorGeralServlet extends HttpServlet {
             return null;
         }
         return logado;
+    }
+
+    private String validarImagemCloudinary(String valor) {
+        if (valor == null || valor.isBlank()) return null;
+        try {
+            URI uri = URI.create(valor.trim());
+            if ("https".equalsIgnoreCase(uri.getScheme())
+                    && "res.cloudinary.com".equalsIgnoreCase(uri.getHost())
+                    && uri.getPath() != null
+                    && uri.getPath().contains("/image/upload/")) {
+                return uri.toString();
+            }
+        } catch (IllegalArgumentException ignored) {
+            // URL inválida; cai na validação abaixo.
+        }
+        throw new ValidacaoException("A foto precisa ser uma URL HTTPS válida do Cloudinary.");
     }
 
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

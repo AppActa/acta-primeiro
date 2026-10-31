@@ -65,8 +65,12 @@ CREATE TABLE IF NOT EXISTS administrador_geral (
                                                    nome VARCHAR(50) NOT NULL,
                                                    senha VARCHAR(100) NOT NULL,
                                                    email VARCHAR(80) UNIQUE NOT NULL,
-                                                   telefone CHAR(11) NOT NULL
+                                                   telefone CHAR(11) NOT NULL,
+                                                   imagem TEXT
 );
+
+-- URL segura da foto de perfil armazenada no Cloudinary.
+ALTER TABLE administrador_geral ADD COLUMN IF NOT EXISTS imagem TEXT;
 
 -- Colaborador
 CREATE TABLE IF NOT EXISTS colaborador (
