@@ -165,6 +165,9 @@ body:not(:has(:target)) #inicio {
 }
 
 .header__nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   gap: 36px;
   font-size: 14px;
