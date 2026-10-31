@@ -6,6 +6,8 @@
         <link rel="shortcut icon" href="../assets/images/logo_compacta.svg" type="image/x-icon">
         <link rel="stylesheet" href="../assets/css/crud.css">
         <title>Área Restrita</title>
+        <script src="../assets/js/regex.js" defer></script>
+        <script src="../assets/js/efeitos.js" defer></script>
     </head>
     <body>
         <div class="sistema">
@@ -95,39 +97,54 @@
                             <h2>Meus dados</h2>
 
                             <label for="config-editar-perfil" class="botao botao-principal botao-pilula config-dados-editar">Editar</label>
-
-                            <div class="config-dados-botoes">
-                                <button type="submit" class="botao botao-principal botao-pilula">Salvar</button>
-                                <label for="config-editar-perfil" class="botao botao-cancelar botao-pilula">Cancelar</label>
-                            </div>
                         </div>
 
                         <div class="config-campos">
                             <div class="config-campo">
                                 <label for="config-nome" class="config-rotulo">Nome</label>
                                 <p class="config-valor editavel">Daniel de Freitas</p>
-                                <input type="text" id="config-nome" name="nome" maxlength="50" value="Daniel de Freitas" autocomplete="name" required>
+                                <input type="text" id="config-nome" name="nome" maxlength="50" value="Daniel de Freitas" data-original="Daniel de Freitas" autocomplete="name" placeholder="Digite o nome" required>
                             </div>
 
                             <div class="config-campo">
                                 <label for="config-email" class="config-rotulo">E-mail</label>
                                 <p class="config-valor editavel"><a href="mailto:danielfrei@gmail.com">danielfrei@gmail.com</a></p>
-                                <input type="email" id="config-email" name="email" maxlength="80" value="danielfrei@gmail.com" autocomplete="email" required>
+                                <input type="email" id="config-email" name="email" maxlength="80" value="danielfrei@gmail.com" data-original="danielfrei@gmail.com" autocomplete="email" placeholder="Digite o e-mail" required>
                             </div>
 
                             <div class="config-campo">
                                 <label for="config-telefone" class="config-rotulo">Telefone</label>
-                                <p class="config-valor editavel">11869345699</p>
-                                <input type="tel" id="config-telefone" name="telefone" maxlength="11" pattern="\d{11}" inputmode="numeric" value="11869345699" autocomplete="tel-national" required>
+                                <p class="config-valor editavel" data-formato="telefone">11869345699</p>
+                                <input type="tel" id="config-telefone" name="telefone" data-mascara="telefone" maxlength="15" pattern="^(?:\([0-9]{2}\)|[0-9]{2}) ?[0-9]{4,5}-?[0-9]{4}$" inputmode="numeric" value="11869345699" data-original="11869345699" autocomplete="tel-national" required>
                             </div>
 
                             <div class="config-campo">
                                 <span class="config-rotulo">Senha</span>
                                 <p class="config-valor editavel">********</p>
                                 <div class="config-senha-acao">
-                                    <label for="config-modal-senha" class="botao botao-secundario botao-pilula botao-pilula-sm">Alterar senha</label>
+                                    <label for="config-modal-senha" class="botao botao-secundario">Alterar senha</label>
                                 </div>
                             </div>
+
+                            <div class="config-campo config-campo-largo">
+                                <span class="config-rotulo">Empresas que administra</span>
+                                <!--
+                                    Só o NOME das empresas ATIVAS ligadas a este administrador
+                                    (empresa_administrador_geral + empresa.status = 'ATIVA').
+                                    Quando ligar ao back-end, gere um <li> por empresa no lugar destes de exemplo.
+                                -->
+                                <ul class="lista-empresas">
+                                    <li>Empresa de exemplo 1</li>
+                                    <li>Empresa de exemplo 2</li>
+                                    <li>Empresa de exemplo 3</li>
+                                </ul>
+                                <!-- Sem empresas ativas, troque a lista por: <p class="config-vazio">Nenhuma empresa ativa vinculada.</p> -->
+                            </div>
+                        </div>
+
+                        <div class="botoes-modal config-dados-botoes">
+                            <label for="config-editar-perfil" class="botao botao-cancelar">Cancelar</label>
+                            <button type="submit" class="botao botao-principal">Confirmar edição</button>
                         </div>
                     </form>
 
@@ -148,11 +165,11 @@
                                     </div>
                                     <div class="campo">
                                         <label for="alt-senha-confirmar">Confirmar nova senha</label>
-                                        <input type="password" id="alt-senha-confirmar" name="senha_confirmar" maxlength="100" autocomplete="new-password" required>
+                                        <input type="password" id="alt-senha-confirmar" name="senha_confirmar" maxlength="100" autocomplete="new-password" placeholder="Repita a nova senha" data-confirma="alt-senha-nova" required>
                                     </div>
                                     <div class="botoes-modal">
-                                        <label for="config-modal-senha" class="botao botao-cancelar botao-pilula">Cancelar</label>
-                                        <button type="submit" class="botao botao-principal botao-pilula">Confirmar</button>
+                                        <label for="config-modal-senha" class="botao botao-cancelar">Cancelar</label>
+                                        <button type="submit" class="botao botao-principal">Confirmar</button>
                                     </div>
                                 </form>
                             </div>
