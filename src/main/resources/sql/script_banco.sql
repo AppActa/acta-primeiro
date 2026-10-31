@@ -217,3 +217,23 @@ ALTER TABLE ciclo
 
 ALTER TABLE tarefa
     ADD CONSTRAINT chk_tarefa_dt_entrega CHECK (dt_entrega >= dt_inicio);
+
+
+
+ALTER TABLE plano_acao
+    DROP CONSTRAINT plano_acao_id_criador_fkey,
+    ADD CONSTRAINT plano_acao_id_criador_fkey
+        FOREIGN KEY (id_criador) REFERENCES colaborador(id_colaborador) ON DELETE NO ACTION;
+
+ALTER TABLE plano_acao5w2h
+    DROP CONSTRAINT plano_acao5w2h_who_fkey,
+    ADD CONSTRAINT plano_acao5w2h_who_fkey
+        FOREIGN KEY (who) REFERENCES colaborador(id_colaborador) ON DELETE NO ACTION;
+
+ALTER TABLE tarefa
+    DROP CONSTRAINT tarefa_id_colaborador_fkey,
+    ADD CONSTRAINT tarefa_id_colaborador_fkey
+        FOREIGN KEY (id_colaborador) REFERENCES colaborador(id_colaborador) ON DELETE NO ACTION,
+    DROP CONSTRAINT tarefa_id_plano_acao_fkey,
+    ADD CONSTRAINT tarefa_id_plano_acao_fkey
+        FOREIGN KEY (id_plano_acao) REFERENCES plano_acao(id_plano_acao) ON DELETE NO ACTION;
