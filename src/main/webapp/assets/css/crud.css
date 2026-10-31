@@ -1253,3 +1253,189 @@ td.coluna-acao {
 .crud-admin .lista-vazia { padding: 9px 12px; font-size: 13px; }
 .crud-admin .lista-escolhas[hidden],
 .crud-admin .lista-escolhas [hidden] { display: none; }
+
+.config-campo-largo {
+    grid-column: 1 / -1;
+}
+
+.config-vazio {
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+.config-dados .lista-empresas {
+    gap: 10px;
+}
+
+.config-dados .lista-empresas li {
+    font-size: 15px;
+    font-weight: 500;
+    padding: 8px 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.config-dados .botoes-modal {
+    margin-top: 28px;
+}
+
+.config-dados .mensagem {
+    margin-bottom: 24px;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.mensagem-saindo {
+    opacity: 0;
+    transform: translateY(-6px);
+}
+
+/* Modo edição: rótulos e campos iguais aos dos formulários de cadastrar/editar das tabelas */
+.config:has(#config-editar-perfil:checked) .config-dados-topo {
+    margin-bottom: 24px;
+}
+
+.config:has(#config-editar-perfil:checked) .config-campos {
+    gap: 14px 20px;
+}
+
+.config:has(#config-editar-perfil:checked) .config-rotulo {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    margin-bottom: 5px;
+}
+
+.config:has(#config-editar-perfil:checked) .config-campo input {
+    height: auto;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: var(--cor-texto);
+    background-color: var(--cor-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+
+.config:has(#config-editar-perfil:checked) .config-senha-acao {
+    height: auto;
+}
+
+.config .config-campo input:focus {
+    outline: none;
+}
+
+/* Efeitos: campos e formulários que brilham ao serem escolhidos */
+.campo input,
+.campo select,
+.campo textarea,
+.config-campo input,
+.pesquisa input {
+    transition: border-color 0.2s ease, box-shadow 0.25s ease, background-color 0.2s ease;
+}
+
+.campo label,
+.config-rotulo {
+    transition: color 0.2s ease;
+}
+
+.campo-ativo input:focus,
+.campo-ativo select:focus,
+.campo-ativo textarea:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 2px var(--cor-borda), 0 0 14px 3px rgba(4, 191, 173, 0.45);
+}
+
+.campo-ativo > label,
+.campo-ativo > .config-rotulo {
+    color: var(--cor-primaria);
+}
+
+.config-dados,
+.modal {
+    transition: box-shadow 0.3s ease;
+}
+
+.config-dados.form-ativo {
+    box-shadow: 0 0 0 2px var(--cor-borda), 0 0 28px 4px rgba(4, 191, 173, 0.5);
+}
+
+.modal:has(form.form-ativo) {
+    box-shadow: 0 0 0 2px var(--cor-borda), 0 8px 32px rgba(4, 191, 173, 0.4);
+}
+
+/* =========================================================
+   EFEITOS: botões e ícones com movimento
+   ========================================================= */
+.botao {
+    transition: transform 0.18s ease-out, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.menu-item img,
+.icone-acao img {
+    transition: transform 0.2s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .botao:not(.botao-animado):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+    }
+
+    .botao:not(.botao-animado):active {
+        transform: translateY(0) scale(0.97);
+    }
+
+    .botao-animado:hover {
+        transform: scale(1.04);
+        box-shadow: 0 6px 14px rgba(2, 115, 115, 0.3);
+    }
+
+    .botao-animado.botao-excluir:hover {
+        box-shadow: 0 6px 14px rgba(202, 29, 29, 0.3);
+    }
+
+    .botao-animado:active {
+        transform: scale(0.97);
+        transition-duration: 0.08s;
+    }
+
+    .menu-item:hover img {
+        transform: scale(1.15);
+    }
+
+    .icone-acao:hover img {
+        transform: scale(1.25) rotate(-6deg);
+    }
+
+    .config-dados .lista-empresas li:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(1, 84, 84, 0.25);
+    }
+
+    .config-dados .lista-empresas li {
+        animation: entrada-item 0.45s ease both;
+    }
+
+    .config-dados .lista-empresas li:nth-child(2) { animation-delay: 0.06s; }
+    .config-dados .lista-empresas li:nth-child(3) { animation-delay: 0.12s; }
+    .config-dados .lista-empresas li:nth-child(4) { animation-delay: 0.18s; }
+    .config-dados .lista-empresas li:nth-child(n+5) { animation-delay: 0.24s; }
+
+    .campo-ativo input:focus,
+    .campo-ativo select:focus,
+    .campo-ativo textarea:focus {
+        animation: brilho-campo 1.8s ease-in-out infinite;
+    }
+}
+
+@keyframes brilho-campo {
+    50% {
+        box-shadow: 0 0 0 2px var(--cor-borda), 0 0 22px 6px rgba(4, 191, 173, 0.6);
+    }
+}
+
+@keyframes entrada-item {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
