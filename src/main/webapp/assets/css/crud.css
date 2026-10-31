@@ -1374,32 +1374,6 @@ td.coluna-acao {
     transition: transform 0.2s ease;
 }
 
-/* Botões de confirmação: seguem o mouse (efeitos.js define --mx e --my) e brilham */
-.botao-animado {
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
-}
-
-.botao-animado::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: radial-gradient(circle at var(--brilho-x, 50%) var(--brilho-y, 50%), rgba(255, 255, 255, 0.4), transparent 60%);
-    opacity: 0;
-    transition: opacity 0.25s ease;
-    pointer-events: none;
-}
-
-.botao-animado .onda {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.45);
-    transform: scale(0);
-    pointer-events: none;
-}
-
 @media (prefers-reduced-motion: no-preference) {
     .botao:not(.botao-animado):hover {
         transform: translateY(-2px);
@@ -1410,30 +1384,18 @@ td.coluna-acao {
         transform: translateY(0) scale(0.97);
     }
 
-    .botao-animado {
-        transform: translate(var(--mx, 0px), var(--my, 0px));
-    }
-
     .botao-animado:hover {
-        transform: translate(var(--mx, 0px), calc(var(--my, 0px) - 3px)) scale(1.05);
-        box-shadow: 0 10px 22px rgba(2, 115, 115, 0.4);
+        transform: scale(1.04);
+        box-shadow: 0 6px 14px rgba(2, 115, 115, 0.3);
     }
 
     .botao-animado.botao-excluir:hover {
-        box-shadow: 0 10px 22px rgba(202, 29, 29, 0.4);
-    }
-
-    .botao-animado:hover::after {
-        opacity: 1;
+        box-shadow: 0 6px 14px rgba(202, 29, 29, 0.3);
     }
 
     .botao-animado:active {
-        transform: translate(0, 0) scale(0.95);
+        transform: scale(0.97);
         transition-duration: 0.08s;
-    }
-
-    .botao-animado .onda {
-        animation: onda-botao 0.6s ease-out forwards;
     }
 
     .menu-item:hover img {
@@ -1462,13 +1424,6 @@ td.coluna-acao {
     .campo-ativo select:focus,
     .campo-ativo textarea:focus {
         animation: brilho-campo 1.8s ease-in-out infinite;
-    }
-}
-
-@keyframes onda-botao {
-    to {
-        transform: scale(1);
-        opacity: 0;
     }
 }
 
