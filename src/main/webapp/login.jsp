@@ -61,8 +61,6 @@
                     <button type="submit" class="login-botao">Concluído</button>
                 </form>
 
-                <div class="login-divisor"><span>ou</span></div>
-
                 <a href="#modal-esqueceu-senha" class="login-esqueceu">Esqueceu sua senha?</a>
             </section>
         </div>
