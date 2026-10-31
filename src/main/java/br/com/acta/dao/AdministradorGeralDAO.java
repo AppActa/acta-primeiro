@@ -18,6 +18,28 @@ import br.com.acta.utils.PasswordUtils;
 
 public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
+    public List<String> buscarEmpresasAtivas(Long idAdministrador) {
+        List<String> empresas = new ArrayList<>();
+        String sql = """
+                SELECT emp.nome
+                FROM empresa_administrador_geral eag
+                JOIN empresa emp ON emp.id_empresa = eag.id_empresa
+                WHERE eag.id_adm_geral = ? AND emp.status = 'ATIVA'
+                ORDER BY emp.nome;
+                """;
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, idAdministrador);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) empresas.add(rs.getString("nome"));
+            }
+            return empresas;
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DaoException("Erro ao consultar as empresas vinculadas ao administrador.", e);
+        }
+    }
+
     //metodos DAO
 
     //inserir
