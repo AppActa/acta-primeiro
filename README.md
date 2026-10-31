@@ -1,41 +1,49 @@
 # ACTA — Sistema de Gestão do PDCA
 
-O ACTA é um projeto da organização ACTA que sistematiza a metodologia PDCA (*Plan, Do, Check, Act*) em uma aplicação web. A proposta é apoiar a organização de ciclos de melhoria contínua, reunindo o planejamento, a execução e o acompanhamento de ações e resultados.
+O ACTA é um projeto da organização ACTA que transforma a metodologia PDCA (*Plan, Do, Check, Act*) em um fluxo de trabalho para organizar ciclos de melhoria contínua. A aplicação registra problemas, metas e ações para apoiar o planejamento, a execução, o acompanhamento e o aprendizado das empresas.
+
+## Estado atual do projeto
+
+O repositório reúne uma página institucional e uma aplicação web administrativa. O backend já se conecta ao PostgreSQL e atende telas de gerenciamento em JSP. A página inicial também apresenta planos e ideias de recursos do produto; itens como IA, dashboards, relatórios, alertas e ferramentas de análise aparecem como conteúdo visual/institucional e não devem ser considerados funcionalidades integradas ao backend atual.
 
 ## O que há neste repositório
 
-- `src/main/java/br/com/acta`: código Java do servidor, organizado em modelos de dados, DAOs de acesso ao banco, Servlets, utilitários, validações, enums e exceções.
-- `src/main/webapp`: páginas HTML e JSP, estilos CSS, imagens, ícones e fontes da aplicação. A pasta `crud` reúne telas de gerenciamento de empresas, endereços, colaboradores, ciclos, metas, problemas, planos de ação, tarefas e lições aprendidas.
-- `src/main/resources/sql`: scripts SQL para criação do esquema e das tabelas, carga de dados e criação de views para consultas.
-- `pom.xml` e `mvnw`/`mvnw.cmd`: configuração e wrapper do Maven para compilar e empacotar a aplicação como WAR.
+- `src/main/java/br/com/acta`: aplicação Java, separada em modelos, DAOs (acesso a dados), Servlets (requisições web), enums, validações, utilitários e exceções.
+- `src/main/webapp/index.html`: página institucional do ACTA, com apresentação do PDCA, recursos, planos, perguntas frequentes e informações sobre o projeto e a equipe.
+- `src/main/webapp/login.jsp` e `src/main/webapp/crud`: login e telas JSP de gerenciamento de empresas, endereços, colaboradores, ciclos, metas, problemas, planos de ação, tarefas e lições aprendidas.
+- `src/main/webapp/assets`: arquivos CSS, JavaScript, imagens, ícones e fontes usados nas páginas.
+- `src/main/resources/sql`: `script_banco.sql` define o esquema, tipos e relacionamentos do banco; `script_views.sql` cria views para consultas.
+- `pom.xml`, `mvnw` e `mvnw.cmd`: configuração e wrapper do Maven. O projeto é empacotado como uma aplicação web WAR.
+- `.env.example`: nomes das variáveis de ambiente usadas para a conexão com o PostgreSQL e configuração do pepper de senhas.
 
-## Linguagens e tecnologias
+## Tecnologias
 
-| Tecnologia | Uso no projeto |
+| Tecnologia | Uso |
 | --- | --- |
-| Java 21 | Regras e modelos da aplicação, acesso ao PostgreSQL por DAOs e processamento de requisições com Jakarta Servlets. |
-| JSP | Geração de páginas dinâmicas no servidor. |
-| HTML | Estrutura das páginas de login, cadastro e gerenciamento. |
-| CSS | Estilização das telas e componentes da interface. |
-| SQL (PostgreSQL) | Definição das tabelas, tipos, relacionamentos, dados de carga e views. |
-| XML | Configuração do projeto Maven em `pom.xml` e da aplicação web em `web.xml`. |
+| Java 21 | Regras da aplicação, modelos, acesso ao banco e processamento de requisições. |
+| Jakarta Servlets e JSP | Endpoints do backend e geração das telas administrativas com dados do banco. |
+| HTML, CSS e JavaScript | Página institucional, estrutura e estilos das telas e interações do navegador, como filtros, ordenação e validações de formulário. |
+| SQL e PostgreSQL | Persistência, relacionamentos, tipos de dados e views de consulta. |
+| XML e Maven | Configuração do projeto, dependências e empacotamento WAR. |
 
-O Maven gerencia as dependências, incluindo a API Jakarta Servlet e o driver PostgreSQL.
+## Área administrativa e funcionalidades implementadas
 
-## Área restrita e operações CRUD
+O login do backend autentica administradores gerais. Após a autenticação, os Servlets e DAOs permitem consultar, cadastrar, editar e excluir registros no PostgreSQL pelas telas de CRUD. As entidades com telas de gerenciamento são empresas, endereços, colaboradores, ciclos PDCA, metas, problemas, planos de ação, tarefas e lições aprendidas. Os registros se relacionam entre si, por exemplo, ciclos com empresas e responsáveis, e tarefas com planos de ação e colaboradores.
 
-A área restrita reúne telas de gerenciamento com operações de cadastro, consulta, edição e exclusão (CRUD). No backend, os Servlets recebem as ações e os DAOs executam as operações no banco PostgreSQL. Esses códigos permitem que o administrador mantenha os registros usados pela aplicação, como empresas, endereços, administradores, colaboradores, ciclos PDCA, metas, problemas, planos de ação, tarefas e lições aprendidas.
+Também estão implementados o acompanhamento da etapa e situação dos ciclos, validações de dados, mensagens de sucesso e erro, filtros e ordenação nas listagens que oferecem esses controles, além de views SQL que apresentam dados relacionados. Senhas são armazenadas com hash bcrypt e pepper configurado por variável de ambiente.
 
-As telas HTML de CRUD estão em `src/main/webapp/crud`; os endpoints e as operações correspondentes ficam em `src/main/java/br/com/acta/servlet` e `src/main/java/br/com/acta/dao`. As telas e a lógica de servidor estão presentes no repositório, embora alguns formulários HTML ainda usem ações de exemplo (`action="#"`) e possam precisar de integração com os endpoints.
+## Limitações conhecidas
 
-## Funcionalidades implementadas
+- A página de configurações do perfil e alguns formulários de recuperação de senha ainda são telas demonstrativas e usam `action="#"`; não estão conectados a operações do backend.
+- Recursos citados na página institucional — como IA, dashboards, relatórios, alertas e ferramentas de análise — não têm implementação integrada identificada no código atual.
+- O login conectado ao backend autentica apenas o administrador geral. Embora exista um endpoint de logout, o atalho “Sair” das telas JSP ainda aponta para `login.html`; também não foi identificada uma checagem de sessão nos endpoints CRUD.
 
-- Autenticação no backend para administrador geral e colaborador, com criação de sessão.
-- Operações CRUD nos DAOs e Servlets para as principais entidades administrativas e do ciclo de melhoria.
-- Registro e acompanhamento de ciclos PDCA, com etapa atual (`PLAN`, `DO`, `CHECK` ou `ACT`), datas, situação, empresa e responsável.
-- Organização de metas, problemas, planos de ação e tarefas relacionados aos ciclos.
-- Registro de lições aprendidas associadas aos ciclos.
-- Views SQL que consolidam dados relacionados para consulta, além de restrições relacionais no esquema do banco.
-- Validação de dados e tratamento de erros de duplicidade, integridade referencial e registros não encontrados.
+## Compilação
 
-As senhas são armazenadas com hash bcrypt e pepper configurado no ambiente. As variáveis necessárias para a conexão com o banco e para o pepper estão exemplificadas em `.env.example`.
+Com o Java 21 instalado, o wrapper do Maven pode gerar o WAR:
+
+```powershell
+.\mvnw.cmd package
+```
+
+O artefato é gerado em `target/ACTA-1.0-SNAPSHOT.war`. Para executar a aplicação, configure as variáveis de banco indicadas em `.env.example` e faça o deploy em um servidor compatível com Jakarta Servlet. O script `src/main/resources/sql/script_banco.sql` recria o esquema, mas primeiro apaga tabelas existentes; execute-o somente em um banco novo ou descartável.
