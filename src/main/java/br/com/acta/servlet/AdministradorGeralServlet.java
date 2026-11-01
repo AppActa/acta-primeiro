@@ -314,6 +314,12 @@ public class AdministradorGeralServlet extends HttpServlet {
         // Erros do usuário: volta para a tela com a mensagem
         req.setAttribute("mensagemErro", mensagem);
 
+        String acao = req.getParameter("acao");
+        if ("atualizar".equals(acao) || "atualizarSenha".equals(acao)) {
+            req.getRequestDispatcher(PAGINA_CONFIGURACOES).forward(req, resp);
+            return;
+        }
+
         // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
         try {
             List<AdministradorGeral> administradoresGerais = DAO.buscar();
