@@ -25,12 +25,14 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
+/** Recebe as requisições de Ciclo e prepara os dados para as páginas JSP. */
 @WebServlet(name = "CicloServlet", value = "/ciclo-servlet")
 public class CicloServlet extends HttpServlet {
     private static final String PAGINA_CICLO = "/crud/ciclo.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final CicloDAO cicloDAO = new CicloDAO();
 
+    /** Atende consultas e converte as falhas em respostas HTTP. */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -57,6 +59,7 @@ public class CicloServlet extends HttpServlet {
         }
     }
 
+    /** Seleciona a ação do formulário e trata erros de validação e persistência. */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -121,7 +124,7 @@ public class CicloServlet extends HttpServlet {
         }
     }
 
-    // CRUD
+    /** Valida os campos do formulário antes de cadastrar o registro. */
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Ciclo ciclo = new Ciclo();
 
@@ -133,7 +136,7 @@ public class CicloServlet extends HttpServlet {
         ciclo.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
         ciclo.setId_empresa(Validador.id(req.getParameter("id_empresa"), "Empresa"));
         ciclo.setId_responsavel(Validador.id(req.getParameter("id_responsavel"), "Responsável"));
-        // criado_em não é setado aqui — quem preenche é o banco (now())
+        // A data de criação é preenchida pelo banco.
 
         Validador.periodo(ciclo.getDt_inicio(), ciclo.getDt_fim(), "A data de fim");
         int resultado = cicloDAO.inserir(ciclo);
@@ -142,6 +145,7 @@ public class CicloServlet extends HttpServlet {
         else enviarErro(req, resp, "O ciclo não pode ser cadastrado");
     }
 
+    /** Busca pelo ID informado ou delega à listagem com filtros. */
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
@@ -161,6 +165,7 @@ public class CicloServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
     }
 
+    /** Lê os filtros opcionais e prepara os dados exibidos pela página. */
     private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String busca = req.getParameter("busca");
         String etapaParam = req.getParameter("etapa");
@@ -172,6 +177,7 @@ public class CicloServlet extends HttpServlet {
         String ordem = req.getParameter("ordem");
         String direcao = req.getParameter("direcao");
 
+        // Filtro ausente permanece null e não restringe a consulta.
         EtapaCiclo etapa = null;
         if (etapaParam != null && !etapaParam.isBlank()) etapa = EtapaCiclo.valueOf(etapaParam);
 
@@ -197,6 +203,7 @@ public class CicloServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
     }
 
+    /** Valida os campos e atualiza o registro identificado no formulário. */
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Validador.id(req.getParameter("id-ciclo"), "Id do ciclo");
         Ciclo ciclo = new Ciclo();
@@ -210,7 +217,7 @@ public class CicloServlet extends HttpServlet {
         ciclo.setStatus(Validador.opcao(Situacao.class, req.getParameter("status"), "Situação"));
         ciclo.setId_empresa(Validador.id(req.getParameter("id_empresa"), "Empresa"));
         ciclo.setId_responsavel(Validador.id(req.getParameter("id_responsavel"), "Responsável"));
-        // criado_em também não entra aqui porque o banco faz automatico.
+        // A atualização preserva a data original de criação.
 
         Validador.periodo(ciclo.getDt_inicio(), ciclo.getDt_fim(), "A data de fim");
         int resultado = cicloDAO.atualizar(ciclo);
@@ -219,6 +226,7 @@ public class CicloServlet extends HttpServlet {
         else enviarErro(req, resp, "O ciclo não pode ser atualizado");
     }
 
+    /** Valida o ID recebido e solicita a exclusão ao DAO. */
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Validador.id(req.getParameter("id-ciclo"), "Id do ciclo");
         int resultado = cicloDAO.excluir(id);
@@ -227,9 +235,7 @@ public class CicloServlet extends HttpServlet {
         else enviarErro(req, resp, "O ciclo não pode ser excluído");
     }
 
-    // UTILITARIOS
-    // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
-    // Assume 500 (erro grave), então o usuário é levado para a página de erro.
+    /** Usa HTTP 500 quando o chamador não informa um status. */
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -240,9 +246,7 @@ public class CicloServlet extends HttpServlet {
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
-    // SOBRECARGA 2 (4 parâmetros): quem realmente trata o erro. O destino depende do status:
-    //  - 404 (registro não encontrado) e 500 (erro de banco/inesperado): vai para a página de erro (/erro.jsp)
-    //  - 400 (dado inválido) e 409 (duplicado/em uso): volta para a tela da entidade, mostrando a mensagem
+    /** Encaminha erros 404/500 à página de erro; os demais retornam à tela do cadastro. */
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -252,7 +256,7 @@ public class CicloServlet extends HttpServlet {
 
         resp.setStatus(status);
 
-        // Erros graves: página de erro (não consulta o banco, então funciona mesmo com ele fora do ar)
+        // Exibe a página de erro sem consultar o banco novamente.
         if (status == HttpServletResponse.SC_NOT_FOUND
                 || status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
             req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
@@ -261,10 +265,10 @@ public class CicloServlet extends HttpServlet {
             return;
         }
 
-        // Erros do usuário: volta para a tela com a mensagem
+        // Mantém a mensagem na tela do cadastro.
         req.setAttribute("mensagemErro", mensagem);
 
-        // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
+        // Se a recarga falhar, exibe listas vazias e preserva a mensagem.
         try {
             List<Ciclo> ciclos = cicloDAO.buscar();
 
@@ -280,6 +284,7 @@ public class CicloServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_CICLO).forward(req, resp);
     }
 
+    /** Recarrega a listagem e as opções da página com uma mensagem de sucesso. */
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Ciclo> ciclos = cicloDAO.buscar();
