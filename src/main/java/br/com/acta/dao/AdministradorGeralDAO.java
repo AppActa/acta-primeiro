@@ -13,6 +13,7 @@ import br.com.acta.excecoes.DaoException;
 import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
+import br.com.acta.excecoes.ValidacaoException;
 import br.com.acta.utils.Conexao;
 import br.com.acta.utils.PasswordUtils;
 
@@ -240,14 +241,14 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
                     if (rs.next()) {
                         hashAtual = rs.getString("senha");
                     } else {
-                        return 0; // usuário não encontrado
+                        throw new RegistroNaoEncontradoException("Administrador não encontrado para alteração de senha.");
                     }
                 }
             }
 
             //conferir se a antiga senha iguala com o hash salvo
             if (!PasswordUtils.verificarSenha(senhaAntiga, hashAtual)) {
-                return 0;
+                throw new ValidacaoException("A senha atual não confere.");
             }
 
             //gera novo hash e atualiza
@@ -256,7 +257,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
                 pstmtAtualizar.setString(2, email);
 
                 if (pstmtAtualizar.executeUpdate() > 0) return 1;
-                else return 0;
+                throw new RegistroNaoEncontradoException("Administrador não encontrado para alteração de senha.");
             }
 
         } catch (SQLException e) {

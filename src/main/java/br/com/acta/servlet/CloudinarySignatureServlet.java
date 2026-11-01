@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Map;
 import java.util.TreeMap;
@@ -59,7 +60,7 @@ public class CloudinarySignatureServlet extends HttpServlet {
         }
     }
 
-    private String assinar(Map<String, String> parametros, String apiSecret) throws Exception {
+    private String assinar(Map<String, String> parametros, String apiSecret) throws NoSuchAlgorithmException {
         StringBuilder base = new StringBuilder();
         for (Map.Entry<String, String> parametro : parametros.entrySet()) {
             if (!base.isEmpty()) base.append('&');

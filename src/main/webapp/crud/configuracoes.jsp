@@ -21,7 +21,17 @@ String email = administrador.getEmail() == null ? "" : administrador.getEmail();
 String telefone = administrador.getTelefone() == null ? "" : administrador.getTelefone();
 String imagem = administrador.getImagem() == null ? "" : administrador.getImagem();
 String imagemPerfil = imagem.isBlank() ? request.getContextPath() + "/assets/images/foto_perfil.svg" : h(imagemOtimizada(imagem, 512));
-List<String> empresasVinculadas = new AdministradorGeralDAO().buscarEmpresasAtivas(administrador.getAdm_geral_id());
+List<String> empresasVinculadas;
+try {
+    empresasVinculadas = new AdministradorGeralDAO().buscarEmpresasAtivas(administrador.getAdm_geral_id());
+} catch (br.com.acta.excecoes.DaoException e) {
+    application.log("Erro ao consultar empresas vinculadas ao administrador.", e);
+    response.setStatus(500);
+    request.setAttribute(jakarta.servlet.RequestDispatcher.ERROR_MESSAGE, "Erro ao consultar as empresas vinculadas.");
+    request.setAttribute(jakarta.servlet.RequestDispatcher.ERROR_STATUS_CODE, 500);
+    request.getRequestDispatcher("/erro.jsp").forward(request, response);
+    return;
+}
 %>
 <!DOCTYPE html>
 <html lang="pt-br">
