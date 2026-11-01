@@ -102,7 +102,6 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                             <img src="<%= adm != null && adm.getImagem() != null && !adm.getImagem().isBlank() ? h(adm.getImagem().replace("/image/upload/", "/image/upload/c_fill,w_96,h_96,q_auto,f_auto/")) : request.getContextPath() + "/assets/images/foto_perfil.svg" %>" alt="Foto de perfil">
                         </div>
                         <div class="perfil-info">
-                            
                             <span class="perfil-nome"><%= adm != null ? adm.getNome() : "Administrador" %></span>
                             <span class="perfil-email"><%= adm != null ? adm.getEmail() : "" %></span>
                         </div>
