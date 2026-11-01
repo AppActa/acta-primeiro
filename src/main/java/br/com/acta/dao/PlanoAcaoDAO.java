@@ -1,21 +1,30 @@
 package br.com.acta.dao;
 
-import br.com.acta.model.PlanoAcao;
-import br.com.acta.enums.Situacao;
 import br.com.acta.enums.Intensidade;
+import br.com.acta.enums.Situacao;
 import br.com.acta.excecoes.DaoException;
 import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
+import br.com.acta.model.PlanoAcao;
 import br.com.acta.utils.Conexao;
-
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 /** Executa a persistência de PlanoAcao e converte consultas em objetos do modelo. */
 public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
+
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_plano_acao",
+            "nome", "nome",
+            "status", "status",
+            "prioridade", "prioridade",
+            "ciclo", "nome_ciclo",
+            "criador", "nome_colaborador");
 
     /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
@@ -26,8 +35,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
                 """;
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, planoAcao.getNome());
             pstmt.setString(2, planoAcao.getDescricao());
             pstmt.setObject(3, planoAcao.getStatus().name(), Types.OTHER);
@@ -35,11 +43,12 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
             pstmt.setLong(5, planoAcao.getId_ciclo());
             pstmt.setLong(6, planoAcao.getId_criador());
 
-            if (pstmt.executeUpdate() > 0) return 1;
-            else return 0;
-
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            } else {
+                return 0;
+            }
         } catch (SQLException e) {
-
             // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de plano de ação com esses dados.", e);
@@ -48,7 +57,6 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
                 throw new IntegridadeReferencialException("Existe uma referência inválida no cadastro.", e);
             }
             throw new DaoException("Erro ao cadastrar plano de ação.", e);
-
         } catch (ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -60,8 +68,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         String sql = "SELECT * FROM vw_plano_acao WHERE id_plano_acao = ?";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -70,7 +77,6 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
                 }
                 return null;
             }
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -83,22 +89,20 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         String sql = "SELECT * FROM vw_plano_acao";
 
         try (Connection conn = Conexao.conectar();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 planosAcao.add(mapearPlanoAcao(rs));
             }
             return planosAcao;
-
-        } catch(SQLException | ClassNotFoundException e ) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
-
     }
 
     /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
-    public List<PlanoAcao> buscaFiltrada(String busca, Situacao status, Intensidade prioridade, String ordem, String direcao) {
+    public List<PlanoAcao> buscaFiltrada(
+            String busca, Situacao status, Intensidade prioridade, String ordem, String direcao) {
         List<PlanoAcao> planosAcao = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_plano_acao WHERE 1=1");
 
@@ -111,17 +115,22 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         boolean temOrdem = colunaOrdem != null;
 
         // Acrescenta condições apenas para os filtros presentes.
-        if (temBusca) sql.append(" AND (nome ILIKE ? OR nome_ciclo ILIKE ? OR nome_colaborador ILIKE ?)");
-        if (temStatus) sql.append(" AND status = ?");
-        if (temPrioridade) sql.append(" AND prioridade = ?");
+        if (temBusca) {
+            sql.append(" AND (nome ILIKE ? OR nome_ciclo ILIKE ? OR nome_colaborador ILIKE ?)");
+        }
+        if (temStatus) {
+            sql.append(" AND status = ?");
+        }
+        if (temPrioridade) {
+            sql.append(" AND prioridade = ?");
+        }
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
             sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
         }
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
@@ -130,8 +139,12 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
-            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
-            if (temPrioridade) pstmt.setObject(i++, prioridade.name(), Types.OTHER);
+            if (temStatus) {
+                pstmt.setObject(i++, status.name(), Types.OTHER);
+            }
+            if (temPrioridade) {
+                pstmt.setObject(i++, prioridade.name(), Types.OTHER);
+            }
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -139,7 +152,6 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
                 }
             }
             return planosAcao;
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -148,45 +160,36 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
     /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(PlanoAcao planoAcao) {
-        String sql = "UPDATE plano_acao SET nome = ?, descricao = ?, status = ?, prioridade = ?, id_ciclo = ?, id_criador = ? WHERE id_plano_acao = ?";
+        String sql = "UPDATE plano_acao SET nome = ?, descricao = ?, status = ?, prioridade = ?, id_ciclo = ?, "
+                + "id_criador = ? WHERE id_plano_acao = ?";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, planoAcao.getNome());
             pstmt.setString(2, planoAcao.getDescricao());
             pstmt.setObject(3, planoAcao.getStatus().name(), Types.OTHER);
             pstmt.setObject(4, planoAcao.getPrioridade().name(), Types.OTHER);
             pstmt.setLong(5, planoAcao.getId_ciclo());
             pstmt.setLong(6, planoAcao.getId_criador());
-            pstmt.setLong(7,planoAcao.getId_plano_acao());
+            pstmt.setLong(7, planoAcao.getId_plano_acao());
 
-            if (pstmt.executeUpdate() > 0) return 1;
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
 
             throw new RegistroNaoEncontradoException("Registro de plano de ação não encontrado para atualização.");
-
         } catch (SQLException e) {
-
             if ("23505".equals(e.getSQLState())) {
-                throw new DuplicidadeException(
-                        "Já existe um registro de plano de ação com esses dados.", e
-                );
+                throw new DuplicidadeException("Já existe um registro de plano de ação com esses dados.", e);
             }
 
             if ("23503".equals(e.getSQLState())) {
-                throw new IntegridadeReferencialException(
-                        "Referência inválida na atualização.", e
-                );
+                throw new IntegridadeReferencialException("Referência inválida na atualização.", e);
             }
 
-            throw new DaoException(
-                    "Erro ao atualizar plano de ação.", e
-            );
-
+            throw new DaoException("Erro ao atualizar plano de ação.", e);
         } catch (ClassNotFoundException e) {
-            throw new DaoException(
-                    "Erro ao conectar no banco de dados.", e
-            );
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -196,32 +199,25 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         String sql = "DELETE FROM plano_acao WHERE id_plano_acao = ?";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
 
-            if (pstmt.executeUpdate() > 0) return 1;
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
             throw new RegistroNaoEncontradoException("Registro de plano de ação não encontrado para exclusão.");
-
         } catch (SQLException e) {
             if ("23503".equals(e.getSQLState())) {
                 throw new IntegridadeReferencialException(
-                        "Não é possível excluir o registro de plano de ação porque existem registros vinculados.", e
-                );
+                        "Não é possível excluir o registro de plano de ação porque existem registros vinculados.",
+                        e);
             }
 
-            throw new DaoException(
-                    "Erro ao excluir plano de ação.", e
-            );
-
+            throw new DaoException("Erro ao excluir plano de ação.", e);
         } catch (ClassNotFoundException e) {
-            throw new DaoException(
-                    "Erro ao conectar no banco de dados.", e
-            );
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
-
     }
-
 
     /** Converte a linha atual do resultado em um objeto do modelo. */
     private static PlanoAcao mapearPlanoAcao(ResultSet rs) throws SQLException {
@@ -237,14 +233,4 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         planoAcao.setId_criador(rs.getLong("id_criador"));
         return planoAcao;
     }
-
-    // Relaciona as opções de ordenação às colunas autorizadas do banco.
-    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
-            "id", "id_plano_acao",
-            "nome", "nome",
-            "status", "status",
-            "prioridade", "prioridade",
-            "ciclo", "nome_ciclo",
-            "criador", "nome_colaborador"
-    );
 }
