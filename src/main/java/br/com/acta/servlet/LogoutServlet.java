@@ -10,9 +10,11 @@ import br.com.acta.utils.CsrfToken;
 
 import java.io.IOException;
 
+/** Encerra a sessão do usuário por uma requisição POST protegida por CSRF. */
 @WebServlet(name = "LogoutServlet", value = "/logout-servlet")
 public class LogoutServlet extends HttpServlet {
 
+    /** Valida o token, invalida a sessão existente e redireciona ao login. */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
@@ -20,6 +22,7 @@ public class LogoutServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Token de segurança inválido ou expirado.");
             return;
         }
+        // Não cria sessão caso ela já tenha expirado.
         HttpSession sessao = req.getSession(false);
         if (sessao != null) {
             sessao.invalidate();
