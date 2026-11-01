@@ -2,19 +2,22 @@ package br.com.acta.model;
 
 
 
+/** Representa o administrador geral e seus dados de perfil. */
 public class AdministradorGeral {
-    //Atributos
+    // Dados de identificação, contato e acesso do administrador.
     private Long id_adm_geral;
     private String nome;
     private String senha;
     private String email;
     private String telefone;
+    // Referência da imagem de perfil armazenada para exibição.
     private String imagem;
 
-    //construtores
 
+    /** Cria o objeto vazio para preenchimento pelo DAO ou servlet. */
     public AdministradorGeral() {}
 
+    /** Monta os dados de cadastro sem um ID definido. */
     public AdministradorGeral(String nome, String senha, String email, String telefone) {
         this.nome = nome;
         this.senha = senha;
@@ -22,7 +25,7 @@ public class AdministradorGeral {
         this.telefone = telefone;
     }
 
-    //construtor com id para os metodos do doPost (exceto o inserir)
+    /** Monta um administrador com ID já conhecido. */
     public AdministradorGeral(Long id_adm_geral, String telefone, String email, String senha, String nome) {
         this.id_adm_geral = id_adm_geral;
         this.telefone = telefone;
@@ -32,7 +35,7 @@ public class AdministradorGeral {
     }
 
 
-    //Getters e Setters
+    // Acesso e atualização dos dados do modelo.
 
     public Long getAdm_geral_id() {
         return id_adm_geral;
