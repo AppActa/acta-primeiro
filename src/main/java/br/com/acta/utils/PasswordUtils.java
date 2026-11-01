@@ -5,6 +5,7 @@ import com.password4j.Password;
 
 /** Centraliza a geração e a verificação dos hashes de senha. */
 public class PasswordUtils {
+
     // Segredo compartilhado, obtido do ambiente ou do .env.
     private static final String PEPPER = Configuracao.obter("PASSWORD_PEPPER");
 
@@ -16,9 +17,9 @@ public class PasswordUtils {
     }
 
     /** Compara a senha recebida com o hash armazenado, usando o mesmo pepper. */
-    public static boolean verificarSenha(String senha, String hash){
+    public static boolean verificarSenha(String senha, String hash) {
         exigirPepper();
-        return Password.check(senha,hash).addPepper(PEPPER).withBcrypt();
+        return Password.check(senha, hash).addPepper(PEPPER).withBcrypt();
     }
 
     /** Interrompe a operação quando o segredo de senhas não está configurado. */
