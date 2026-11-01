@@ -36,7 +36,8 @@ public class Empresa {
         this.tamanho = tamanho;
     }
 
-    // Acesso e atualização dos dados da empresa.
+    // Acesso e atualização dos dados do modelo.
+
     public Long getId_empresa() {
         return id_empresa;
     }
@@ -85,4 +86,3 @@ public class Empresa {
         this.tamanho = tamanho;
     }
 }
-
