@@ -14,9 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/** Executa a persistência de Tarefa e converte consultas em objetos do modelo. */
 public class TarefaDAO implements MetodosCrud<Tarefa> {
 
-    // INSERT
+    /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(Tarefa tarefa) {
         String sql = """
@@ -41,6 +42,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
 
         } catch (SQLException e) {
 
+            // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de tarefa com esses dados.", e);
             }
@@ -54,7 +56,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         }
     }
 
-    // READ
+    /** Busca pelo ID; retorna null quando o registro não existe. */
     @Override
     public Tarefa buscar(Long id) {
         String sql = "SELECT * FROM vw_tarefa WHERE id_tarefa = ?;";
@@ -76,6 +78,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         }
     }
 
+    /** Lista todos os registros disponíveis na consulta. */
     @Override
     public List<Tarefa> buscar() {
         List<Tarefa> lista = new ArrayList<>();
@@ -95,6 +98,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         }
     }
 
+    /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
     public List<Tarefa> buscaFiltrada(String busca, Intensidade prioridade, Situacao status, Date dataInicial, Date dataFinal, String ordem, String direcao) {
         List<Tarefa> lista = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_tarefa WHERE 1=1");
@@ -105,9 +109,11 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         boolean temDataInicial = dataInicial != null;
         boolean temDataFinal = dataFinal != null;
 
+        // A coluna vem de uma lista permitida, nunca diretamente do formulário.
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
+        // Acrescenta condições apenas para os filtros presentes.
         if (temBusca) sql.append(" AND (titulo ILIKE ? OR nome_colaborador ILIKE ? OR nome_plano_acao ILIKE ?)");
         if (temPrioridade) sql.append(" AND prioridade = ?");
         if (temStatus) sql.append(" AND status = ?");
@@ -121,6 +127,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
+            // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
@@ -145,7 +152,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         }
     }
 
-    // UPDATE
+    /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(Tarefa tarefa) {
         String sql = "UPDATE tarefa SET titulo = ?, descricao = ?, prioridade = ?, dt_entrega = ?, status = ?, dt_inicio = ?, id_colaborador = ?, id_plano_acao = ? WHERE id_tarefa = ?;";
@@ -192,7 +199,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         }
     }
 
-    // DELETE
+    /** Exclui pelo ID; informa ausência do registro ou vínculos que impedem a exclusão. */
     @Override
     public int excluir(Long id) {
         String sql = "DELETE FROM tarefa WHERE id_tarefa = ?;";
@@ -223,9 +230,8 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         }
     }
 
-    // SQLState "23xxx" = violação de integridade (e-mail/CPF duplicado, FK, NOT NULL).
 
-    // Mapear tarefa para simplificar a busca
+    /** Converte a linha atual do resultado em um objeto do modelo. */
     private static Tarefa mapearTarefa(ResultSet rs) throws SQLException {
         Tarefa tarefa = new Tarefa();
         tarefa.setId_tarefa(rs.getLong("id_tarefa"));
@@ -242,6 +248,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         return tarefa;
     }
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
             "id", "id_tarefa",
             "titulo", "titulo",
