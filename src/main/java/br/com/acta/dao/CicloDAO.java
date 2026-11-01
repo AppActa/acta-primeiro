@@ -15,15 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/** Executa a persistência de Ciclo e converte consultas em objetos do modelo. */
 public class CicloDAO implements MetodosCrud<Ciclo> {
 
+    /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(Ciclo ciclo) {
         String sql = """
                 INSERT INTO ciclo (nome, descricao, etapa_atual, dt_inicio, dt_fim, status, id_empresa, id_responsavel)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
                 """;
-        // criado_em NÃO entra aqui, o banco preenche sozinho com now()
+        // A data de criação é preenchida automaticamente pelo banco.
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -42,6 +44,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
 
         } catch (SQLException e) {
 
+            // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de ciclo com esses dados.", e);
             }
@@ -55,6 +58,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         }
     }
 
+    /** Busca pelo ID; retorna null quando o registro não existe. */
     @Override
     public Ciclo buscar(Long id) {
         String sql = "SELECT * FROM vw_ciclo WHERE id_ciclo = ?";
@@ -76,6 +80,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         }
     }
 
+    /** Lista todos os registros disponíveis na consulta. */
     @Override
     public List<Ciclo> buscar() {
         List<Ciclo> ciclos = new ArrayList<>();
@@ -95,6 +100,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         }
     }
 
+    /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
     public List<Ciclo> buscaFiltrada(String busca, EtapaCiclo etapa, Situacao status, Date dataInicial, Date dataFinal, Date criadoDe, Date criadoAte, String ordem, String direcao) {
         List<Ciclo> ciclos = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_ciclo WHERE 1=1");
@@ -107,15 +113,18 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         boolean temCriadoDe = criadoDe != null;
         boolean temCriadoAte = criadoAte != null;
 
+        // A coluna vem de uma lista permitida, nunca diretamente do formulário.
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
+        // Acrescenta condições apenas para os filtros presentes.
         if (temBusca) sql.append(" AND (nome ILIKE ? OR nome_empresa ILIKE ? OR nome_responsavel ILIKE ?)");
         if (temEtapa) sql.append(" AND etapa_atual = ?");
         if (temStatus) sql.append(" AND status = ?");
         if (temDataInicial) sql.append(" AND dt_inicio >= ?");
         if (temDataFinal) sql.append(" AND dt_inicio <= ?");
         if (temCriadoDe) sql.append(" AND criado_em >= ?::date");
+        // O limite exclusivo do dia seguinte inclui todo o último dia do filtro.
         if (temCriadoAte) sql.append(" AND criado_em < (?::date + 1)");
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
@@ -125,6 +134,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
+            // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
@@ -151,10 +161,11 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         }
     }
 
+    /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(Ciclo ciclo) {
         String sql = "UPDATE ciclo SET nome = ?, descricao = ?, etapa_atual = ?, dt_inicio = ?, dt_fim = ?, status = ?, id_empresa = ?, id_responsavel = ? WHERE id_ciclo = ?";
-        //em nunca é atualizado porque o banco passa direto quando entra para data e local;
+        // A atualização preserva a data original de criação.
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -198,6 +209,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         }
     }
 
+    /** Exclui pelo ID; informa ausência do registro ou vínculos que impedem a exclusão. */
     @Override
     public int excluir(Long id) {
         String sql = "DELETE FROM ciclo WHERE id_ciclo = ?";
@@ -229,6 +241,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
     }
 
 
+    /** Converte a linha atual do resultado em um objeto do modelo. */
     private static Ciclo mapearCiclo(ResultSet rs) throws SQLException {
         Ciclo ciclo = new Ciclo();
         ciclo.setId_ciclo(rs.getLong("id_ciclo"));
@@ -246,6 +259,7 @@ public class CicloDAO implements MetodosCrud<Ciclo> {
         return ciclo;
     }
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
             "id", "id_ciclo",
             "nome", "nome",
