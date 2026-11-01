@@ -7,8 +7,7 @@
     }
     private String imagemOtimizada(String url, int tamanho) {
         if (url == null || url.isBlank()) return "";
-        String transformacao = "/image/upload/c_fill,w_" + tamanho + ",h_" + tamanho + ",q_auto,f_auto/";
-        return url.replace("/image/upload/", transformacao);
+        return url.replace("/image/upload/", "/image/upload/c_fill,w_" + tamanho + ",h_" + tamanho + ",q_auto,f_auto/");
     }
 %>
 <%
@@ -21,7 +20,7 @@ String nome = administrador.getNome() == null ? "" : administrador.getNome();
 String email = administrador.getEmail() == null ? "" : administrador.getEmail();
 String telefone = administrador.getTelefone() == null ? "" : administrador.getTelefone();
 String imagem = administrador.getImagem() == null ? "" : administrador.getImagem();
-String imagemPerfil = imagem.isBlank() ? request.getContextPath() + "/assets/images/foto_perfil.svg" : h(imagemOtimizada(imagem, 96));
+String imagemPerfil = imagem.isBlank() ? request.getContextPath() + "/assets/images/foto_perfil.svg" : h(imagemOtimizada(imagem, 512));
 List<String> empresasVinculadas = new AdministradorGeralDAO().buscarEmpresasAtivas(administrador.getAdm_geral_id());
 %>
 <!DOCTYPE html>
@@ -67,9 +66,13 @@ List<String> empresasVinculadas = new AdministradorGeralDAO().buscarEmpresasAtiv
                 <h1 class="config-titulo">Configurações</h1>
                 <div class="config-foto-area">
                     <div class="config-foto">
-                        <img id="config-foto-preview" src="<%= imagem.isBlank() ? request.getContextPath() + "/assets/images/foto_perfil.svg" : h(imagemOtimizada(imagem, 512)) %>" alt="Foto de perfil">
-                        <label for="config-editar-perfil" class="config-camera config-camera-modo" aria-label="Editar foto"><img src="<%= request.getContextPath() %>/assets/images/icone_camera.svg" alt=""></label>
-                        <label for="config-foto-arquivo" class="config-camera config-camera-arquivo" aria-label="Escolher nova foto"><img src="<%= request.getContextPath() %>/assets/images/icone_camera.svg" alt=""></label>
+                        <img id="config-foto-preview" src="<%= imagemPerfil %>" alt="Foto de perfil">
+                        <label for="config-editar-perfil" class="config-camera config-camera-modo" aria-label="Editar foto">
+                            <img src="<%= request.getContextPath() %>/assets/images/icone_camera.svg" alt="">
+                        </label>
+                        <label for="config-foto-arquivo" class="config-camera config-camera-arquivo" aria-label="Escolher nova foto">
+                            <img src="<%= request.getContextPath() %>/assets/images/icone_camera.svg" alt="">
+                        </label>
                         <input type="file" id="config-foto-arquivo" accept="image/png,image/jpeg,image/webp" hidden>
                     </div>
                     <p id="config-foto-status" class="config-vazio" role="status" aria-live="polite"></p>
@@ -79,6 +82,7 @@ List<String> empresasVinculadas = new AdministradorGeralDAO().buscarEmpresasAtiv
             <p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p>
             <% } %>
             <form class="config-dados" id="form-perfil" method="post" action="<%= request.getContextPath() %>/administrador-geral-servlet">
+                <input type="hidden" id="config-imagem-url" name="imagem" value="<%= h(imagem) %>">
                 <div class="config-dados-topo"><h2>Meus dados</h2><label for="config-editar-perfil" class="botao botao-principal botao-pilula config-dados-editar">Editar</label></div>
                 <div class="config-campos">
                     <div class="config-campo"><label for="config-nome" class="config-rotulo">Nome</label><p class="config-valor editavel"><%= h(nome) %></p><input type="text" id="config-nome" name="nome" maxlength="50" value="<%= h(nome) %>" autocomplete="name" placeholder="Digite o nome" required></div>
@@ -98,7 +102,6 @@ List<String> empresasVinculadas = new AdministradorGeralDAO().buscarEmpresasAtiv
                         <% } %>
                     </div>
                 </div>
-                <input type="hidden" id="config-imagem-url" name="imagem" value="<%= h(imagem) %>">
                 <div class="botoes-modal config-dados-botoes"><input type="hidden" name="acao" value="atualizar"><input type="hidden" name="id-adm-geral" value="<%= administrador.getAdm_geral_id() %>"><label for="config-editar-perfil" class="botao botao-cancelar">Cancelar</label><button type="submit" class="botao botao-principal">Confirmar edição</button></div>
             </form>
             <div class="modal-pagina config-modal"><div class="modal-fundo"><label for="config-modal-senha" class="config-modal-fundo-fechar" aria-label="Fechar"></label><div class="modal"><h2>Alterar senha</h2>
