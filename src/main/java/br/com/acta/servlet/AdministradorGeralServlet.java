@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
+/** Recebe as requisições de AdministradorGeral e prepara os dados para as páginas JSP. */
 @WebServlet(name = "AdministradorGeralServlet", value = "/administrador-geral-servlet")
 public class AdministradorGeralServlet extends HttpServlet {
     private static final String PAGINA_ADMINISTRADOR_GERAL = "/administrador-geral.jsp";
@@ -28,6 +29,7 @@ public class AdministradorGeralServlet extends HttpServlet {
     private final AdministradorGeralDAO DAO = new AdministradorGeralDAO();
 
 
+    /** Atende consultas e converte as falhas em respostas HTTP. */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -54,6 +56,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         }
     }
 
+    /** Permite editar o próprio perfil e senha; bloqueia cadastro, exclusão e login nesta rota. */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -129,8 +132,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         }
     }
 
-    // CRUD
-    // Retorno do DAO: 1 = certo, 0 = erro de negócio, -1 = erro de conexão com o banco
+    /** Monta o cadastro; este método não é chamado pelas ações públicas desta rota. */
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         AdministradorGeral administradorGeral = new AdministradorGeral();
 
@@ -145,6 +147,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         else enviarErro(req, resp, "O administrador geral não pode ser cadastrado");
     }
 
+    /** Busca pelo ID informado ou delega à listagem com filtros. */
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
@@ -162,6 +165,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
     }
 
+    /** Lê os filtros opcionais e prepara os dados exibidos pela página. */
     private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String busca = req.getParameter("busca");
         String ordem = req.getParameter("ordem");
@@ -173,6 +177,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
     }
 
+    /** Confere se o ID é do administrador logado e sincroniza o perfil da sessão. */
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         AdministradorGeral logado = obterAdministradorLogado(req, resp);
         if (logado == null) return;
@@ -202,6 +207,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         else enviarErro(req, resp, "O administrador geral não pode ser atualizado");
     }
 
+    /** Valida a identidade, a nova senha e a confirmação antes de solicitar a troca. */
     private void atualizarSenha(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         AdministradorGeral logado = obterAdministradorLogado(req, resp);
         if (logado == null) return;
@@ -224,6 +230,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         else enviarErro(req, resp, "A senha não pode ser atualizada");
     }
 
+    /** Obtém a identidade da sessão; redireciona ao login se estiver ausente. */
     private AdministradorGeral obterAdministradorLogado(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession sessao = req.getSession(false);
         AdministradorGeral logado = sessao == null ? null : (AdministradorGeral) sessao.getAttribute("usuarioLogado");
@@ -234,6 +241,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         return logado;
     }
 
+    /** Aceita foto opcional em HTTPS no domínio e no caminho de imagens do Cloudinary. */
     private String validarImagemCloudinary(String valor) {
         if (valor == null || valor.isBlank()) return null;
         try {
@@ -250,6 +258,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         throw new ValidacaoException("A foto precisa ser uma URL HTTPS válida do Cloudinary.");
     }
 
+    /** Executa a exclusão por ID; a ação pública correspondente está bloqueada. */
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Validador.id(req.getParameter("id-adm-geral"), "Id do administrador");
         int resultado = DAO.excluir(id);
@@ -258,7 +267,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         else enviarErro(req, resp, "O administrador geral não pode ser excluído");
     }
 
-    // AUTENTICACAO
+    /** Cria uma sessão autenticada; a ação pública desta rota direciona ao login próprio. */
     private void autenticar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = Validador.obrigatorio(req.getParameter("email"), "E-mail");
         String senha = Validador.obrigatorio(req.getParameter("senha"), "Senha");
@@ -280,9 +289,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         enviarPaginaCerta(req, resp);
     }
 
-    // UTILITARIOS
-    // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
-    // Assume 500 (erro grave), então o usuário é levado para a página de erro.
+    /** Usa HTTP 500 quando o chamador não informa um status. */
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -293,9 +300,7 @@ public class AdministradorGeralServlet extends HttpServlet {
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
-    // SOBRECARGA 2 (4 parâmetros): quem realmente trata o erro. O destino depende do status:
-    //  - 404 (registro não encontrado) e 500 (erro de banco/inesperado): vai para a página de erro (/erro.jsp)
-    //  - 400 (dado inválido) e 409 (duplicado/em uso): volta para a tela da entidade, mostrando a mensagem
+    /** Encaminha erros 404/500 à página de erro; os demais retornam à tela do cadastro. */
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -305,7 +310,7 @@ public class AdministradorGeralServlet extends HttpServlet {
 
         resp.setStatus(status);
 
-        // Erros graves: página de erro (não consulta o banco, então funciona mesmo com ele fora do ar)
+        // Exibe a página de erro sem consultar o banco novamente.
         if (status == HttpServletResponse.SC_NOT_FOUND
                 || status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
             req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
@@ -314,7 +319,7 @@ public class AdministradorGeralServlet extends HttpServlet {
             return;
         }
 
-        // Erros do usuário: volta para a tela com a mensagem
+        // Mantém a mensagem na tela do cadastro.
         req.setAttribute("mensagemErro", mensagem);
 
         String acao = req.getParameter("acao");
@@ -323,7 +328,7 @@ public class AdministradorGeralServlet extends HttpServlet {
             return;
         }
 
-        // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
+        // Se a recarga falhar, exibe listas vazias e preserva a mensagem.
         try {
             List<AdministradorGeral> administradoresGerais = DAO.buscar();
 
@@ -336,6 +341,7 @@ public class AdministradorGeralServlet extends HttpServlet {
     }
 
 
+    /** Recarrega a listagem e as opções da página com uma mensagem de sucesso. */
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<AdministradorGeral> administradoresGerais = DAO.buscar();
 
