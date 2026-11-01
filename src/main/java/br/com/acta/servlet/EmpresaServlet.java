@@ -19,12 +19,14 @@ import br.com.acta.utils.Validador;
 import java.io.IOException;
 import java.util.List;
 
+/** Recebe as requisições de Empresa e prepara os dados para as páginas JSP. */
 @WebServlet(name = "EmpresaServlet", value = "/empresa-servlet")
 public class EmpresaServlet extends HttpServlet {
     private static final String PAGINA_EMPRESA = "/crud/empresa.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private static final EmpresaDAO DAO = new EmpresaDAO();
 
+    /** Atende consultas e converte as falhas em respostas HTTP. */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -51,6 +53,7 @@ public class EmpresaServlet extends HttpServlet {
         }
     }
 
+    /** Seleciona a ação do formulário e trata erros de validação e persistência. */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -123,6 +126,7 @@ public class EmpresaServlet extends HttpServlet {
         }
     }
 
+    /** Valida os campos do formulário antes de cadastrar o registro. */
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Empresa empresa = new Empresa();
 
@@ -139,6 +143,7 @@ public class EmpresaServlet extends HttpServlet {
         else enviarErro(req, resp, "A empresa não pode ser cadastrada");
     }
 
+    /** Busca pelo ID informado ou delega à listagem com filtros. */
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
         String id = req.getParameter("id");
 
@@ -161,6 +166,7 @@ public class EmpresaServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req,resp);
     }
 
+    /** Lê os filtros opcionais e prepara os dados exibidos pela página. */
     private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String busca = req.getParameter("busca");
         String setor = req.getParameter("setor");
@@ -169,6 +175,7 @@ public class EmpresaServlet extends HttpServlet {
         String ordem = req.getParameter("ordem");
         String direcao = req.getParameter("direcao");
 
+        // Filtro ausente permanece null e não restringe a consulta.
         Status status = null;
         if (statusParam != null && !statusParam.isBlank()) {
             status = Status.valueOf(statusParam);
@@ -185,6 +192,7 @@ public class EmpresaServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req,resp);
     }
 
+    /** Valida os campos e atualiza o registro identificado no formulário. */
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Validador.id(req.getParameter("id-empresa"), "Id da empresa");
         Empresa empresa = new Empresa();
@@ -204,6 +212,7 @@ public class EmpresaServlet extends HttpServlet {
 
     }
 
+    /** Valida o ID recebido e solicita a exclusão ao DAO. */
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Validador.id(req.getParameter("id-empresa"), "Id da empresa");
         int resultado = DAO.excluir(id);
@@ -212,6 +221,7 @@ public class EmpresaServlet extends HttpServlet {
         else enviarErro(req, resp, "A empresa não pode ser excluída");
     }
 
+    /** Usa o CNPJ atual para localizar a empresa e valida os novos dados. */
     private void atualizarPorCnpj(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String cnpjAtual = Validador.cnpj(req.getParameter("cnpj-atual"));
@@ -228,6 +238,7 @@ public class EmpresaServlet extends HttpServlet {
         else enviarErro(req, resp, "A empresa não pode ser atualizada pelo CNPJ.");
     }
 
+    /** Valida o CNPJ informado e solicita a exclusão da empresa. */
     private void excluirPorCnpj(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String cnpj = Validador.cnpj(req.getParameter("cnpj-exclusao"));
@@ -237,15 +248,14 @@ public class EmpresaServlet extends HttpServlet {
         else enviarErro(req, resp, "A empresa não pode ser excluída pelo CNPJ.");
     }
 
-    //UTILITARIOS
+    /** Remove espaços excedentes e reutiliza a escrita já cadastrada no banco. */
     private String normalizarSetor(String setor) {
         String limpa = setor.trim().replaceAll("\\s+", " ");
         String existente = DAO.buscarSetorExistente(limpa);
         return existente != null ? existente : limpa;
     }
 
-    // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
-    // Assume 500 (erro grave), então o usuário é levado para a página de erro.
+    /** Usa HTTP 500 quando o chamador não informa um status. */
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -256,9 +266,7 @@ public class EmpresaServlet extends HttpServlet {
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
-    // SOBRECARGA 2 (4 parâmetros): quem realmente trata o erro. O destino depende do status:
-    //  - 404 (registro não encontrado) e 500 (erro de banco/inesperado): vai para a página de erro (/erro.jsp)
-    //  - 400 (dado inválido) e 409 (duplicado/em uso): volta para a tela da entidade, mostrando a mensagem
+    /** Encaminha erros 404/500 à página de erro; os demais retornam à tela do cadastro. */
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -268,7 +276,7 @@ public class EmpresaServlet extends HttpServlet {
 
         resp.setStatus(status);
 
-        // Erros graves: página de erro (não consulta o banco, então funciona mesmo com ele fora do ar)
+        // Exibe a página de erro sem consultar o banco novamente.
         if (status == HttpServletResponse.SC_NOT_FOUND
                 || status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
             req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
@@ -277,10 +285,10 @@ public class EmpresaServlet extends HttpServlet {
             return;
         }
 
-        // Erros do usuário: volta para a tela com a mensagem
+        // Mantém a mensagem na tela do cadastro.
         req.setAttribute("mensagemErro", mensagem);
 
-        // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
+        // Se a recarga falhar, exibe listas vazias e preserva a mensagem.
         try {
             req.setAttribute("empresaList", DAO.buscar());
             req.setAttribute("setorList", DAO.buscarSetor());
@@ -292,6 +300,7 @@ public class EmpresaServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_EMPRESA).forward(req, resp);
     }
 
+    /** Recarrega a listagem e as opções da página com uma mensagem de sucesso. */
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Empresa> empresas = DAO.buscar();
