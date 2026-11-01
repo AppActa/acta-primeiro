@@ -1,6 +1,7 @@
 package br.com.acta.servlet;
 
 import br.com.acta.model.AdministradorGeral;
+import br.com.acta.utils.CsrfToken;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -20,11 +21,8 @@ import java.io.IOException;
         "/empresa-servlet", "/endereco-servlet", "/colaborador-servlet",
         "/ciclo-servlet", "/problema-servlet", "/meta-servlet",
         "/planoAcao-servlet", "/tarefa-servlet", "/licoes-aprendidas-servlet",
-        "/administrador-geral-servlet", "/cloudinary-signature"
-}, dispatcherTypes = {
-        DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE,
-        DispatcherType.ERROR, DispatcherType.ASYNC
-})
+        "/administrador-geral-servlet", "/cloudinary-signature", "/logout-servlet"
+}, dispatcherTypes = { DispatcherType.REQUEST })
 public class LoginFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -34,6 +32,14 @@ public class LoginFilter implements Filter {
 
         // Impede reutilizar respostas administrativas em cache depois do logout.
         resp.setHeader("Cache-Control", "no-store");
+        resp.setHeader("X-Content-Type-Options", "nosniff");
+        resp.setHeader("X-Frame-Options", "DENY");
+        resp.setHeader("Referrer-Policy", "same-origin");
+        resp.setHeader("Content-Security-Policy",
+                "default-src 'self'; img-src 'self' https://res.cloudinary.com data:; "
+                + "style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; "
+                + "script-src 'self'; connect-src 'self' https://api.cloudinary.com; "
+                + "form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'");
         HttpSession sessao = req.getSession(false);
         Object usuario = sessao == null ? null : sessao.getAttribute("usuarioLogado");
 
@@ -51,6 +57,11 @@ public class LoginFilter implements Filter {
                 || administrador.getAdm_geral_id() == null
                 || administrador.getAdm_geral_id() <= 0) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+        if ("POST".equalsIgnoreCase(req.getMethod()) && !CsrfToken.isValid(req)) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Token de segurança inválido ou expirado.");
             return;
         }
 
