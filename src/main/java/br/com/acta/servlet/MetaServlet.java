@@ -177,17 +177,16 @@ public class MetaServlet extends HttpServlet {
         StatusMeta status = null;
         if (statusParam != null && !statusParam.isBlank()) status = StatusMeta.valueOf(statusParam);
 
-        Date dataInicial = null;
-        if (dataInicialParam != null && !dataInicialParam.isBlank()) dataInicial = Date.valueOf(dataInicialParam);
+        Date dataInicial = Validador.dataOpcional(dataInicialParam, "Data inicial");
 
-        Date dataFinal = null;
-        if (dataFinalParam != null && !dataFinalParam.isBlank()) dataFinal = Date.valueOf(dataFinalParam);
+        Date dataFinal = Validador.dataOpcional(dataFinalParam, "Data final");
 
-        Date criadoDe = null;
-        if (criadoDeParam != null && !criadoDeParam.isBlank()) criadoDe = Date.valueOf(criadoDeParam);
+        Date criadoDe = Validador.dataOpcional(criadoDeParam, "Data inicial de criação");
 
-        Date criadoAte = null;
-        if (criadoAteParam != null && !criadoAteParam.isBlank()) criadoAte = Date.valueOf(criadoAteParam);
+        Date criadoAte = Validador.dataOpcional(criadoAteParam, "Data final de criação");
+
+        Validador.periodo(dataInicial, dataFinal, "A data final");
+        Validador.periodo(criadoDe, criadoAte, "A data final de criação");
 
         List<Meta> metas = DAO.buscaFiltrada(busca, prioridade, status, dataInicial, dataFinal, criadoDe, criadoAte, ordem, direcao);
 

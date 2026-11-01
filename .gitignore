@@ -16,6 +16,8 @@ target/
 
 ### Secrets ###
 .env
+src/main/resources/.env
+src/main/java/br/com/acta/utils/GerarHash.java
 
 ### Eclipse ###
 .apt_generated

@@ -47,9 +47,9 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Plano de Ação</title>
-        <script src="<%= request.getContextPath() %>/assets/js/crud.js" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=ordenacao-local-2" defer></script>
     </head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
@@ -96,16 +96,17 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                     </a>
                 </nav>
                 <div class="perfil-barra">
-                    <a href="<%= request.getContextPath() %>/crud/configurações.html" class="perfil-admin">
+                    <% br.com.acta.model.AdministradorGeral adm = (br.com.acta.model.AdministradorGeral) session.getAttribute("usuarioLogado"); %>
+                    <a href="<%= request.getContextPath() %>/crud/configuracoes.jsp" class="perfil-admin">
                         <div class="perfil-foto">
-                            <img src="<%= request.getContextPath() %>/assets/images/foto_perfil.svg" alt="Foto de perfil">
+                            <img src="<%= adm != null && adm.getImagem() != null && !adm.getImagem().isBlank() ? h(adm.getImagem().replace("/image/upload/", "/image/upload/c_fill,w_96,h_96,q_auto,f_auto/")) : request.getContextPath() + "/assets/images/foto_perfil.svg" %>" alt="Foto de perfil">
                         </div>
                         <div class="perfil-info">
-                            <span class="perfil-nome">Área administrativa</span>
-                            <span class="perfil-email">ACTA</span>
+                            <span class="perfil-nome"><%= adm != null ? adm.getNome() : "Administrador" %></span>
+                            <span class="perfil-email"><%= adm != null ? adm.getEmail() : "" %></span>
                         </div>
                     </a>
-                    <a href="<%= request.getContextPath() %>/login.html" class="botao botao-sair">Sair</a>
+                    <form method="post" action="<%= request.getContextPath() %>/logout-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>"><button type="submit" class="botao botao-sair">Sair</button></form>
                 </div>
             </aside>
             <main class="conteudo">
@@ -349,7 +350,7 @@ if (recuperarCadastro) {
                             <div class="modal modal-larga">
                                 <h2>Cadastrar plano de ação</h2>
 <% if (recuperarCadastro) { %><p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p><% } %>
-                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/planoAcao-servlet">
+                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/planoAcao-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-plano-de-ação-nome">Nome</label>
@@ -357,12 +358,8 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-plano-de-ação-id_ciclo">Ciclo</label>
-                                        <select id="cad-plano-de-ação-id_ciclo" name="id_ciclo" required>
-<option value="">Selecione</option>
-<% for (Ciclo opcao : cicloOpcoes) { %>
-<option value="<%= opcao.getId_ciclo() %>" <%= String.valueOf(opcao.getId_ciclo()).equals(valorIdCicloCadastro) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-plano-de-ação-id_ciclo" data-lista="sugestoes-fk-ciclo-lista" data-validar-lista data-campo-valor="cad-plano-de-ação-id_ciclo-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-plano-de-ação-id_ciclo-valor" name="id_ciclo" value="<%= h(valorIdCicloCadastro) %>">
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="cad-plano-de-ação-descricao">Descrição</label>
@@ -386,12 +383,8 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-plano-de-ação-id_criador">Criador</label>
-                                        <select id="cad-plano-de-ação-id_criador" name="id_criador" required>
-<option value="">Selecione</option>
-<% for (Colaborador opcao : colaboradorOpcoes) { %>
-<option value="<%= opcao.getId_colaborador() %>" <%= String.valueOf(opcao.getId_colaborador()).equals(valorIdCriadorCadastro) ? "selected" : "" %>><%= h(opcao.getNome() + " " + opcao.getSobrenome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-plano-de-ação-id_criador" data-lista="sugestoes-fk-colaborador-lista" data-validar-lista data-campo-valor="cad-plano-de-ação-id_criador-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-plano-de-ação-id_criador-valor" name="id_criador" value="<%= h(valorIdCriadorCadastro) %>">
                                     </div>
 
                                     <div class="botoes-modal">
@@ -435,7 +428,7 @@ if (recuperarEdicao) {
                             <div class="modal modal-larga">
                                 <h2>Editar plano de ação</h2>
 <% if (recuperarEdicao) { %><p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p><% } %>
-                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/planoAcao-servlet">
+                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/planoAcao-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="atualizar">
 
                                     <input type="hidden" name="id-planoAcao" value="<%= planoAcao.getId_plano_acao() %>">
@@ -445,12 +438,8 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-plano-de-ação-id_ciclo-<%= planoAcao.getId_plano_acao() %>">Ciclo</label>
-                                        <select id="edi-plano-de-ação-id_ciclo-<%= planoAcao.getId_plano_acao() %>" name="id_ciclo" required>
-<option value="">Selecione</option>
-<% for (Ciclo opcao : cicloOpcoes) { %>
-<option value="<%= opcao.getId_ciclo() %>" <%= String.valueOf(opcao.getId_ciclo()).equals(valorIdCicloEdicao) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-plano-de-ação-id_ciclo-<%= planoAcao.getId_plano_acao() %>" data-lista="sugestoes-fk-ciclo-lista" data-validar-lista data-campo-valor="edi-plano-de-ação-id_ciclo-<%= planoAcao.getId_plano_acao() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-plano-de-ação-id_ciclo-<%= planoAcao.getId_plano_acao() %>-valor" name="id_ciclo" value="<%= h(valorIdCicloEdicao) %>">
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="edi-plano-de-ação-descricao-<%= planoAcao.getId_plano_acao() %>">Descrição</label>
@@ -474,12 +463,8 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-plano-de-ação-id_criador-<%= planoAcao.getId_plano_acao() %>">Criador</label>
-                                        <select id="edi-plano-de-ação-id_criador-<%= planoAcao.getId_plano_acao() %>" name="id_criador" required>
-<option value="">Selecione</option>
-<% for (Colaborador opcao : colaboradorOpcoes) { %>
-<option value="<%= opcao.getId_colaborador() %>" <%= String.valueOf(opcao.getId_colaborador()).equals(valorIdCriadorEdicao) ? "selected" : "" %>><%= h(opcao.getNome() + " " + opcao.getSobrenome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-plano-de-ação-id_criador-<%= planoAcao.getId_plano_acao() %>" data-lista="sugestoes-fk-colaborador-lista" data-validar-lista data-campo-valor="edi-plano-de-ação-id_criador-<%= planoAcao.getId_plano_acao() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-plano-de-ação-id_criador-<%= planoAcao.getId_plano_acao() %>-valor" name="id_criador" value="<%= h(valorIdCriadorEdicao) %>">
                                     </div>
 
                                     <div class="botoes-modal">
@@ -499,7 +484,7 @@ if (recuperarEdicao) {
 <p><%= h(planoAcao.getNome() == null || planoAcao.getNome().isBlank() ? "—" : planoAcao.getNome()) %></p>
                                 <h2>Excluir plano de ação</h2>
                                 <p>Tem certeza que deseja excluir este plano de ação?</p>
-                                <form method="post" action="<%= request.getContextPath() %>/planoAcao-servlet">
+                                <form method="post" action="<%= request.getContextPath() %>/planoAcao-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="excluir">
 
                                     <input type="hidden" name="id-planoAcao" value="<%= planoAcao.getId_plano_acao() %>">
@@ -514,6 +499,40 @@ if (recuperarEdicao) {
 <% } %>
                 </section>
 
+                <div id="sugestoes-fk-ciclo-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Ciclo opcao : cicloOpcoes) {
+    String nomeOpcao = opcao.getNome();
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Ciclo outra : cicloOpcoes) {
+            String outroNome = outra.getNome();
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_ciclo() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_ciclo() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-colaborador-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Colaborador opcao : colaboradorOpcoes) {
+    String nomeOpcao = (opcao.getNome() == null ? "" : opcao.getNome()) + " " + (opcao.getSobrenome() == null ? "" : opcao.getSobrenome());
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Colaborador outra : colaboradorOpcoes) {
+            String outroNome = (outra.getNome() == null ? "" : outra.getNome()) + " " + (outra.getSobrenome() == null ? "" : outra.getSobrenome());
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_colaborador() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_colaborador() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
             </main>
         </div>
     </body>

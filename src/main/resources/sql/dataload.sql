@@ -21,16 +21,16 @@ INSERT INTO empresa (nome, setor, cnpj, tamanho)
 VALUES ('Âmbar Energia', 'Elétrico', '67423601000188', 'MEDIA');
 
 INSERT INTO empresa (nome, setor, cnpj, tamanho)
-VALUES ('Friboi', 'Alimentício', '19583726000144', 'GRANDE');
+VALUES ('Friboi', 'Alimentício', '19583726000122', 'GRANDE');
 
 INSERT INTO empresa (nome, setor, cnpj, tamanho)
-VALUES ('Seara Alimentos', 'Alimentício', '48273910000156', 'GRANDE');
+VALUES ('Seara Alimentos', 'Alimentício', '48273910000174', 'GRANDE');
 
 INSERT INTO empresa (nome, setor, cnpj, tamanho)
-VALUES ('Swift', 'Alimentício', '82734510000199', 'GRANDE');
+VALUES ('Swift', 'Alimentício', '82734510000157', 'GRANDE');
 
 INSERT INTO empresa (nome, setor, cnpj, tamanho)
-VALUES ('PicPay', 'Fintech', '35792468000110', 'GRANDE');
+VALUES ('PicPay', 'Fintech', '35792468000140', 'GRANDE');
 
 -- Endereço
 INSERT INTO endereco (rua, bairro, cidade, estado, cep, numero, complemento, unidade, id_empresa)
@@ -48,37 +48,62 @@ VALUES ('Rua das Carnes', 'Veloso', 'Osasco', 'SP', '14783000', '780', 'Bloco C'
 INSERT INTO endereco (rua, bairro, cidade, estado, cep, numero, complemento, unidade, id_empresa)
 VALUES ('Rua Fidêncio Ramos', 'Vila Olímpia', 'São Paulo', 'SP', '04551010', '308', 'Andar 12', 'Vila Olímpia', 5);
 
--- Administrador Geral
-INSERT INTO administrador_geral (nome, senha, email, telefone)
-VALUES ('Roberson', 'souAdmdaAmbar1234', 'roberson.silva@ambarenergia.com.br', '11348394736');
+--Administrador Geral
 
+--Senha: souAdmdaAmbar1234
 INSERT INTO administrador_geral (nome, senha, email, telefone)
-VALUES ('Fernanda', 'friboiAdm2026', 'fernanda.lopes@jbsfriboi.com.br', '31998475632');
+VALUES ('Roberson', '$2b$10$wnfp.Z1K69nlKVKbpLeHXuQ1xnlFge8kZKhq6FD8hP9Ulg2IneD/i', 'roberson.silva@ambarenergia.com.br', '11948394736');
 
+--Senha: friboiAdm2026
 INSERT INTO administrador_geral (nome, senha, email, telefone)
-VALUES ('Patrícia', 'jbsAdmSeara25', 'patricia.gomes@jbsseara.com.br', '11976543210');
+VALUES ('Fernanda', '$2b$10$mzKAUxS96pzrlMf8dvN//uzJ5o7qBxQgje3Um18JpCEXKK.mq5soa', 'fernanda.lopes@jbsfriboi.com.br', '31998475632');
 
+--Senha: jbsAdmSeara25
 INSERT INTO administrador_geral (nome, senha, email, telefone)
-VALUES ('Eduardo', 'swiftAdm2026', 'eduardo.martins@swiftbrasil.com.br', '17998765432');
+VALUES ('Patrícia', '$2b$10$Hfp7NiArzaAj8ZffpDc1g.nc.ZtXSL2Vk/kZyRgAOAL29MVM3sZh6', 'patricia.gomes@jbsseara.com.br', '11976543210');
 
+--Senha: swiftAdm2026
 INSERT INTO administrador_geral (nome, senha, email, telefone)
-VALUES ('Juliana', 'picpayAdm2026', 'juliana.tavares@picpay.com.br', '11991234567');
+VALUES ('Eduardo', '$2b$10$NsEfJUfc70MTGVE9nrVcN.eoFGs63FymmS6gZw8yQBs16y/Cmqomy', 'eduardo.martins@swiftbrasil.com.br', '17998765432');
 
+--Senha: picpayAdm2026
+INSERT INTO administrador_geral (nome, senha, email, telefone)
+VALUES ('Juliana', '$2b$10$jLIKiEqCa.8lL1Pfx/PrtuUOYa42R8McFM/TzxFcDfUT5lvUeGEJW', 'juliana.tavares@picpay.com.br', '11991234567');
+
+--Senha:CenarioUtopico67?
+INSERT INTO administrador_geral (nome, senha, email, telefone)
+VALUES ('Cauê', '$2b$10$Z.9aNriiu.V0icNiW44fZOuL1PQQ6E88va0/GhH8z2tt9fnQDvSp.', 'alvarezcaue@gmail.com', '11995152707');
+
+--Senha:Acta735!
+INSERT INTO administrador_geral (nome, senha, email, telefone)
+VALUES ('Arthur', '$2b$10$28fSEi1dbY/mCbm7qlEu9Ozf9GXclVT7SR7TLjEtp1uKMBB7ao2ui', 'martinsarthuramorim@gmail.com', '11979546672');
+
+--Senha:Imensa306.
+INSERT INTO administrador_geral (nome, senha, email, telefone)
+VALUES ('Raphael', '$2b$10$JiO53KsjcaJMggIwez.BKe5JaTvZWKFcOCN.dX07UeFQjn1FmbSPm', 'raphabragatech@gmail.com','11962756799');
+
+--Senha:Mdox@2011
+INSERT INTO administrador_geral (nome, senha, email, telefone)
+VALUES ('Mariana', '$2b$10$kTnaZLOY7hdLMiub2FQLX.icfGRppYTo27fZ1WZE4U1pt6s9MUKpq', 'xavier.mariana.germinaretech@gmail.com','11972560902');
+
+--Senha:lu2904#
+INSERT INTO administrador_geral (nome, senha, email, telefone)
+VALUES ('Ana Luisa', '$2b$10$Em1jljolpuMiG1w6dnYybefrR./OGJTExQCJ6FujZ5JdOXLvmxjRW', 'analuisamelo52@gmail.com','11915134955');
 -- Colaborador
 INSERT INTO colaborador (nome, sobrenome, area, cargo, dt_contratacao, email, senha, telefone, cpf, id_empresa)
-VALUES ('José', 'Amorim Martins', 'Manutenção Elétrica', 'Técnico Eletricista', '2022-03-15', 'amorimar.jose@ambarenergia.org.br', 'joseAmSenha2022', '11483058338', '98457908658', 1);
+VALUES ('José', 'Amorim Martins', 'Manutenção Elétrica', 'Técnico Eletricista', '2022-03-15', 'amorimar.jose@ambarenergia.org.br', 'joseAmSenha2022', '11983058338', '98457908600', 1);
 
 INSERT INTO colaborador (nome, sobrenome, area, cargo, dt_contratacao, email, senha, telefone, cpf, id_empresa)
-VALUES ('Camila', 'Duarte Rocha', 'Segurança do Trabalho', 'Técnica de Segurança do Trabalho', '2021-07-01', 'camila.rocha@jbsfriboi.com.br', 'camilaSenha2021', '31976583421', '65498732014', 2);
+VALUES ('Camila', 'Duarte Rocha', 'Segurança do Trabalho', 'Técnica de Segurança do Trabalho', '2021-07-01', 'camila.rocha@jbsfriboi.com.br', 'camilaSenha2021', '31976583421', '65498732074', 2);
 
 INSERT INTO colaborador (nome, sobrenome, area, cargo, dt_contratacao, email, senha, telefone, cpf, id_empresa)
-VALUES ('Rafael', 'Costa Almeida', 'Produção', 'Supervisor de Produção', '2020-11-20', 'rafael.almeida@jbsseara.com.br', 'rafaelSenha2020', '11987654321', '52698471033', 3);
+VALUES ('Rafael', 'Costa Almeida', 'Produção', 'Supervisor de Produção', '2020-11-20', 'rafael.almeida@jbsseara.com.br', 'rafaelSenha2020', '11987654321', '52698471085', 3);
 
 INSERT INTO colaborador (nome, sobrenome, area, cargo, dt_contratacao, email, senha, telefone, cpf, id_empresa)
-VALUES ('Larissa', 'Ferreira Souza', 'Comércio Exterior', 'Analista de Exportação', '2023-02-10', 'larissa.souza@swiftbrasil.com.br', 'larissaSenha2023', '17987651234', '74185296330', 4);
+VALUES ('Larissa', 'Ferreira Souza', 'Comércio Exterior', 'Analista de Exportação', '2023-02-10', 'larissa.souza@swiftbrasil.com.br', 'larissaSenha2023', '17987651234', '74185296355', 4);
 
 INSERT INTO colaborador (nome, sobrenome, area, cargo, dt_contratacao, email, senha, telefone, cpf, id_empresa)
-VALUES ('Thiago', 'Ramos Vieira', 'Risco e Compliance', 'Analista de Prevenção a Fraudes', '2022-09-05', 'thiago.vieira@picpay.com.br', 'thiagoSenha2022', '11987651230', '15926374805', 5);
+VALUES ('Thiago', 'Ramos Vieira', 'Risco e Compliance', 'Analista de Prevenção a Fraudes', '2022-09-05', 'thiago.vieira@picpay.com.br', 'thiagoSenha2022', '11987651230', '15926374855', 5);
 
 -- Ciclo
 INSERT INTO ciclo (nome, dt_inicio, id_empresa, id_responsavel)
@@ -223,3 +248,6 @@ VALUES (4, 4);
 
 INSERT INTO empresa_administrador_geral (id_empresa, id_adm_geral)
 VALUES (5, 5);
+
+INSERT INTO empresa_administrador_geral (id_empresa, id_adm_geral)
+VALUES (1, 6), (1, 7), (1, 8), (1, 9), (1, 10);

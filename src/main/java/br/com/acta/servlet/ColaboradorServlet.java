@@ -193,15 +193,11 @@ public class ColaboradorServlet extends HttpServlet {
             permissaoGestor = Boolean.parseBoolean(gestorParam);
         }
 
-        Date dataInicial = null;
-        if (dataInicialParam != null && !dataInicialParam.isBlank()) {
-            dataInicial = Date.valueOf(dataInicialParam);
-        }
+        Date dataInicial = Validador.dataOpcional(dataInicialParam, "Data inicial");
 
-        Date dataFinal = null;
-        if (dataFinalParam != null && !dataFinalParam.isBlank()) {
-            dataFinal = Date.valueOf(dataFinalParam);
-        }
+        Date dataFinal = Validador.dataOpcional(dataFinalParam, "Data final");
+
+        Validador.periodo(dataInicial, dataFinal, "A data final");
 
         List<Colaborador> colaboradores = DAO.buscaFiltrada(busca, status, area, cargo, permissaoGestor,
                 dataInicial, dataFinal, ordem, direcao);

@@ -9,6 +9,7 @@ public class AdministradorGeral {
     private String senha;
     private String email;
     private String telefone;
+    private String imagem;
 
     //construtores
 
@@ -72,4 +73,8 @@ public class AdministradorGeral {
     public void setNome(String nome) {
         this.nome = nome;
     }
+
+    public String getImagem() { return imagem; }
+
+    public void setImagem(String imagem) { this.imagem = imagem; }
 }
