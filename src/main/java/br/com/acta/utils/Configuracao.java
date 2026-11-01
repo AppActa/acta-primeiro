@@ -11,9 +11,12 @@ import java.util.Set;
 public final class Configuracao {
     private static final Dotenv DOTENV = carregarDotenv();
 
+    /** Impede instâncias desta classe de métodos estáticos. */
     private Configuracao() { }
 
+    /** Procura um .env a partir do diretório de execução e das classes. */
     private static Dotenv carregarDotenv() {
+        // Mantém a ordem de busca e evita diretórios duplicados.
         Set<Path> candidatos = new LinkedHashSet<>();
         adicionarPais(candidatos, Path.of(System.getProperty("user.dir", ".")));
         try {
@@ -32,6 +35,7 @@ public final class Configuracao {
         return Dotenv.configure().ignoreIfMissing().load();
     }
 
+    /** Inclui até dez diretórios ancestrais, sem repetir candidatos. */
     private static void adicionarPais(Set<Path> candidatos, Path inicio) {
         Path diretorio = inicio.toAbsolutePath().normalize();
         for (int nivel = 0; diretorio != null && nivel < 10; nivel++, diretorio = diretorio.getParent()) {
@@ -39,12 +43,14 @@ public final class Configuracao {
         }
     }
 
+    /** Prioriza o ambiente do servidor; usa o .env como alternativa. */
     public static String obter(String chave) {
         String valorAmbiente = System.getenv(chave);
         if (valorAmbiente != null && !valorAmbiente.isBlank()) return valorAmbiente;
         return DOTENV.get(chave);
     }
 
+    /** Usa o valor padrão apenas quando a chave não foi encontrada. */
     public static String obter(String chave, String padrao) {
         String valor = obter(chave);
         return valor == null ? padrao : valor;
