@@ -38,6 +38,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= h(br.com.acta.utils.CsrfToken.getOrCreate(session)) %>">
     <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
     <title>ACTA — Configurações</title>
@@ -65,7 +66,7 @@ try {
                 <div class="perfil-foto"><img src="<%= imagemPerfil %>" alt="Foto de perfil"></div>
                 <div class="perfil-info"><span class="perfil-nome"><%= h(nome) %></span><span class="perfil-email"><%= h(email) %></span></div>
             </a>
-            <a href="<%= request.getContextPath() %>/logout-servlet" class="botao botao-sair">Sair</a>
+            <form method="post" action="<%= request.getContextPath() %>/logout-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>"><button type="submit" class="botao botao-sair">Sair</button></form>
         </div>
     </aside>
     <main class="conteudo conteudo-config">
@@ -91,7 +92,7 @@ try {
             <% if (request.getAttribute("mensagemErro") != null) { %>
             <p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p>
             <% } %>
-            <form class="config-dados" id="form-perfil" method="post" action="<%= request.getContextPath() %>/administrador-geral-servlet">
+            <form class="config-dados" id="form-perfil" method="post" action="<%= request.getContextPath() %>/administrador-geral-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                 <input type="hidden" id="config-imagem-url" name="imagem" value="<%= h(imagem) %>">
                 <div class="config-dados-topo"><h2>Meus dados</h2><label for="config-editar-perfil" class="botao botao-principal botao-pilula config-dados-editar">Editar</label></div>
                 <div class="config-campos">
@@ -115,7 +116,7 @@ try {
                 <div class="botoes-modal config-dados-botoes"><input type="hidden" name="acao" value="atualizar"><input type="hidden" name="id-adm-geral" value="<%= administrador.getAdm_geral_id() %>"><label for="config-editar-perfil" class="botao botao-cancelar">Cancelar</label><button type="submit" class="botao botao-principal">Confirmar edição</button></div>
             </form>
             <div class="modal-pagina config-modal"><div class="modal-fundo"><label for="config-modal-senha" class="config-modal-fundo-fechar" aria-label="Fechar"></label><div class="modal"><h2>Alterar senha</h2>
-                <form class="formulario" method="post" action="<%= request.getContextPath() %>/administrador-geral-servlet">
+                <form class="formulario" method="post" action="<%= request.getContextPath() %>/administrador-geral-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                     <input type="hidden" name="acao" value="atualizarSenha"><input type="hidden" name="email" value="<%= h(email) %>">
                     <div class="campo"><label for="alt-senha-antiga">Senha antiga</label><input type="password" id="alt-senha-antiga" name="senha_antiga" maxlength="100" autocomplete="current-password" placeholder="Digite a senha antiga" required></div>
                     <div class="campo"><label for="alt-senha-nova">Nova senha</label><input type="password" id="alt-senha-nova" name="senha_nova" maxlength="100" autocomplete="new-password" placeholder="Digite a nova senha" required></div>
