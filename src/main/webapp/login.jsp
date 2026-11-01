@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%
     // Se já há sessão ativa, redireciona para home
     if (session != null && session.getAttribute("usuarioLogado") != null) {
@@ -46,7 +46,7 @@
                 <p class="login-erro" role="alert"><%= mensagemErro %></p>
                 <% } %>
 
-                <form class="login-form" method="post" action="<%= request.getContextPath() %>/login-servlet">
+                <form class="login-form" method="post" action="<%= request.getContextPath() %>/login-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                     <input type="hidden" name="acao" value="login">
                     <div class="login-campo">
                         <label for="login-email">Email</label>
@@ -76,7 +76,7 @@
                         <p class="esqueceu-senha-descricao">Recupere por endereço de email</p>
                     </div>
 
-                    <form class="login-form" method="post" action="#">
+                    <form class="login-form" method="post" action="#"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                         <div class="login-campo">
                             <label for="esqueceu-email">Email</label>
                             <input type="email" id="esqueceu-email" name="email" maxlength="80" autocomplete="email" required>

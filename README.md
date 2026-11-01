@@ -32,11 +32,17 @@ O login do backend autentica administradores gerais. Após a autenticação, os 
 
 Também estão implementados o acompanhamento da etapa e situação dos ciclos, validações de dados, mensagens de sucesso e erro, filtros e ordenação nas listagens que oferecem esses controles, além de views SQL que apresentam dados relacionados. Senhas são armazenadas com hash bcrypt e pepper configurado por variável de ambiente.
 
+O `LoginFilter`, no pacote `br.com.acta.servlet`, protege `/crud/*` e os endpoints administrativos, incluindo o gerenciamento de administradores e a assinatura de upload. O acesso exige `usuarioLogado` na sessão do servidor, do tipo `AdministradorGeral`, com ID positivo. Parâmetros de URL e formulário não concedem permissões. Sem sessão, navegações GET/HEAD são redirecionadas para `/login.jsp`; outras operações recebem HTTP 401. Sessões de outros perfis recebem HTTP 403. O filtro também protege encaminhamentos e inclusões internos e envia `Cache-Control: no-store`.
+
+Novos endpoints administrativos devem ser incluídos no mapeamento do filtro. O login público continua em `/login-servlet`; operações de cadastro e alteração de administradores em `/administrador-geral-servlet` exigem um administrador já autenticado.
+
+Execute `.\mvnw.cmd test` para testar os bloqueios por HTTP em um Tomcat local isolado, sem consultar ou modificar o banco. Os testes usam destinos sentinela e sessões preparadas exclusivamente no servidor de teste para verificar acessos anônimos, perfis incorretos, logout, URLs manipuladas e a liberação das operações para administrador geral.
+
 ## Limitações conhecidas
 
 - A página de configurações do perfil e alguns formulários de recuperação de senha ainda são telas demonstrativas e usam `action="#"`; não estão conectados a operações do backend.
 - Recursos citados na página institucional — como IA, dashboards, relatórios, alertas e ferramentas de análise — não têm implementação integrada identificada no código atual.
-- O login conectado ao backend autentica apenas o administrador geral. Embora exista um endpoint de logout, o atalho “Sair” das telas JSP ainda aponta para `login.html`; também não foi identificada uma checagem de sessão nos endpoints CRUD.
+- O login conectado ao backend autentica apenas o administrador geral; outros perfis não têm acesso ao CRUD.
 
 ## Compilação
 

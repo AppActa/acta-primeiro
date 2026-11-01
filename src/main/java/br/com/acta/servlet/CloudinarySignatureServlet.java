@@ -1,7 +1,8 @@
 package br.com.acta.servlet;
 
 import br.com.acta.model.AdministradorGeral;
-import io.github.cdimascio.dotenv.Dotenv;
+import br.com.acta.utils.CsrfToken;
+import br.com.acta.utils.Configuracao;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +21,7 @@ public class CloudinarySignatureServlet extends HttpServlet {
     private static final String FOLDER = "acta/admin-profiles";
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Object usuario = req.getSession(false) == null
                 ? null
                 : req.getSession(false).getAttribute("usuarioLogado");
@@ -28,12 +29,15 @@ public class CloudinarySignatureServlet extends HttpServlet {
             responderErro(resp, HttpServletResponse.SC_UNAUTHORIZED, "Entre novamente para enviar uma foto.");
             return;
         }
+        if (!CsrfToken.isValid(req)) {
+            responderErro(resp, HttpServletResponse.SC_FORBIDDEN, "Token de segurança inválido ou expirado.");
+            return;
+        }
 
         try {
-            Dotenv dotenv = Dotenv.load();
-            String cloudName = dotenv.get("CLOUDINARY_CLOUD_NAME", "");
-            String apiKey = dotenv.get("CLOUDINARY_API_KEY", "");
-            String apiSecret = dotenv.get("CLOUDINARY_API_SECRET", "");
+            String cloudName = Configuracao.obter("CLOUDINARY_CLOUD_NAME", "");
+            String apiKey = Configuracao.obter("CLOUDINARY_API_KEY", "");
+            String apiSecret = Configuracao.obter("CLOUDINARY_API_SECRET", "");
             if (cloudName.isBlank() || apiKey.isBlank() || apiSecret.isBlank()) {
                 responderErro(resp, HttpServletResponse.SC_SERVICE_UNAVAILABLE,
                         "Configure CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY e CLOUDINARY_API_SECRET no .env.");

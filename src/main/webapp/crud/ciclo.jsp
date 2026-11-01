@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.List,java.util.ArrayList,java.time.ZoneId,java.time.format.DateTimeFormatter,br.com.acta.model.*,br.com.acta.enums.*" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.List,java.util.ArrayList,java.time.ZoneId,java.time.format.DateTimeFormatter,br.com.acta.model.*,br.com.acta.enums.*" %>
 <%!
     private String h(Object valor) {
         if (valor == null) return "";
@@ -116,7 +116,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                             <span class="perfil-email"><%= adm != null ? adm.getEmail() : "" %></span>
                         </div>
                     </a>
-                    <a href="<%= request.getContextPath() %>/logout-servlet" class="botao botao-sair">Sair</a>
+                    <form method="post" action="<%= request.getContextPath() %>/logout-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>"><button type="submit" class="botao botao-sair">Sair</button></form>
                 </div>
             </aside>
             <main class="conteudo">
@@ -456,7 +456,7 @@ if (recuperarCadastro) {
                             <div class="modal modal-grande">
                                 <h2>Cadastrar ciclo</h2>
 <% if (recuperarCadastro) { %><p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p><% } %>
-                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/ciclo-servlet">
+                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/ciclo-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-ciclo-nome">Nome</label>
@@ -543,7 +543,7 @@ if (recuperarEdicao) {
                             <div class="modal modal-grande">
                                 <h2>Editar ciclo</h2>
 <% if (recuperarEdicao) { %><p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p><% } %>
-                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/ciclo-servlet">
+                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/ciclo-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="atualizar">
 
                                     <input type="hidden" name="id-ciclo" value="<%= ciclo.getId_ciclo() %>">
@@ -608,7 +608,7 @@ if (recuperarEdicao) {
 <p><%= h(ciclo.getNome() == null || ciclo.getNome().isBlank() ? "—" : ciclo.getNome()) %></p>
                                 <h2>Excluir ciclo</h2>
                                 <p>Tem certeza que deseja excluir este ciclo?</p>
-                                <form method="post" action="<%= request.getContextPath() %>/ciclo-servlet">
+                                <form method="post" action="<%= request.getContextPath() %>/ciclo-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="excluir">
 
                                     <input type="hidden" name="id-ciclo" value="<%= ciclo.getId_ciclo() %>">
