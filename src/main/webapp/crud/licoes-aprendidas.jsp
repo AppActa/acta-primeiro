@@ -53,9 +53,9 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Lições Aprendidas</title>
-        <script src="<%= request.getContextPath() %>/assets/js/crud.js" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=ordenacao-local-2" defer></script>
     </head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
@@ -102,16 +102,17 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                     </a>
                 </nav>
                 <div class="perfil-barra">
-                    <a href="<%= request.getContextPath() %>/crud/configurações.html" class="perfil-admin">
+                    <% br.com.acta.model.AdministradorGeral adm = (br.com.acta.model.AdministradorGeral) session.getAttribute("usuarioLogado"); %>
+                    <a href="<%= request.getContextPath() %>/crud/configuracoes.jsp" class="perfil-admin">
                         <div class="perfil-foto">
-                            <img src="<%= request.getContextPath() %>/assets/images/foto_perfil.svg" alt="Foto de perfil">
+                            <img src="<%= adm != null && adm.getImagem() != null && !adm.getImagem().isBlank() ? h(adm.getImagem().replace("/image/upload/", "/image/upload/c_fill,w_96,h_96,q_auto,f_auto/")) : request.getContextPath() + "/assets/images/foto_perfil.svg" %>" alt="Foto de perfil">
                         </div>
                         <div class="perfil-info">
-                            <span class="perfil-nome">Área administrativa</span>
-                            <span class="perfil-email">ACTA</span>
+                            <span class="perfil-nome"><%= adm != null ? adm.getNome() : "Administrador" %></span>
+                            <span class="perfil-email"><%= adm != null ? adm.getEmail() : "" %></span>
                         </div>
                     </a>
-                    <a href="<%= request.getContextPath() %>/login.html" class="botao botao-sair">Sair</a>
+                    <form method="post" action="<%= request.getContextPath() %>/logout-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>"><button type="submit" class="botao botao-sair">Sair</button></form>
                 </div>
             </aside>
             <main class="conteudo">
@@ -160,11 +161,11 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-licoes-area">Área</label>
-                                                <input type="text" id="filtros-licoes-area" name="area" list="sugestoes-licoes-area" maxlength="30" value="<%= h(filtroArea) %>">
+                                                <input type="text" id="filtros-licoes-area" name="area" data-lista="sugestoes-licoes-area-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroArea) %>">
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-licoes-categoria">Categoria</label>
-                                                <input type="text" id="filtros-licoes-categoria" name="categoria" list="sugestoes-licoes-categoria" maxlength="30" value="<%= h(filtroCategoria) %>">
+                                                <input type="text" id="filtros-licoes-categoria" name="categoria" data-lista="sugestoes-licoes-categoria-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroCategoria) %>">
                                             </div>
                                             <input type="hidden" name="ordem" value="<%= h(ordem) %>">
                                             <input type="hidden" name="direcao" value="<%= h(direcao) %>">
@@ -394,7 +395,7 @@ if (recuperarCadastro) {
                             <div class="modal modal-grande">
                                 <h2>Cadastrar lição aprendida</h2>
 <% if (recuperarCadastro) { %><p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p><% } %>
-                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/licoes-aprendidas-servlet">
+                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/licoes-aprendidas-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-titulo">Título</label>
@@ -402,20 +403,16 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-id_ciclo">Ciclo</label>
-                                        <select id="cad-lição-aprendida-id_ciclo" name="id_ciclo" required>
-<option value="">Selecione</option>
-<% for (Ciclo opcao : cicloOpcoes) { %>
-<option value="<%= opcao.getId_ciclo() %>" <%= String.valueOf(opcao.getId_ciclo()).equals(valorIdCicloCadastro) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-lição-aprendida-id_ciclo" data-lista="sugestoes-fk-ciclo-lista" data-validar-lista data-campo-valor="cad-lição-aprendida-id_ciclo-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-lição-aprendida-id_ciclo-valor" name="id_ciclo" value="<%= h(valorIdCicloCadastro) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-area">Área</label>
-                                        <input type="text" id="cad-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área" list="sugestoes-licoes-area" value="<%= h(recuperarCadastro ? request.getParameter("area") : "") %>">
+                                        <input type="text" id="cad-lição-aprendida-area" name="area" maxlength="30" placeholder="Digite área" data-lista="sugestoes-licoes-area-lista" value="<%= h(recuperarCadastro ? request.getParameter("area") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-categoria">Categoria</label>
-                                        <input type="text" id="cad-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria" list="sugestoes-licoes-categoria" value="<%= h(recuperarCadastro ? request.getParameter("categoria") : "") %>">
+                                        <input type="text" id="cad-lição-aprendida-categoria" name="categoria" maxlength="30" placeholder="Digite categoria" data-lista="sugestoes-licoes-categoria-lista" value="<%= h(recuperarCadastro ? request.getParameter("categoria") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-lição-aprendida-fase_origem">Fase de origem</label>
@@ -477,7 +474,7 @@ if (recuperarEdicao) {
                             <div class="modal modal-grande">
                                 <h2>Editar lição aprendida</h2>
 <% if (recuperarEdicao) { %><p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p><% } %>
-                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/licoes-aprendidas-servlet">
+                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/licoes-aprendidas-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="atualizar">
 
                                     <input type="hidden" name="id-licoesAprendidas" value="<%= licao.getId_licao() %>">
@@ -487,20 +484,16 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-id_ciclo-<%= licao.getId_licao() %>">Ciclo</label>
-                                        <select id="edi-lição-aprendida-id_ciclo-<%= licao.getId_licao() %>" name="id_ciclo" required>
-<option value="">Selecione</option>
-<% for (Ciclo opcao : cicloOpcoes) { %>
-<option value="<%= opcao.getId_ciclo() %>" <%= String.valueOf(opcao.getId_ciclo()).equals(valorIdCicloEdicao) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-lição-aprendida-id_ciclo-<%= licao.getId_licao() %>" data-lista="sugestoes-fk-ciclo-lista" data-validar-lista data-campo-valor="edi-lição-aprendida-id_ciclo-<%= licao.getId_licao() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-lição-aprendida-id_ciclo-<%= licao.getId_licao() %>-valor" name="id_ciclo" value="<%= h(valorIdCicloEdicao) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-area-<%= licao.getId_licao() %>">Área</label>
-                                        <input type="text" id="edi-lição-aprendida-area-<%= licao.getId_licao() %>" name="area" maxlength="30" placeholder="Digite área" list="sugestoes-licoes-area" value="<%= h(recuperarEdicao ? request.getParameter("area") : licao.getArea()) %>">
+                                        <input type="text" id="edi-lição-aprendida-area-<%= licao.getId_licao() %>" name="area" maxlength="30" placeholder="Digite área" data-lista="sugestoes-licoes-area-lista" value="<%= h(recuperarEdicao ? request.getParameter("area") : licao.getArea()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-categoria-<%= licao.getId_licao() %>">Categoria</label>
-                                        <input type="text" id="edi-lição-aprendida-categoria-<%= licao.getId_licao() %>" name="categoria" maxlength="30" placeholder="Digite categoria" list="sugestoes-licoes-categoria" value="<%= h(recuperarEdicao ? request.getParameter("categoria") : licao.getCategoria()) %>">
+                                        <input type="text" id="edi-lição-aprendida-categoria-<%= licao.getId_licao() %>" name="categoria" maxlength="30" placeholder="Digite categoria" data-lista="sugestoes-licoes-categoria-lista" value="<%= h(recuperarEdicao ? request.getParameter("categoria") : licao.getCategoria()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-lição-aprendida-fase_origem-<%= licao.getId_licao() %>">Fase de origem</label>
@@ -544,7 +537,7 @@ if (recuperarEdicao) {
 <p><%= h(licao.getTitulo() == null || licao.getTitulo().isBlank() ? "—" : licao.getTitulo()) %></p>
                                 <h2>Excluir lição aprendida</h2>
                                 <p>Tem certeza que deseja excluir esta lição aprendida?</p>
-                                <form method="post" action="<%= request.getContextPath() %>/licoes-aprendidas-servlet">
+                                <form method="post" action="<%= request.getContextPath() %>/licoes-aprendidas-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="excluir">
 
                                     <input type="hidden" name="id-licoesAprendidas" value="<%= licao.getId_licao() %>">
@@ -559,20 +552,43 @@ if (recuperarEdicao) {
 <% } %>
                 </section>
 
-                <datalist id="sugestoes-licoes-area">
+
+<div id="sugestoes-licoes-area-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : areaList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
-                <datalist id="sugestoes-licoes-categoria">
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+
+<div id="sugestoes-licoes-categoria-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : categoriaList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-ciclo-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Ciclo opcao : cicloOpcoes) {
+    String nomeOpcao = opcao.getNome();
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Ciclo outra : cicloOpcoes) {
+            String outroNome = outra.getNome();
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_ciclo() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_ciclo() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
             </main>
         </div>
     </body>

@@ -58,9 +58,10 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Colaborador</title>
-        <script src="<%= request.getContextPath() %>/assets/js/crud.js" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=ordenacao-local-2" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/regex.js?v=7c47ef420f" defer></script>
     </head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
@@ -107,16 +108,17 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                     </a>
                 </nav>
                 <div class="perfil-barra">
-                    <a href="<%= request.getContextPath() %>/crud/configurações.html" class="perfil-admin">
+                    <% br.com.acta.model.AdministradorGeral adm = (br.com.acta.model.AdministradorGeral) session.getAttribute("usuarioLogado"); %>
+                    <a href="<%= request.getContextPath() %>/crud/configuracoes.jsp" class="perfil-admin">
                         <div class="perfil-foto">
-                            <img src="<%= request.getContextPath() %>/assets/images/foto_perfil.svg" alt="Foto de perfil">
+                            <img src="<%= adm != null && adm.getImagem() != null && !adm.getImagem().isBlank() ? h(adm.getImagem().replace("/image/upload/", "/image/upload/c_fill,w_96,h_96,q_auto,f_auto/")) : request.getContextPath() + "/assets/images/foto_perfil.svg" %>" alt="Foto de perfil">
                         </div>
                         <div class="perfil-info">
-                            <span class="perfil-nome">Área administrativa</span>
-                            <span class="perfil-email">ACTA</span>
+                            <span class="perfil-nome"><%= adm != null ? adm.getNome() : "Administrador" %></span>
+                            <span class="perfil-email"><%= adm != null ? adm.getEmail() : "" %></span>
                         </div>
                     </a>
-                    <a href="<%= request.getContextPath() %>/login.html" class="botao botao-sair">Sair</a>
+                    <form method="post" action="<%= request.getContextPath() %>/logout-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>"><button type="submit" class="botao botao-sair">Sair</button></form>
                 </div>
             </aside>
             <main class="conteudo">
@@ -154,19 +156,16 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-colaborador-area">Área</label>
-                                                <input type="text" id="filtros-colaborador-area" name="area" list="sugestoes-colaborador-area" maxlength="30" value="<%= h(filtroArea) %>">
+                                                <input type="text" id="filtros-colaborador-area" name="area" data-lista="sugestoes-colaborador-area-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroArea) %>">
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-colaborador-cargo">Cargo</label>
-                                                <input type="text" id="filtros-colaborador-cargo" name="cargo" list="sugestoes-colaborador-cargo" maxlength="100" value="<%= h(filtroCargo) %>">
+                                                <input type="text" id="filtros-colaborador-cargo" name="cargo" data-lista="sugestoes-colaborador-cargo-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroCargo) %>">
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-colaborador-gestor">Permissão de gestor</label>
-                                                <select id="filtros-colaborador-gestor" name="gestor">
-                                                    <option value="" <%= "".equals(filtroGestor) ? "selected" : "" %>>Todos</option>
-                                                    <option value="true" <%= "true".equals(filtroGestor) ? "selected" : "" %>>Sim</option>
-                                                    <option value="false" <%= "false".equals(filtroGestor) ? "selected" : "" %>>Não</option>
-                                                </select>
+                                                <input type="text" id="filtros-colaborador-gestor" data-lista="sugestoes-permissao-gestor-lista" data-validar-lista data-campo-valor="filtros-colaborador-gestor-valor" autocomplete="off" placeholder="Todos">
+<input type="hidden" id="filtros-colaborador-gestor-valor" name="gestor" value="<%= h(filtroGestor) %>">
                                             </div>
                                             <div class="campo periodo-datas">
                                                 <span class="rotulo-campo">Contratação</span>
@@ -365,7 +364,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
 <tr><td colspan="15">Nenhum registro encontrado.</td></tr>
 <% } %>
 <% for (Colaborador colaborador : colaboradores) { %>
-<tr><td><%= h(colaborador.getId_colaborador()) %></td><td><%= h(colaborador.getNome() == null || colaborador.getNome().isBlank() ? "—" : colaborador.getNome()) %></td><td><%= h(colaborador.getSobrenome() == null || colaborador.getSobrenome().isBlank() ? "—" : colaborador.getSobrenome()) %></td><td><%= h(colaborador.getArea() == null || colaborador.getArea().isBlank() ? "—" : colaborador.getArea()) %></td><td><%= h(colaborador.getCargo() == null || colaborador.getCargo().isBlank() ? "—" : colaborador.getCargo()) %></td><td><%= h(colaborador.getTelefone() == null || colaborador.getTelefone().isBlank() ? "—" : colaborador.getTelefone()) %></td><td><%= h(colaborador.getCpf() == null || colaborador.getCpf().isBlank() ? "—" : colaborador.getCpf()) %></td><td><%= h(colaborador.getEmail() == null || colaborador.getEmail().isBlank() ? "—" : colaborador.getEmail()) %></td><td><%
+<tr><td><%= h(colaborador.getId_colaborador()) %></td><td><%= h(colaborador.getNome() == null || colaborador.getNome().isBlank() ? "—" : colaborador.getNome()) %></td><td><%= h(colaborador.getSobrenome() == null || colaborador.getSobrenome().isBlank() ? "—" : colaborador.getSobrenome()) %></td><td><%= h(colaborador.getArea() == null || colaborador.getArea().isBlank() ? "—" : colaborador.getArea()) %></td><td><%= h(colaborador.getCargo() == null || colaborador.getCargo().isBlank() ? "—" : colaborador.getCargo()) %></td><td data-formato="telefone"><%= h(colaborador.getTelefone() == null || colaborador.getTelefone().isBlank() ? "—" : colaborador.getTelefone()) %></td><td data-formato="cpf"><%= h(colaborador.getCpf() == null || colaborador.getCpf().isBlank() ? "—" : colaborador.getCpf()) %></td><td><%= h(colaborador.getEmail() == null || colaborador.getEmail().isBlank() ? "—" : colaborador.getEmail()) %></td><td><%
 String textoStatus = "—";
 if (colaborador.getStatus() == Status.ATIVA) {
     textoStatus = "Ativa";
@@ -393,8 +392,8 @@ else if (colaborador.getStatus() == Status.INATIVA) {
                                     <div class="detalhe"><span class="detalhe-label">Sobrenome</span><span class="detalhe-valor"><%= h(colaborador.getSobrenome() == null || colaborador.getSobrenome().isBlank() ? "—" : colaborador.getSobrenome()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Área</span><span class="detalhe-valor"><%= h(colaborador.getArea() == null || colaborador.getArea().isBlank() ? "—" : colaborador.getArea()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Cargo</span><span class="detalhe-valor"><%= h(colaborador.getCargo() == null || colaborador.getCargo().isBlank() ? "—" : colaborador.getCargo()) %></span></div>
-                                    <div class="detalhe"><span class="detalhe-label">Telefone</span><span class="detalhe-valor"><%= h(colaborador.getTelefone() == null || colaborador.getTelefone().isBlank() ? "—" : colaborador.getTelefone()) %></span></div>
-                                    <div class="detalhe"><span class="detalhe-label">CPF</span><span class="detalhe-valor"><%= h(colaborador.getCpf() == null || colaborador.getCpf().isBlank() ? "—" : colaborador.getCpf()) %></span></div>
+                                    <div class="detalhe"><span class="detalhe-label">Telefone</span><span class="detalhe-valor" data-formato="telefone"><%= h(colaborador.getTelefone() == null || colaborador.getTelefone().isBlank() ? "—" : colaborador.getTelefone()) %></span></div>
+                                    <div class="detalhe"><span class="detalhe-label">CPF</span><span class="detalhe-valor" data-formato="cpf"><%= h(colaborador.getCpf() == null || colaborador.getCpf().isBlank() ? "—" : colaborador.getCpf()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Email</span><span class="detalhe-valor"><%= h(colaborador.getEmail() == null || colaborador.getEmail().isBlank() ? "—" : colaborador.getEmail()) %></span></div>
                                     <div class="detalhe"><span class="detalhe-label">Status</span><span class="detalhe-valor"><%
 String textoStatus = "—";
@@ -434,7 +433,7 @@ if (recuperarCadastro) {
                             <div class="modal modal-larga">
                                 <h2>Cadastrar colaborador</h2>
 <% if (recuperarCadastro) { %><p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p><% } %>
-                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/colaborador-servlet">
+                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/colaborador-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-colaborador-nome">Nome</label>
@@ -446,11 +445,11 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-telefone">Telefone</label>
-                                        <input type="tel" id="cad-colaborador-telefone" name="telefone" required maxlength="15" inputmode="numeric" pattern="^(?:\([0-9]{2}\)|[0-9]{2}) ?[0-9]{5}-?[0-9]{4}$" value="<%= h(recuperarCadastro ? request.getParameter("telefone") : "") %>">
+                                        <input type="tel" id="cad-colaborador-telefone" name="telefone" data-mascara="telefone" required maxlength="15" inputmode="numeric" pattern="^(?:\([0-9]{2}\)|[0-9]{2}) ?[0-9]{4,5}-?[0-9]{4}$" value="<%= h(recuperarCadastro ? request.getParameter("telefone") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-cpf">CPF</label>
-                                        <input type="text" id="cad-colaborador-cpf" name="cpf" required maxlength="14" inputmode="numeric" pattern="^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2}$" value="<%= h(recuperarCadastro ? request.getParameter("cpf") : "") %>">
+                                        <input type="text" id="cad-colaborador-cpf" name="cpf" data-mascara="cpf" required maxlength="14" inputmode="numeric" pattern="^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2}$" value="<%= h(recuperarCadastro ? request.getParameter("cpf") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-senha">Senha</label>
@@ -463,11 +462,11 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-area">Área</label>
-                                        <input type="text" id="cad-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required list="sugestoes-colaborador-area" value="<%= h(recuperarCadastro ? request.getParameter("area") : "") %>">
+                                        <input type="text" id="cad-colaborador-area" name="area" maxlength="30" placeholder="Digite área" required data-lista="sugestoes-colaborador-area-lista" value="<%= h(recuperarCadastro ? request.getParameter("area") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-cargo">Cargo</label>
-                                        <input type="text" id="cad-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required list="sugestoes-colaborador-cargo" value="<%= h(recuperarCadastro ? request.getParameter("cargo") : "") %>">
+                                        <input type="text" id="cad-colaborador-cargo" name="cargo" maxlength="100" placeholder="Digite cargo" required data-lista="sugestoes-colaborador-cargo-lista" value="<%= h(recuperarCadastro ? request.getParameter("cargo") : "") %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-dt_contratacao">Data de contratação</label>
@@ -482,19 +481,13 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-permissao_gestor">Permissão de gestor</label>
-                                        <select id="cad-colaborador-permissao_gestor" name="permissao_gestor" required>
-                                            <option value="false" <%= "false".equals(valorPermissaoGestorCadastro) ? "selected" : "" %>>Não</option>
-                                            <option value="true" <%= "true".equals(valorPermissaoGestorCadastro) ? "selected" : "" %>>Sim</option>
-                                        </select>
+                                        <input type="text" id="cad-colaborador-permissao_gestor" data-lista="sugestoes-permissao-gestor-lista" data-validar-lista data-campo-valor="cad-colaborador-permissao_gestor-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-colaborador-permissao_gestor-valor" name="permissao_gestor" value="<%= h(valorPermissaoGestorCadastro == null || valorPermissaoGestorCadastro.isBlank() ? "false" : valorPermissaoGestorCadastro) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-id_empresa">Empresa</label>
-                                        <select id="cad-colaborador-id_empresa" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaCadastro) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-colaborador-id_empresa" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="cad-colaborador-id_empresa-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-colaborador-id_empresa-valor" name="id_empresa" value="<%= h(valorIdEmpresaCadastro) %>">
                                     </div>
                                     <div class="botoes-modal">
                                         <a href="#colaborador" class="botao botao-cancelar">Cancelar</a>
@@ -531,7 +524,7 @@ if (recuperarEdicao) {
                             <div class="modal modal-larga">
                                 <h2>Editar colaborador</h2>
 <% if (recuperarEdicao) { %><p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p><% } %>
-                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/colaborador-servlet">
+                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/colaborador-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="atualizar">
 
                                     <input type="hidden" name="id-colaborador" value="<%= colaborador.getId_colaborador() %>">
@@ -549,11 +542,11 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-telefone-<%= colaborador.getId_colaborador() %>">Telefone</label>
-                                        <input type="tel" id="edi-colaborador-telefone-<%= colaborador.getId_colaborador() %>" name="telefone" required maxlength="15" inputmode="numeric" pattern="^(?:\([0-9]{2}\)|[0-9]{2}) ?[0-9]{5}-?[0-9]{4}$" value="<%= h(recuperarEdicao ? request.getParameter("telefone") : colaborador.getTelefone()) %>">
+                                        <input type="tel" id="edi-colaborador-telefone-<%= colaborador.getId_colaborador() %>" name="telefone" data-mascara="telefone" required maxlength="15" inputmode="numeric" pattern="^(?:\([0-9]{2}\)|[0-9]{2}) ?[0-9]{4,5}-?[0-9]{4}$" value="<%= h(recuperarEdicao ? request.getParameter("telefone") : colaborador.getTelefone()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-cpf-<%= colaborador.getId_colaborador() %>">CPF</label>
-                                        <input type="text" id="edi-colaborador-cpf-<%= colaborador.getId_colaborador() %>" name="cpf" required maxlength="14" inputmode="numeric" pattern="^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2}$" value="<%= h(recuperarEdicao ? request.getParameter("cpf") : colaborador.getCpf()) %>">
+                                        <input type="text" id="edi-colaborador-cpf-<%= colaborador.getId_colaborador() %>" name="cpf" data-mascara="cpf" required maxlength="14" inputmode="numeric" pattern="^[0-9]{3}\.?[0-9]{3}\.?[0-9]{3}-?[0-9]{2}$" value="<%= h(recuperarEdicao ? request.getParameter("cpf") : colaborador.getCpf()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-dt_contratacao-<%= colaborador.getId_colaborador() %>">Data de contratação</label>
@@ -562,11 +555,11 @@ if (recuperarEdicao) {
 
                                     <div class="campo">
                                         <label for="edi-colaborador-area-<%= colaborador.getId_colaborador() %>">Área</label>
-                                        <input type="text" id="edi-colaborador-area-<%= colaborador.getId_colaborador() %>" name="area" maxlength="30" placeholder="Digite área" required list="sugestoes-colaborador-area" value="<%= h(recuperarEdicao ? request.getParameter("area") : colaborador.getArea()) %>">
+                                        <input type="text" id="edi-colaborador-area-<%= colaborador.getId_colaborador() %>" name="area" maxlength="30" placeholder="Digite área" required data-lista="sugestoes-colaborador-area-lista" value="<%= h(recuperarEdicao ? request.getParameter("area") : colaborador.getArea()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-cargo-<%= colaborador.getId_colaborador() %>">Cargo</label>
-                                        <input type="text" id="edi-colaborador-cargo-<%= colaborador.getId_colaborador() %>" name="cargo" maxlength="100" placeholder="Digite cargo" required list="sugestoes-colaborador-cargo" value="<%= h(recuperarEdicao ? request.getParameter("cargo") : colaborador.getCargo()) %>">
+                                        <input type="text" id="edi-colaborador-cargo-<%= colaborador.getId_colaborador() %>" name="cargo" maxlength="100" placeholder="Digite cargo" required data-lista="sugestoes-colaborador-cargo-lista" value="<%= h(recuperarEdicao ? request.getParameter("cargo") : colaborador.getCargo()) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-status-<%= colaborador.getId_colaborador() %>">Status</label>
@@ -577,19 +570,13 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>">Permissão de gestor</label>
-                                        <select id="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>" name="permissao_gestor" required>
-                                            <option value="false" <%= "false".equals(valorPermissaoGestorEdicao) ? "selected" : "" %>>Não</option>
-                                            <option value="true" <%= "true".equals(valorPermissaoGestorEdicao) ? "selected" : "" %>>Sim</option>
-                                        </select>
+                                        <input type="text" id="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>" data-lista="sugestoes-permissao-gestor-lista" data-validar-lista data-campo-valor="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>-valor" name="permissao_gestor" value="<%= h(valorPermissaoGestorEdicao == null || valorPermissaoGestorEdicao.isBlank() ? "false" : valorPermissaoGestorEdicao) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-id_empresa-<%= colaborador.getId_colaborador() %>">Empresa</label>
-                                        <select id="edi-colaborador-id_empresa-<%= colaborador.getId_colaborador() %>" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaEdicao) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-colaborador-id_empresa-<%= colaborador.getId_colaborador() %>" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="edi-colaborador-id_empresa-<%= colaborador.getId_colaborador() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-colaborador-id_empresa-<%= colaborador.getId_colaborador() %>-valor" name="id_empresa" value="<%= h(valorIdEmpresaEdicao) %>">
                                     </div>
                                     <div class="botoes-modal">
                                         <a href="#colaborador" class="botao botao-cancelar">Cancelar</a>
@@ -608,7 +595,7 @@ if (recuperarEdicao) {
 <p><%= h(colaborador.getNome() == null || colaborador.getNome().isBlank() ? "—" : colaborador.getNome()) %></p>
                                 <h2>Excluir colaborador</h2>
                                 <p>Tem certeza que deseja excluir este colaborador?</p>
-                                <form method="post" action="<%= request.getContextPath() %>/colaborador-servlet">
+                                <form method="post" action="<%= request.getContextPath() %>/colaborador-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="excluir">
 
                                     <input type="hidden" name="id-colaborador" value="<%= colaborador.getId_colaborador() %>">
@@ -623,20 +610,50 @@ if (recuperarEdicao) {
 <% } %>
                 </section>
 
-                <datalist id="sugestoes-colaborador-area">
+
+<div id="sugestoes-colaborador-area-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : areaList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
-                <datalist id="sugestoes-colaborador-cargo">
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+
+<div id="sugestoes-colaborador-cargo-lista" class="lista-escolhas" role="listbox" hidden>
 <% for (String sugestao : cargoList) { %>
 <% if (sugestao != null && !sugestao.isBlank()) { %>
-<option value="<%= h(sugestao) %>"></option>
+<button type="button" role="option" data-valor="<%= h(sugestao) %>"><%= h(sugestao) %></button>
 <% } %>
 <% } %>
-</datalist>
+<button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-empresa-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Empresa opcao : empresaOpcoes) {
+    String nomeOpcao = opcao.getNome();
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Empresa outra : empresaOpcoes) {
+            String outroNome = outra.getNome();
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_empresa() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_empresa() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-permissao-gestor-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (boolean opcao : new boolean[]{false, true}) { %>
+<button type="button" role="option" data-valor="<%= opcao %>"><%= opcao ? "Sim" : "Não" %></button>
+<% } %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
             </main>
         </div>
     </body>

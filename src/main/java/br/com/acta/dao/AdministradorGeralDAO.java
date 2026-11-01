@@ -13,10 +13,33 @@ import br.com.acta.excecoes.DaoException;
 import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
+import br.com.acta.excecoes.ValidacaoException;
 import br.com.acta.utils.Conexao;
 import br.com.acta.utils.PasswordUtils;
 
 public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
+
+    public List<String> buscarEmpresasAtivas(Long idAdministrador) {
+        List<String> empresas = new ArrayList<>();
+        String sql = """
+                SELECT emp.nome
+                FROM empresa_administrador_geral eag
+                JOIN empresa emp ON emp.id_empresa = eag.id_empresa
+                WHERE eag.id_adm_geral = ? AND emp.status = 'ATIVA'
+                ORDER BY emp.nome;
+                """;
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, idAdministrador);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) empresas.add(rs.getString("nome"));
+            }
+            return empresas;
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DaoException("Erro ao consultar as empresas vinculadas ao administrador.", e);
+        }
+    }
 
     //metodos DAO
 
@@ -58,7 +81,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     //buscar com id
     @Override
     public AdministradorGeral buscar(Long id) {
-        String sql = "SELECT id_adm_geral, nome, email, telefone FROM administrador_geral WHERE id_adm_geral = ?;";
+        String sql = "SELECT id_adm_geral, nome, email, telefone, imagem FROM administrador_geral WHERE id_adm_geral = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -81,7 +104,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     @Override
     public List<AdministradorGeral> buscar() {
         List<AdministradorGeral> administradoresGerais = new ArrayList<>();
-        String sql = "SELECT id_adm_geral, nome, email, telefone FROM administrador_geral;";
+        String sql = "SELECT id_adm_geral, nome, email, telefone, imagem FROM administrador_geral;";
 
         try (Connection conn = Conexao.conectar();
              Statement stmt = conn.createStatement();
@@ -165,7 +188,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     //atualizar
     @Override
     public int atualizar(AdministradorGeral administradorGeral) {
-        String sql = "UPDATE administrador_geral SET nome = ?, email = ?, telefone = ? WHERE id_adm_geral = ?;";
+        String sql = "UPDATE administrador_geral SET nome = ?, email = ?, telefone = ?, imagem = ? WHERE id_adm_geral = ?;";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql)){
@@ -173,7 +196,8 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
             pstmt.setString(1,administradorGeral.getNome());
             pstmt.setString(2,administradorGeral.getEmail());
             pstmt.setString(3, administradorGeral.getTelefone());
-            pstmt.setLong(4,administradorGeral.getAdm_geral_id());
+            pstmt.setString(4, administradorGeral.getImagem());
+            pstmt.setLong(5,administradorGeral.getAdm_geral_id());
 
             if (pstmt.executeUpdate() > 0) return 1;
 
@@ -217,14 +241,14 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
                     if (rs.next()) {
                         hashAtual = rs.getString("senha");
                     } else {
-                        return 0; // usuário não encontrado
+                        throw new RegistroNaoEncontradoException("Administrador não encontrado para alteração de senha.");
                     }
                 }
             }
 
             //conferir se a antiga senha iguala com o hash salvo
             if (!PasswordUtils.verificarSenha(senhaAntiga, hashAtual)) {
-                return 0;
+                throw new ValidacaoException("A senha atual não confere.");
             }
 
             //gera novo hash e atualiza
@@ -233,7 +257,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
                 pstmtAtualizar.setString(2, email);
 
                 if (pstmtAtualizar.executeUpdate() > 0) return 1;
-                else return 0;
+                throw new RegistroNaoEncontradoException("Administrador não encontrado para alteração de senha.");
             }
 
         } catch (SQLException e) {
@@ -299,6 +323,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         administradorGeral.setNome(rs.getString("nome"));
         administradorGeral.setEmail(rs.getString("email"));
         administradorGeral.setTelefone(rs.getString("telefone"));
+        administradorGeral.setImagem(rs.getString("imagem"));
         return administradorGeral;
     }
 

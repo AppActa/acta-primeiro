@@ -772,15 +772,15 @@ td.coluna-acao {
     padding: 30px;
 }
  
-/* Página em duas colunas: dados à esquerda, cartão verde ocupando toda a direita */
+/* Página em duas colunas: foto grande à esquerda, bloco de dados à direita */
 .config {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
     gap: 30px;
     min-height: calc(100vh - 60px);
 }
  
-/* Chaves invisíveis que controlam os modos de edição.
+/* Chaves invisíveis que controlam a edição e o modal de senha.
    Ficam "fixed" no canto da tela: assim, clicar em Editar nunca rola a página. */
 .config-toggle {
     position: fixed;
@@ -792,12 +792,13 @@ td.coluna-acao {
     pointer-events: none;
 }
  
-/* Coluna da esquerda (mais afastada da sidebar) */
+/* ---------- Coluna da esquerda: título + foto bem grande ---------- */
 .config-principal {
-    padding: 18px 40px 0 70px;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 20px 0 70px;
 }
  
-/* Título com linha embaixo */
 .config .config-titulo {
     width: 370px;
     max-width: 100%;
@@ -806,29 +807,21 @@ td.coluna-acao {
     line-height: 1.2;
     color: var(--cor-primaria);
     padding-bottom: 8px;
-    margin-bottom: 55px;
     border-bottom: 1px solid var(--cor-primaria);
 }
  
-/* Perfil: troca entre visualização e edição, mantendo tudo no mesmo lugar */
-.config-edicao {
-    display: none;
+.config-foto-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
 }
  
-.config:has(#config-editar-perfil:checked) .config-leitura {
-    display: none;
-}
- 
-.config:has(#config-editar-perfil:checked) .config-edicao {
-    display: block;
-}
- 
-/* Foto de perfil grande e botão da câmera */
 .config-foto {
     position: relative;
-    width: 155px;
-    height: 155px;
-    margin: 0 0 90px 30px;
+    width: min(100%, clamp(220px, 28vw, 460px));
+    aspect-ratio: 1;
 }
  
 .config-foto > img {
@@ -839,12 +832,13 @@ td.coluna-acao {
     object-fit: cover;
 }
  
+/* Botão da câmera: fica sobre a borda do círculo, em qualquer tamanho de foto */
 .config-camera {
     position: absolute;
-    right: 4px;
-    bottom: 6px;
-    width: 30px;
-    height: 30px;
+    right: 9%;
+    bottom: 9%;
+    width: 11%;
+    aspect-ratio: 1;
     border-radius: 50%;
     background-color: #C4C4C4;
     display: flex;
@@ -859,59 +853,143 @@ td.coluna-acao {
 }
  
 .config-camera img {
-    width: 16px;
-    height: 16px;
+    width: 50%;
+    height: 50%;
     display: block;
 }
  
-/* Campos: o texto (visualização) e o input (edição) têm exatamente a mesma altura */
+/* Na visualização a câmera entra no modo de edição; na edição ela escolhe o arquivo */
+.config-camera-arquivo {
+    display: none;
+}
+ 
+.config:has(#config-editar-perfil:checked) .config-camera-modo {
+    display: none;
+}
+ 
+.config:has(#config-editar-perfil:checked) .config-camera-arquivo {
+    display: flex;
+}
+ 
+/* ---------- Bloco de dados (mesma cor do antigo cartão de contato) ---------- */
+.config-dados {
+    align-self: center;
+    margin-top: 120px; /* desce o bloco */
+    display: flex;
+    flex-direction: column;
+    padding: 48px clamp(28px, 3vw, 56px) 56px;
+    background-color: #8CBBBB;
+    border-radius: 16px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+    color: var(--cor-texto-suave);
+}
+ 
+/* Linha de cima: título à esquerda, Editar (ou Salvar/Cancelar) à direita */
+.config-dados-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 46px;
+    margin-bottom: 40px;
+}
+ 
+.config-dados h2 {
+    min-width: 0;
+    font-size: clamp(26px, 2.4vw, 34px);
+    font-weight: 500;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+ 
+.config-dados-botoes {
+    display: none;
+    gap: 10px;
+}
+ 
+.config:has(#config-editar-perfil:checked) .config-dados-editar {
+    display: none;
+}
+ 
+.config:has(#config-editar-perfil:checked) .config-dados-botoes {
+    display: flex;
+}
+ 
+/* Colunas proporcionais */
+.config-campos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 34px 40px;
+}
+ 
 .config-campo {
-    margin-bottom: 19px;
+    min-width: 0;
 }
  
 .config-rotulo {
     display: block;
     font-size: 22px;
     font-weight: 600;
-    line-height: 27px;
-    color: var(--cor-primaria);
-    margin-bottom: 5px;
+    line-height: 28px;
+    margin-bottom: 8px;
 }
  
+/* Texto (visualização) e input (edição) têm exatamente a mesma altura */
 .config-valor {
     display: flex;
     align-items: center;
-    height: 38px;
-    font-size: 16px;
-    line-height: 20px;
-    color: var(--cor-texto);
+    height: 48px;
+    font-size: 20px;
+    line-height: 24px;
     word-break: break-all;
 }
  
 .config-valor a {
-    color: var(--cor-texto);
+    color: inherit;
     text-decoration: underline;
 }
  
-/* Inputs no mesmo formato dos formulários de cadastrar (borda verde, cantos 4px) */
-.config-edicao input[type="text"],
-.config-edicao input[type="email"],
-.config-edicao input[type="password"] {
-    display: block;
-    width: 268px;
-    max-width: 100%;
-    height: 38px;
-    padding: 8px 12px;
-    font-size: 16px;
+/* Inputs no mesmo formato dos formulários de cadastrar */
+.config-campo input {
+    display: none;
+    width: 100%;
+    height: 48px;
+    padding: 10px 14px;
+    font-size: 20px;
     border: 1px solid var(--cor-borda);
     border-radius: 4px;
 }
  
-.config-edicao input:focus {
+.config-campo input:focus {
     outline: 2px solid var(--cor-borda);
 }
  
-/* Botões arredondados (usam as cores do sistema: .botao-principal e .botao-cancelar) */
+.config:has(#config-editar-perfil:checked) .config-campo input {
+    display: block;
+}
+ 
+.config:has(#config-editar-perfil:checked) .config-valor.editavel {
+    display: none;
+}
+ 
+.config-senha-acao {
+    display: none;
+    align-items: center;
+    height: 48px;
+}
+ 
+.config:has(#config-editar-perfil:checked) .config-senha-acao {
+    display: flex;
+}
+
+.config-senha-acao .botao-secundario,
+.config-senha-acao .botao-secundario:hover {
+    background-color: var(--cor-card);
+}
+ 
+/* Botões arredondados */
 .botao-pilula {
     height: 36px;
     min-width: 96px;
@@ -928,137 +1006,45 @@ td.coluna-acao {
     padding: 0 18px;
 }
  
-.config-botoes {
-    display: flex;
-    gap: 10px;
-    margin-top: 22px;
+/* Botões um pouco maiores dentro do bloco de dados */
+.config-dados .botao-pilula {
+    height: 42px;
+    min-width: 112px;
+    padding: 0 28px;
+    font-size: 16px;
 }
  
-/* ---------- Cartão de contato: o "quadradão" verde da direita ---------- */
-.config-contato {
-    display: flex;
-    flex-direction: column;
-    padding: 36px 40px 40px;
-    background-color: #8CBBBB;
-    border-radius: 16px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
-    color: var(--cor-texto-suave);
-}
- 
-.config-contato-form {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-}
- 
-/* Linha de cima: título + lápis (ou Salvar/Cancelar) no canto superior direito */
-.config-contato-topo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+.config-dados .botao-pilula-sm {
     height: 40px;
-    margin-bottom: 24px;
+    min-width: 100px;
+    padding: 0 22px;
+    font-size: 15px;
 }
  
-.config-contato h2 {
-    font-size: 28px;
-    font-weight: 500;
-    line-height: 35px;
+/* Modal "Alterar senha" */
+.config-modal {
+    display: none;
 }
  
-.config-contato-lapis {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: var(--cor-fundo);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
- 
-.config-contato-lapis:hover {
-    background-color: var(--cor-card);
-}
- 
-.config-contato-lapis img {
-    width: 20px;
-    height: 20px;
+.config:has(#config-modal-senha:checked) .config-modal {
     display: block;
 }
  
-.config-contato-botoes {
-    display: none;
-    gap: 10px;
+.config-modal .modal-fundo {
+    position: relative;
 }
  
-.config:has(#config-editar-contato:checked) .config-contato-lapis {
-    display: none;
+.config-modal-fundo-fechar {
+    position: absolute;
+    inset: 0;
+    cursor: default;
 }
  
-.config:has(#config-editar-contato:checked) .config-contato-botoes {
-    display: flex;
+.config-modal .modal {
+    position: relative;
 }
  
-/* Linhas de informação: texto e input com a mesma altura */
-.config-contato-linha {
-    display: flex;
-    align-items: center;
-    height: 40px;
-}
- 
-.config-contato-linha p {
-    font-size: 18px;
-    line-height: 24px;
-}
- 
-.config-contato a {
-    color: var(--cor-texto);
-    text-decoration: underline;
-}
- 
-.config-contato-linha input {
-    display: none;
-    width: 100%;
-    height: 40px;
-    padding: 8px 12px;
-    font-size: 18px;
-    border: 1px solid var(--cor-borda);
-    border-radius: 4px;
-}
- 
-.config-contato-linha input:focus {
-    outline: 2px solid var(--cor-borda);
-}
- 
-.config:has(#config-editar-contato:checked) .contato-leitura {
-    display: none;
-}
- 
-.config:has(#config-editar-contato:checked) .config-contato-linha input {
-    display: block;
-}
- 
-/* Mapa: ocupa toda a largura do cartão e o espaço que sobra na altura */
-.config-contato iframe {
-    display: block;
-    width: 100%;
-    flex: 1;
-    min-height: 300px;
-    margin: 13px 0 17px;
-    border: 0;
-    border-radius: 10px;
-}
- 
-.config-contato-grupo .config-contato-linha + .config-contato-linha {
-    margin-top: 6px;
-}
- 
-/* Telas menores: cartão vai para baixo dos dados */
+/* Telas menores: foto em cima, bloco de dados embaixo */
 @media (max-width: 1100px) {
     .config {
         grid-template-columns: 1fr;
@@ -1069,13 +1055,41 @@ td.coluna-acao {
         padding: 18px 0 0 20px;
     }
  
-    .config-contato {
-        min-height: 520px;
+    .config-foto-area {
+        padding: 30px 0 10px;
+    }
+ 
+    .config-foto {
+        width: clamp(200px, 50vw, 320px);
+    }
+ 
+    .config-dados {
+        align-self: stretch;
+        margin-top: 0;
+    }
+}
+ 
+@media (max-width: 640px) {
+    .config-campos {
+        grid-template-columns: 1fr;
+    }
+ 
+    .config-dados {
+        padding: 28px 22px 32px;
+    }
+ 
+    .config-dados-topo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
     }
 }
 
 /* Componentes das telas CRUD: filtros, períodos e ordenação. */
-.crud-admin .barra-acoes { position: relative; align-items: flex-start; }
+.crud-admin .barra-acoes { 
+    position: relative; 
+    align-items: flex-start; 
+}
 .crud-admin .barra-acoes > .filtro-container {
     position: static;
     flex: 0 0 auto;
@@ -1089,7 +1103,9 @@ td.coluna-acao {
     width: min(420px, calc(100vw - 24px));
     z-index: 1001;
 }
-.crud-admin .filtros-painel[hidden] { display: none; }
+.crud-admin .filtros-painel[hidden] { 
+    display: none; 
+}
 .crud-admin .filtros-painel .modal-filtros {
     max-width: none;
     max-height: calc(100dvh - 24px);
@@ -1098,33 +1114,97 @@ td.coluna-acao {
 }
 .crud-admin .filtros-painel .campo,
 .crud-admin .filtros-painel input,
-.crud-admin .filtros-painel select { min-width: 0; max-width: 100%; }
-.crud-admin .filtros-painel .modal-fechar { border: 0; background: transparent; cursor: pointer; }
-.crud-admin .datas-linha { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
-.crud-admin .datas-linha .campo { min-width: 0; }
-.crud-admin .datas-linha input { width: 100%; min-width: 0; padding: 8px 4px; }
-.crud-admin .filtros-painel .formulario { gap: 18px; }
+.crud-admin .filtros-painel select { 
+    min-width: 0; 
+    max-width: 100%; 
+}
+.crud-admin .filtros-painel .modal-fechar { 
+    border: 0; 
+    background: transparent; 
+    cursor: pointer; 
+}
+.crud-admin .datas-linha { 
+    display: grid; 
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); 
+    gap: 10px; 
+}
+.crud-admin .datas-linha .campo { 
+    min-width: 0; 
+}
+.crud-admin .datas-linha input { 
+    width: 100%; 
+    min-width: 0; 
+    padding: 8px 4px; 
+}
+.crud-admin .filtros-painel .formulario { 
+    gap: 18px; 
+}
 .crud-admin .filtros-painel .formulario > .campo > label,
 .crud-admin .filtros-painel .periodo-datas > .rotulo-campo {
     font-size: 14px;
     font-weight: 600;
     line-height: 1.4;
 }
-.crud-admin .filtros-painel .periodo-datas > .rotulo-campo { margin-bottom: 8px; }
-.crud-admin .filtros-painel .datas-linha label { font-size: 12px; font-weight: 400; }
-.crud-admin .filtros-painel h2 { font-size: 18px; }
+.crud-admin .filtros-painel .periodo-datas > .rotulo-campo { 
+    margin-bottom: 8px; 
+}
+.crud-admin .filtros-painel .datas-linha label { 
+    font-size: 12px; 
+    font-weight: 400; 
+}
+.crud-admin .filtros-painel h2 { 
+    font-size: 18px; 
+}
 .crud-admin .filtros-painel .modal-topo {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
 }
-.crud-admin .botao-ordenacao { font: inherit; color: inherit; padding: 0; border: 0; background: transparent; cursor: pointer; text-align: left; }
-.crud-admin .botao-ordenacao:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
-.crud-admin th[aria-sort="ascending"] button[data-ordenar] span::after { content: " ▲"; }
-.crud-admin th[aria-sort="descending"] button[data-ordenar] span::after { content: " ▼"; }
+.crud-admin thead th {
+    height: 48px;
+    line-height: 20px;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.crud-admin thead th.coluna-acao { text-align: center; }
+.crud-admin th.coluna-ordenavel { position: relative; padding: 0; }
+.crud-admin th.coluna-ordenavel form { margin: 0; }
+.crud-admin .botao-ordenacao {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 32px 12px 16px;
+    font: inherit;
+    line-height: 20px;
+    color: inherit;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+}
+.crud-admin .botao-ordenacao > span {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.crud-admin .botao-ordenacao::before { content: ""; position: absolute; inset: 0; }
+.crud-admin .botao-ordenacao:focus-visible { outline: 2px solid currentColor; outline-offset: -3px; }
+.crud-admin th[aria-sort="ascending"] button[data-ordenar] span::after { 
+    content: " ▲"; 
+}
+.crud-admin th[aria-sort="descending"] button[data-ordenar] span::after { 
+    content: " ▼"; 
+}
 
-.crud-admin a.botao-ordenacao { display: inline-block; text-decoration: none; }
+.crud-admin a.botao-ordenacao { 
+    text-decoration: none; 
+}
 .crud-admin .mensagem {
     padding: 12px 16px;
     margin-bottom: 16px;
@@ -1132,5 +1212,230 @@ td.coluna-acao {
     border-radius: 6px;
     background-color: var(--cor-card);
 }
-.crud-admin .mensagem-erro { border-color: var(--cor-perigo); color: var(--cor-perigo); }
-.crud-admin .detalhe-valor { white-space: pre-wrap; }
+.crud-admin .mensagem-erro { 
+    border-color: var(--cor-perigo); 
+    color: var(--cor-perigo); 
+}
+.crud-admin .detalhe-valor { 
+    white-space: pre-wrap; 
+}
+
+/* Listas geradas pelos JSPs, alinhadas aos campos de pesquisa. */
+.crud-admin .lista-escolhas {
+    position: fixed;
+    z-index: 2000;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 4px;
+    background: var(--cor-card);
+    color: var(--cor-texto);
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.crud-admin .lista-escolhas button {
+    display: block;
+    width: 100%;
+    padding: 9px 12px;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+}
+.crud-admin .lista-escolhas button:hover,
+.crud-admin .lista-escolhas .opcao-ativa { background: var(--cor-fundo); }
+.crud-admin .lista-vazia { padding: 9px 12px; font-size: 13px; }
+.crud-admin .lista-escolhas[hidden],
+.crud-admin .lista-escolhas [hidden] { display: none; }
+
+.config-campo-largo {
+    grid-column: 1 / -1;
+}
+
+.config-vazio {
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+.config-dados .lista-empresas {
+    gap: 10px;
+}
+
+.config-dados .lista-empresas li {
+    font-size: 15px;
+    font-weight: 500;
+    padding: 8px 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.config-dados .botoes-modal {
+    margin-top: 28px;
+}
+
+.config-dados .mensagem {
+    margin-bottom: 24px;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.mensagem-saindo {
+    opacity: 0;
+    transform: translateY(-6px);
+}
+
+/* Modo edição: rótulos e campos iguais aos dos formulários de cadastrar/editar das tabelas */
+.config:has(#config-editar-perfil:checked) .config-dados-topo {
+    margin-bottom: 24px;
+}
+
+.config:has(#config-editar-perfil:checked) .config-campos {
+    gap: 14px 20px;
+}
+
+.config:has(#config-editar-perfil:checked) .config-rotulo {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    margin-bottom: 5px;
+}
+
+.config:has(#config-editar-perfil:checked) .config-campo input {
+    height: auto;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: var(--cor-texto);
+    background-color: var(--cor-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+
+.config:has(#config-editar-perfil:checked) .config-senha-acao {
+    height: auto;
+}
+
+.config .config-campo input:focus {
+    outline: none;
+}
+
+/* Efeitos: campos e formulários que brilham ao serem escolhidos */
+.campo input,
+.campo select,
+.campo textarea,
+.config-campo input,
+.pesquisa input {
+    transition: border-color 0.2s ease, box-shadow 0.25s ease, background-color 0.2s ease;
+}
+
+.campo label,
+.config-rotulo {
+    transition: color 0.2s ease;
+}
+
+.campo-ativo input:focus,
+.campo-ativo select:focus,
+.campo-ativo textarea:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 2px var(--cor-borda), 0 0 14px 3px rgba(4, 191, 173, 0.45);
+}
+
+.campo-ativo > label,
+.campo-ativo > .config-rotulo {
+    color: var(--cor-primaria);
+}
+
+.config-dados,
+.modal {
+    transition: box-shadow 0.3s ease;
+}
+
+.config-dados.form-ativo {
+    box-shadow: 0 0 0 2px var(--cor-borda), 0 0 28px 4px rgba(4, 191, 173, 0.5);
+}
+
+.modal:has(form.form-ativo) {
+    box-shadow: 0 0 0 2px var(--cor-borda), 0 8px 32px rgba(4, 191, 173, 0.4);
+}
+
+/* =========================================================
+   EFEITOS: botões e ícones com movimento
+   ========================================================= */
+.botao {
+    transition: transform 0.18s ease-out, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.menu-item img,
+.icone-acao img {
+    transition: transform 0.2s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .botao:not(.botao-animado):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+    }
+
+    .botao:not(.botao-animado):active {
+        transform: translateY(0) scale(0.97);
+    }
+
+    .botao-animado:hover {
+        transform: scale(1.04);
+        box-shadow: 0 6px 14px rgba(2, 115, 115, 0.3);
+    }
+
+    .botao-animado.botao-excluir:hover {
+        box-shadow: 0 6px 14px rgba(202, 29, 29, 0.3);
+    }
+
+    .botao-animado:active {
+        transform: scale(0.97);
+        transition-duration: 0.08s;
+    }
+
+    .menu-item:hover img {
+        transform: scale(1.15);
+    }
+
+    .icone-acao:hover img {
+        transform: scale(1.25) rotate(-6deg);
+    }
+
+    .config-dados .lista-empresas li:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(1, 84, 84, 0.25);
+    }
+
+    .config-dados .lista-empresas li {
+        animation: entrada-item 0.45s ease both;
+    }
+
+    .config-dados .lista-empresas li:nth-child(2) { animation-delay: 0.06s; }
+    .config-dados .lista-empresas li:nth-child(3) { animation-delay: 0.12s; }
+    .config-dados .lista-empresas li:nth-child(4) { animation-delay: 0.18s; }
+    .config-dados .lista-empresas li:nth-child(n+5) { animation-delay: 0.24s; }
+
+    .campo-ativo input:focus,
+    .campo-ativo select:focus,
+    .campo-ativo textarea:focus {
+        animation: brilho-campo 1.8s ease-in-out infinite;
+    }
+}
+
+@keyframes brilho-campo {
+    50% {
+        box-shadow: 0 0 0 2px var(--cor-borda), 0 0 22px 6px rgba(4, 191, 173, 0.6);
+    }
+}
+
+@keyframes entrada-item {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}

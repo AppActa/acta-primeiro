@@ -171,11 +171,11 @@ public class TarefaServlet extends HttpServlet {
         Situacao status = null;
         if (statusParam != null && !statusParam.isBlank()) status = Situacao.valueOf(statusParam);
 
-        Date dataInicial = null;
-        if (dataInicialParam != null && !dataInicialParam.isBlank()) dataInicial = Date.valueOf(dataInicialParam);
+        Date dataInicial = Validador.dataOpcional(dataInicialParam, "Data inicial");
 
-        Date dataFinal = null;
-        if (dataFinalParam != null && !dataFinalParam.isBlank()) dataFinal = Date.valueOf(dataFinalParam);
+        Date dataFinal = Validador.dataOpcional(dataFinalParam, "Data final");
+
+        Validador.periodo(dataInicial, dataFinal, "A data final");
 
         List<Tarefa> tarefas = DAO.buscaFiltrada(busca, prioridade, status, dataInicial, dataFinal, ordem, direcao);
 

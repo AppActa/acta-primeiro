@@ -57,9 +57,9 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Ciclos</title>
-        <script src="<%= request.getContextPath() %>/assets/js/crud.js" defer></script>
+        <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=ordenacao-local-2" defer></script>
     </head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
@@ -106,16 +106,17 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                     </a>
                 </nav>
                 <div class="perfil-barra">
-                    <a href="<%= request.getContextPath() %>/crud/configurações.html" class="perfil-admin">
+                    <% br.com.acta.model.AdministradorGeral adm = (br.com.acta.model.AdministradorGeral) session.getAttribute("usuarioLogado"); %>
+                    <a href="<%= request.getContextPath() %>/crud/configuracoes.jsp" class="perfil-admin">
                         <div class="perfil-foto">
-                            <img src="<%= request.getContextPath() %>/assets/images/foto_perfil.svg" alt="Foto de perfil">
+                            <img src="<%= adm != null && adm.getImagem() != null && !adm.getImagem().isBlank() ? h(adm.getImagem().replace("/image/upload/", "/image/upload/c_fill,w_96,h_96,q_auto,f_auto/")) : request.getContextPath() + "/assets/images/foto_perfil.svg" %>" alt="Foto de perfil">
                         </div>
                         <div class="perfil-info">
-                            <span class="perfil-nome">Área administrativa</span>
-                            <span class="perfil-email">ACTA</span>
+                            <span class="perfil-nome"><%= adm != null ? adm.getNome() : "Administrador" %></span>
+                            <span class="perfil-email"><%= adm != null ? adm.getEmail() : "" %></span>
                         </div>
                     </a>
-                    <a href="<%= request.getContextPath() %>/login.html" class="botao botao-sair">Sair</a>
+                    <form method="post" action="<%= request.getContextPath() %>/logout-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>"><button type="submit" class="botao botao-sair">Sair</button></form>
                 </div>
             </aside>
             <main class="conteudo">
@@ -455,7 +456,7 @@ if (recuperarCadastro) {
                             <div class="modal modal-grande">
                                 <h2>Cadastrar ciclo</h2>
 <% if (recuperarCadastro) { %><p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p><% } %>
-                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/ciclo-servlet">
+                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/ciclo-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="inserir">
                                     <div class="campo">
                                         <label for="cad-ciclo-nome">Nome</label>
@@ -492,21 +493,13 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-ciclo-id_empresa">Empresa</label>
-                                        <select id="cad-ciclo-id_empresa" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaCadastro) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-ciclo-id_empresa" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="cad-ciclo-id_empresa-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-ciclo-id_empresa-valor" name="id_empresa" value="<%= h(valorIdEmpresaCadastro) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-ciclo-id_responsavel">Responsável</label>
-                                        <select id="cad-ciclo-id_responsavel" name="id_responsavel" required>
-<option value="">Selecione</option>
-<% for (Colaborador opcao : colaboradorOpcoes) { %>
-<option value="<%= opcao.getId_colaborador() %>" <%= String.valueOf(opcao.getId_colaborador()).equals(valorIdResponsavelCadastro) ? "selected" : "" %>><%= h(opcao.getNome() + " " + opcao.getSobrenome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="cad-ciclo-id_responsavel" data-lista="sugestoes-fk-colaborador-lista" data-validar-lista data-campo-valor="cad-ciclo-id_responsavel-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-ciclo-id_responsavel-valor" name="id_responsavel" value="<%= h(valorIdResponsavelCadastro) %>">
                                     </div>
 
                                     <div class="botoes-modal">
@@ -550,7 +543,7 @@ if (recuperarEdicao) {
                             <div class="modal modal-grande">
                                 <h2>Editar ciclo</h2>
 <% if (recuperarEdicao) { %><p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p><% } %>
-                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/ciclo-servlet">
+                                <form class="formulario" method="post" action="<%= request.getContextPath() %>/ciclo-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="atualizar">
 
                                     <input type="hidden" name="id-ciclo" value="<%= ciclo.getId_ciclo() %>">
@@ -589,21 +582,13 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-ciclo-id_empresa-<%= ciclo.getId_ciclo() %>">Empresa</label>
-                                        <select id="edi-ciclo-id_empresa-<%= ciclo.getId_ciclo() %>" name="id_empresa" required>
-<option value="">Selecione</option>
-<% for (Empresa opcao : empresaOpcoes) { %>
-<option value="<%= opcao.getId_empresa() %>" <%= String.valueOf(opcao.getId_empresa()).equals(valorIdEmpresaEdicao) ? "selected" : "" %>><%= h(opcao.getNome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-ciclo-id_empresa-<%= ciclo.getId_ciclo() %>" data-lista="sugestoes-fk-empresa-lista" data-validar-lista data-campo-valor="edi-ciclo-id_empresa-<%= ciclo.getId_ciclo() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-ciclo-id_empresa-<%= ciclo.getId_ciclo() %>-valor" name="id_empresa" value="<%= h(valorIdEmpresaEdicao) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-ciclo-id_responsavel-<%= ciclo.getId_ciclo() %>">Responsável</label>
-                                        <select id="edi-ciclo-id_responsavel-<%= ciclo.getId_ciclo() %>" name="id_responsavel" required>
-<option value="">Selecione</option>
-<% for (Colaborador opcao : colaboradorOpcoes) { %>
-<option value="<%= opcao.getId_colaborador() %>" <%= String.valueOf(opcao.getId_colaborador()).equals(valorIdResponsavelEdicao) ? "selected" : "" %>><%= h(opcao.getNome() + " " + opcao.getSobrenome()) %></option>
-<% } %>
-</select>
+                                        <input type="text" id="edi-ciclo-id_responsavel-<%= ciclo.getId_ciclo() %>" data-lista="sugestoes-fk-colaborador-lista" data-validar-lista data-campo-valor="edi-ciclo-id_responsavel-<%= ciclo.getId_ciclo() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-ciclo-id_responsavel-<%= ciclo.getId_ciclo() %>-valor" name="id_responsavel" value="<%= h(valorIdResponsavelEdicao) %>">
                                     </div>
 
                                     <div class="botoes-modal">
@@ -623,7 +608,7 @@ if (recuperarEdicao) {
 <p><%= h(ciclo.getNome() == null || ciclo.getNome().isBlank() ? "—" : ciclo.getNome()) %></p>
                                 <h2>Excluir ciclo</h2>
                                 <p>Tem certeza que deseja excluir este ciclo?</p>
-                                <form method="post" action="<%= request.getContextPath() %>/ciclo-servlet">
+                                <form method="post" action="<%= request.getContextPath() %>/ciclo-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                                     <input type="hidden" name="acao" value="excluir">
 
                                     <input type="hidden" name="id-ciclo" value="<%= ciclo.getId_ciclo() %>">
@@ -638,6 +623,40 @@ if (recuperarEdicao) {
 <% } %>
                 </section>
 
+                <div id="sugestoes-fk-empresa-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Empresa opcao : empresaOpcoes) {
+    String nomeOpcao = opcao.getNome();
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Empresa outra : empresaOpcoes) {
+            String outroNome = outra.getNome();
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_empresa() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_empresa() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-fk-colaborador-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (Colaborador opcao : colaboradorOpcoes) {
+    String nomeOpcao = (opcao.getNome() == null ? "" : opcao.getNome()) + " " + (opcao.getSobrenome() == null ? "" : opcao.getSobrenome());
+    if (nomeOpcao != null && !nomeOpcao.isBlank()) {
+        nomeOpcao = nomeOpcao.trim();
+        int nomesIguais = 0;
+        for (Colaborador outra : colaboradorOpcoes) {
+            String outroNome = (outra.getNome() == null ? "" : outra.getNome()) + " " + (outra.getSobrenome() == null ? "" : outra.getSobrenome());
+            if (outroNome != null && nomeOpcao.equals(outroNome.trim())) nomesIguais++;
+        }
+        if (nomesIguais > 1) nomeOpcao += " (#" + opcao.getId_colaborador() + ")"; %>
+<button type="button" role="option" data-valor="<%= opcao.getId_colaborador() %>"><%= h(nomeOpcao) %></button>
+<% }
+} %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
             </main>
         </div>
     </body>
