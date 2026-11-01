@@ -1,12 +1,10 @@
 package br.com.acta.excecoes;
 
-/**
- * Valor repetido em coluna UNIQUE (e-mail, CPF, CNPJ...). SQLState 23505.
- * O servlet transforma em HTTP 409.
- */
+/** Violação de unicidade (SQLState 23505), tratada como HTTP 409. */
 
 public class DuplicidadeException extends RuntimeException {
 
+    /** Informa a duplicidade e preserva a exceção lançada pelo banco. */
     public DuplicidadeException(String mensagem, Throwable causa) {
         super(mensagem,causa);
     }
