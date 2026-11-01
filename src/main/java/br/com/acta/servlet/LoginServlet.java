@@ -18,8 +18,10 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 
+/** Autentica administradores e limita tentativas por endereço de origem. */
 @WebServlet(name = "LoginServlet", value = "/login-servlet")
 public class LoginServlet extends HttpServlet {
+    // Até cinco falhas por IP em uma janela de quinze minutos.
     private static final int MAX_TENTATIVAS = 5;
     private static final long JANELA_MS = 15 * 60 * 1000L;
     private static final ConcurrentHashMap<String, Tentativas> TENTATIVAS = new ConcurrentHashMap<>();
@@ -27,6 +29,7 @@ public class LoginServlet extends HttpServlet {
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final AdministradorGeralDAO ADMINISTRADOR_DAO = new AdministradorGeralDAO();
 
+    /** Verifica o token CSRF e encaminha a ação de login. */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -53,7 +56,7 @@ public class LoginServlet extends HttpServlet {
         } catch (ValidacaoException e) {
             enviarErroLogin(req, resp, e.getMessage());
         } catch (DaoException e) {
-            e.printStackTrace(); // ou logger
+            e.printStackTrace();
             enviarErroLogin(req, resp, "Erro ao acessar o banco de dados. Tente novamente.");
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,9 +64,11 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
+    /** Confere credenciais e inicia a sessão do administrador autenticado. */
     private void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String chaveTentativa = req.getRemoteAddr();
         Tentativas tentativas = TENTATIVAS.computeIfAbsent(chaveTentativa, ignorado -> new Tentativas());
+        // Protege a consulta ao contador contra requisições simultâneas.
         synchronized (tentativas) {
             tentativas.resetarSeExpirou();
             if (tentativas.quantidade >= MAX_TENTATIVAS) {
@@ -84,17 +89,21 @@ public class LoginServlet extends HttpServlet {
         }
         TENTATIVAS.remove(chaveTentativa);
 
+        // Evita manter o hash da senha no objeto salvo na sessão.
         adm.setSenha(null);
         req.getSession(true);
+        // Renova o identificador após a autenticação.
         req.changeSessionId();
         req.getSession().setAttribute("usuarioLogado", adm);
-        resp.sendRedirect(req.getContextPath() + "/empresa-servlet"); // tela que existe
+        resp.sendRedirect(req.getContextPath() + "/empresa-servlet");
     }
 
+    /** Mantém a contagem de falhas e o início da janela de quinze minutos. */
     private static final class Tentativas {
         private int quantidade;
         private long inicio = Instant.now().toEpochMilli();
 
+        /** Zera a contagem quando a janela de tentativas expira. */
         private void resetarSeExpirou() {
             if (Instant.now().toEpochMilli() - inicio >= JANELA_MS) {
                 quantidade = 0;
@@ -102,19 +111,20 @@ public class LoginServlet extends HttpServlet {
             }
         }
 
+        /** Renova a janela se necessário e contabiliza uma tentativa inválida. */
         private void registrarFalha() {
             resetarSeExpirou();
             quantidade++;
         }
     }
 
-    // erro específico do login
+    /** Volta à página de login com a mensagem para o usuário. */
     private void enviarErroLogin(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
         req.setAttribute("mensagemErro", mensagem);
         req.getRequestDispatcher(PAGINA_LOGIN).forward(req, resp);
     }
 
-    // erro genérico
+    /** Exibe a página de erro com status HTTP 500. */
     private void enviarErro(HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
         req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
         req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
