@@ -1,10 +1,10 @@
 package br.com.acta.dao;
 
-import br.com.acta.model.Endereco;
 import br.com.acta.excecoes.DaoException;
 import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
+import br.com.acta.model.Endereco;
 import br.com.acta.utils.Conexao;
 
 import java.sql.*;
@@ -15,6 +15,16 @@ import java.util.Map;
 /** Executa a persistência de Endereco e converte consultas em objetos do modelo. */
 public class EnderecoDAO implements MetodosCrud<Endereco> {
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_endereco",
+            "rua", "rua",
+            "bairro", "bairro",
+            "cidade", "cidade",
+            "estado", "estado",
+            "cep", "cep",
+            "empresa", "nome_empresa");
+
     /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(Endereco endereco) {
@@ -24,8 +34,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
                 """;
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, endereco.getRua());
             pstmt.setString(2, endereco.getBairro());
             pstmt.setString(3, endereco.getCidade());
@@ -36,11 +45,12 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
             pstmt.setString(8, endereco.getUnidade());
             pstmt.setLong(9, endereco.getId_empresa());
 
-            if (pstmt.executeUpdate() > 0) return 1;
-            else return 0;
-
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            } else {
+                return 0;
+            }
         } catch (SQLException e) {
-
             // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de endereço com esses dados.", e);
@@ -49,7 +59,6 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
                 throw new IntegridadeReferencialException("Existe uma referência inválida no cadastro.", e);
             }
             throw new DaoException("Erro ao cadastrar endereço.", e);
-
         } catch (ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -61,8 +70,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         String sql = "SELECT * FROM vw_endereco WHERE id_endereco = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -71,7 +79,6 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
                 }
                 return null;
             }
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -84,14 +91,12 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         String sql = "SELECT * FROM vw_endereco;";
 
         try (Connection conn = Conexao.conectar();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 enderecos.add(mapearEndereco(rs));
             }
             return enderecos;
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -111,17 +116,22 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         boolean temOrdem = colunaOrdem != null;
 
         // Acrescenta condições apenas para os filtros presentes.
-        if (temBusca) sql.append(" AND (rua ILIKE ? OR bairro ILIKE ? OR cep ILIKE ? OR nome_empresa ILIKE ?)");
-        if (temEstado) sql.append(" AND estado = ?");
-        if (temCidade) sql.append(" AND cidade = ?");
+        if (temBusca) {
+            sql.append(" AND (rua ILIKE ? OR bairro ILIKE ? OR cep ILIKE ? OR nome_empresa ILIKE ?)");
+        }
+        if (temEstado) {
+            sql.append(" AND estado = ?");
+        }
+        if (temCidade) {
+            sql.append(" AND cidade = ?");
+        }
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
             sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
         }
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
@@ -129,15 +139,21 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
                 String documento = busca.trim();
                 if (documento.matches("[0-9.()\\s-]+")) {
                     String limpo = documento.replaceAll("\\D", "");
-                    if (!limpo.isEmpty()) documento = limpo;
+                    if (!limpo.isEmpty()) {
+                        documento = limpo;
+                    }
                 }
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, "%" + documento + "%");
                 pstmt.setString(i++, termo);
             }
-            if (temEstado) pstmt.setString(i++, estado);
-            if (temCidade) pstmt.setString(i++, cidade.trim());
+            if (temEstado) {
+                pstmt.setString(i++, estado);
+            }
+            if (temCidade) {
+                pstmt.setString(i++, cidade.trim());
+            }
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -145,7 +161,6 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
                 }
             }
             return enderecos;
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -157,14 +172,12 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         String sql = "SELECT DISTINCT cidade FROM endereco ORDER BY cidade;";
 
         try (Connection conn = Conexao.conectar();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 cidades.add(rs.getString("cidade"));
             }
             return cidades;
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -173,11 +186,11 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
     /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(Endereco endereco) {
-        String sql = "UPDATE endereco SET rua = ?, bairro = ?, cidade = ?, estado = ?, cep = ?, numero = ?, complemento = ?, unidade = ?, id_empresa = ? WHERE id_endereco = ?;";
+        String sql = "UPDATE endereco SET rua = ?, bairro = ?, cidade = ?, estado = ?, cep = ?, numero = ?, "
+                + "complemento = ?, unidade = ?, id_empresa = ? WHERE id_endereco = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, endereco.getRua());
             pstmt.setString(2, endereco.getBairro());
             pstmt.setString(3, endereco.getCidade());
@@ -189,32 +202,23 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
             pstmt.setLong(9, endereco.getId_empresa());
             pstmt.setLong(10, endereco.getId_endereco());
 
-            if (pstmt.executeUpdate() > 0) return 1;
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
 
             throw new RegistroNaoEncontradoException("Registro de endereço não encontrado para atualização.");
-
         } catch (SQLException e) {
-
             if ("23505".equals(e.getSQLState())) {
-                throw new DuplicidadeException(
-                        "Já existe um registro de endereço com esses dados.", e
-                );
+                throw new DuplicidadeException("Já existe um registro de endereço com esses dados.", e);
             }
 
             if ("23503".equals(e.getSQLState())) {
-                throw new IntegridadeReferencialException(
-                        "Referência inválida na atualização.", e
-                );
+                throw new IntegridadeReferencialException("Referência inválida na atualização.", e);
             }
 
-            throw new DaoException(
-                    "Erro ao atualizar endereço.", e
-            );
-
+            throw new DaoException("Erro ao atualizar endereço.", e);
         } catch (ClassNotFoundException e) {
-            throw new DaoException(
-                    "Erro ao conectar no banco de dados.", e
-            );
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -224,31 +228,43 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         String sql = "DELETE FROM endereco WHERE id_endereco = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
 
-            if (pstmt.executeUpdate() > 0) return 1;
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
             throw new RegistroNaoEncontradoException("Registro de endereço não encontrado para exclusão.");
-
         } catch (SQLException e) {
             if ("23503".equals(e.getSQLState())) {
                 throw new IntegridadeReferencialException(
-                        "Não é possível excluir o registro de endereço porque existem registros vinculados.", e
-                );
+                        "Não é possível excluir o registro de endereço porque existem registros vinculados.", e);
             }
 
-            throw new DaoException(
-                    "Erro ao excluir endereço.", e
-            );
-
+            throw new DaoException("Erro ao excluir endereço.", e);
         } catch (ClassNotFoundException e) {
-            throw new DaoException(
-                    "Erro ao conectar no banco de dados.", e
-            );
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
+    /** Recupera a escrita já cadastrada da cidade, ignorando maiúsculas. */
+    public String buscarCidadeExistente(String cidade) {
+        String sql = "SELECT cidade FROM endereco WHERE LOWER(cidade) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, cidade);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("cidade");
+                }
+                return null;
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /** Converte a linha atual do resultado em um objeto do modelo. */
     private static Endereco mapearEndereco(ResultSet rs) throws SQLException {
@@ -265,37 +281,5 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         endereco.setNome_empresa(rs.getString("nome_empresa"));
         endereco.setId_empresa(rs.getLong("id_empresa"));
         return endereco;
-    }
-
-    // Relaciona as opções de ordenação às colunas autorizadas do banco.
-    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
-            "id", "id_endereco",
-            "rua", "rua",
-            "bairro", "bairro",
-            "cidade", "cidade",
-            "estado", "estado",
-            "cep", "cep",
-            "empresa", "nome_empresa"
-    );
-
-    /** Recupera a escrita já cadastrada da cidade, ignorando maiúsculas. */
-    public String buscarCidadeExistente(String cidade) {
-        String sql = "SELECT cidade FROM endereco WHERE LOWER(cidade) = LOWER(?) LIMIT 1;";
-
-        try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, cidade);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs. next()) {
-                    return rs.getString("cidade");
-                }
-                return null;
-            }
-
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

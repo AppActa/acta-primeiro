@@ -2,6 +2,7 @@ package br.com.acta.servlet;
 
 import br.com.acta.model.AdministradorGeral;
 import br.com.acta.utils.CsrfToken;
+
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -16,18 +17,30 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /** Autoriza o CRUD somente a partir da identidade autenticada no servidor. */
-@WebFilter(filterName = "LoginFilter", urlPatterns = {
-        "/crud/*", "/administrador-geral.jsp",
-        "/empresa-servlet", "/endereco-servlet", "/colaborador-servlet",
-        "/ciclo-servlet", "/problema-servlet", "/meta-servlet",
-        "/planoAcao-servlet", "/tarefa-servlet", "/licoes-aprendidas-servlet",
-        "/administrador-geral-servlet", "/cloudinary-signature", "/logout-servlet"
-}, dispatcherTypes = { DispatcherType.REQUEST })
+@WebFilter(filterName = "LoginFilter",
+        urlPatterns = {
+            "/crud/*",
+            "/administrador-geral.jsp",
+            "/empresa-servlet",
+            "/endereco-servlet",
+            "/colaborador-servlet",
+            "/ciclo-servlet",
+            "/problema-servlet",
+            "/meta-servlet",
+            "/planoAcao-servlet",
+            "/tarefa-servlet",
+            "/licoes-aprendidas-servlet",
+            "/administrador-geral-servlet",
+            "/cloudinary-signature",
+            "/logout-servlet"
+        },
+        dispatcherTypes = {DispatcherType.REQUEST})
 public class LoginFilter implements Filter {
+
     /** Exige administrador com ID válido e, nos POSTs, token CSRF da sessão. */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(
+            ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
 
@@ -57,8 +70,7 @@ public class LoginFilter implements Filter {
         }
 
         // A autorização depende do objeto autenticado no servidor.
-        if (!(usuario instanceof AdministradorGeral administrador)
-                || administrador.getAdm_geral_id() == null
+        if (!(usuario instanceof AdministradorGeral administrador) || administrador.getAdm_geral_id() == null
                 || administrador.getAdm_geral_id() <= 0) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;

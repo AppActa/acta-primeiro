@@ -1,7 +1,10 @@
 package br.com.acta.servlet;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import br.com.acta.model.AdministradorGeral;
 import br.com.acta.model.Colaborador;
+
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
@@ -9,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
@@ -34,17 +38,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /** Exercita o filtro por HTTP em Tomcat isolado, com destinos que dispensam o banco. */
 class LoginFilterTest {
-    @TempDir
-    static Path temporario;
+
+    @TempDir static Path temporario;
     static Tomcat tomcat;
     static String base;
+
     // Mantém redirecionamentos visíveis para conferir o status e o destino.
-    static final HttpClient CLIENT = HttpClient.newBuilder()
-            .followRedirects(HttpClient.Redirect.NEVER).build();
+    static final HttpClient CLIENT = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NEVER).build();
     static final List<String> ROTAS = new ArrayList<>();
     static String cookieAdministrador;
     static String cookieColaborador;
@@ -55,11 +57,11 @@ class LoginFilterTest {
     @BeforeAll
     static void iniciar() throws Exception {
         WebFilter configuracao = LoginFilter.class.getAnnotation(WebFilter.class);
-        ROTAS.addAll(Arrays.stream(configuracao.urlPatterns())
-                .filter(url -> !url.contains("*")).toList());
+        ROTAS.addAll(Arrays.stream(configuracao.urlPatterns()).filter(url -> !url.contains("*")).toList());
         try (Stream<Path> arquivos = Files.list(Path.of("src/main/webapp/crud"))) {
-            arquivos.filter(Files::isRegularFile).forEach(arquivo -> ROTAS.add(
-                    "/crud/" + URLEncoder.encode(arquivo.getFileName().toString(), StandardCharsets.UTF_8)));
+            arquivos.filter(Files::isRegularFile).forEach(arquivo ->
+                    ROTAS.add("/crud/" + URLEncoder.encode(
+                            arquivo.getFileName().toString(), StandardCharsets.UTF_8)));
         }
         ROTAS.add("/crud/");
         ROTAS.add("/crud/arquivo-futuro.jsp");
@@ -76,48 +78,58 @@ class LoginFilterTest {
         contexto.addFilterDef(filtro);
         FilterMap mapa = new FilterMap();
         mapa.setFilterName(configuracao.filterName());
-        for (String url : configuracao.urlPatterns()) mapa.addURLPattern(url);
-        for (DispatcherType tipo : configuracao.dispatcherTypes()) mapa.setDispatcher(tipo.name());
+        for (String url : configuracao.urlPatterns()) {
+            mapa.addURLPattern(url);
+        }
+        for (DispatcherType tipo : configuracao.dispatcherTypes()) {
+            mapa.setDispatcher(tipo.name());
+        }
         contexto.addFilterMap(mapa);
 
         // Substitui somente os destinos por sentinelas: chegar aqui significa acesso liberado.
-        Tomcat.addServlet(contexto, "destino", new HttpServlet() {
-            @Override
-            protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-                resp.getWriter().write("DESTINO_EXECUTADO");
-            }
-        });
+        Tomcat.addServlet(contexto,
+                "destino",
+                new HttpServlet() {
+                    @Override
+                    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+                        resp.getWriter().write("DESTINO_EXECUTADO");
+                    }
+                });
         contexto.addServletMappingDecoded("/", "destino");
         // Cria identidades de teste sem autenticação ou consulta ao banco.
-        Tomcat.addServlet(contexto, "sessao-teste", new HttpServlet() {
-            @Override
-            protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-                Object usuario = switch (req.getParameter("tipo")) {
-                    case "administrador" -> administrador(1L);
-                    case "sem-id" -> administrador(null);
-                    case "id-zero" -> administrador(0L);
-                    case "id-negativo" -> administrador(-1L);
-                    case "colaborador" -> new Colaborador();
-                    default -> "administrador_geral";
-                };
-                req.getSession(true).setAttribute("usuarioLogado", usuario);
-            }
-        });
+        Tomcat.addServlet(contexto,
+                "sessao-teste",
+                new HttpServlet() {
+                    @Override
+                    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+                        Object usuario = switch (req.getParameter("tipo")) {
+                            case "administrador" -> administrador(1L);
+                            case "sem-id" -> administrador(null);
+                            case "id-zero" -> administrador(0L);
+                            case "id-negativo" -> administrador(-1L);
+                            case "colaborador" -> new Colaborador();
+                            default -> "administrador_geral";
+                        };
+                        req.getSession(true).setAttribute("usuarioLogado", usuario);
+                    }
+                });
         contexto.addServletMappingDecoded("/sessao-teste", "sessao-teste");
         Tomcat.addServlet(contexto, "logout", new LogoutServlet());
         contexto.addServletMappingDecoded("/logout-servlet", "logout");
         // Simula despachos internos para os caminhos protegidos.
-        Tomcat.addServlet(contexto, "despacho", new HttpServlet() {
-            @Override
-            protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-                    throws IOException, ServletException {
-                if ("include".equals(req.getParameter("tipo"))) {
-                    req.getRequestDispatcher("/crud/empresa.jsp").include(req, resp);
-                } else {
-                    req.getRequestDispatcher("/empresa-servlet").forward(req, resp);
-                }
-            }
-        });
+        Tomcat.addServlet(contexto,
+                "despacho",
+                new HttpServlet() {
+                    @Override
+                    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+                            throws IOException, ServletException {
+                        if ("include".equals(req.getParameter("tipo"))) {
+                            req.getRequestDispatcher("/crud/empresa.jsp").include(req, resp);
+                        } else {
+                            req.getRequestDispatcher("/empresa-servlet").forward(req, resp);
+                        }
+                    }
+                });
         contexto.addServletMappingDecoded("/despacho", "despacho");
         tomcat.start();
         base = "http://127.0.0.1:" + tomcat.getConnector().getLocalPort() + "/acta";
@@ -142,7 +154,8 @@ class LoginFilterTest {
     Stream<DynamicTest> bloquearAtaquesSemAdministrador() {
         return ROTAS.stream().flatMap(url -> Stream.of("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
                 .map(metodo -> DynamicTest.dynamicTest(metodo + " " + url, () -> {
-                    String ataque = url + "?acao=excluir&id=1&usuarioLogado=administrador_geral&perfil=administrador_geral";
+                    String ataque = url
+                            + "?acao=excluir&id=1&usuarioLogado=administrador_geral&perfil=administrador_geral";
                     for (String cookie : Arrays.asList(null, cookieExpirado, cookieColaborador, cookieInvalido)) {
                         HttpResponse<String> resposta = enviar(metodo, ataque, cookie);
                         int esperado = cookie == null || cookie.equals(cookieExpirado)
@@ -151,7 +164,8 @@ class LoginFilterTest {
                         assertFalse(resposta.body().contains("DESTINO_EXECUTADO"));
                         assertEquals("no-store", resposta.headers().firstValue("Cache-Control").orElseThrow());
                         if (esperado == 302) {
-                            assertTrue(resposta.headers().firstValue("Location").orElseThrow().endsWith("/acta/login.jsp"));
+                            assertTrue(resposta.headers().firstValue("Location").orElseThrow()
+                                    .endsWith("/acta/login.jsp"));
                         }
                     }
                 })));
@@ -172,9 +186,10 @@ class LoginFilterTest {
     /** Exercita variações de URL com um cookie de sessão falso. */
     @Test
     void bloquearVariacoesDeUrlESessaoFalsa() throws Exception {
-        for (String url : List.of("/crud/../crud/empresa.jsp", "/%63rud/empresa.jsp",
-                "/crud;qualquer=1/empresa.jsp", "/empresa-servlet;qualquer=1",
-                "//crud/empresa.jsp", "/crud/empresa.jsp;jsessionid=falso")) {
+        for (String url :
+                List.of("/crud/../crud/empresa.jsp", "/%63rud/empresa.jsp", "/crud;qualquer=1/empresa.jsp",
+                        "/empresa-servlet;qualquer=1", "//crud/empresa.jsp",
+                        "/crud/empresa.jsp;jsessionid=falso")) {
             HttpResponse<String> resposta = enviar("GET", url, "JSESSIONID=falso");
             assertTrue(List.of(302, 400, 404).contains(resposta.statusCode()), url + ": " + resposta.statusCode());
             assertFalse(resposta.body().contains("DESTINO_EXECUTADO"), url);
@@ -202,8 +217,9 @@ class LoginFilterTest {
     /** Verifica se páginas e arquivos públicos continuam acessíveis. */
     @Test
     void manterLandingPageELoginPublicos() throws Exception {
-        for (String url : List.of("/", "/index.jsp", "/index.html", "/login.jsp", "/login.html",
-                "/login-servlet", "/assets/css/style.css")) {
+        for (String url :
+                List.of("/", "/index.jsp", "/index.html", "/login.jsp", "/login.html", "/login-servlet",
+                        "/assets/css/style.css")) {
             assertEquals(200, enviar("GET", url, null).statusCode(), url);
         }
     }
@@ -211,11 +227,14 @@ class LoginFilterTest {
     /** Confere se as rotas dos servlets constam na cobertura do filtro. */
     @Test
     void cobrirTodosOsServletsQueAcessamOCrud() {
-        for (Class<?> servlet : List.of(EmpresaServlet.class, EnderecoServlet.class, ColaboradorServlet.class,
-                CicloServlet.class, ProblemaServlet.class, MetaServlet.class, PlanoAcaoServlet.class,
-                TarefaServlet.class, LicoesAprendidasServlet.class, AdministradorGeralServlet.class,
-                CloudinarySignatureServlet.class)) {
-            for (String url : servlet.getAnnotation(WebServlet.class).value()) assertTrue(ROTAS.contains(url), url);
+        for (Class<?> servlet :
+                List.of(EmpresaServlet.class, EnderecoServlet.class, ColaboradorServlet.class,
+                        CicloServlet.class, ProblemaServlet.class, MetaServlet.class, PlanoAcaoServlet.class,
+                        TarefaServlet.class, LicoesAprendidasServlet.class, AdministradorGeralServlet.class,
+                        CloudinarySignatureServlet.class)) {
+            for (String url : servlet.getAnnotation(WebServlet.class).value()) {
+                assertTrue(ROTAS.contains(url), url);
+            }
         }
     }
 
@@ -228,8 +247,8 @@ class LoginFilterTest {
 
     /** Obtém o cookie criado pela rota de sessão exclusiva do teste. */
     private static String criarSessao(String tipo) throws Exception {
-        return enviar("GET", "/sessao-teste?tipo=" + tipo, null).headers()
-                .firstValue("Set-Cookie").orElseThrow().split(";", 2)[0];
+        return enviar("GET", "/sessao-teste?tipo=" + tipo, null).headers().firstValue("Set-Cookie").orElseThrow()
+                .split(";", 2)[0];
     }
 
     /** Envia a requisição HTTP com o método, o corpo e o cookie do cenário. */
@@ -238,8 +257,12 @@ class LoginFilterTest {
                 .method(metodo, metodo.equals("POST")
                         ? HttpRequest.BodyPublishers.ofString("acao=excluir&id=1&perfil=administrador_geral")
                         : HttpRequest.BodyPublishers.noBody());
-        if (metodo.equals("POST")) requisicao.header("Content-Type", "application/x-www-form-urlencoded");
-        if (cookie != null) requisicao.header("Cookie", cookie);
+        if (metodo.equals("POST")) {
+            requisicao.header("Content-Type", "application/x-www-form-urlencoded");
+        }
+        if (cookie != null) {
+            requisicao.header("Cookie", cookie);
+        }
         return CLIENT.send(requisicao.build(), HttpResponse.BodyHandlers.ofString());
     }
 }

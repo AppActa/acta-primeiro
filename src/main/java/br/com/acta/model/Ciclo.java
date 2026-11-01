@@ -12,15 +12,18 @@ public class Ciclo {
     private Long id_ciclo;
     private String nome;
     private String descricao;
+
     // A etapa PDCA e o status de execução são informações distintas.
     private EtapaCiclo etapa_atual;
     private Date dt_inicio;
     private Date dt_fim;
     private Situacao status;
     private OffsetDateTime criado_em;
+
     // IDs dos registros vinculados ao ciclo.
     private Long id_empresa;
     private Long id_responsavel;
+
     // Nomes trazidos pelas consultas para exibir os vínculos.
     private String nome_empresa;
     private String nome_responsavel;
@@ -29,7 +32,9 @@ public class Ciclo {
     public Ciclo() {}
 
     /** Monta os dados do ciclo sem um ID definido. */
-    public Ciclo(String nome, String descricao, EtapaCiclo etapa_atual, Date dt_inicio, Date dt_fim, Situacao status, OffsetDateTime criado_em, Long id_empresa, Long id_responsavel) {
+    public Ciclo(
+            String nome, String descricao, EtapaCiclo etapa_atual, Date dt_inicio, Date dt_fim, Situacao status,
+            OffsetDateTime criado_em, Long id_empresa, Long id_responsavel) {
         this.nome = nome;
         this.descricao = descricao;
         this.etapa_atual = etapa_atual;
@@ -42,7 +47,9 @@ public class Ciclo {
     }
 
     /** Monta um ciclo com ID já conhecido. */
-    public Ciclo(Long id_ciclo, String nome, String descricao, EtapaCiclo etapa_atual, Date dt_inicio, Date dt_fim, Situacao status, OffsetDateTime criado_em, Long id_responsavel, Long id_empresa) {
+    public Ciclo(
+            Long id_ciclo, String nome, String descricao, EtapaCiclo etapa_atual, Date dt_inicio, Date dt_fim,
+            Situacao status, OffsetDateTime criado_em, Long id_responsavel, Long id_empresa) {
         this.id_ciclo = id_ciclo;
         this.nome = nome;
         this.descricao = descricao;
@@ -55,8 +62,7 @@ public class Ciclo {
         this.id_empresa = id_empresa;
     }
 
-    // Acesso e atualização dos dados do ciclo.
-
+    // Acesso e atualização dos dados do modelo.
 
     public Long getId_ciclo() {
         return id_ciclo;
@@ -138,11 +144,19 @@ public class Ciclo {
         this.id_responsavel = id_responsavel;
     }
 
-    public String getNome_empresa() {return nome_empresa;}
+    public String getNome_empresa() {
+        return nome_empresa;
+    }
 
-    public void setNome_empresa(String nome_empresa) {this.nome_empresa = nome_empresa;}
+    public void setNome_empresa(String nome_empresa) {
+        this.nome_empresa = nome_empresa;
+    }
 
-    public String getNome_responsavel() {return nome_responsavel;}
+    public String getNome_responsavel() {
+        return nome_responsavel;
+    }
 
-    public void setNome_responsavel(String nome_responsavel) {this.nome_responsavel = nome_responsavel;}
+    public void setNome_responsavel(String nome_responsavel) {
+        this.nome_responsavel = nome_responsavel;
+    }
 }

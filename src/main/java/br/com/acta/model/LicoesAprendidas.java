@@ -17,15 +17,17 @@ public class LicoesAprendidas {
     private EtapaCiclo fase_origem;
     private Intensidade severidade;
     private Long id_ciclo;
+
     // Nome do ciclo usado na exibição do vínculo.
     private String nome_ciclo;
 
     /** Cria uma lição vazia para preenchimento posterior. */
-    public LicoesAprendidas() {
-    }
+    public LicoesAprendidas() {}
 
     /** Monta os dados da lição sem um ID definido. */
-    public LicoesAprendidas(String titulo, String area, String aprendizado, String categoria, String descricao, EtapaCiclo fase_origem, Intensidade severidade, Long id_ciclo, String nome_ciclo) {
+    public LicoesAprendidas(
+            String titulo, String area, String aprendizado, String categoria, String descricao,
+            EtapaCiclo fase_origem, Intensidade severidade, Long id_ciclo, String nome_ciclo) {
         this.titulo = titulo;
         this.area = area;
         this.aprendizado = aprendizado;
@@ -38,7 +40,9 @@ public class LicoesAprendidas {
     }
 
     /** Monta uma lição com ID já conhecido. */
-    public LicoesAprendidas(Long id_licao, String titulo, String area, String aprendizado, String categoria, String descricao, EtapaCiclo fase_origem, Intensidade severidade, Long id_ciclo, String nome_ciclo) {
+    public LicoesAprendidas(
+            Long id_licao, String titulo, String area, String aprendizado, String categoria, String descricao,
+            EtapaCiclo fase_origem, Intensidade severidade, Long id_ciclo, String nome_ciclo) {
         this.id_licao = id_licao;
         this.titulo = titulo;
         this.area = area;
@@ -51,7 +55,8 @@ public class LicoesAprendidas {
         this.nome_ciclo = nome_ciclo;
     }
 
-    // Acesso e atualização dos dados da lição.
+    // Acesso e atualização dos dados do modelo.
+
     public Long getId_licao() {
         return id_licao;
     }
