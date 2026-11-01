@@ -34,7 +34,7 @@ import java.io.IOException;
             "/cloudinary-signature",
             "/logout-servlet"
         },
-        dispatcherTypes = {DispatcherType.REQUEST})
+        dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE})
 public class LoginFilter implements Filter {
 
     /** Exige administrador com ID válido e, nos POSTs, token CSRF da sessão. */

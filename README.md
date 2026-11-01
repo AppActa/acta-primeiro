@@ -53,3 +53,15 @@ Com o Java 21 instalado, o wrapper do Maven pode gerar o WAR:
 ```
 
 O artefato é gerado em `target/ACTA-1.0-SNAPSHOT.war`. Para executar a aplicação, configure as variáveis de banco indicadas em `.env.example` e faça o deploy em um servidor compatível com Jakarta Servlet. O script `src/main/resources/sql/script_banco.sql` recria o esquema, mas primeiro apaga tabelas existentes; execute-o somente em um banco novo ou descartável.
+
+### Segurança do Tomcat em produção
+
+O WAR apresenta uma página genérica para exceções e erros HTTP 500, sem exibir mensagens ou pilhas Java. O Tomcat da hospedagem também deve estar atualizado (11.0.27 ou versão corrigida mais recente) e configurado para não mostrar relatórios técnicos padrão. Em uma instalação própria, configure o `ErrorReportValve` dentro de `<Host>` em `$CATALINA_BASE/conf/server.xml`:
+
+```xml
+<Valve className="org.apache.catalina.valves.ErrorReportValve"
+       showReport="false"
+       showServerInfo="false" />
+```
+
+Em hospedagem compartilhada, solicite ao provedor a atualização do Tomcat e a desativação dos relatórios detalhados.
