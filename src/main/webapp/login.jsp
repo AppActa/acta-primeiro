@@ -20,7 +20,7 @@
     <main class="login-pagina">
         <div class="login-sair">
             <img src="<%= request.getContextPath() %>/assets/images/icone_voltar.svg" alt="">
-            <a href="<%= request.getContextPath() %>/index.jsp">Tela inicial</a>
+            <a href="<%= request.getContextPath() %>/index.html">Tela inicial</a>
         </div>
 
         <div class="login-cartao">
@@ -60,32 +60,8 @@
 
                     <button type="submit" class="login-botao">Concluído</button>
                 </form>
-
-                <a href="#modal-esqueceu-senha" class="login-esqueceu">Esqueceu sua senha?</a>
             </section>
         </div>
-
-        <!-- Modal "Esqueceu sua senha?" (abre pelo link acima; fecha clicando fora da caixa) -->
-        <section id="modal-esqueceu-senha" class="modal-esqueceu-senha">
-            <a href="#" class="modal-esqueceu-fundo" aria-label="Fechar"></a>
-
-            <div class="modal-esqueceu-caixa">
-                <div class="modal-esqueceu-conteudo">
-                    <div class="modal-titulo">
-                        <h1>Esqueceu sua senha?</h1>
-                        <p class="esqueceu-senha-descricao">Recupere por endereço de email</p>
-                    </div>
-
-                    <form class="login-form" method="post" action="#"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
-                        <div class="login-campo">
-                            <label for="esqueceu-email">Email</label>
-                            <input type="email" id="esqueceu-email" name="email" maxlength="80" autocomplete="email" required>
-                        </div>
-                        <button type="submit" class="login-botao">Concluído</button>
-                    </form>
-                </div>
-            </div>
-        </section>
     </main>
 </body>
 </html>

@@ -771,6 +771,22 @@ td.coluna-acao {
 .conteudo-config {
     padding: 30px;
 }
+
+.config-alerta-topo {
+    width: fit-content;
+    max-width: 100%;
+    align-self: flex-start;
+    margin: 0;
+}
+
+.config-dados-area {
+    align-self: center;
+    min-width: 0;
+    margin-top: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
  
 /* Página em duas colunas: foto grande à esquerda, bloco de dados à direita */
 .config {
@@ -873,8 +889,8 @@ td.coluna-acao {
  
 /* ---------- Bloco de dados (mesma cor do antigo cartão de contato) ---------- */
 .config-dados {
-    align-self: center;
-    margin-top: 120px; /* desce o bloco */
+    align-self: stretch;
+    margin-top: 0;
     display: flex;
     flex-direction: column;
     padding: 48px clamp(28px, 3vw, 56px) 56px;
@@ -1064,6 +1080,11 @@ td.coluna-acao {
     }
  
     .config-dados {
+        align-self: stretch;
+        margin-top: 0;
+    }
+
+    .config-dados-area {
         align-self: stretch;
         margin-top: 0;
     }
