@@ -1070,7 +1070,33 @@ body:not(:has(:target)) #inicio {
 }
 
 
-/* 16. RESPONSIVO */
+/* 16. RESPONSIVO
+   Desktop = estilos acima (sem alterações de layout).
+   Abaixo: notebooks pequenos, tablet, celular. */
+
+@media (max-width: 1400px) {
+  .pagina { 
+    overflow-x: clip; 
+  }
+}
+
+/* Notebooks pequenos / tablet na horizontal (até 1100px) */
+@media (max-width: 1100px) {
+  /* os cards do PDCA podem encolher em vez de estourar a tela */
+  .pdca__card { 
+    flex: 0 1 auto; 
+    min-width: 0; 
+  }
+  .pdca__card img { 
+    max-width: 100%; 
+  }
+
+  /* os 3 planos passam a caber na largura da tela */
+  .planos__grid { 
+    max-width: calc(100vw - 96px); 
+    gap: 24px; 
+  }
+}
 
 /* Tablets */
 @media (max-width: 960px) {
@@ -1087,10 +1113,20 @@ body:not(:has(:target)) #inicio {
     min-height: 0; 
   }
   .hero__mockups { 
-    height: 480px; 
     max-width: 520px; 
     margin: 0 auto; 
     width: 100%; 
+  }
+  
+  /* o hero do "Sobre nós" precisa de altura fixa porque seus celulares são posicionados em absoluto */
+  .hero__mockups--sobre { 
+    height: 505px; 
+  }
+  .sobre__celular--fundo { 
+    top: 0; 
+  }
+  .sobre__celular--frente { 
+    top: 155px; 
   }
   .hero--sobre::before { 
     width: 100%; 
@@ -1138,6 +1174,7 @@ body:not(:has(:target)) #inicio {
 
   .plano--destaque{
     margin: 0;
+    padding-top: 26px;
   }
   .planos__fundo { 
     margin: 24px -24px 0; 
@@ -1146,12 +1183,25 @@ body:not(:has(:target)) #inicio {
   .planos__recomendado { 
     margin-left: 0; 
     text-align: center; 
+    top: 0;
   }
   .planos__grid { 
     grid-template-columns: 1fr; 
     max-width: 380px; 
     margin: 0 auto; 
     gap: 24px; 
+    bottom: 0;
+  }
+
+  .equipe { 
+    padding-bottom: 56px; 
+  }
+  .equipe__ano { 
+    padding: 0 24px; 
+  }
+  .equipe__galeria { 
+    padding: 0 24px; 
+    scroll-padding: 0 24px; 
   }
 
   .ia { 
@@ -1169,11 +1219,7 @@ body:not(:has(:target)) #inicio {
   .ia__mockups { 
     max-width: 460px; 
     width: 100%; 
-    margin: 0 auto; 
-  }
-
-  .equipe { 
-    padding-bottom: 56px; 
+    margin: 150px auto 0;
   }
 
   .valores { 
@@ -1194,16 +1240,18 @@ body:not(:has(:target)) #inicio {
   }
 }
 
-/* Celulares */
-@media (max-width: 600px) {
+/* Header em duas linhas */
+@media (max-width: 720px) {
   .header { 
     height: auto; 
     min-height: var(--altura-header);
     flex-wrap: wrap; 
     gap: 8px; 
     padding: 10px 16px; 
-    }
+  }
   .header__nav { 
+    position: static;
+    transform: none;
     order: 3; 
     width: 100%; 
     justify-content: space-between; 
@@ -1213,9 +1261,36 @@ body:not(:has(:target)) #inicio {
   html { 
     scroll-padding-top: 120px; 
   }
+}
 
-  .hero__mockups { 
-    height: 400px; 
+/* Celulares */
+@media (max-width: 600px) {
+  .hero__texto p { 
+    margin: 20px 0 28px; 
+  }
+
+  /* Hero "Sobre nós": celulares menores e texto sem o deslocamento do desktop */
+  .hero--sobre .hero__texto { 
+    left: 0; 
+  }
+  .hero--sobre::before { 
+    border-radius: 28px; 
+  }
+  .hero__mockups--sobre { 
+    height: 430px; 
+  }
+  .sobre__celular--fundo { 
+    width: 170px; 
+    left: 0; 
+  }
+  .sobre__celular--frente { 
+    width: 160px; 
+    right: 0; 
+    top: 110px; 
+  }
+
+  .pdca__lista { 
+    gap: 24px; 
   }
 
   .resultados__grid { 
@@ -1240,16 +1315,41 @@ body:not(:has(:target)) #inicio {
     grid-template-columns: 1fr; 
   }
 
-  .equipe__ano { 
-    padding: 0 24px; 
+  .planos__fundo { 
+    margin: 24px -24px 0; 
+    padding: 32px 16px 48px; 
   }
+
+  .origem__texto { 
+    font-size: 16px; 
+  }
+
   .equipe__galeria { 
     gap: 24px; 
-    padding: 0 24px; 
     margin-top: 32px; 
   }
   .membro { 
     flex-basis: 200px; 
+  }
+
+  /* Seção IA: tudo reduzido em ~38% mantendo as proporções */
+  .ia__textos { 
+    padding-left: 0; 
+  }
+  .ia__textos p { 
+    font-size: 115%; 
+  }
+  .ia__mockups { 
+    height: 260px; 
+    margin-top: 93px; 
+  }
+  .ia__celular--inicio { 
+    width: 136px; 
+    top: 25px; 
+  }
+  .ia__celular--chat { 
+    width: 177px; 
+    top: -93px; 
   }
 
   .valores__grid { 
@@ -1262,6 +1362,16 @@ body:not(:has(:target)) #inicio {
   .footer__conteudo { 
     grid-template-columns: 1fr; 
     text-align: left; 
+  }
+  .footer__contatos li { 
+    overflow-wrap: anywhere; 
+  }
+}
+
+/* Telas de toque (celular/tablet): não existe "hover", então os nomes da equipe ficam sempre visíveis */
+@media (hover: none) {
+  .membro__legenda { 
+    opacity: 1; 
   }
 }
 
