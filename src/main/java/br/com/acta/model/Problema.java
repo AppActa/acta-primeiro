@@ -1,8 +1,8 @@
 package br.com.acta.model;
 
-
 import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.StatusProblema;
+
 import java.sql.Date;
 
 /** Representa um problema, sua resolução e os registros relacionados. */
@@ -16,10 +16,12 @@ public class Problema {
     private StatusProblema status;
     private String origem;
     private Date encontrado_em;
+
     // IDs dos vínculos com ciclo, plano de ação e colaborador.
     private Long id_ciclo;
     private Long id_plano_acao;
     private Long id_colaborador;
+
     // Nomes retornados pelas consultas para exibir os vínculos.
     private String nome_ciclo;
     private String nome_plano_acao;
@@ -29,7 +31,9 @@ public class Problema {
     public Problema() {}
 
     /** Monta os dados do problema sem um ID definido. */
-    public Problema(String titulo, String descricao, Intensidade peso, String solucao, StatusProblema status, String origem, Date encontrado_em, Long id_ciclo, Long id_plano_acao, Long id_colaborador) {
+    public Problema(
+            String titulo, String descricao, Intensidade peso, String solucao, StatusProblema status,
+            String origem, Date encontrado_em, Long id_ciclo, Long id_plano_acao, Long id_colaborador) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.peso = peso;
@@ -43,7 +47,10 @@ public class Problema {
     }
 
     /** Monta um problema com ID já conhecido. */
-    public Problema(Long id_problema, String titulo, String descricao,Intensidade peso, String solucao, StatusProblema status, String origem, Date encontrado_em, Long id_ciclo, Long id_plano_acao, Long id_colaborador) {
+    public Problema(
+            Long id_problema, String titulo, String descricao, Intensidade peso, String solucao,
+            StatusProblema status, String origem, Date encontrado_em, Long id_ciclo, Long id_plano_acao,
+            Long id_colaborador) {
         this.id_problema = id_problema;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -57,8 +64,7 @@ public class Problema {
         this.id_colaborador = id_colaborador;
     }
 
-    // Acesso e atualização dos dados do problema.
-
+    // Acesso e atualização dos dados do modelo.
 
     public Long getId_problema() {
         return id_problema;

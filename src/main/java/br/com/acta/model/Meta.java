@@ -17,9 +17,11 @@ public class Meta {
     private Date prazo;
     private StatusMeta status;
     private OffsetDateTime criando_em;
+
     // IDs dos registros relacionados à meta.
     private Long id_ciclo;
     private Long id_plano_acao;
+
     // Nomes trazidos pelas consultas para exibir os vínculos.
     private String nome_ciclo;
     private String nome_plano_acao;
@@ -28,7 +30,9 @@ public class Meta {
     public Meta() {}
 
     /** Monta os dados da meta sem um ID definido. */
-    public Meta(String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, Long id_plano_acao) {
+    public Meta(
+            String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo,
+            StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, Long id_plano_acao) {
         this.meta = meta;
         this.descricao_meta = descricao_meta;
         this.objetivo = objetivo;
@@ -41,7 +45,9 @@ public class Meta {
     }
 
     /** Monta uma meta com ID já conhecido. */
-    public Meta(Long id_meta, String meta, String descricao_meta, String objetivo, Intensidade prioridade, Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, Long id_plano_acao) {
+    public Meta(
+            Long id_meta, String meta, String descricao_meta, String objetivo, Intensidade prioridade,
+            Date prazo, StatusMeta status, OffsetDateTime criando_em, Long id_ciclo, Long id_plano_acao) {
         this.id_meta = id_meta;
         this.meta = meta;
         this.descricao_meta = descricao_meta;
@@ -54,7 +60,8 @@ public class Meta {
         this.id_plano_acao = id_plano_acao;
     }
 
-    // Acesso e atualização dos dados da meta.
+    // Acesso e atualização dos dados do modelo.
+
     public Long getId_meta() {
         return id_meta;
     }

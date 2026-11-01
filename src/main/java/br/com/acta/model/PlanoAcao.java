@@ -12,19 +12,22 @@ public class PlanoAcao {
     private String descricao;
     private Situacao status;
     private Intensidade prioridade;
+
     // IDs do ciclo e do colaborador que criou o plano.
     private Long id_ciclo;
     private Long id_criador;
+
     // Nomes retornados pelas consultas para exibir os vínculos.
     private String nome_ciclo;
     private String nome_criador;
-
 
     /** Cria um plano vazio para preenchimento posterior. */
     public PlanoAcao() {}
 
     /** Monta os dados do plano sem um ID definido. */
-    public PlanoAcao(String nome, String descricao, Situacao status, Intensidade prioridade, Long id_ciclo, Long id_criador) {
+    public PlanoAcao(
+            String nome, String descricao, Situacao status, Intensidade prioridade, Long id_ciclo,
+            Long id_criador) {
         this.nome = nome;
         this.descricao = descricao;
         this.status = status;
@@ -34,7 +37,9 @@ public class PlanoAcao {
     }
 
     /** Monta um plano com ID já conhecido. */
-    public PlanoAcao(Long id_plano_acao, String nome, String descricao, Situacao status, Intensidade prioridade, Long id_ciclo, Long id_criador) {
+    public PlanoAcao(
+            Long id_plano_acao, String nome, String descricao, Situacao status, Intensidade prioridade,
+            Long id_ciclo, Long id_criador) {
         this.id_plano_acao = id_plano_acao;
         this.nome = nome;
         this.descricao = descricao;
@@ -44,7 +49,8 @@ public class PlanoAcao {
         this.id_criador = id_criador;
     }
 
-    // Acesso e atualização dos dados do plano.
+    // Acesso e atualização dos dados do modelo.
+
     public Long getId_plano_acao() {
         return id_plano_acao;
     }
@@ -101,9 +107,13 @@ public class PlanoAcao {
         this.id_criador = id_criador;
     }
 
-    public String getNome_ciclo() {return nome_ciclo;}
+    public String getNome_ciclo() {
+        return nome_ciclo;
+    }
 
-    public void setNome_ciclo(String nome_ciclo) {this.nome_ciclo = nome_ciclo;}
+    public void setNome_ciclo(String nome_ciclo) {
+        this.nome_ciclo = nome_ciclo;
+    }
 
     public String getNome_criador() {
         return nome_criador;
