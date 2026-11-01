@@ -20,7 +20,7 @@ public class CloudinarySignatureServlet extends HttpServlet {
     private static final String FOLDER = "acta/admin-profiles";
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Object usuario = req.getSession(false) == null
                 ? null
                 : req.getSession(false).getAttribute("usuarioLogado");
