@@ -24,6 +24,7 @@ import java.io.IOException;
         "/administrador-geral-servlet", "/cloudinary-signature", "/logout-servlet"
 }, dispatcherTypes = { DispatcherType.REQUEST })
 public class LoginFilter implements Filter {
+    /** Exige administrador com ID válido e, nos POSTs, token CSRF da sessão. */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -40,9 +41,11 @@ public class LoginFilter implements Filter {
                 + "style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; "
                 + "script-src 'self'; connect-src 'self' https://api.cloudinary.com; "
                 + "form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'");
+        // Consulta a sessão existente sem criar uma para visitantes.
         HttpSession sessao = req.getSession(false);
         Object usuario = sessao == null ? null : sessao.getAttribute("usuarioLogado");
 
+        // Navegação anônima vai ao login; outras requisições recebem HTTP 401.
         if (usuario == null) {
             if (req.getDispatcherType() == DispatcherType.REQUEST
                     && ("GET".equals(req.getMethod()) || "HEAD".equals(req.getMethod()))) {
@@ -53,6 +56,7 @@ public class LoginFilter implements Filter {
             return;
         }
 
+        // A autorização depende do objeto autenticado no servidor.
         if (!(usuario instanceof AdministradorGeral administrador)
                 || administrador.getAdm_geral_id() == null
                 || administrador.getAdm_geral_id() <= 0) {
@@ -60,11 +64,13 @@ public class LoginFilter implements Filter {
             return;
         }
 
+        // Alterações exigem o token associado à sessão autenticada.
         if ("POST".equalsIgnoreCase(req.getMethod()) && !CsrfToken.isValid(req)) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Token de segurança inválido ou expirado.");
             return;
         }
 
+        // Encaminha ao destino somente após todas as verificações.
         chain.doFilter(request, response);
     }
 }
