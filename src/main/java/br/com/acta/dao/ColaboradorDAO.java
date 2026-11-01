@@ -14,9 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/** Executa a persistência de Colaborador e converte consultas em objetos do modelo. */
 public class ColaboradorDAO implements MetodosCrud<Colaborador> {
 
-    // INSERT
+    /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(Colaborador colaborador) {
         String sql = """
@@ -45,6 +46,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
 
         } catch (SQLException e) {
 
+            // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de colaborador com esses dados.", e);
             }
@@ -58,7 +60,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
-    // READ
+    /** Busca pelo ID; retorna null quando o registro não existe. */
     @Override
     public Colaborador buscar(Long id) {
         String sql = "SELECT * FROM vw_colaborador WHERE id_colaborador = ?;";
@@ -80,6 +82,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
+    /** Lista todos os registros disponíveis na consulta. */
     @Override
     public List<Colaborador> buscar() {
         List<Colaborador> colaboradores = new ArrayList<>();
@@ -99,6 +102,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
+    /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
     public List<Colaborador> buscaFiltrada(String busca, Status status, String area, String cargo, Boolean permissaoGestor, Date dataInicial, Date dataFinal, String ordem, String direcao) {
         List<Colaborador> colaboradores = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_colaborador WHERE 1=1");
@@ -111,9 +115,11 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         boolean temDataInicial = dataInicial != null;
         boolean temDataFinal = dataFinal != null;
 
+        // A coluna vem de uma lista permitida, nunca diretamente do formulário.
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
+        // Acrescenta condições apenas para os filtros presentes.
         if (temBusca) sql.append(" AND (nome ILIKE ? OR sobrenome ILIKE ? OR CONCAT_WS(' ', nome, sobrenome) ILIKE ? OR email ILIKE ? OR nome_empresa ILIKE ? OR cpf ILIKE ? OR telefone ILIKE ?)");
         if (temStatus) sql.append(" AND status = ?");
         if (temArea) sql.append(" AND area = ?");
@@ -129,6 +135,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
+            // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
@@ -163,6 +170,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
+    /** Lista as áreas cadastradas, sem repetição e em ordem alfabética. */
     public List<String> buscarAreas() {
         List<String> areas = new ArrayList<>();
         String sql = "SELECT DISTINCT area FROM colaborador ORDER BY area;";
@@ -181,6 +189,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
+    /** Lista os cargos cadastrados, sem repetição e em ordem alfabética. */
     public List<String> buscarCargos() {
         List<String> cargos = new ArrayList<>();
         String sql = "SELECT DISTINCT cargo FROM colaborador ORDER BY cargo;";
@@ -199,7 +208,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
-    // UPDATE
+    /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(Colaborador colaborador) {
         String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, status = ?, area = ?, cargo = ?, dt_contratacao = ?, email = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE id_colaborador = ?;";
@@ -249,11 +258,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
-    /**
-     * Atualiza os dados de um colaborador localizando o registro pelo CPF atual.
-     * O parâmetro cpfAtual identifica o registro antes da alteração; o CPF novo
-     * vem de colaborador.getCpf().
-     */
+    /** Localiza pelo CPF atual e salva os dados, incluindo o novo CPF do modelo. */
     public int atualizarPorCpf(Colaborador colaborador, String cpfAtual) {
         String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, status = ?, area = ?, cargo = ?, dt_contratacao = ?, email = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE cpf = ?;";
 
@@ -296,7 +301,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
-    // DELETE
+    /** Exclui pelo ID; informa ausência do registro ou vínculos que impedem a exclusão. */
     @Override
     public int excluir(Long id) {
         String sql = "DELETE FROM colaborador WHERE id_colaborador = ?;";
@@ -328,6 +333,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
     }
 
     /** Exclui um colaborador usando o e-mail único como identificador. */
+    /** Exclui o colaborador pelo e-mail e informa ausência ou vínculos impeditivos. */
     public int excluirPorEmail(String email) {
         String sql = "DELETE FROM colaborador WHERE email = ?;";
 
@@ -355,6 +361,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
     }
 
     // PASSWORD
+    /** Busca pelo e-mail e verifica a senha; devolve null se as credenciais não conferem. */
     public Colaborador autenticar(String email, String senha) {
         String sql = "SELECT * FROM vw_colaborador WHERE email = ?;";
         String sqlSenha = "SELECT senha FROM colaborador WHERE email = ?;";
@@ -389,6 +396,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
+    /** Confere a senha atual antes de gravar o hash da nova senha. */
     public int atualizarSenha(String email, String senhaAntiga, String senhaNova) {
         String sqlBuscar = "SELECT senha FROM colaborador WHERE email = ?;";
         String sqlAtualizar = "UPDATE colaborador SET senha = ? WHERE email = ?;";
@@ -446,11 +454,9 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
-    // UTILITÁRIOS
 
-    // SQLState "23xxx" = violação de integridade (e-mail/CPF duplicado, FK, NOT NULL).
 
-    // Mapear colaborador para simplificar busca
+    /** Converte a linha atual do resultado em um objeto do modelo. */
     private static Colaborador mapearColaborador(ResultSet rs) throws SQLException {
         Colaborador colaborador = new Colaborador();
         colaborador.setId_colaborador(rs.getLong("id_colaborador"));
@@ -469,7 +475,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         return colaborador;
     }
 
-    // Whitelist de ordenação
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
             "id", "id_colaborador",
             "nome", "nome",
@@ -483,7 +489,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             "empresa", "nome_empresa"
     );
 
-    // Identifica áreas repetidas
+    /** Recupera a escrita já cadastrada da área, ignorando maiúsculas. */
     public String buscarAreaExistente(String area) {
         String sql = "SELECT area FROM colaborador WHERE LOWER(area) = LOWER(?) LIMIT 1;";
 
@@ -504,6 +510,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         }
     }
 
+    /** Recupera a escrita já cadastrada do cargo, ignorando maiúsculas. */
     public String buscarCargoExistente(String cargo) {
         String sql = "SELECT cargo FROM colaborador WHERE LOWER(cargo) = LOWER(?) LIMIT 1;";
 
