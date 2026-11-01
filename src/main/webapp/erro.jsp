@@ -117,7 +117,8 @@
                 <img src="<%= request.getContextPath() %>/assets/images/cato_triste.svg" alt="Gato triste ao lado de uma espinha de peixe" class="erro-imagem">
                 <div class="sombra"></div>
             </div>
-            <p role="alert"><%= h(request.getAttribute(jakarta.servlet.RequestDispatcher.ERROR_MESSAGE) == null ? "Não foi possível concluir a operação." : request.getAttribute(jakarta.servlet.RequestDispatcher.ERROR_MESSAGE)) %></p><p><a href="<%= request.getContextPath() %>/empresa-servlet">Voltar aos CRUDs</a></p>    
+            <p role="alert"><%= h(request.getAttribute(jakarta.servlet.RequestDispatcher.ERROR_MESSAGE) == null ? "Não foi possível concluir a operação." : request.getAttribute(jakarta.servlet.RequestDispatcher.ERROR_MESSAGE)) %></p>
+            <a class="erro-voltar" href="<%= request.getContextPath() %>/empresa-servlet">Voltar</a>
         </section>
 
     </main>
