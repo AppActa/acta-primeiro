@@ -40,7 +40,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<%= h(br.com.acta.utils.CsrfToken.getOrCreate(session)) %>">
     <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c12">
     <title>ACTA — Configurações</title>
     <script src="<%= request.getContextPath() %>/assets/js/regex.js?v=7c47ef420f" defer></script>
     <script src="<%= request.getContextPath() %>/assets/js/efeitos.js" defer></script>
@@ -89,9 +89,10 @@ try {
                     <p id="config-foto-status" class="config-vazio" role="status" aria-live="polite"></p>
                 </div>
             </div>
-            <% if (request.getAttribute("mensagemErro") != null) { %>
-            <p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p>
-            <% } %>
+            <div class="config-dados-area">
+                <% if (request.getAttribute("mensagemErro") != null) { %>
+                <p class="mensagem mensagem-erro config-alerta-topo" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p>
+                <% } %>
             <form class="config-dados" id="form-perfil" method="post" action="<%= request.getContextPath() %>/administrador-geral-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                 <input type="hidden" id="config-imagem-url" name="imagem" value="<%= h(imagem) %>">
                 <div class="config-dados-topo"><h2>Meus dados</h2><label for="config-editar-perfil" class="botao botao-principal botao-pilula config-dados-editar">Editar</label></div>
@@ -115,6 +116,7 @@ try {
                 </div>
                 <div class="botoes-modal config-dados-botoes"><input type="hidden" name="acao" value="atualizar"><input type="hidden" name="id-adm-geral" value="<%= administrador.getAdm_geral_id() %>"><label for="config-editar-perfil" class="botao botao-cancelar">Cancelar</label><button type="submit" class="botao botao-principal">Confirmar edição</button></div>
             </form>
+            </div>
             <div class="modal-pagina config-modal"><div class="modal-fundo"><label for="config-modal-senha" class="config-modal-fundo-fechar" aria-label="Fechar"></label><div class="modal"><h2>Alterar senha</h2>
                 <form class="formulario" method="post" action="<%= request.getContextPath() %>/administrador-geral-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
                     <input type="hidden" name="acao" value="atualizarSenha"><input type="hidden" name="email" value="<%= h(email) %>">
