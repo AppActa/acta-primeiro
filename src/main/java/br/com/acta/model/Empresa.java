@@ -3,9 +3,10 @@ package br.com.acta.model;
 import br.com.acta.enums.Status;
 import br.com.acta.enums.TamanhoEmpresa;
 
+/** Representa o cadastro da empresa, incluindo porte e situação de atividade. */
 public class Empresa {
 
-    //Atributos
+    // Identificação e classificação da empresa.
     private Long id_empresa;
     private String nome;
     private String setor;
@@ -13,8 +14,10 @@ public class Empresa {
     private Status status;
     private TamanhoEmpresa tamanho;
 
+    /** Cria uma empresa vazia para preenchimento posterior. */
     public Empresa() {}
 
+    /** Monta os dados de cadastro sem um ID definido. */
     public Empresa(String nome, String setor, String cnpj, Status status, TamanhoEmpresa tamanho) {
         this.nome = nome;
         this.setor = setor;
@@ -23,6 +26,7 @@ public class Empresa {
         this.tamanho = tamanho;
     }
 
+    /** Monta uma empresa com ID já conhecido. */
     public Empresa(Long id_empresa, String nome, String setor, String cnpj, Status status, TamanhoEmpresa tamanho) {
         this.id_empresa = id_empresa;
         this.nome = nome;
@@ -32,6 +36,7 @@ public class Empresa {
         this.tamanho = tamanho;
     }
 
+    // Acesso e atualização dos dados da empresa.
     public Long getId_empresa() {
         return id_empresa;
     }
