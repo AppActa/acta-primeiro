@@ -70,7 +70,8 @@ public class AdministradorGeralServlet extends HttpServlet {
 
             switch (acao) {
                 case "inserir":
-                    inserir(req, resp);
+                    resp.sendError(HttpServletResponse.SC_FORBIDDEN,
+                            "O cadastro de administradores não está disponível por esta rota.");
                     break;
 
                 case "atualizar":
@@ -82,11 +83,13 @@ public class AdministradorGeralServlet extends HttpServlet {
                     break;
 
                 case "excluir":
-                    excluir(req, resp);
+                    resp.sendError(HttpServletResponse.SC_FORBIDDEN,
+                            "A exclusão de administradores não está disponível por esta rota.");
                     break;
 
                 case "autenticar":
-                    autenticar(req, resp);
+                    resp.sendError(HttpServletResponse.SC_FORBIDDEN,
+                            "Use a rota de login para autenticar.");
                     break;
 
                 default:
