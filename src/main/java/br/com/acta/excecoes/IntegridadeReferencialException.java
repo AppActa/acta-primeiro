@@ -1,12 +1,10 @@
 package br.com.acta.excecoes;
 
-/**
- * Violação de chave estrangeira (SQLState 23503): referência que não existe
- * ou registro que ainda é usado por outro. O servlet transforma em HTTP 409.
- */
+/** Referência inválida ou ainda em uso (SQLState 23503); corresponde a HTTP 409. */
 
 public class IntegridadeReferencialException extends RuntimeException {
 
+    /** Descreve o vínculo que impediu a operação e mantém a causa original. */
     public IntegridadeReferencialException(String mensagem, Throwable causa) {
         super(mensagem,causa);
     }
