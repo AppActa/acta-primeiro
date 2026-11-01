@@ -6,12 +6,16 @@ import java.util.List;
 public interface MetodosCrud<T> {
     /** Insere o modelo e informa se houve gravação. */
     int inserir(T t);
+
     /** Busca um registro pelo ID; pode retornar null quando ausente. */
     T buscar(Long id);
+
     /** Lista os registros encontrados pelo DAO. */
     List<T> buscar();
+
     /** Atualiza o registro identificado no modelo. */
     int atualizar(T t);
+
     /** Exclui o registro identificado pelo ID. */
     int excluir(Long id);
 }
