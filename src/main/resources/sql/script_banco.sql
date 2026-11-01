@@ -2,29 +2,14 @@
 set timezone to 'America/Sao_Paulo';
 
 DROP TABLE IF EXISTS
-    endereco,
-    empresa,
-    administrador_geral,
-    colaborador,
-    ciclo,
-    meta,
-    plano_acao,
-    plano_acao5w2h,
-    tarefa,
-    licoes_aprendidas,
-    problema,
-    ciclo_colaborador,
-    empresa_administrador_geral
+    endereco, empresa, administrador_geral, colaborador, ciclo, meta,
+    plano_acao, plano_acao5w2h, tarefa, licoes_aprendidas, problema,
+    ciclo_colaborador, empresa_administrador_geral
     CASCADE;
 
 DROP TYPE IF EXISTS
-    tamanho_empresa_enum,
-    status_enum,
-    situacao_enum,
-    status_meta_enum,
-    status_problema_enum,
-    intensidade_enum,
-    etapas_ciclo_enum;
+    tamanho_empresa_enum, status_enum, situacao_enum, status_meta_enum,
+    status_problema_enum, intensidade_enum, etapas_ciclo_enum;
 
 -- ENUMs
 CREATE TYPE tamanho_empresa_enum AS ENUM('GRANDE','PEQUENA','MEDIA');
@@ -36,208 +21,167 @@ CREATE TYPE intensidade_enum AS ENUM ('ALTO', 'MEDIO', 'BAIXO');
 CREATE TYPE etapas_ciclo_enum AS ENUM ('PLAN', 'DO', 'CHECK', 'ACT');
 
 -- Empresa
-CREATE TABLE IF NOT EXISTS empresa (
-                                       id_empresa SERIAL PRIMARY KEY,
-                                       nome VARCHAR(50) NOT NULL,
-                                       setor VARCHAR(30) NOT NULL,
-                                       cnpj CHAR(14) UNIQUE NOT NULL,
-                                       status status_enum NOT NULL DEFAULT 'ATIVA',
-                                       tamanho tamanho_empresa_enum DEFAULT 'MEDIA'
+CREATE TABLE empresa (
+                         id_empresa SERIAL PRIMARY KEY,
+                         nome VARCHAR(50) NOT NULL,
+                         setor VARCHAR(30) NOT NULL,
+                         cnpj CHAR(14) UNIQUE NOT NULL,
+                         status status_enum NOT NULL DEFAULT 'ATIVA',
+                         tamanho tamanho_empresa_enum DEFAULT 'MEDIA',
+                         CONSTRAINT chk_empresa_cnpj_tamanho CHECK (length(cnpj) = 14)
 );
 
 -- Endereço
-CREATE TABLE IF NOT EXISTS endereco (
-                                        id_endereco SERIAL PRIMARY KEY,
-                                        rua VARCHAR(50) NOT NULL,
-                                        bairro VARCHAR(30) NOT NULL,
-                                        cidade VARCHAR(30) NOT NULL,
-                                        estado CHAR(2) NOT NULL,
-                                        cep CHAR(8) NOT NULL,
-                                        numero VARCHAR(10) NOT NULL,
-                                        complemento TEXT,
-                                        unidade VARCHAR(30) NOT NULL,
-                                        id_empresa INT NOT NULL REFERENCES empresa(id_empresa) ON DELETE CASCADE
+CREATE TABLE endereco (
+                          id_endereco SERIAL PRIMARY KEY,
+                          rua VARCHAR(50) NOT NULL,
+                          bairro VARCHAR(30) NOT NULL,
+                          cidade VARCHAR(30) NOT NULL,
+                          estado CHAR(2) NOT NULL,
+                          cep CHAR(8) NOT NULL,
+                          numero VARCHAR(10) NOT NULL,
+                          complemento TEXT,
+                          unidade VARCHAR(30) NOT NULL,
+                          id_empresa INT NOT NULL REFERENCES empresa(id_empresa) ON DELETE CASCADE,
+                          CONSTRAINT chk_endereco_cep_tamanho CHECK (length(cep) = 8)
 );
 
 -- Administrador Geral
-CREATE TABLE IF NOT EXISTS administrador_geral (
-                                                   id_adm_geral SERIAL PRIMARY KEY,
-                                                   nome VARCHAR(50) NOT NULL,
-                                                   senha VARCHAR(100) NOT NULL,
-                                                   email VARCHAR(80) UNIQUE NOT NULL,
-                                                   telefone CHAR(11) NOT NULL,
-                                                   imagem TEXT
+CREATE TABLE administrador_geral (
+                                     id_adm_geral SERIAL PRIMARY KEY,
+                                     nome VARCHAR(50) NOT NULL,
+                                     senha TEXT NOT NULL,
+                                     email VARCHAR(80) UNIQUE NOT NULL,
+                                     telefone CHAR(11) NOT NULL,
+                                     imagem TEXT,
+                                     CONSTRAINT chk_adm_telefone_tamanho CHECK (length(telefone) IN (10, 11))
 );
 
--- URL segura da foto de perfil armazenada no Cloudinary.
-ALTER TABLE administrador_geral ADD COLUMN IF NOT EXISTS imagem TEXT;
-
 -- Colaborador
-CREATE TABLE IF NOT EXISTS colaborador (
-                                           id_colaborador SERIAL PRIMARY KEY,
-                                           nome VARCHAR(50) NOT NULL,
-                                           sobrenome VARCHAR(50) NOT NULL,
-                                           permissao_gestor BOOLEAN NOT NULL DEFAULT FALSE,
-                                           status status_enum NOT NULL DEFAULT 'ATIVA',
-                                           area VARCHAR(30) NOT NULL,
-                                           cargo VARCHAR(100) NOT NULL,
-                                           dt_contratacao DATE NOT NULL,
-                                           email VARCHAR(80) UNIQUE NOT NULL,
-                                           senha VARCHAR(100) NOT NULL,
-                                           telefone CHAR(11) NOT NULL,
-                                           cpf CHAR(11) UNIQUE NOT NULL,
-                                           id_empresa INT NOT NULL REFERENCES empresa(id_empresa) ON DELETE CASCADE
+CREATE TABLE colaborador (
+                             id_colaborador SERIAL PRIMARY KEY,
+                             nome VARCHAR(50) NOT NULL,
+                             sobrenome VARCHAR(50) NOT NULL,
+                             permissao_gestor BOOLEAN NOT NULL DEFAULT FALSE,
+                             status status_enum NOT NULL DEFAULT 'ATIVA',
+                             area VARCHAR(30) NOT NULL,
+                             cargo VARCHAR(100) NOT NULL,
+                             dt_contratacao DATE NOT NULL,
+                             email VARCHAR(80) UNIQUE NOT NULL,
+                             senha TEXT NOT NULL,
+                             telefone CHAR(11) NOT NULL,
+                             cpf CHAR(11) UNIQUE NOT NULL,
+                             id_empresa INT NOT NULL REFERENCES empresa(id_empresa) ON DELETE CASCADE,
+                             CONSTRAINT chk_colab_cpf_tamanho CHECK (length(cpf) = 11),
+                             CONSTRAINT chk_colab_telefone_tamanho CHECK (length(telefone) IN (10, 11)),
+                             CONSTRAINT chk_colab_dt_contratacao CHECK (dt_contratacao <= current_date)
 );
 
 -- Ciclo
-CREATE TABLE IF NOT EXISTS ciclo (
-                                     id_ciclo SERIAL PRIMARY KEY,
-                                     nome VARCHAR(100) NOT NULL,
-                                     descricao TEXT,
-                                     etapa_atual etapas_ciclo_enum NOT NULL DEFAULT 'PLAN',
-                                     dt_inicio DATE NOT NULL,
-                                     dt_fim DATE,
-                                     status situacao_enum NOT NULL DEFAULT 'NAO_INICIADO',
-                                     criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                                     id_empresa INT NOT NULL REFERENCES empresa(id_empresa) ON DELETE CASCADE,
-                                     id_responsavel INT NOT NULL REFERENCES colaborador(id_colaborador)
+CREATE TABLE ciclo (
+                       id_ciclo SERIAL PRIMARY KEY,
+                       nome VARCHAR(100) NOT NULL,
+                       descricao TEXT,
+                       etapa_atual etapas_ciclo_enum NOT NULL DEFAULT 'PLAN',
+                       dt_inicio DATE NOT NULL,
+                       dt_fim DATE,
+                       status situacao_enum NOT NULL DEFAULT 'NAO_INICIADO',
+                       criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                       id_empresa INT NOT NULL REFERENCES empresa(id_empresa) ON DELETE CASCADE,
+                       id_responsavel INT NOT NULL REFERENCES colaborador(id_colaborador),
+                       CONSTRAINT chk_ciclo_dt_fim CHECK (dt_fim >= dt_inicio)
 );
 
 -- Plano de Ação
-CREATE TABLE IF NOT EXISTS plano_acao (
-                                          id_plano_acao SERIAL PRIMARY KEY,
-                                          nome VARCHAR(100) NOT NULL,
-                                          descricao TEXT,
-                                          status situacao_enum NOT NULL DEFAULT 'NAO_INICIADO',
-                                          prioridade intensidade_enum NOT NULL DEFAULT 'MEDIO',
-                                          id_ciclo INT NOT NULL REFERENCES ciclo(id_ciclo) ON DELETE CASCADE,
-                                          id_criador INT NOT NULL REFERENCES colaborador(id_colaborador) ON DELETE RESTRICT
+CREATE TABLE plano_acao (
+                            id_plano_acao SERIAL PRIMARY KEY,
+                            nome VARCHAR(100) NOT NULL,
+                            descricao TEXT,
+                            status situacao_enum NOT NULL DEFAULT 'NAO_INICIADO',
+                            prioridade intensidade_enum NOT NULL DEFAULT 'MEDIO',
+                            id_ciclo INT NOT NULL REFERENCES ciclo(id_ciclo) ON DELETE CASCADE,
+                            id_criador INT NOT NULL REFERENCES colaborador(id_colaborador) ON DELETE NO ACTION
 );
 
 -- 5W2H
-CREATE TABLE IF NOT EXISTS plano_acao5w2h (
-                                              id_plano_acao_5w2h SERIAL PRIMARY KEY,
-                                              what TEXT NOT NULL,
-                                              why TEXT,
-                                              "where" TEXT,
-                                              "when" DATE,
-                                              who INT NOT NULL REFERENCES colaborador(id_colaborador) ON DELETE RESTRICT,
-                                              how TEXT,
-                                              how_much NUMERIC,
-                                              id_plano_acao INT NOT NULL REFERENCES plano_acao(id_plano_acao) ON DELETE CASCADE
+CREATE TABLE plano_acao5w2h (
+                                id_plano_acao_5w2h SERIAL PRIMARY KEY,
+                                what TEXT NOT NULL,
+                                why TEXT,
+                                "where" TEXT,
+                                "when" DATE,
+                                who INT NOT NULL REFERENCES colaborador(id_colaborador) ON DELETE NO ACTION,
+                                how TEXT,
+                                how_much NUMERIC,
+                                id_plano_acao INT NOT NULL REFERENCES plano_acao(id_plano_acao) ON DELETE CASCADE
 );
 
 -- Meta
-CREATE TABLE IF NOT EXISTS meta (
-                                    id_meta SERIAL PRIMARY KEY,
-                                    meta VARCHAR(100) NOT NULL,
-                                    descricao_meta TEXT,
-                                    objetivo VARCHAR(200),
-                                    prioridade intensidade_enum NOT NULL DEFAULT 'MEDIO',
-                                    prazo DATE NOT NULL,
-                                    status status_meta_enum NOT NULL DEFAULT 'REGULAR',
-                                    criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-                                    id_ciclo INT NOT NULL REFERENCES ciclo(id_ciclo) ON DELETE CASCADE,
-                                    id_plano_acao INT REFERENCES plano_acao(id_plano_acao) ON DELETE SET NULL
+CREATE TABLE meta (
+                      id_meta SERIAL PRIMARY KEY,
+                      meta VARCHAR(100) NOT NULL,
+                      descricao_meta TEXT,
+                      objetivo VARCHAR(200),
+                      prioridade intensidade_enum NOT NULL DEFAULT 'MEDIO',
+                      prazo DATE NOT NULL,
+                      status status_meta_enum NOT NULL DEFAULT 'REGULAR',
+                      criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                      id_ciclo INT NOT NULL REFERENCES ciclo(id_ciclo) ON DELETE CASCADE,
+                      id_plano_acao INT REFERENCES plano_acao(id_plano_acao) ON DELETE SET NULL
 );
 
 -- Tarefa
-CREATE TABLE IF NOT EXISTS tarefa (
-                                      id_tarefa SERIAL PRIMARY KEY,
-                                      titulo VARCHAR(100) NOT NULL,
-                                      descricao TEXT,
-                                      prioridade intensidade_enum NOT NULL DEFAULT 'MEDIO',
-                                      dt_entrega DATE,
-                                      status situacao_enum NOT NULL DEFAULT 'NAO_INICIADO',
-                                      dt_inicio DATE NOT NULL DEFAULT CURRENT_DATE,
-                                      id_colaborador INT NOT NULL REFERENCES colaborador(id_colaborador) ON DELETE RESTRICT,
-                                      id_plano_acao INT NOT NULL REFERENCES plano_acao(id_plano_acao) ON DELETE RESTRICT
+CREATE TABLE tarefa (
+                        id_tarefa SERIAL PRIMARY KEY,
+                        titulo VARCHAR(100) NOT NULL,
+                        descricao TEXT,
+                        prioridade intensidade_enum NOT NULL DEFAULT 'MEDIO',
+                        dt_entrega DATE,
+                        status situacao_enum NOT NULL DEFAULT 'NAO_INICIADO',
+                        dt_inicio DATE NOT NULL DEFAULT CURRENT_DATE,
+                        id_colaborador INT NOT NULL REFERENCES colaborador(id_colaborador) ON DELETE NO ACTION,
+                        id_plano_acao INT NOT NULL REFERENCES plano_acao(id_plano_acao) ON DELETE NO ACTION,
+                        CONSTRAINT chk_tarefa_dt_entrega CHECK (dt_entrega >= dt_inicio)
 );
 
 -- Lições Aprendidas
-CREATE TABLE IF NOT EXISTS licoes_aprendidas (
-                                                 id_licao SERIAL PRIMARY KEY,
-                                                 titulo VARCHAR(100) NOT NULL,
-                                                 area VARCHAR(30),
-                                                 aprendizado TEXT NOT NULL,
-                                                 categoria VARCHAR(30),
-                                                 descricao TEXT,
-                                                 fase_origem etapas_ciclo_enum NOT NULL DEFAULT 'PLAN',
-                                                 severidade intensidade_enum NOT NULL DEFAULT 'MEDIO',
-                                                 id_ciclo INT NOT NULL REFERENCES ciclo(id_ciclo) ON DELETE CASCADE
+CREATE TABLE licoes_aprendidas (
+                                   id_licao SERIAL PRIMARY KEY,
+                                   titulo VARCHAR(100) NOT NULL,
+                                   area VARCHAR(30),
+                                   aprendizado TEXT NOT NULL,
+                                   categoria VARCHAR(30),
+                                   descricao TEXT,
+                                   fase_origem etapas_ciclo_enum NOT NULL DEFAULT 'PLAN',
+                                   severidade intensidade_enum NOT NULL DEFAULT 'MEDIO',
+                                   id_ciclo INT NOT NULL REFERENCES ciclo(id_ciclo) ON DELETE CASCADE
 );
 
 -- Problema
-CREATE TABLE IF NOT EXISTS problema (
-                                        id_problema SERIAL PRIMARY KEY,
-                                        titulo VARCHAR(100) NOT NULL,
-                                        descricao TEXT NOT NULL,
-                                        peso intensidade_enum NOT NULL DEFAULT 'MEDIO',
-                                        solucao VARCHAR(200),
-                                        status status_problema_enum NOT NULL DEFAULT 'EM_ANALISE',
-                                        origem TEXT,
-                                        encontrado_em DATE NOT NULL,
-                                        id_ciclo INT NOT NULL REFERENCES ciclo(id_ciclo) ON DELETE CASCADE,
-                                        id_plano_acao INT REFERENCES plano_acao(id_plano_acao) ON DELETE SET NULL,
-                                        id_colaborador INT REFERENCES colaborador(id_colaborador) ON DELETE SET NULL
+CREATE TABLE problema (
+                          id_problema SERIAL PRIMARY KEY,
+                          titulo VARCHAR(100) NOT NULL,
+                          descricao TEXT NOT NULL,
+                          peso intensidade_enum NOT NULL DEFAULT 'MEDIO',
+                          solucao VARCHAR(200),
+                          status status_problema_enum NOT NULL DEFAULT 'EM_ANALISE',
+                          origem TEXT,
+                          encontrado_em DATE NOT NULL,
+                          id_ciclo INT NOT NULL REFERENCES ciclo(id_ciclo) ON DELETE CASCADE,
+                          id_plano_acao INT REFERENCES plano_acao(id_plano_acao) ON DELETE SET NULL,
+                          id_colaborador INT REFERENCES colaborador(id_colaborador) ON DELETE SET NULL
 );
 
 -- Relacionamentos N:N
-CREATE TABLE IF NOT EXISTS ciclo_colaborador (
-                                                 id_ciclo INT NOT NULL REFERENCES ciclo (id_ciclo) ON DELETE CASCADE,
-                                                 id_colaborador INT NOT NULL REFERENCES colaborador (id_colaborador) ON DELETE CASCADE,
-                                                 papel_ciclo VARCHAR(50),
-                                                 PRIMARY KEY (id_ciclo, id_colaborador)
+CREATE TABLE ciclo_colaborador (
+                                   id_ciclo INT NOT NULL REFERENCES ciclo (id_ciclo) ON DELETE CASCADE,
+                                   id_colaborador INT NOT NULL REFERENCES colaborador (id_colaborador) ON DELETE CASCADE,
+                                   papel_ciclo VARCHAR(50),
+                                   PRIMARY KEY (id_ciclo, id_colaborador)
 );
 
-CREATE TABLE IF NOT EXISTS empresa_administrador_geral (
-                                                           id_empresa INT NOT NULL REFERENCES empresa (id_empresa) ON DELETE CASCADE,
-                                                           id_adm_geral INT NOT NULL REFERENCES administrador_geral (id_adm_geral) ON DELETE CASCADE,
-                                                           PRIMARY KEY (id_empresa, id_adm_geral)
+CREATE TABLE empresa_administrador_geral (
+                                             id_empresa INT NOT NULL REFERENCES empresa (id_empresa) ON DELETE CASCADE,
+                                             id_adm_geral INT NOT NULL REFERENCES administrador_geral (id_adm_geral) ON DELETE CASCADE,
+                                             PRIMARY KEY (id_empresa, id_adm_geral)
 );
-
-
-
-ALTER TABLE endereco
-    ADD CONSTRAINT chk_endereco_cep_tamanho CHECK (length(cep) = 8);
-
-ALTER TABLE administrador_geral
-    ADD CONSTRAINT chk_adm_telefone_tamanho CHECK (length(telefone) IN (10, 11));
-
-ALTER TABLE empresa
-    ADD CONSTRAINT chk_empresa_cnpj_tamanho CHECK (length(cnpj) = 14);
-
-ALTER TABLE colaborador
-    ADD CONSTRAINT chk_colab_cpf_tamanho CHECK (length(cpf) = 11);
-
-ALTER TABLE colaborador
-    ADD CONSTRAINT chk_colab_telefone_tamanho CHECK (length(telefone) IN (10, 11));
-
-ALTER TABLE colaborador
-    ADD CONSTRAINT chk_colab_dt_contratacao CHECK (dt_contratacao <= current_date);
-
-ALTER TABLE ciclo
-    ADD CONSTRAINT chk_ciclo_dt_fim CHECK (dt_fim >= dt_inicio);
-
-ALTER TABLE tarefa
-    ADD CONSTRAINT chk_tarefa_dt_entrega CHECK (dt_entrega >= dt_inicio);
-
-
-
-ALTER TABLE plano_acao
-    DROP CONSTRAINT plano_acao_id_criador_fkey,
-    ADD CONSTRAINT plano_acao_id_criador_fkey
-        FOREIGN KEY (id_criador) REFERENCES colaborador(id_colaborador) ON DELETE NO ACTION;
-
-ALTER TABLE plano_acao5w2h
-    DROP CONSTRAINT plano_acao5w2h_who_fkey,
-    ADD CONSTRAINT plano_acao5w2h_who_fkey
-        FOREIGN KEY (who) REFERENCES colaborador(id_colaborador) ON DELETE NO ACTION;
-
-ALTER TABLE tarefa
-    DROP CONSTRAINT tarefa_id_colaborador_fkey,
-    ADD CONSTRAINT tarefa_id_colaborador_fkey
-        FOREIGN KEY (id_colaborador) REFERENCES colaborador(id_colaborador) ON DELETE NO ACTION,
-    DROP CONSTRAINT tarefa_id_plano_acao_fkey,
-    ADD CONSTRAINT tarefa_id_plano_acao_fkey
-        FOREIGN KEY (id_plano_acao) REFERENCES plano_acao(id_plano_acao) ON DELETE NO ACTION;
