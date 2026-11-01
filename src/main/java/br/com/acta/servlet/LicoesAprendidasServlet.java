@@ -22,12 +22,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+/** Recebe as requisições de LicoesAprendidas e prepara os dados para as páginas JSP. */
 @WebServlet(name = "LicoesAprendidasServlet", value = "/licoes-aprendidas-servlet")
 public class LicoesAprendidasServlet extends HttpServlet {
     private static final String PAGINA_LICOES_APRENDIDAS = "/crud/licoes-aprendidas.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final LicoesAprendidasDAO DAO = new LicoesAprendidasDAO();
 
+    /** Atende consultas e converte as falhas em respostas HTTP. */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -50,6 +52,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         }
     }
 
+    /** Seleciona a ação do formulário e trata erros de validação e persistência. */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -103,8 +106,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         }
     }
 
-    // CRUD
-    // Retorno do DAO: 1 = certo, 0 = erro de negócio, -1 = erro de conexão com o banco
+    /** Valida os campos do formulário antes de cadastrar o registro. */
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         LicoesAprendidas licoesAprendidas = new LicoesAprendidas();
 
@@ -123,6 +125,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         else enviarErro(req, resp, "A lição aprendida não pode ser cadastrada");
     }
 
+    /** Busca pelo ID informado ou delega à listagem com filtros. */
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
@@ -143,6 +146,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
+    /** Lê os filtros opcionais e prepara os dados exibidos pela página. */
     private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String busca = req.getParameter("busca");
         String faseParam = req.getParameter("fase");
@@ -152,6 +156,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         String ordem = req.getParameter("ordem");
         String direcao = req.getParameter("direcao");
 
+        // Filtro ausente permanece null e não restringe a consulta.
         EtapaCiclo fase = null;
         if (faseParam != null && !faseParam.isBlank()) fase = EtapaCiclo.valueOf(faseParam);
 
@@ -167,6 +172,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
+    /** Valida os campos e atualiza o registro identificado no formulário. */
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Validador.id(req.getParameter("id-licoesAprendidas"), "Id da lição");
         LicoesAprendidas licoesAprendidas = new LicoesAprendidas();
@@ -187,6 +193,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         else enviarErro(req, resp, "A lição aprendida não pode ser atualizada");
     }
 
+    /** Valida o ID recebido e solicita a exclusão ao DAO. */
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Validador.id(req.getParameter("id-licoesAprendidas"), "Id da lição");
         int resultado = DAO.excluir(id);
@@ -195,7 +202,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         else enviarErro(req, resp, "A lição aprendida não pode ser excluída");
     }
 
-    // UTILITARIOS
+    /** Remove espaços excedentes e reutiliza a escrita já cadastrada no banco. */
     private String normalizarArea(String area) {
         if (area == null || area.isBlank()) return null;
 
@@ -204,6 +211,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         return existente != null ? existente : limpa;
     }
 
+    /** Remove espaços excedentes e reutiliza a escrita já cadastrada no banco. */
     private String normalizarCategoria(String categoria) {
         if (categoria == null || categoria.isBlank()) return null;
 
@@ -212,8 +220,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         return existente != null ? existente : limpa;
     }
 
-    // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
-    // Assume 500 (erro grave), então o usuário é levado para a página de erro.
+    /** Usa HTTP 500 quando o chamador não informa um status. */
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -224,9 +231,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
-    // SOBRECARGA 2 (4 parâmetros): quem realmente trata o erro. O destino depende do status:
-    //  - 404 (registro não encontrado) e 500 (erro de banco/inesperado): vai para a página de erro (/erro.jsp)
-    //  - 400 (dado inválido) e 409 (duplicado/em uso): volta para a tela da entidade, mostrando a mensagem
+    /** Encaminha erros 404/500 à página de erro; os demais retornam à tela do cadastro. */
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -236,7 +241,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
 
         resp.setStatus(status);
 
-        // Erros graves: página de erro (não consulta o banco, então funciona mesmo com ele fora do ar)
+        // Exibe a página de erro sem consultar o banco novamente.
         if (status == HttpServletResponse.SC_NOT_FOUND
                 || status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
             req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
@@ -245,10 +250,10 @@ public class LicoesAprendidasServlet extends HttpServlet {
             return;
         }
 
-        // Erros do usuário: volta para a tela com a mensagem
+        // Mantém a mensagem na tela do cadastro.
         req.setAttribute("mensagemErro", mensagem);
 
-        // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
+        // Se a recarga falhar, exibe listas vazias e preserva a mensagem.
         try {
             List<LicoesAprendidas> licoesAprendidas = DAO.buscar();
 
@@ -266,6 +271,7 @@ public class LicoesAprendidasServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_LICOES_APRENDIDAS).forward(req, resp);
     }
 
+    /** Recarrega a listagem e as opções da página com uma mensagem de sucesso. */
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<LicoesAprendidas> licoesAprendidas = DAO.buscar();

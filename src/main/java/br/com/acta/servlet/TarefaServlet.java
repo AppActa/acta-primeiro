@@ -25,12 +25,14 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
+/** Recebe as requisições de Tarefa e prepara os dados para as páginas JSP. */
 @WebServlet(name = "TarefaServlet", value = "/tarefa-servlet")
 public class TarefaServlet extends HttpServlet {
     private static final String PAGINA_TAREFA = "/crud/tarefa.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final TarefaDAO DAO = new TarefaDAO();
 
+    /** Atende consultas e converte as falhas em respostas HTTP. */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -57,6 +59,7 @@ public class TarefaServlet extends HttpServlet {
         }
     }
 
+    /** Seleciona a ação do formulário e trata erros de validação e persistência. */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -117,8 +120,7 @@ public class TarefaServlet extends HttpServlet {
         }
     }
 
-    // CRUD
-    // Retorno do DAO: 1 = certo, 0 = erro de negócio, -1 = erro de conexão com o banco
+    /** Valida os campos do formulário antes de cadastrar o registro. */
     private void inserir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Tarefa tarefa = new Tarefa();
 
@@ -137,6 +139,7 @@ public class TarefaServlet extends HttpServlet {
         else enviarErro(req, resp, "A tarefa não pode ser cadastrada");
     }
 
+    /** Busca pelo ID informado ou delega à listagem com filtros. */
     private void buscar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (id == null) {
@@ -156,6 +159,7 @@ public class TarefaServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
 
+    /** Lê os filtros opcionais e prepara os dados exibidos pela página. */
     private void buscaFiltrada(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String busca = req.getParameter("busca");
         String prioridadeParam = req.getParameter("prioridade");
@@ -165,6 +169,7 @@ public class TarefaServlet extends HttpServlet {
         String ordem = req.getParameter("ordem");
         String direcao = req.getParameter("direcao");
 
+        // Filtro ausente permanece null e não restringe a consulta.
         Intensidade prioridade = null;
         if (prioridadeParam != null && !prioridadeParam.isBlank()) prioridade = Intensidade.valueOf(prioridadeParam);
 
@@ -185,6 +190,7 @@ public class TarefaServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
 
+    /** Valida os campos e atualiza o registro identificado no formulário. */
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Validador.id(req.getParameter("id-tarefa"), "Id da tarefa");
         Tarefa tarefa = new Tarefa();
@@ -206,6 +212,7 @@ public class TarefaServlet extends HttpServlet {
         else enviarErro(req, resp, "A tarefa não pode ser atualizada");
     }
 
+    /** Valida o ID recebido e solicita a exclusão ao DAO. */
     private void excluir(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id = Validador.id(req.getParameter("id-tarefa"), "Id da tarefa");
         int resultado = DAO.excluir(id);
@@ -214,9 +221,7 @@ public class TarefaServlet extends HttpServlet {
         else enviarErro(req, resp, "A tarefa não pode ser excluída");
     }
 
-    // UTILITARIOS
-    // SOBRECARGA 1 (3 parâmetros): erro sem status definido.
-    // Assume 500 (erro grave), então o usuário é levado para a página de erro.
+    /** Usa HTTP 500 quando o chamador não informa um status. */
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -227,9 +232,7 @@ public class TarefaServlet extends HttpServlet {
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
-    // SOBRECARGA 2 (4 parâmetros): quem realmente trata o erro. O destino depende do status:
-    //  - 404 (registro não encontrado) e 500 (erro de banco/inesperado): vai para a página de erro (/erro.jsp)
-    //  - 400 (dado inválido) e 409 (duplicado/em uso): volta para a tela da entidade, mostrando a mensagem
+    /** Encaminha erros 404/500 à página de erro; os demais retornam à tela do cadastro. */
     private void enviarErro(
             HttpServletRequest req,
             HttpServletResponse resp,
@@ -239,7 +242,7 @@ public class TarefaServlet extends HttpServlet {
 
         resp.setStatus(status);
 
-        // Erros graves: página de erro (não consulta o banco, então funciona mesmo com ele fora do ar)
+        // Exibe a página de erro sem consultar o banco novamente.
         if (status == HttpServletResponse.SC_NOT_FOUND
                 || status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
             req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
@@ -248,10 +251,10 @@ public class TarefaServlet extends HttpServlet {
             return;
         }
 
-        // Erros do usuário: volta para a tela com a mensagem
+        // Mantém a mensagem na tela do cadastro.
         req.setAttribute("mensagemErro", mensagem);
 
-        // Não pode depender do banco: se recarregar a lista falhar, mostra a tela vazia com a mensagem
+        // Se a recarga falhar, exibe listas vazias e preserva a mensagem.
         try {
             List<Tarefa> tarefas = DAO.buscar();
 
@@ -267,6 +270,7 @@ public class TarefaServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_TAREFA).forward(req, resp);
     }
 
+    /** Recarrega a listagem e as opções da página com uma mensagem de sucesso. */
     private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("mensagemSucesso", "Operação realizada com sucesso.");
         List<Tarefa> tarefas = DAO.buscar();

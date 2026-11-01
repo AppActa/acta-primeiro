@@ -10,43 +10,29 @@ import java.util.regex.Pattern;
 
 /**
  * Validações de entrada compartilhadas por todos os servlets.
- * Regra: aceita o texto com máscara, valida e devolve o valor LIMPO (só dígitos, quando for o caso).
- * Qualquer problema lança ValidacaoException (o servlet transforma em HTTP 400).
+ * Valida e normaliza os valores; entradas inválidas geram ValidacaoException.
  */
 public class Validador {
 
-    private Validador() { }   // classe só de métodos estáticos: ninguém dá "new Validador()"
+    private Validador() { }   // classe só de métodos estáticos
 
-    // ---------------------------------------------------------------------------------
-    // REGEX. O Pattern é criado UMA vez (static final) e reaproveitado em toda chamada.
-    // No Java a barra é dobrada: \d no regex101 vira \\d aqui.
-    // ---------------------------------------------------------------------------------
-
-    // EXEMPLO RESOLVIDO: e-mail (leia com calma, depois faça os dois de baixo)
-    //  ^            começo do texto
-    //  [\w.+-]+     1 ou mais: letra/número/_ , ponto, + ou -
-    //  @            a arroba
-    //  [\w-]+       nome do domínio
-    //  (\.[\w-]+)+  1 ou mais ".algo"  (.com  ou  .com.br)
-    //  $            fim do texto
+    // E-mail: usuário, @ e domínio com pelo menos um ponto.
     private static final Pattern EMAIL = Pattern.compile("^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$");
 
     // CEP: 5 dígitos, hífen opcional, 3 dígitos
     private static final Pattern CEP = Pattern.compile("^[0-9]{5}-?[0-9]{3}$");
 
-    // Telefone: DDD com parênteses OU sem, espaço opcional, 4 ou 5 dígitos, hífen opcional, 4 dígitos
+    // DDD + fixo ou celular; parênteses, espaço e hífen são opcionais.
     private static final Pattern TELEFONE = Pattern.compile("^(?:\\([0-9]{2}\\)|[0-9]{2}) ?[0-9]{4,5}-?[0-9]{4}$");
 
-    // CPF: 000.000.000-00 (pontos e hífen opcionais). O ponto precisa de \\. senão "." casa com QUALQUER caractere.
+    // CPF: 11 dígitos, com pontos e hífen opcionais.
     private static final Pattern CPF = Pattern.compile("^[0-9]{3}\\.?[0-9]{3}\\.?[0-9]{3}-?[0-9]{2}$");
 
-    // CNPJ alfanumérico (padrão novo da Receita): 12 primeiros caracteres letras/números, 2 últimos (DV) só números.
-    // Também aceita o CNPJ antigo, só com números. Formato: 00.000.000/0000-00 (separadores opcionais).
+    // CNPJ numérico ou alfanumérico: termina em dois dígitos verificadores.
+    // Pontos, barra e hífen são opcionais.
     private static final Pattern CNPJ = Pattern.compile("^[A-Za-z0-9]{2}\\.?[A-Za-z0-9]{3}\\.?[A-Za-z0-9]{3}/?[A-Za-z0-9]{4}-?[0-9]{2}$");
 
-    // ---------------------------------------------------------------------------------
-    // MÉTODOS GENÉRICOS (prontos)
-    // ---------------------------------------------------------------------------------
+    // Validações básicas e identificação.
 
     /** Tira espaços das pontas e recusa nulo/vazio. */
     public static String obrigatorio(String valor, String campo) {
@@ -56,7 +42,7 @@ public class Validador {
         return valor.trim();
     }
 
-    /** Respeita o tamanho do VARCHAR(n) da coluna. */
+    /** Limita o tamanho de um texto já preenchido. */
     public static String tamanhoMaximo(String valor, int max, String campo) {
         if (valor.length() > max) {
             throw new ValidacaoException(campo + " deve ter no máximo " + max + " caracteres.");
@@ -74,6 +60,7 @@ public class Validador {
         String v = obrigatorio(valor, campo);
         try {
             long numero = Long.parseLong(v);
+            // O ID deve ser positivo e caber em um inteiro do banco.
             if (numero <= 0 || numero > Integer.MAX_VALUE) {
                 throw new ValidacaoException(campo + " inválido.");
             }
@@ -83,6 +70,7 @@ public class Validador {
         }
     }
 
+    /** Valida formato e limite de 80 caracteres; devolve em minúsculas. */
     public static String email(String valor) {
         String v = obrigatorio(valor, "E-mail");
         if (!EMAIL.matcher(v).matches()) {
@@ -91,9 +79,7 @@ public class Validador {
         return tamanhoMaximo(v, 80, "E-mail").toLowerCase();
     }
 
-    // ---------------------------------------------------------------------------------
-    // OS DOIS DO EXERCÍCIO (a lógica já está pronta; falta só o regex acima)
-    // ---------------------------------------------------------------------------------
+    // CEP e telefone: valida o formato antes de remover a máscara.
 
     /** Devolve o CEP só com dígitos (CHAR(8) no banco). */
     public static String cep(String valor) {
@@ -111,15 +97,14 @@ public class Validador {
             throw new ValidacaoException("Telefone inválido. Use (11) 3456-7890 ou (11) 98765-4321.");
         }
         String digitos = somenteDigitos(v);
-        if (!digitos.matches("[1-9]{2}(?:\\d{8}|9\\d{8})")) {        // DDD sem zero; celular continua começando com 9
+        // Recusa zero no DDD e exige 9 no início de celulares.
+        if (!digitos.matches("[1-9]{2}(?:\\d{8}|9\\d{8})")) {
             throw new ValidacaoException("Telefone inválido: informe DDD + fixo com 8 dígitos ou celular com 9 dígitos.");
         }
         return digitos;
     }
 
-    // ---------------------------------------------------------------------------------
-    // CPF e CNPJ: o regex confere o FORMATO; a conta abaixo confere os DÍGITOS VERIFICADORES.
-    // ---------------------------------------------------------------------------------
+    // CPF e CNPJ: confere o formato e os dígitos verificadores.
 
     /** Devolve o CPF só com dígitos (CHAR(11) no banco). */
     public static String cpf(String valor) {
@@ -140,6 +125,7 @@ public class Validador {
         if (!CNPJ.matcher(v).matches()) {
             throw new ValidacaoException("CNPJ inválido. Use 00.000.000/0000-00.");
         }
+        // Preserva as letras do CNPJ ao retirar a pontuação.
         String c = v.replaceAll("[^A-Za-z0-9]", "").toUpperCase();
         if (todosIguais(c) || !cnpjConfere(c)) {
             throw new ValidacaoException("CNPJ inválido.");
@@ -147,60 +133,62 @@ public class Validador {
         return c;
     }
 
-    /** 111.111.111-11 passa na conta mas não existe: recusa tudo igual. */
+    /** Recusa sequências repetidas, mesmo quando passam no cálculo. */
     private static boolean todosIguais(String texto) {
         return texto.chars().distinct().count() == 1;
     }
 
-    // CPF: cada dígito é multiplicado por um peso que diminui (10,9,8... para o 1º DV; 11,10,9... para o 2º).
-    // Soma tudo, pega o resto da divisão por 11: resto menor que 2 vira DV 0, senão DV = 11 - resto.
+    /** Calcula um dígito do CPF usando pesos decrescentes. */
     private static int digitoCpf(String base) {
         int peso = base.length() + 1;
         int soma = 0;
         for (char c : base.toCharArray()) {
+            // Subtrair '0' converte o caractere em número.
             soma += (c - '0') * peso--;
         }
         int resto = soma % 11;
         return resto < 2 ? 0 : 11 - resto;
     }
 
+    /** Compara os dois dígitos finais com os valores calculados. */
     private static boolean cpfConfere(String d) {
         return d.charAt(9) - '0' == digitoCpf(d.substring(0, 9))
                 && d.charAt(10) - '0' == digitoCpf(d.substring(0, 10));
     }
 
-    // CNPJ: mesma ideia, com pesos 6,5,4,3,2,9,8,7,6,5,4,3,2 (o 1º DV usa só os 12 últimos pesos).
-    // Letra vale (código ASCII - 48): '0'..'9' = 0..9, 'A' = 17, 'B' = 18... (regra do CNPJ alfanumérico).
+    // O primeiro dígito usa os 12 últimos pesos; o segundo usa todos.
     private static final int[] PESOS_CNPJ = {6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
 
+    /** Calcula um dígito do CNPJ, aceitando números e letras. */
     private static int digitoCnpj(String base) {
+        // Alinha os pesos ao tamanho da base: 12 ou 13 caracteres.
         int inicio = PESOS_CNPJ.length - base.length();
         int soma = 0;
         for (int i = 0; i < base.length(); i++) {
+            // ASCII - 48: números valem 0 a 9; letras começam em A = 17.
             soma += (base.charAt(i) - '0') * PESOS_CNPJ[inicio + i];
         }
         int resto = soma % 11;
         return resto < 2 ? 0 : 11 - resto;
     }
 
+    /** Confere os dois dígitos, incluindo o primeiro na segunda conta. */
     private static boolean cnpjConfere(String c) {
         return c.charAt(12) - '0' == digitoCnpj(c.substring(0, 12))
                 && c.charAt(13) - '0' == digitoCnpj(c.substring(0, 13));
     }
 
-    // ---------------------------------------------------------------------------------
-    // TEXTOS, NOMES, UF, NÚMERO, SENHA, DATAS, OPÇÕES (enum) E IDS
-    // ---------------------------------------------------------------------------------
+    // Regras de texto, endereço, senha, datas e opções.
 
     private static final int TEXTO_LONGO_MAX = 2000;   // limite do app para colunas TEXT
 
-    // Texto de UMA linha: qualquer coisa menos caracteres de controle (tab, quebra de linha, etc.)
+    // Uma linha, sem caracteres de controle, como tabulação e quebra de linha.
     private static final Pattern LINHA = Pattern.compile("^[^\\p{Cntrl}]+$");
     // Texto de várias linhas (descrições): permite quebra de linha e tab
     private static final Pattern LONGO = Pattern.compile("^[\\P{Cntrl}\\r\\n\\t]+$");
-    // Nome de pessoa/cidade: começa com letra (aceita acento), depois letras, espaço, apóstrofo, ponto ou hífen
+    // Começa com letra; aceita acentos, espaços, apóstrofos, pontos e hífens.
     private static final Pattern NOME_PESSOA = Pattern.compile("^\\p{L}[\\p{L} '.-]*$");
-    // As 27 siglas de estado
+    // Siglas dos 26 estados e do Distrito Federal.
     private static final Pattern UF = Pattern.compile("^(AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)$");
     // Número do endereço: 1 a 6 dígitos com letra opcional (12, 12A) ou S/N
     private static final Pattern NUMERO = Pattern.compile("^(\\d{1,6}[A-Za-z]?|[Ss]/[Nn])$");
@@ -235,6 +223,7 @@ public class Validador {
         return tamanhoMaximo(v, TEXTO_LONGO_MAX, campo);
     }
 
+    /** Valida texto de várias linhas; nulo ou em branco vira null. */
     public static String textoLongoOpcional(String valor, String campo) {
         if (valor == null || valor.isBlank()) {
             return null;
@@ -291,16 +280,19 @@ public class Validador {
         }
         LocalDate data;
         try {
+            // O formato sozinho não garante que o dia exista no calendário.
             data = LocalDate.parse(v);
         } catch (DateTimeParseException e) {
             throw new ValidacaoException(campo + " inválida.");
         }
+        // Restringe os anos ao intervalo aceito pela aplicação.
         if (data.getYear() < 1900 || data.getYear() > 2100) {
             throw new ValidacaoException(campo + " fora do intervalo permitido.");
         }
         return Date.valueOf(data);
     }
 
+    /** Valida a data quando preenchida; nulo ou em branco vira null. */
     public static Date dataOpcional(String valor, String campo) {
         if (valor == null || valor.isBlank()) {
             return null;
@@ -311,20 +303,21 @@ public class Validador {
     /** Data que não pode estar no futuro (contratação, problema encontrado...). */
     public static Date dataNaoFutura(String valor, String campo) {
         Date d = data(valor, campo);
+        // Usa o dia atual no fuso de São Paulo.
         if (d.toLocalDate().isAfter(LocalDate.now(ZoneId.of("America/Sao_Paulo")))) {
             throw new ValidacaoException(campo + " não pode estar no futuro.");
         }
         return d;
     }
 
-    /** Regra do banco: fim não pode ser antes do início. Fim vazio (null) é permitido. */
+    /** Compara datas quando ambas existem; fim igual ao início é permitido. */
     public static void periodo(Date inicio, Date fim, String campoFim) {
         if (inicio != null && fim != null && fim.before(inicio)) {
             throw new ValidacaoException(campoFim + " não pode ser anterior à data de início.");
         }
     }
 
-    /** Converte o texto para um valor do enum (Status, Situacao...). Valor fora da lista é recusado. */
+    /** Exige uma opção do enum com a mesma escrita, incluindo maiúsculas. */
     public static <E extends Enum<E>> E opcao(Class<E> tipo, String valor, String campo) {
         String v = obrigatorio(valor, campo);
         try {
@@ -334,7 +327,7 @@ public class Validador {
         }
     }
 
-    /** Checkbox: marcado chega "on" ou "true"; desmarcado não chega (null). */
+    /** Aceita true/on/1 e false/off/0; nulo ou em branco resulta em false. */
     public static boolean booleano(String valor) {
         if (valor == null || valor.isBlank()) {
             return false;

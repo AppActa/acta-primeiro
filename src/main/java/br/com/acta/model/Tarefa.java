@@ -5,9 +5,10 @@ import br.com.acta.enums.Situacao;
 
 import java.sql.Date;
 
+/** Representa uma tarefa do plano de ação e o colaborador responsável. */
 public class Tarefa {
 
-    //Atributos
+    // Descrição, prioridade, datas e andamento da tarefa.
 
     private Long id_tarefa;
     private String titulo;
@@ -16,13 +17,17 @@ public class Tarefa {
     private Date dt_entrega;
     private Situacao status;
     private Date dt_inicio;
+    // IDs do responsável e do plano ao qual a tarefa pertence.
     private Long id_colaborador;
     private Long id_plano_acao;
+    // Nomes trazidos pelas consultas para exibir os vínculos.
     private String nome_colaborador;
     private String nome_plano_acao;
 
+    /** Cria uma tarefa vazia para preenchimento posterior. */
     public Tarefa() {}
 
+    /** Monta os dados da tarefa sem um ID definido. */
     public Tarefa(String titulo, String descricao, Intensidade prioridade, Date dt_entrega, Situacao status, Date dt_inicio, Long id_colaborador, Long id_plano_acao) {
         this.titulo = titulo;
         this.descricao = descricao;
@@ -34,6 +39,7 @@ public class Tarefa {
         this.id_plano_acao = id_plano_acao;
     }
 
+    /** Monta uma tarefa com ID já conhecido. */
     public Tarefa(Long id_tarefa, String titulo, String descricao, Intensidade prioridade, Date dt_entrega, Situacao status, Date dt_inicio, Long id_colaborador, Long id_plano_acao) {
         this.id_tarefa = id_tarefa;
         this.titulo = titulo;
@@ -46,6 +52,7 @@ public class Tarefa {
         this.id_plano_acao = id_plano_acao;
     }
 
+    // Acesso e atualização dos dados da tarefa.
     public Long getId_tarefa() {
         return id_tarefa;
     }

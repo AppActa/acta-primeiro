@@ -3,9 +3,10 @@ package br.com.acta.model;
 import br.com.acta.enums.EtapaCiclo;
 import br.com.acta.enums.Intensidade;
 
+/** Registra o aprendizado obtido em uma etapa de um ciclo PDCA. */
 public class LicoesAprendidas {
 
-    //Atributos
+    // Conteúdo, classificação e origem do aprendizado.
 
     private Long id_licao;
     private String titulo;
@@ -16,11 +17,14 @@ public class LicoesAprendidas {
     private EtapaCiclo fase_origem;
     private Intensidade severidade;
     private Long id_ciclo;
+    // Nome do ciclo usado na exibição do vínculo.
     private String nome_ciclo;
 
+    /** Cria uma lição vazia para preenchimento posterior. */
     public LicoesAprendidas() {
     }
 
+    /** Monta os dados da lição sem um ID definido. */
     public LicoesAprendidas(String titulo, String area, String aprendizado, String categoria, String descricao, EtapaCiclo fase_origem, Intensidade severidade, Long id_ciclo, String nome_ciclo) {
         this.titulo = titulo;
         this.area = area;
@@ -33,6 +37,7 @@ public class LicoesAprendidas {
         this.nome_ciclo = nome_ciclo;
     }
 
+    /** Monta uma lição com ID já conhecido. */
     public LicoesAprendidas(Long id_licao, String titulo, String area, String aprendizado, String categoria, String descricao, EtapaCiclo fase_origem, Intensidade severidade, Long id_ciclo, String nome_ciclo) {
         this.id_licao = id_licao;
         this.titulo = titulo;
@@ -46,6 +51,7 @@ public class LicoesAprendidas {
         this.nome_ciclo = nome_ciclo;
     }
 
+    // Acesso e atualização dos dados da lição.
     public Long getId_licao() {
         return id_licao;
     }

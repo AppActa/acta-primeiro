@@ -3,23 +3,27 @@ package br.com.acta.model;
 import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
 
+/** Representa um plano de ação ligado a um ciclo e ao seu criador. */
 public class PlanoAcao {
 
-    //Atributos
+    // Dados do plano, prioridade e andamento da execução.
     private Long id_plano_acao;
     private String nome;
     private String descricao;
     private Situacao status;
     private Intensidade prioridade;
+    // IDs do ciclo e do colaborador que criou o plano.
     private Long id_ciclo;
     private Long id_criador;
+    // Nomes retornados pelas consultas para exibir os vínculos.
     private String nome_ciclo;
     private String nome_criador;
 
-    //Construtores
 
+    /** Cria um plano vazio para preenchimento posterior. */
     public PlanoAcao() {}
 
+    /** Monta os dados do plano sem um ID definido. */
     public PlanoAcao(String nome, String descricao, Situacao status, Intensidade prioridade, Long id_ciclo, Long id_criador) {
         this.nome = nome;
         this.descricao = descricao;
@@ -29,6 +33,7 @@ public class PlanoAcao {
         this.id_criador = id_criador;
     }
 
+    /** Monta um plano com ID já conhecido. */
     public PlanoAcao(Long id_plano_acao, String nome, String descricao, Situacao status, Intensidade prioridade, Long id_ciclo, Long id_criador) {
         this.id_plano_acao = id_plano_acao;
         this.nome = nome;
@@ -39,6 +44,7 @@ public class PlanoAcao {
         this.id_criador = id_criador;
     }
 
+    // Acesso e atualização dos dados do plano.
     public Long getId_plano_acao() {
         return id_plano_acao;
     }
