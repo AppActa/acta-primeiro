@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import br.com.acta.model.AdministradorGeral;
 import br.com.acta.model.Colaborador;
+import br.com.acta.utils.CsrfToken;
 
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,11 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.io.TempDir;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.Map;
+import java.util.TreeMap;
+import java.security.NoSuchAlgorithmException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -52,6 +58,8 @@ class LoginFilterTest {
     static String cookieColaborador;
     static String cookieInvalido;
     static String cookieExpirado;
+    static String cookieCsrfCorreto;
+    static String cookieCsrfIncorreto;
 
     /** Sobe o Tomcat em porta livre e prepara rotas e sessões para os cenários. */
     @BeforeAll
@@ -110,12 +118,16 @@ class LoginFilterTest {
                             case "colaborador" -> new Colaborador();
                             default -> "administrador_geral";
                         };
-                        req.getSession(true).setAttribute("usuarioLogado", usuario);
+                        var sessao = req.getSession(true);
+                        sessao.setAttribute("usuarioLogado", usuario);
+                        sessao.setAttribute(CsrfToken.SESSION_KEY, "token-teste");
                     }
                 });
         contexto.addServletMappingDecoded("/sessao-teste", "sessao-teste");
         Tomcat.addServlet(contexto, "logout", new LogoutServlet());
         contexto.addServletMappingDecoded("/logout-servlet", "logout");
+        Tomcat.addServlet(contexto, "cloudinary-signature", new CloudinarySignatureServlet());
+        contexto.addServletMappingDecoded("/cloudinary-signature", "cloudinary-signature");
         // Simula despachos internos para os caminhos protegidos.
         Tomcat.addServlet(contexto,
                 "despacho",
@@ -137,7 +149,10 @@ class LoginFilterTest {
         cookieColaborador = criarSessao("colaborador");
         cookieInvalido = criarSessao("falso");
         cookieExpirado = criarSessao("administrador");
-        assertEquals(302, enviar("GET", "/logout-servlet", cookieExpirado).statusCode());
+        cookieCsrfCorreto = criarSessao("administrador");
+        cookieCsrfIncorreto = criarSessao("administrador");
+        cookieCsrfIncorreto += "; csrfToken=token-injetado";
+        assertEquals(302, enviar("POST", "/logout-servlet", cookieExpirado).statusCode());
     }
 
     /** Para o servidor e libera os recursos usados pelos testes. */
@@ -152,7 +167,8 @@ class LoginFilterTest {
     /** Combina rotas, métodos HTTP e sessões sem um administrador autorizado. */
     @TestFactory
     Stream<DynamicTest> bloquearAtaquesSemAdministrador() {
-        return ROTAS.stream().flatMap(url -> Stream.of("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
+        return ROTAS.stream().filter(url -> !url.equals("/cloudinary-signature"))
+                .flatMap(url -> Stream.of("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
                 .map(metodo -> DynamicTest.dynamicTest(metodo + " " + url, () -> {
                     String ataque = url
                             + "?acao=excluir&id=1&usuarioLogado=administrador_geral&perfil=administrador_geral";
@@ -174,7 +190,8 @@ class LoginFilterTest {
     /** Verifica o acesso esperado para a sessão de administrador. */
     @TestFactory
     Stream<DynamicTest> permitirTodasAsOperacoesDoAdministrador() {
-        return ROTAS.stream().flatMap(url -> Stream.of("GET", "POST", "PUT", "DELETE")
+        return ROTAS.stream().filter(url -> !url.equals("/logout-servlet") && !url.equals("/cloudinary-signature"))
+                .flatMap(url -> Stream.of("GET", "POST", "PUT", "DELETE")
                 .map(metodo -> DynamicTest.dynamicTest("administrador " + metodo + " " + url, () -> {
                     HttpResponse<String> resposta = enviar(metodo, url, cookieAdministrador);
                     assertEquals(200, resposta.statusCode());
@@ -214,6 +231,17 @@ class LoginFilterTest {
         }
     }
 
+    /** Exige POST e token CSRF válido para encerrar uma sessão. */
+    @Test
+    void logoutExigePostComTokenCsrf() throws Exception {
+        String cookie = criarSessao("administrador");
+        assertEquals(405, enviar("GET", "/logout-servlet", cookie).statusCode());
+        assertEquals(403, enviarPost("/logout-servlet", cookie, "acao=sair").statusCode());
+        assertEquals(403, enviarPost("/logout-servlet", cookie, "csrfToken=token-invalido").statusCode());
+        assertEquals(302, enviarPost("/logout-servlet", cookie, "csrfToken=token-teste").statusCode());
+        assertEquals(302, enviar("GET", "/empresa-servlet", cookie).statusCode());
+    }
+
     /** Verifica se páginas e arquivos públicos continuam acessíveis. */
     @Test
     void manterLandingPageELoginPublicos() throws Exception {
@@ -238,6 +266,39 @@ class LoginFilterTest {
         }
     }
 
+    /** Exercita Cloudinary no estado sem credenciais: autorização, CSRF e resposta configurada. */
+    @Test
+    void protegerEndpointCloudinaryEAssinarComConfiguracaoDeTeste() throws Exception {
+        assertEquals(401, enviarPost("/cloudinary-signature", null, "").statusCode());
+        assertEquals(403, enviarPost("/cloudinary-signature", cookieCsrfIncorreto, "").statusCode());
+        assertEquals(405, enviar("GET", "/cloudinary-signature", cookieCsrfCorreto).statusCode());
+        HttpResponse<String> resposta = enviarPost("/cloudinary-signature", cookieCsrfCorreto,
+                "csrfToken=token-teste");
+        assertTrue(List.of(200, 503).contains(resposta.statusCode()), resposta.body());
+        assertTrue(resposta.headers().firstValue("Content-Type").orElse("").contains("application/json"));
+        if (resposta.statusCode() == 503) assertTrue(resposta.body().contains("Configure CLOUDINARY_"));
+        else assertTrue(resposta.body().contains("\"signature\":"));
+        assertFalse(resposta.body().contains("apiSecret"));
+    }
+
+    /** Confere assinatura SHA-1 segundo a ordenação alfabética dos parâmetros. */
+    @Test
+    void gerarAssinaturaCloudinaryComParametrosOrdenados() throws Exception {
+        var servlet = new CloudinarySignatureServlet();
+        var metodo = CloudinarySignatureServlet.class.getDeclaredMethod("assinar", Map.class, String.class);
+        metodo.setAccessible(true);
+        Map<String, String> parametros = new TreeMap<>();
+        parametros.put("timestamp", "1234567890");
+        parametros.put("folder", "acta/admin-profiles");
+        String esperado = sha1("folder=acta/admin-profiles&timestamp=1234567890segredo-falso");
+        assertEquals(esperado, metodo.invoke(servlet, parametros, "segredo-falso"));
+    }
+
+    private static String sha1(String valor) throws NoSuchAlgorithmException {
+        byte[] bytes = MessageDigest.getInstance("SHA-1").digest(valor.getBytes(StandardCharsets.UTF_8));
+        return java.util.HexFormat.of().formatHex(bytes);
+    }
+
     /** Monta a identidade mínima de administrador usada nos cenários. */
     private static AdministradorGeral administrador(Long id) {
         AdministradorGeral administrador = new AdministradorGeral();
@@ -253,13 +314,23 @@ class LoginFilterTest {
 
     /** Envia a requisição HTTP com o método, o corpo e o cookie do cenário. */
     private static HttpResponse<String> enviar(String metodo, String url, String cookie) throws Exception {
-        HttpRequest.Builder requisicao = HttpRequest.newBuilder(URI.create(base + url))
-                .method(metodo, metodo.equals("POST")
-                        ? HttpRequest.BodyPublishers.ofString("acao=excluir&id=1&perfil=administrador_geral")
-                        : HttpRequest.BodyPublishers.noBody());
         if (metodo.equals("POST")) {
-            requisicao.header("Content-Type", "application/x-www-form-urlencoded");
+            return enviarPost(url, cookie,
+                    "acao=excluir&id=1&perfil=administrador_geral&csrfToken=token-teste");
         }
+        HttpRequest.Builder requisicao = HttpRequest.newBuilder(URI.create(base + url))
+                .method(metodo, HttpRequest.BodyPublishers.noBody());
+        if (cookie != null) {
+            requisicao.header("Cookie", cookie);
+        }
+        return CLIENT.send(requisicao.build(), HttpResponse.BodyHandlers.ofString());
+    }
+
+    /** Envia um POST com corpo explícito para cenários de CSRF e logout. */
+    private static HttpResponse<String> enviarPost(String url, String cookie, String corpo) throws Exception {
+        HttpRequest.Builder requisicao = HttpRequest.newBuilder(URI.create(base + url))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString(corpo));
         if (cookie != null) {
             requisicao.header("Cookie", cookie);
         }
