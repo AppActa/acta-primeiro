@@ -1,13 +1,14 @@
 package br.com.acta.servlet;
 
 import br.com.acta.dao.AdministradorGeralDAO;
-import br.com.acta.model.AdministradorGeral;
 import br.com.acta.excecoes.DaoException;
 import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.excecoes.ValidacaoException;
+import br.com.acta.model.AdministradorGeral;
 import br.com.acta.utils.Validador;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,32 +24,24 @@ import java.util.List;
 /** Recebe as requisições de AdministradorGeral e prepara os dados para as páginas JSP. */
 @WebServlet(name = "AdministradorGeralServlet", value = "/administrador-geral-servlet")
 public class AdministradorGeralServlet extends HttpServlet {
+
     private static final String PAGINA_ADMINISTRADOR_GERAL = "/administrador-geral.jsp";
     private static final String PAGINA_CONFIGURACOES = "/crud/configuracoes.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final AdministradorGeralDAO DAO = new AdministradorGeralDAO();
 
-
     /** Atende consultas e converte as falhas em respostas HTTP. */
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             buscar(req, resp);
-
         } catch (RegistroNaoEncontradoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_NOT_FOUND);
-
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
         } catch (ValidacaoException | IllegalArgumentException e) {
-            enviarErro(req, resp, "Parâmetro de consulta inválido.",
-                    HttpServletResponse.SC_BAD_REQUEST);
-
+            enviarErro(req, resp, "Parâmetro de consulta inválido.", HttpServletResponse.SC_BAD_REQUEST);
         } catch (DaoException e) {
             e.printStackTrace();
-            enviarErro(req, resp, "Erro ao consultar o banco de dados.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
+            enviarErro(req, resp, "Erro ao consultar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             e.printStackTrace();
             enviarErro(req, resp, "Não foi possível encontrar os administradores gerais.",
@@ -58,16 +51,13 @@ public class AdministradorGeralServlet extends HttpServlet {
 
     /** Permite editar o próprio perfil e senha; bloqueia cadastro, exclusão e login nesta rota. */
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         String acao = req.getParameter("acao");
 
         try {
             if (acao == null) {
-                enviarErro(req, resp, "Ação não informada.",
-                        HttpServletResponse.SC_BAD_REQUEST);
+                enviarErro(req, resp, "Ação não informada.", HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
 
@@ -91,40 +81,26 @@ public class AdministradorGeralServlet extends HttpServlet {
                     break;
 
                 case "autenticar":
-                    resp.sendError(HttpServletResponse.SC_FORBIDDEN,
-                            "Use a rota de login para autenticar.");
+                    resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Use a rota de login para autenticar.");
                     break;
 
                 default:
-                    enviarErro(req, resp, "Ação não existente.",
-                            HttpServletResponse.SC_BAD_REQUEST);
+                    enviarErro(req, resp, "Ação não existente.", HttpServletResponse.SC_BAD_REQUEST);
             }
-
         } catch (ValidacaoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_BAD_REQUEST);
-
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
         } catch (RegistroNaoEncontradoException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_NOT_FOUND);
-
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
         } catch (DuplicidadeException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_CONFLICT);
-
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
         } catch (IntegridadeReferencialException e) {
-            enviarErro(req, resp, e.getMessage(),
-                    HttpServletResponse.SC_CONFLICT);
-
+            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_CONFLICT);
         } catch (IllegalArgumentException e) {
-            enviarErro(req, resp, "Parâmetro inválido.",
-                    HttpServletResponse.SC_BAD_REQUEST);
-
+            enviarErro(req, resp, "Parâmetro inválido.", HttpServletResponse.SC_BAD_REQUEST);
         } catch (DaoException e) {
             e.printStackTrace();
             enviarErro(req, resp, "Erro interno ao acessar o banco de dados.",
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
         } catch (Exception e) {
             e.printStackTrace();
             enviarErro(req, resp, "Não foi possível concluir a operação.",
@@ -143,8 +119,11 @@ public class AdministradorGeralServlet extends HttpServlet {
 
         int resultado = DAO.inserir(administradorGeral);
 
-        if (resultado == 1) enviarPaginaCerta(req, resp);
-        else enviarErro(req, resp, "O administrador geral não pode ser cadastrado");
+        if (resultado == 1) {
+            enviarPaginaCerta(req, resp);
+        } else {
+            enviarErro(req, resp, "O administrador geral não pode ser cadastrado");
+        }
     }
 
     /** Busca pelo ID informado ou delega à listagem com filtros. */
@@ -180,7 +159,9 @@ public class AdministradorGeralServlet extends HttpServlet {
     /** Confere se o ID é do administrador logado e sincroniza o perfil da sessão. */
     private void atualizar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         AdministradorGeral logado = obterAdministradorLogado(req, resp);
-        if (logado == null) return;
+        if (logado == null) {
+            return;
+        }
         Long id = Validador.id(req.getParameter("id-adm-geral"), "Id do administrador");
         if (!id.equals(logado.getAdm_geral_id())) {
             enviarErro(req, resp, "Não é permitido atualizar outro administrador.", HttpServletResponse.SC_FORBIDDEN);
@@ -203,17 +184,21 @@ public class AdministradorGeralServlet extends HttpServlet {
             logado.setImagem(administradorGeral.getImagem());
             req.getSession(false).setAttribute("usuarioLogado", logado);
             resp.sendRedirect(req.getContextPath() + PAGINA_CONFIGURACOES);
+        } else {
+            enviarErro(req, resp, "O administrador geral não pode ser atualizado");
         }
-        else enviarErro(req, resp, "O administrador geral não pode ser atualizado");
     }
 
     /** Valida a identidade, a nova senha e a confirmação antes de solicitar a troca. */
     private void atualizarSenha(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         AdministradorGeral logado = obterAdministradorLogado(req, resp);
-        if (logado == null) return;
+        if (logado == null) {
+            return;
+        }
         String email = Validador.email(req.getParameter("email"));
         if (!email.equalsIgnoreCase(logado.getEmail())) {
-            enviarErro(req, resp, "Não é permitido alterar a senha de outro administrador.", HttpServletResponse.SC_FORBIDDEN);
+            enviarErro(req, resp, "Não é permitido alterar a senha de outro administrador.",
+                    HttpServletResponse.SC_FORBIDDEN);
             return;
         }
         String senhaAntiga = Validador.obrigatorio(req.getParameter("senha_antiga"), "Senha atual");
@@ -226,12 +211,16 @@ public class AdministradorGeralServlet extends HttpServlet {
 
         int resultado = DAO.atualizarSenha(email, senhaAntiga, senhaNova);
 
-        if (resultado == 1) resp.sendRedirect(req.getContextPath() + PAGINA_CONFIGURACOES);
-        else enviarErro(req, resp, "A senha não pode ser atualizada");
+        if (resultado == 1) {
+            resp.sendRedirect(req.getContextPath() + PAGINA_CONFIGURACOES);
+        } else {
+            enviarErro(req, resp, "A senha não pode ser atualizada");
+        }
     }
 
     /** Obtém a identidade da sessão; redireciona ao login se estiver ausente. */
-    private AdministradorGeral obterAdministradorLogado(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private AdministradorGeral obterAdministradorLogado(
+            HttpServletRequest req, HttpServletResponse resp) throws IOException {
         HttpSession sessao = req.getSession(false);
         AdministradorGeral logado = sessao == null ? null : (AdministradorGeral) sessao.getAttribute("usuarioLogado");
         if (logado == null) {
@@ -243,13 +232,13 @@ public class AdministradorGeralServlet extends HttpServlet {
 
     /** Aceita foto opcional em HTTPS no domínio e no caminho de imagens do Cloudinary. */
     private String validarImagemCloudinary(String valor) {
-        if (valor == null || valor.isBlank()) return null;
+        if (valor == null || valor.isBlank()) {
+            return null;
+        }
         try {
             URI uri = URI.create(valor.trim());
-            if ("https".equalsIgnoreCase(uri.getScheme())
-                    && "res.cloudinary.com".equalsIgnoreCase(uri.getHost())
-                    && uri.getPath() != null
-                    && uri.getPath().contains("/image/upload/")) {
+            if ("https".equalsIgnoreCase(uri.getScheme()) && "res.cloudinary.com".equalsIgnoreCase(uri.getHost())
+                    && uri.getPath() != null && uri.getPath().contains("/image/upload/")) {
                 return uri.toString();
             }
         } catch (IllegalArgumentException ignored) {
@@ -263,8 +252,11 @@ public class AdministradorGeralServlet extends HttpServlet {
         Long id = Validador.id(req.getParameter("id-adm-geral"), "Id do administrador");
         int resultado = DAO.excluir(id);
 
-        if (resultado == 1) enviarPaginaCerta(req, resp);
-        else enviarErro(req, resp, "O administrador geral não pode ser excluído");
+        if (resultado == 1) {
+            enviarPaginaCerta(req, resp);
+        } else {
+            enviarErro(req, resp, "O administrador geral não pode ser excluído");
+        }
     }
 
     /** Cria uma sessão autenticada; a ação pública desta rota direciona ao login próprio. */
@@ -291,28 +283,18 @@ public class AdministradorGeralServlet extends HttpServlet {
 
     /** Usa HTTP 500 quando o chamador não informa um status. */
     private void enviarErro(
-            HttpServletRequest req,
-            HttpServletResponse resp,
-            String mensagem
-    ) throws ServletException, IOException {
-
-        enviarErro(req, resp, mensagem,
-                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
+        enviarErro(req, resp, mensagem, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     /** Encaminha erros 404/500 à página de erro; os demais retornam à tela do cadastro. */
     private void enviarErro(
-            HttpServletRequest req,
-            HttpServletResponse resp,
-            String mensagem,
-            int status
-    ) throws ServletException, IOException {
-
+            HttpServletRequest req, HttpServletResponse resp, String mensagem, int status)
+            throws ServletException, IOException {
         resp.setStatus(status);
 
         // Exibe a página de erro sem consultar o banco novamente.
-        if (status == HttpServletResponse.SC_NOT_FOUND
-                || status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+        if (status == HttpServletResponse.SC_NOT_FOUND || status == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
             req.setAttribute(RequestDispatcher.ERROR_MESSAGE, mensagem);
             req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, status);
             req.getRequestDispatcher(PAGINA_ERRO).forward(req, resp);
@@ -340,9 +322,9 @@ public class AdministradorGeralServlet extends HttpServlet {
         req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
     }
 
-
     /** Recarrega a listagem e as opções da página com uma mensagem de sucesso. */
-    private void enviarPaginaCerta(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void enviarPaginaCerta(
+            HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<AdministradorGeral> administradoresGerais = DAO.buscar();
 
         req.setAttribute("administradorGeralList", administradoresGerais);
