@@ -25,8 +25,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const contexto = document.body.dataset.contextPath || "";
+            const tokenCsrf = document.querySelector('meta[name="csrf-token"]')?.content;
+            if (!tokenCsrf) throw new Error("Token de segurança ausente. Atualize a página.");
             const respostaAssinatura = await fetch(`${contexto}/cloudinary-signature`, {
-                headers: { "Accept": "application/json" }
+                method: "POST",
+                headers: { "Accept": "application/json", "X-CSRF-Token": tokenCsrf }
             });
             const assinatura = await respostaAssinatura.json();
             if (!respostaAssinatura.ok) {
