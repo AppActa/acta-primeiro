@@ -1,5 +1,15 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.util.List,java.util.ArrayList,java.time.ZoneId,java.time.format.DateTimeFormatter,br.com.acta.model.*,br.com.acta.enums.*" %>
 <%!
+    private static final String[][] UFS_BRASIL = {
+        {"AC", "Acre"}, {"AL", "Alagoas"}, {"AP", "Amapá"}, {"AM", "Amazonas"},
+        {"BA", "Bahia"}, {"CE", "Ceará"}, {"DF", "Distrito Federal"}, {"ES", "Espírito Santo"},
+        {"GO", "Goiás"}, {"MA", "Maranhão"}, {"MT", "Mato Grosso"}, {"MS", "Mato Grosso do Sul"},
+        {"MG", "Minas Gerais"}, {"PA", "Pará"}, {"PB", "Paraíba"}, {"PR", "Paraná"},
+        {"PE", "Pernambuco"}, {"PI", "Piauí"}, {"RJ", "Rio de Janeiro"}, {"RN", "Rio Grande do Norte"},
+        {"RS", "Rio Grande do Sul"}, {"RO", "Rondônia"}, {"RR", "Roraima"}, {"SC", "Santa Catarina"},
+        {"SP", "São Paulo"}, {"SE", "Sergipe"}, {"TO", "Tocantins"}
+    };
+
     private String h(Object valor) {
         if (valor == null) return "";
         return valor.toString().replace("&", "&amp;").replace("<", "&lt;")
@@ -137,7 +147,12 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                         <form class="formulario" id="filtros-endereco-form" method="get" action="<%= request.getContextPath() %>/endereco-servlet">
                                             <div class="campo">
                                                 <label for="filtros-endereco-estado">Estado</label>
-                                                <input type="text" id="filtros-endereco-estado" name="estado" maxlength="2" pattern="[A-Za-z]{2}" placeholder="Ex: SP" value="<%= h(filtroEstado) %>">
+                                                <select id="filtros-endereco-estado" name="estado">
+                                                    <option value="">Todos os estados</option>
+                                                    <% for (String[] uf : UFS_BRASIL) { %>
+                                                    <option value="<%= uf[0] %>" <%= uf[0].equalsIgnoreCase(filtroEstado) ? "selected" : "" %>><%= uf[1] %> (<%= uf[0] %>)</option>
+                                                    <% } %>
+                                                </select>
                                             </div>
                                             <div class="campo">
                                                 <label for="filtros-endereco-cidade">Cidade</label>
@@ -292,6 +307,7 @@ String valorIdEmpresaCadastro = "";
 if (recuperarCadastro) {
     valorIdEmpresaCadastro = request.getParameter("id_empresa");
 }
+String valorEstadoCadastro = recuperarCadastro ? request.getParameter("estado") : "";
 %>
 <section id="cadastrar-endereco" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -332,7 +348,12 @@ if (recuperarCadastro) {
                                     </div>
                                     <div class="campo">
                                         <label for="cad-endereco-estado">Estado (UF)</label>
-                                        <input type="text" id="cad-endereco-estado" name="estado" maxlength="2" pattern="[A-Za-z]{2}" placeholder="Ex: SP" required value="<%= h(recuperarCadastro ? request.getParameter("estado") : "") %>">
+                                        <select id="cad-endereco-estado" name="estado" required>
+                                            <option value="">Selecione o estado</option>
+                                            <% for (String[] uf : UFS_BRASIL) { %>
+                                            <option value="<%= uf[0] %>" <%= uf[0].equalsIgnoreCase(valorEstadoCadastro == null ? "" : valorEstadoCadastro) ? "selected" : "" %>><%= uf[1] %> (<%= uf[0] %>)</option>
+                                            <% } %>
+                                        </select>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="cad-endereco-complemento">Complemento</label>
@@ -355,6 +376,8 @@ if (recuperarEdicao) {
 } else if (endereco.getId_empresa() != null) {
     valorIdEmpresaEdicao = endereco.getId_empresa().toString();
 }
+String valorEstadoEdicao = recuperarEdicao && request.getParameter("estado") != null
+        ? request.getParameter("estado") : endereco.getEstado();
 %>
 <section id="editar-endereco-<%= endereco.getId_endereco() %>" class="pagina modal-pagina">
                         <div class="modal-fundo">
@@ -397,7 +420,12 @@ if (recuperarEdicao) {
                                     </div>
                                     <div class="campo">
                                         <label for="edi-endereco-estado-<%= endereco.getId_endereco() %>">Estado (UF)</label>
-                                        <input type="text" id="edi-endereco-estado-<%= endereco.getId_endereco() %>" name="estado" maxlength="2" pattern="[A-Za-z]{2}" placeholder="Ex: SP" required value="<%= h(recuperarEdicao ? request.getParameter("estado") : endereco.getEstado()) %>">
+                                        <select id="edi-endereco-estado-<%= endereco.getId_endereco() %>" name="estado" required>
+                                            <option value="">Selecione o estado</option>
+                                            <% for (String[] uf : UFS_BRASIL) { %>
+                                            <option value="<%= uf[0] %>" <%= uf[0].equalsIgnoreCase(valorEstadoEdicao == null ? "" : valorEstadoEdicao) ? "selected" : "" %>><%= uf[1] %> (<%= uf[0] %>)</option>
+                                            <% } %>
+                                        </select>
                                     </div>
                                     <div class="campo campo-largo">
                                         <label for="edi-endereco-complemento-<%= endereco.getId_endereco() %>">Complemento</label>
