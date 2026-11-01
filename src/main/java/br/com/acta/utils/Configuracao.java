@@ -1,18 +1,35 @@
 package br.com.acta.utils;
 
 import io.github.cdimascio.dotenv.Dotenv;
+
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.net.URISyntaxException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** Lê segredos do ambiente do servidor e, em desenvolvimento, de um .env opcional. */
 public final class Configuracao {
+
     private static final Dotenv DOTENV = carregarDotenv();
 
     /** Impede instâncias desta classe de métodos estáticos. */
-    private Configuracao() { }
+    private Configuracao() {}
+
+    /** Prioriza o ambiente do servidor; usa o .env como alternativa. */
+    public static String obter(String chave) {
+        String valorAmbiente = System.getenv(chave);
+        if (valorAmbiente != null && !valorAmbiente.isBlank()) {
+            return valorAmbiente;
+        }
+        return DOTENV.get(chave);
+    }
+
+    /** Usa o valor padrão apenas quando a chave não foi encontrada. */
+    public static String obter(String chave, String padrao) {
+        String valor = obter(chave);
+        return valor == null ? padrao : valor;
+    }
 
     /** Procura um .env a partir do diretório de execução e das classes. */
     private static Dotenv carregarDotenv() {
@@ -20,8 +37,7 @@ public final class Configuracao {
         Set<Path> candidatos = new LinkedHashSet<>();
         adicionarPais(candidatos, Path.of(System.getProperty("user.dir", ".")));
         try {
-            Path localClasses = Path.of(Configuracao.class.getProtectionDomain()
-                    .getCodeSource().getLocation().toURI());
+            Path localClasses = Path.of(Configuracao.class.getProtectionDomain().getCodeSource().getLocation().toURI());
             adicionarPais(candidatos, localClasses);
         } catch (URISyntaxException | RuntimeException ignored) {
             // Em alguns containers a localização das classes não é exposta como URI de arquivo.
@@ -41,18 +57,5 @@ public final class Configuracao {
         for (int nivel = 0; diretorio != null && nivel < 10; nivel++, diretorio = diretorio.getParent()) {
             candidatos.add(diretorio);
         }
-    }
-
-    /** Prioriza o ambiente do servidor; usa o .env como alternativa. */
-    public static String obter(String chave) {
-        String valorAmbiente = System.getenv(chave);
-        if (valorAmbiente != null && !valorAmbiente.isBlank()) return valorAmbiente;
-        return DOTENV.get(chave);
-    }
-
-    /** Usa o valor padrão apenas quando a chave não foi encontrada. */
-    public static String obter(String chave, String padrao) {
-        String valor = obter(chave);
-        return valor == null ? padrao : valor;
     }
 }
