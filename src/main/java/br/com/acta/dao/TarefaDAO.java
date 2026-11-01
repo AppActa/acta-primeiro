@@ -1,12 +1,12 @@
 package br.com.acta.dao;
 
-import br.com.acta.model.Tarefa;
 import br.com.acta.enums.Intensidade;
 import br.com.acta.enums.Situacao;
 import br.com.acta.excecoes.DaoException;
 import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
+import br.com.acta.model.Tarefa;
 import br.com.acta.utils.Conexao;
 
 import java.sql.*;
@@ -17,6 +17,17 @@ import java.util.Map;
 /** Executa a persistência de Tarefa e converte consultas em objetos do modelo. */
 public class TarefaDAO implements MetodosCrud<Tarefa> {
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_tarefa",
+            "titulo", "titulo",
+            "prioridade", "prioridade",
+            "entrega", "dt_entrega",
+            "status", "status",
+            "inicio", "dt_inicio",
+            "colaborador", "nome_colaborador",
+            "plano_acao", "nome_plano_acao");
+
     /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(Tarefa tarefa) {
@@ -26,8 +37,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
                 """;
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, tarefa.getTitulo());
             pstmt.setString(2, tarefa.getDescricao());
             pstmt.setObject(3, tarefa.getPrioridade().name(), Types.OTHER);
@@ -37,11 +47,12 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             pstmt.setLong(7, tarefa.getId_colaborador());
             pstmt.setLong(8, tarefa.getId_plano_acao());
 
-            if (pstmt.executeUpdate() > 0) return 1;
-            else return 0;
-
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            } else {
+                return 0;
+            }
         } catch (SQLException e) {
-
             // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de tarefa com esses dados.", e);
@@ -50,7 +61,6 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
                 throw new IntegridadeReferencialException("Existe uma referência inválida no cadastro.", e);
             }
             throw new DaoException("Erro ao cadastrar tarefa.", e);
-
         } catch (ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -62,8 +72,7 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         String sql = "SELECT * FROM vw_tarefa WHERE id_tarefa = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -72,7 +81,6 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
                 }
                 return null;
             }
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -85,21 +93,21 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         String sql = "SELECT * FROM vw_tarefa;";
 
         try (Connection conn = Conexao.conectar();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 lista.add(mapearTarefa(rs));
             }
             return lista;
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
     /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
-    public List<Tarefa> buscaFiltrada(String busca, Intensidade prioridade, Situacao status, Date dataInicial, Date dataFinal, String ordem, String direcao) {
+    public List<Tarefa> buscaFiltrada(
+            String busca, Intensidade prioridade, Situacao status, Date dataInicial, Date dataFinal,
+            String ordem, String direcao) {
         List<Tarefa> lista = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_tarefa WHERE 1=1");
 
@@ -114,19 +122,28 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         boolean temOrdem = colunaOrdem != null;
 
         // Acrescenta condições apenas para os filtros presentes.
-        if (temBusca) sql.append(" AND (titulo ILIKE ? OR nome_colaborador ILIKE ? OR nome_plano_acao ILIKE ?)");
-        if (temPrioridade) sql.append(" AND prioridade = ?");
-        if (temStatus) sql.append(" AND status = ?");
-        if (temDataInicial) sql.append(" AND dt_entrega >= ?");
-        if (temDataFinal) sql.append(" AND dt_entrega <= ?");
+        if (temBusca) {
+            sql.append(" AND (titulo ILIKE ? OR nome_colaborador ILIKE ? OR nome_plano_acao ILIKE ?)");
+        }
+        if (temPrioridade) {
+            sql.append(" AND prioridade = ?");
+        }
+        if (temStatus) {
+            sql.append(" AND status = ?");
+        }
+        if (temDataInicial) {
+            sql.append(" AND dt_entrega >= ?");
+        }
+        if (temDataFinal) {
+            sql.append(" AND dt_entrega <= ?");
+        }
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
             sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
         }
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
@@ -135,10 +152,18 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
             }
-            if (temPrioridade) pstmt.setObject(i++, prioridade.name(), Types.OTHER);
-            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
-            if (temDataInicial) pstmt.setDate(i++, dataInicial);
-            if (temDataFinal) pstmt.setDate(i++, dataFinal);
+            if (temPrioridade) {
+                pstmt.setObject(i++, prioridade.name(), Types.OTHER);
+            }
+            if (temStatus) {
+                pstmt.setObject(i++, status.name(), Types.OTHER);
+            }
+            if (temDataInicial) {
+                pstmt.setDate(i++, dataInicial);
+            }
+            if (temDataFinal) {
+                pstmt.setDate(i++, dataFinal);
+            }
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -146,7 +171,6 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
                 }
             }
             return lista;
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -155,11 +179,11 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
     /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(Tarefa tarefa) {
-        String sql = "UPDATE tarefa SET titulo = ?, descricao = ?, prioridade = ?, dt_entrega = ?, status = ?, dt_inicio = ?, id_colaborador = ?, id_plano_acao = ? WHERE id_tarefa = ?;";
+        String sql = "UPDATE tarefa SET titulo = ?, descricao = ?, prioridade = ?, dt_entrega = ?, status = ?, "
+                + "dt_inicio = ?, id_colaborador = ?, id_plano_acao = ? WHERE id_tarefa = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, tarefa.getTitulo());
             pstmt.setString(2, tarefa.getDescricao());
             pstmt.setObject(3, tarefa.getPrioridade().name(), Types.OTHER);
@@ -170,32 +194,23 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
             pstmt.setLong(8, tarefa.getId_plano_acao());
             pstmt.setLong(9, tarefa.getId_tarefa());
 
-            if (pstmt.executeUpdate() > 0) return 1;
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
 
             throw new RegistroNaoEncontradoException("Registro de tarefa não encontrado para atualização.");
-
         } catch (SQLException e) {
-
             if ("23505".equals(e.getSQLState())) {
-                throw new DuplicidadeException(
-                        "Já existe um registro de tarefa com esses dados.", e
-                );
+                throw new DuplicidadeException("Já existe um registro de tarefa com esses dados.", e);
             }
 
             if ("23503".equals(e.getSQLState())) {
-                throw new IntegridadeReferencialException(
-                        "Referência inválida na atualização.", e
-                );
+                throw new IntegridadeReferencialException("Referência inválida na atualização.", e);
             }
 
-            throw new DaoException(
-                    "Erro ao atualizar tarefa.", e
-            );
-
+            throw new DaoException("Erro ao atualizar tarefa.", e);
         } catch (ClassNotFoundException e) {
-            throw new DaoException(
-                    "Erro ao conectar no banco de dados.", e
-            );
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -205,31 +220,24 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         String sql = "DELETE FROM tarefa WHERE id_tarefa = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
 
-            if (pstmt.executeUpdate() > 0) return 1;
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
             throw new RegistroNaoEncontradoException("Registro de tarefa não encontrado para exclusão.");
-
         } catch (SQLException e) {
             if ("23503".equals(e.getSQLState())) {
                 throw new IntegridadeReferencialException(
-                        "Não é possível excluir o registro de tarefa porque existem registros vinculados.", e
-                );
+                        "Não é possível excluir o registro de tarefa porque existem registros vinculados.", e);
             }
 
-            throw new DaoException(
-                    "Erro ao excluir tarefa.", e
-            );
-
+            throw new DaoException("Erro ao excluir tarefa.", e);
         } catch (ClassNotFoundException e) {
-            throw new DaoException(
-                    "Erro ao conectar no banco de dados.", e
-            );
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
-
 
     /** Converte a linha atual do resultado em um objeto do modelo. */
     private static Tarefa mapearTarefa(ResultSet rs) throws SQLException {
@@ -247,16 +255,4 @@ public class TarefaDAO implements MetodosCrud<Tarefa> {
         tarefa.setId_plano_acao(rs.getLong("id_plano_acao"));
         return tarefa;
     }
-
-    // Relaciona as opções de ordenação às colunas autorizadas do banco.
-    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
-            "id", "id_tarefa",
-            "titulo", "titulo",
-            "prioridade", "prioridade",
-            "entrega", "dt_entrega",
-            "status", "status",
-            "inicio", "dt_inicio",
-            "colaborador", "nome_colaborador",
-            "plano_acao", "nome_plano_acao"
-    );
 }
