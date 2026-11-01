@@ -2,14 +2,29 @@
 set timezone to 'America/Sao_Paulo';
 
 DROP TABLE IF EXISTS
-    endereco, empresa, administrador_geral, colaborador, ciclo, meta,
-    plano_acao, plano_acao5w2h, tarefa, licoes_aprendidas, problema,
-    ciclo_colaborador, empresa_administrador_geral
+    endereco, 
+    empresa, 
+    administrador_geral, 
+    colaborador, 
+    ciclo, 
+    meta,
+    plano_acao, 
+    plano_acao5w2h, 
+    tarefa, 
+    licoes_aprendidas, 
+    problema,
+    ciclo_colaborador, 
+    empresa_administrador_geral
     CASCADE;
 
 DROP TYPE IF EXISTS
-    tamanho_empresa_enum, status_enum, situacao_enum, status_meta_enum,
-    status_problema_enum, intensidade_enum, etapas_ciclo_enum;
+    tamanho_empresa_enum, 
+    status_enum, 
+    situacao_enum, 
+    status_meta_enum,
+    status_problema_enum, 
+    intensidade_enum, 
+    etapas_ciclo_enum;
 
 -- ENUMs
 CREATE TYPE tamanho_empresa_enum AS ENUM('GRANDE','PEQUENA','MEDIA');
@@ -50,7 +65,7 @@ CREATE TABLE endereco (
 CREATE TABLE administrador_geral (
                                      id_adm_geral SERIAL PRIMARY KEY,
                                      nome VARCHAR(50) NOT NULL,
-                                     senha TEXT NOT NULL,
+                                     senha VARCHAR NOT NULL,
                                      email VARCHAR(80) UNIQUE NOT NULL,
                                      telefone CHAR(11) NOT NULL,
                                      imagem TEXT,
@@ -68,7 +83,7 @@ CREATE TABLE colaborador (
                              cargo VARCHAR(100) NOT NULL,
                              dt_contratacao DATE NOT NULL,
                              email VARCHAR(80) UNIQUE NOT NULL,
-                             senha TEXT NOT NULL,
+                             senha VARCHAR NOT NULL,
                              telefone CHAR(11) NOT NULL,
                              cpf CHAR(11) UNIQUE NOT NULL,
                              id_empresa INT NOT NULL REFERENCES empresa(id_empresa) ON DELETE CASCADE,
