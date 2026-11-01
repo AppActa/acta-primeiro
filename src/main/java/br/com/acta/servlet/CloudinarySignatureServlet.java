@@ -16,10 +16,13 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.TreeMap;
 
+/** Prepara a assinatura necessária para o envio da foto de perfil ao Cloudinary. */
 @WebServlet(name = "CloudinarySignatureServlet", value = "/cloudinary-signature")
 public class CloudinarySignatureServlet extends HttpServlet {
+    // Restringe o destino assinado à pasta de fotos de administradores.
     private static final String FOLDER = "acta/admin-profiles";
 
+    /** Exige autenticação e CSRF antes de retornar os parâmetros assinados. */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Object usuario = req.getSession(false) == null
@@ -45,11 +48,13 @@ public class CloudinarySignatureServlet extends HttpServlet {
             }
 
             long timestamp = Instant.now().getEpochSecond();
+            // TreeMap mantém os parâmetros em ordem alfabética para a assinatura.
             Map<String, String> parametros = new TreeMap<>();
             parametros.put("folder", FOLDER);
             parametros.put("timestamp", String.valueOf(timestamp));
             String assinatura = assinar(parametros, apiSecret);
 
+            // O segredo participa da assinatura e permanece apenas no servidor.
             resp.setCharacterEncoding("UTF-8");
             resp.setContentType("application/json");
             resp.getWriter().write("{\"cloudName\":\"" + json(cloudName)
@@ -64,6 +69,7 @@ public class CloudinarySignatureServlet extends HttpServlet {
         }
     }
 
+    /** Concatena os parâmetros e o segredo para calcular a assinatura SHA-1. */
     private String assinar(Map<String, String> parametros, String apiSecret) throws NoSuchAlgorithmException {
         StringBuilder base = new StringBuilder();
         for (Map.Entry<String, String> parametro : parametros.entrySet()) {
@@ -73,15 +79,18 @@ public class CloudinarySignatureServlet extends HttpServlet {
         base.append(apiSecret);
         byte[] hash = MessageDigest.getInstance("SHA-1")
                 .digest(base.toString().getBytes(StandardCharsets.UTF_8));
+        // Converte cada byte do hash em dois caracteres hexadecimais.
         StringBuilder hexadecimal = new StringBuilder(hash.length * 2);
         for (byte valor : hash) hexadecimal.append(String.format("%02x", valor));
         return hexadecimal.toString();
     }
 
+    /** Escapa barras invertidas e aspas ao montar os campos do JSON. */
     private String json(String valor) {
         return valor.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
+    /** Retorna o status solicitado e a mensagem de erro em JSON. */
     private void responderErro(HttpServletResponse resp, int status, String mensagem) throws IOException {
         resp.setStatus(status);
         resp.setCharacterEncoding("UTF-8");
