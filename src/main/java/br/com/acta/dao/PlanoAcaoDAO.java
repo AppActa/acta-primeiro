@@ -14,9 +14,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+/** Executa a persistência de PlanoAcao e converte consultas em objetos do modelo. */
 public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
 
-    //INSERT
+    /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(PlanoAcao planoAcao) {
         String sql = """
@@ -39,6 +40,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
 
         } catch (SQLException e) {
 
+            // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de plano de ação com esses dados.", e);
             }
@@ -52,6 +54,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         }
     }
 
+    /** Busca pelo ID; retorna null quando o registro não existe. */
     @Override
     public PlanoAcao buscar(Long id) {
         String sql = "SELECT * FROM vw_plano_acao WHERE id_plano_acao = ?";
@@ -73,6 +76,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         }
     }
 
+    /** Lista todos os registros disponíveis na consulta. */
     @Override
     public List<PlanoAcao> buscar() {
         List<PlanoAcao> planosAcao = new ArrayList<>();
@@ -93,6 +97,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
 
     }
 
+    /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
     public List<PlanoAcao> buscaFiltrada(String busca, Situacao status, Intensidade prioridade, String ordem, String direcao) {
         List<PlanoAcao> planosAcao = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_plano_acao WHERE 1=1");
@@ -101,9 +106,11 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         boolean temStatus = status != null;
         boolean temPrioridade = prioridade != null;
 
+        // A coluna vem de uma lista permitida, nunca diretamente do formulário.
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
+        // Acrescenta condições apenas para os filtros presentes.
         if (temBusca) sql.append(" AND (nome ILIKE ? OR nome_ciclo ILIKE ? OR nome_colaborador ILIKE ?)");
         if (temStatus) sql.append(" AND status = ?");
         if (temPrioridade) sql.append(" AND prioridade = ?");
@@ -115,6 +122,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
+            // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
@@ -137,6 +145,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         }
     }
 
+    /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(PlanoAcao planoAcao) {
         String sql = "UPDATE plano_acao SET nome = ?, descricao = ?, status = ?, prioridade = ?, id_ciclo = ?, id_criador = ? WHERE id_plano_acao = ?";
@@ -181,6 +190,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         }
     }
 
+    /** Exclui pelo ID; informa ausência do registro ou vínculos que impedem a exclusão. */
     @Override
     public int excluir(Long id) {
         String sql = "DELETE FROM plano_acao WHERE id_plano_acao = ?";
@@ -213,6 +223,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
     }
 
 
+    /** Converte a linha atual do resultado em um objeto do modelo. */
     private static PlanoAcao mapearPlanoAcao(ResultSet rs) throws SQLException {
         PlanoAcao planoAcao = new PlanoAcao();
         planoAcao.setId_plano_acao((rs.getLong("id_plano_acao")));
@@ -227,6 +238,7 @@ public class PlanoAcaoDAO implements MetodosCrud<PlanoAcao> {
         return planoAcao;
     }
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
             "id", "id_plano_acao",
             "nome", "nome",
