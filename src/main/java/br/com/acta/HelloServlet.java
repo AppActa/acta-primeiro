@@ -1,13 +1,14 @@
 package br.com.acta;
 
-import java.io.*;
-
-import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import jakarta.servlet.http.*;
+
+import java.io.*;
 
 /** Servlet de exemplo que responde com uma mensagem em HTML. */
 @WebServlet(name = "helloServlet", value = "/hello-servlet")
 public class HelloServlet extends HttpServlet {
+
     private String message;
 
     /** Define a mensagem quando o servlet é inicializado pelo container. */
@@ -27,6 +28,5 @@ public class HelloServlet extends HttpServlet {
     }
 
     /** Encerra o ciclo de vida; este exemplo não possui recursos para liberar. */
-    public void destroy() {
-    }
+    public void destroy() {}
 }
