@@ -15,9 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/** Executa a persistência de Meta e converte consultas em objetos do modelo. */
 public class MetaDAO implements MetodosCrud<Meta> {
 
-    // INSERT
+    /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(Meta meta) {
         String sql = """
@@ -42,6 +43,7 @@ public class MetaDAO implements MetodosCrud<Meta> {
 
         } catch (SQLException e) {
 
+            // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de meta com esses dados.", e);
             }
@@ -55,7 +57,7 @@ public class MetaDAO implements MetodosCrud<Meta> {
         }
     }
 
-    // READ
+    /** Busca pelo ID; retorna null quando o registro não existe. */
     @Override
     public Meta buscar(Long id) {
         String sql = "SELECT * FROM vw_meta WHERE id_meta = ?;";
@@ -77,6 +79,7 @@ public class MetaDAO implements MetodosCrud<Meta> {
         }
     }
 
+    /** Lista todos os registros disponíveis na consulta. */
     @Override
     public List<Meta> buscar() {
         List<Meta> metas = new ArrayList<>();
@@ -96,6 +99,7 @@ public class MetaDAO implements MetodosCrud<Meta> {
         }
     }
 
+    /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
     public List<Meta> buscaFiltrada(String busca, Intensidade prioridade, StatusMeta status, Date dataInicial, Date dataFinal, Date criadoDe, Date criadoAte, String ordem, String direcao) {
         List<Meta> metas = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_meta WHERE 1=1");
@@ -108,15 +112,18 @@ public class MetaDAO implements MetodosCrud<Meta> {
         boolean temCriadoDe = criadoDe != null;
         boolean temCriadoAte = criadoAte != null;
 
+        // A coluna vem de uma lista permitida, nunca diretamente do formulário.
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
+        // Acrescenta condições apenas para os filtros presentes.
         if (temBusca) sql.append(" AND (meta ILIKE ? OR objetivo ILIKE ? OR nome_ciclo ILIKE ? or nome_plano_acao ILIKE ?)");
         if (temPrioridade) sql.append(" AND prioridade = ?");
         if (temStatus) sql.append(" AND status = ?");
         if (temDataInicial) sql.append(" AND prazo >= ?");
         if (temDataFinal) sql.append(" AND prazo <= ?");
         if (temCriadoDe) sql.append(" AND criado_em >= ?::date");
+        // O limite exclusivo do dia seguinte inclui todo o último dia do filtro.
         if (temCriadoAte) sql.append(" AND criado_em < (?::date + 1)");
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
@@ -126,6 +133,7 @@ public class MetaDAO implements MetodosCrud<Meta> {
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
+            // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
@@ -153,7 +161,7 @@ public class MetaDAO implements MetodosCrud<Meta> {
         }
     }
 
-    // UPDATE
+    /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(Meta meta) {
         String sql = "UPDATE meta SET meta = ?, descricao_meta = ?, objetivo = ?, prioridade = ?, prazo = ?, status = ?, id_ciclo = ?, id_plano_acao = ? WHERE id_meta = ?;";
@@ -200,7 +208,7 @@ public class MetaDAO implements MetodosCrud<Meta> {
         }
     }
 
-    // DELETE
+    /** Exclui pelo ID; informa ausência do registro ou vínculos que impedem a exclusão. */
     @Override
     public int excluir(Long id) {
         String sql = "DELETE FROM meta WHERE id_meta = ?;";
@@ -231,9 +239,8 @@ public class MetaDAO implements MetodosCrud<Meta> {
         }
     }
 
-    // SQLState "23xxx" = violação de integridade (e-mail/CPF duplicado, FK, NOT NULL).
 
-    // Mapear meta para simplificar a busca
+    /** Converte a linha atual do resultado em um objeto do modelo. */
     private static Meta mapearMeta(ResultSet rs) throws SQLException {
         Meta meta = new Meta();
         meta.setId_meta(rs.getLong("id_meta"));
@@ -247,11 +254,13 @@ public class MetaDAO implements MetodosCrud<Meta> {
         meta.setNome_ciclo(rs.getString("nome_ciclo"));
         meta.setNome_plano_acao(rs.getString("nome_plano_acao"));
         meta.setId_ciclo(rs.getLong("id_ciclo"));
+        // wasNull preserva o vínculo ausente como null, em vez de zero.
         long idPlanoAcao = rs.getLong("id_plano_acao");
         meta.setId_plano_acao(rs.wasNull() ? null : idPlanoAcao);
         return meta;
     }
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
             "id", "id_meta",
             "meta", "meta",
