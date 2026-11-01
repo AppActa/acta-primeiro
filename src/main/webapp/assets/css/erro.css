@@ -3,6 +3,8 @@
 :root {
     --cor-fundo: #EDF0F0;
     --cor-texto: #000;
+    --cor-primaria: #027373;
+    --cor-primaria-hover: #025A8A;
 }
 
 * {
@@ -50,6 +52,29 @@ body {
 .erro-conteudo p {
     font-size: clamp(1.3rem, 2.4vw, 1.8rem);
     font-weight: 700;
+}
+
+.erro-voltar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    border-radius: 8px;
+    background-color: var(--cor-primaria);
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.erro-voltar:hover {
+    background-color: var(--cor-primaria-hover);
+}
+
+.erro-voltar:focus-visible {
+    outline: 3px solid var(--cor-primaria);
+    outline-offset: 4px;
 }
 
 .gato-wrapper{
