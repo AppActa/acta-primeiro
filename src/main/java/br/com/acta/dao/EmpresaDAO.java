@@ -1,7 +1,14 @@
-
 package br.com.acta.dao;
 
-import java.util.List;
+import br.com.acta.enums.Status;
+import br.com.acta.enums.TamanhoEmpresa;
+import br.com.acta.excecoes.DaoException;
+import br.com.acta.excecoes.DuplicidadeException;
+import br.com.acta.excecoes.IntegridadeReferencialException;
+import br.com.acta.excecoes.RegistroNaoEncontradoException;
+import br.com.acta.model.Empresa;
+import br.com.acta.utils.Conexao;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,52 +16,50 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-
-import br.com.acta.enums.Status;
-import br.com.acta.enums.TamanhoEmpresa;
-import br.com.acta.excecoes.RegistroNaoEncontradoException;
-import br.com.acta.model.Empresa;
-import br.com.acta.utils.Conexao;
-import br.com.acta.excecoes.DaoException;
-import br.com.acta.excecoes.DuplicidadeException;
-import br.com.acta.excecoes.IntegridadeReferencialException;
 
 /** Executa a persistência de Empresa e converte consultas em objetos do modelo. */
 public class EmpresaDAO implements MetodosCrud<Empresa> {
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_empresa",
+            "nome", "nome",
+            "setor", "setor",
+            "status", "status",
+            "tamanho", "tamanho");
+
     /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(Empresa empresa) {
-
         String sql = """
                 INSERT INTO empresa (nome, setor, cnpj, status, tamanho)
                 VALUES (?, ?, ?, ?, ?);
                 """;
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)){
-
-            pstmt.setString(1,empresa.getNome());
-            pstmt.setString(2,empresa.getSetor());
-            pstmt.setString(3,empresa.getCnpj());
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, empresa.getNome());
+            pstmt.setString(2, empresa.getSetor());
+            pstmt.setString(3, empresa.getCnpj());
             pstmt.setObject(4, empresa.getStatus().name(), Types.OTHER);
-            pstmt.setObject(5,empresa.getTamanho().name(), Types.OTHER);
+            pstmt.setObject(5, empresa.getTamanho().name(), Types.OTHER);
 
-            if (pstmt.executeUpdate() > 0) return 1;
-            else return 0;
-
-        } catch (SQLException e) {
-
-            // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
-            if ("23505".equals(e.getSQLState())){
-                throw new DuplicidadeException("Já existe um registro com esse dados.",e);
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            } else {
+                return 0;
             }
-            if ("23503".equals(e.getSQLState())){
-                throw new IntegridadeReferencialException("Existe uma referência inválida no cadastro.",e);
+        } catch (SQLException e) {
+            // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicidadeException("Já existe um registro com esse dados.", e);
+            }
+            if ("23503".equals(e.getSQLState())) {
+                throw new IntegridadeReferencialException("Existe uma referência inválida no cadastro.", e);
             }
             throw new DaoException("Erro ao cadrastrar empresa.", e);
-
         } catch (ClassNotFoundException e) {
             throw new DaoException("Driver do banco de dados não encontrado.", e);
         }
@@ -66,8 +71,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String sql = "SELECT * FROM empresa WHERE id_empresa = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -76,7 +80,6 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
                 }
                 return null;
             }
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -89,21 +92,20 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String sql = "SELECT * FROM empresa";
 
         try (Connection conn = Conexao.conectar();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()){
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
                 empresas.add(mapearEmpresa(rs));
             }
             return empresas;
-
-        } catch(SQLException | ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
     /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
-    public List<Empresa> buscaFiltrada(String busca, String setor, Status status, TamanhoEmpresa tamanho, String ordem, String direcao) {
+    public List<Empresa> buscaFiltrada(
+            String busca, String setor, Status status, TamanhoEmpresa tamanho, String ordem, String direcao) {
         List<Empresa> empresas = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM empresa WHERE 1=1");
 
@@ -116,18 +118,25 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         boolean temOrdem = colunaOrdem != null;
 
         // Acrescenta condições apenas para os filtros presentes.
-        if (temBusca) sql.append(" AND (nome ILIKE ? OR cnpj ILIKE ?)");
-        if (temSetor) sql.append(" AND setor ILIKE ?");
-        if (temStatus) sql.append(" AND status = ?");
-        if  (temTamanho) sql.append(" AND tamanho = ?");
+        if (temBusca) {
+            sql.append(" AND (nome ILIKE ? OR cnpj ILIKE ?)");
+        }
+        if (temSetor) {
+            sql.append(" AND setor ILIKE ?");
+        }
+        if (temStatus) {
+            sql.append(" AND status = ?");
+        }
+        if (temTamanho) {
+            sql.append(" AND tamanho = ?");
+        }
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
             sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
         }
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
@@ -135,21 +144,29 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
                 String documento = busca.trim();
                 if (documento.matches("[A-Za-z0-9./\\s-]+")) {
                     String limpo = documento.replaceAll("[^A-Za-z0-9]", "").toUpperCase(java.util.Locale.ROOT);
-                    if (!limpo.isEmpty()) documento = limpo;
+                    if (!limpo.isEmpty()) {
+                        documento = limpo;
+                    }
                 }
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, "%" + documento + "%");
             }
-            if (temSetor) pstmt.setString(i++, setor);
-            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
-            if (temTamanho) pstmt.setObject(i++, tamanho.name(), Types.OTHER);
+            if (temSetor) {
+                pstmt.setString(i++, setor);
+            }
+            if (temStatus) {
+                pstmt.setObject(i++, status.name(), Types.OTHER);
+            }
+            if (temTamanho) {
+                pstmt.setObject(i++, tamanho.name(), Types.OTHER);
+            }
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     empresas.add(mapearEmpresa(rs));
                 }
-            } return empresas;
-
+            }
+            return empresas;
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -161,16 +178,14 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String sql = "SELECT DISTINCT setor FROM empresa ORDER BY setor;";
 
         try (Connection conn = Conexao.conectar();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 setores.add(rs.getString("setor"));
             }
             return setores;
-
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DaoException("Erro ao conectar no banco de dados",e);
+            throw new DaoException("Erro ao conectar no banco de dados", e);
         }
     }
 
@@ -180,41 +195,31 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String sql = "UPDATE empresa SET nome = ?, setor = ?, cnpj = ?, status = ?, tamanho = ? WHERE id_empresa = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, empresa.getNome());
             pstmt.setString(2, empresa.getSetor());
             pstmt.setString(3, empresa.getCnpj());
             pstmt.setObject(4, empresa.getStatus().name(), Types.OTHER);
             pstmt.setObject(5, empresa.getTamanho().name(), Types.OTHER);
-            pstmt.setLong(6, empresa.getId_empresa()); //localizando o id
+            pstmt.setLong(6, empresa.getId_empresa()); // localizando o id
 
-            if (pstmt.executeUpdate() > 0) return 1;
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
 
             throw new RegistroNaoEncontradoException("Empresa não encontrada para atualização");
-
         } catch (SQLException e) {
-
             if ("23505".equals(e.getSQLState())) {
-                throw new DuplicidadeException(
-                        "Já existe uma empresa com esses dados.", e
-                );
+                throw new DuplicidadeException("Já existe uma empresa com esses dados.", e);
             }
 
             if ("23503".equals(e.getSQLState())) {
-                throw new IntegridadeReferencialException(
-                        "Referência inválida na atualização.", e
-                );
+                throw new IntegridadeReferencialException("Referência inválida na atualização.", e);
             }
 
-            throw new DaoException(
-                    "Erro ao atualizar empresa.", e
-            );
-
+            throw new DaoException("Erro ao atualizar empresa.", e);
         } catch (ClassNotFoundException e) {
-            throw new DaoException(
-                    "Erro ao conectar no banco de dados.", e
-            );
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -223,8 +228,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String sql = "UPDATE empresa SET nome = ?, setor = ?, cnpj = ?, status = ?, tamanho = ? WHERE cnpj = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, empresa.getNome());
             pstmt.setString(2, empresa.getSetor());
             pstmt.setString(3, empresa.getCnpj());
@@ -232,22 +236,18 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             pstmt.setObject(5, empresa.getTamanho().name(), Types.OTHER);
             pstmt.setString(6, cnpjAtual);
 
-            if (pstmt.executeUpdate() > 0) return 1;
-            throw new RegistroNaoEncontradoException(
-                    "Empresa não encontrada para atualização pelo CNPJ informado."
-            );
-
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
+            throw new RegistroNaoEncontradoException("Empresa não encontrada para atualização pelo CNPJ informado.");
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe uma empresa com esse CNPJ.", e);
             }
             if ("23503".equals(e.getSQLState())) {
-                throw new IntegridadeReferencialException(
-                        "Referência inválida na atualização da empresa.", e
-                );
+                throw new IntegridadeReferencialException("Referência inválida na atualização da empresa.", e);
             }
             throw new DaoException("Erro ao atualizar empresa pelo CNPJ.", e);
-
         } catch (ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -259,30 +259,22 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String sql = "DELETE FROM empresa WHERE id_empresa = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
 
-            if (pstmt.executeUpdate() > 0) return 1;
-            throw new RegistroNaoEncontradoException(
-                    "Empresa não encontrada para exclusão"
-            );
-
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
+            throw new RegistroNaoEncontradoException("Empresa não encontrada para exclusão");
         } catch (SQLException e) {
             if ("23503".equals(e.getSQLState())) {
                 throw new IntegridadeReferencialException(
-                        "Não é possível excluir a empresa porque existem registros vinculados.", e
-                );
+                        "Não é possível excluir a empresa porque existem registros vinculados.", e);
             }
 
-            throw new DaoException(
-                    "Erro ao excluir empresa.", e
-            );
-
+            throw new DaoException("Erro ao excluir empresa.", e);
         } catch (ClassNotFoundException e) {
-            throw new DaoException(
-                    "Driver do banco não encontrado.", e
-            );
+            throw new DaoException("Driver do banco não encontrado.", e);
         }
     }
 
@@ -291,24 +283,39 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String sql = "DELETE FROM empresa WHERE cnpj = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, cnpj);
 
-            if (pstmt.executeUpdate() > 0) return 1;
-            throw new RegistroNaoEncontradoException(
-                    "Empresa não encontrada para exclusão pelo CNPJ informado."
-            );
-
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
+            throw new RegistroNaoEncontradoException("Empresa não encontrada para exclusão pelo CNPJ informado.");
         } catch (SQLException e) {
             if ("23503".equals(e.getSQLState())) {
                 throw new IntegridadeReferencialException(
-                        "Não é possível excluir a empresa porque existem registros vinculados.", e
-                );
+                        "Não é possível excluir a empresa porque existem registros vinculados.", e);
             }
             throw new DaoException("Erro ao excluir empresa pelo CNPJ.", e);
-
         } catch (ClassNotFoundException e) {
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
+        }
+    }
+
+    /** Recupera a escrita já cadastrada do setor, ignorando maiúsculas. */
+    public String buscarSetorExistente(String setor) {
+        String sql = "SELECT setor FROM empresa WHERE LOWER(setor) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, setor);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("setor");
+                }
+                return null;
+            }
+        } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
@@ -324,35 +331,5 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         String tamanho = rs.getString("tamanho");
         empresa.setTamanho(tamanho == null ? null : TamanhoEmpresa.valueOf(tamanho));
         return empresa;
-    }
-
-    // Relaciona as opções de ordenação às colunas autorizadas do banco.
-    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
-            "id", "id_empresa",
-            "nome", "nome",
-            "setor", "setor",
-            "status", "status",
-            "tamanho", "tamanho"
-    );
-
-    /** Recupera a escrita já cadastrada do setor, ignorando maiúsculas. */
-    public String buscarSetorExistente(String setor) {
-        String sql = "SELECT setor FROM empresa WHERE LOWER(setor) = LOWER(?) LIMIT 1;";
-
-        try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, setor);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs. next()) {
-                    return rs.getString("setor");
-                }
-                return null;
-            }
-
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new DaoException("Erro ao conectar no banco de dados.",e);
-        }
     }
 }
