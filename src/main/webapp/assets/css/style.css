@@ -1117,7 +1117,6 @@ body:not(:has(:target)) #inicio {
     margin: 0 auto; 
     width: 100%; 
   }
-  
   /* o hero do "Sobre nós" precisa de altura fixa porque seus celulares são posicionados em absoluto */
   .hero__mockups--sobre { 
     height: 505px; 
@@ -1365,6 +1364,11 @@ body:not(:has(:target)) #inicio {
   }
   .footer__contatos li { 
     overflow-wrap: anywhere; 
+  }
+
+  .header .btn--pequeno,
+  .footer__contatos li:has(.footer__cadeado) { 
+    display: none; 
   }
 }
 
