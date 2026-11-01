@@ -1,8 +1,9 @@
 package br.com.acta.servlet;
 
 import br.com.acta.model.AdministradorGeral;
-import br.com.acta.utils.CsrfToken;
 import br.com.acta.utils.Configuracao;
+import br.com.acta.utils.CsrfToken;
+
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import java.util.TreeMap;
 /** Prepara a assinatura necessária para o envio da foto de perfil ao Cloudinary. */
 @WebServlet(name = "CloudinarySignatureServlet", value = "/cloudinary-signature")
 public class CloudinarySignatureServlet extends HttpServlet {
+
     // Restringe o destino assinado à pasta de fotos de administradores.
     private static final String FOLDER = "acta/admin-profiles";
 
@@ -57,11 +59,9 @@ public class CloudinarySignatureServlet extends HttpServlet {
             // O segredo participa da assinatura e permanece apenas no servidor.
             resp.setCharacterEncoding("UTF-8");
             resp.setContentType("application/json");
-            resp.getWriter().write("{\"cloudName\":\"" + json(cloudName)
-                    + "\",\"apiKey\":\"" + json(apiKey)
-                    + "\",\"timestamp\":" + timestamp
-                    + ",\"folder\":\"" + FOLDER
-                    + "\",\"signature\":\"" + assinatura + "\"}");
+            resp.getWriter().write("{\"cloudName\":\"" + json(cloudName) + "\",\"apiKey\":\"" + json(apiKey)
+                    + "\",\"timestamp\":" + timestamp + ",\"folder\":\"" + FOLDER + "\",\"signature\":\"" + assinatura
+                    + "\"}");
         } catch (Exception e) {
             getServletContext().log("Falha ao gerar assinatura para upload de perfil no Cloudinary.", e);
             responderErro(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -73,15 +73,18 @@ public class CloudinarySignatureServlet extends HttpServlet {
     private String assinar(Map<String, String> parametros, String apiSecret) throws NoSuchAlgorithmException {
         StringBuilder base = new StringBuilder();
         for (Map.Entry<String, String> parametro : parametros.entrySet()) {
-            if (!base.isEmpty()) base.append('&');
+            if (!base.isEmpty()) {
+                base.append('&');
+            }
             base.append(parametro.getKey()).append('=').append(parametro.getValue());
         }
         base.append(apiSecret);
-        byte[] hash = MessageDigest.getInstance("SHA-1")
-                .digest(base.toString().getBytes(StandardCharsets.UTF_8));
+        byte[] hash = MessageDigest.getInstance("SHA-1").digest(base.toString().getBytes(StandardCharsets.UTF_8));
         // Converte cada byte do hash em dois caracteres hexadecimais.
         StringBuilder hexadecimal = new StringBuilder(hash.length * 2);
-        for (byte valor : hash) hexadecimal.append(String.format("%02x", valor));
+        for (byte valor : hash) {
+            hexadecimal.append(String.format("%02x", valor));
+        }
         return hexadecimal.toString();
     }
 
