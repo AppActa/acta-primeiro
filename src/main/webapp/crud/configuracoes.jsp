@@ -5,6 +5,10 @@
         return valor.toString().replace("&", "&amp;").replace("<", "&lt;")
                 .replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;");
     }
+    private String imagemOtimizada(String url, int tamanho) {
+        if (url == null || url.isBlank()) return "";
+        return url.replace("/image/upload/", "/image/upload/c_fill,w_" + tamanho + ",h_" + tamanho + ",q_auto,f_auto/");
+    }
 %>
 <%
 AdministradorGeral administrador = (AdministradorGeral) session.getAttribute("usuarioLogado");
@@ -15,6 +19,8 @@ if (administrador == null) {
 String nome = administrador.getNome() == null ? "" : administrador.getNome();
 String email = administrador.getEmail() == null ? "" : administrador.getEmail();
 String telefone = administrador.getTelefone() == null ? "" : administrador.getTelefone();
+String imagem = administrador.getImagem() == null ? "" : administrador.getImagem();
+String imagemPerfil = imagem.isBlank() ? request.getContextPath() + "/assets/images/foto_perfil.svg" : h(imagemOtimizada(imagem, 512));
 List<String> empresasVinculadas = new AdministradorGeralDAO().buscarEmpresasAtivas(administrador.getAdm_geral_id());
 %>
 <!DOCTYPE html>
@@ -27,8 +33,9 @@ List<String> empresasVinculadas = new AdministradorGeralDAO().buscarEmpresasAtiv
     <title>ACTA — Configurações</title>
     <script src="<%= request.getContextPath() %>/assets/js/regex.js?v=7c47ef420f" defer></script>
     <script src="<%= request.getContextPath() %>/assets/js/efeitos.js" defer></script>
+    <script src="<%= request.getContextPath() %>/assets/js/cloudinary-profile.js" defer></script>
 </head>
-<body class="crud-admin">
+<body class="crud-admin" data-context-path="<%= request.getContextPath() %>">
 <div class="sistema">
     <aside class="sidebar">
         <div class="sidebar-logo"><img src="<%= request.getContextPath() %>/assets/images/logo_oficial.svg" alt="ACTA"></div>
@@ -45,7 +52,7 @@ List<String> empresasVinculadas = new AdministradorGeralDAO().buscarEmpresasAtiv
         </nav>
         <div class="perfil-barra">
             <a href="<%= request.getContextPath() %>/crud/configuracoes.jsp" class="perfil-admin">
-                <div class="perfil-foto"><img src="<%= request.getContextPath() %>/assets/images/foto_perfil.svg" alt="Foto de perfil"></div>
+                <div class="perfil-foto"><img src="<%= imagemPerfil %>" alt="Foto de perfil"></div>
                 <div class="perfil-info"><span class="perfil-nome"><%= h(nome) %></span><span class="perfil-email"><%= h(email) %></span></div>
             </a>
             <a href="<%= request.getContextPath() %>/logout-servlet" class="botao botao-sair">Sair</a>
@@ -57,12 +64,25 @@ List<String> empresasVinculadas = new AdministradorGeralDAO().buscarEmpresasAtiv
             <input type="checkbox" id="config-modal-senha" class="config-toggle" aria-label="Alterar senha">
             <div class="config-principal">
                 <h1 class="config-titulo">Configurações</h1>
-                <div class="config-foto-area"><div class="config-foto"><img src="<%= request.getContextPath() %>/assets/images/foto_perfil.svg" alt="Foto de perfil"></div></div>
+                <div class="config-foto-area">
+                    <div class="config-foto">
+                        <img id="config-foto-preview" src="<%= imagemPerfil %>" alt="Foto de perfil">
+                        <label for="config-editar-perfil" class="config-camera config-camera-modo" aria-label="Editar foto">
+                            <img src="<%= request.getContextPath() %>/assets/images/icone_camera.svg" alt="">
+                        </label>
+                        <label for="config-foto-arquivo" class="config-camera config-camera-arquivo" aria-label="Escolher nova foto">
+                            <img src="<%= request.getContextPath() %>/assets/images/icone_camera.svg" alt="">
+                        </label>
+                        <input type="file" id="config-foto-arquivo" accept="image/png,image/jpeg,image/webp" hidden>
+                    </div>
+                    <p id="config-foto-status" class="config-vazio" role="status" aria-live="polite"></p>
+                </div>
             </div>
             <% if (request.getAttribute("mensagemErro") != null) { %>
             <p class="mensagem mensagem-erro" role="alert"><%= h(request.getAttribute("mensagemErro")) %></p>
             <% } %>
             <form class="config-dados" id="form-perfil" method="post" action="<%= request.getContextPath() %>/administrador-geral-servlet">
+                <input type="hidden" id="config-imagem-url" name="imagem" value="<%= h(imagem) %>">
                 <div class="config-dados-topo"><h2>Meus dados</h2><label for="config-editar-perfil" class="botao botao-principal botao-pilula config-dados-editar">Editar</label></div>
                 <div class="config-campos">
                     <div class="config-campo"><label for="config-nome" class="config-rotulo">Nome</label><p class="config-valor editavel"><%= h(nome) %></p><input type="text" id="config-nome" name="nome" maxlength="50" value="<%= h(nome) %>" autocomplete="name" placeholder="Digite o nome" required></div>
