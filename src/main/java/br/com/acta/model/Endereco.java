@@ -1,5 +1,6 @@
 package br.com.acta.model;
 
+/** Representa o endereço de uma unidade vinculada a uma empresa. */
 public class Endereco {
     private Long id_endereco;
     private String rua;
@@ -10,12 +11,16 @@ public class Endereco {
     private String numero;
     private String complemento;
     private String unidade;
+    // Empresa à qual este endereço pertence.
     private Long id_empresa;
+    // Nome trazido pela consulta para mostrar a empresa vinculada.
     private String nome_empresa;
 
+    /** Cria um endereço vazio para preenchimento posterior. */
     public Endereco() {
     }
 
+    /** Monta os dados do endereço sem um ID definido. */
     public Endereco(String rua, String bairro, String cidade, String estado, String cep, String numero, String complemento, String unidade, Long id_empresa) {
         this.rua = rua;
         this.bairro = bairro;
@@ -28,6 +33,7 @@ public class Endereco {
         this.id_empresa = id_empresa;
     }
 
+    /** Monta um endereço com ID já conhecido. */
     public Endereco(Long id_endereco, String rua, String bairro, String cidade, String estado, String cep, String numero, String complemento, String unidade, Long id_empresa) {
         this.id_endereco = id_endereco;
         this.rua = rua;
@@ -41,6 +47,7 @@ public class Endereco {
         this.id_empresa = id_empresa;
     }
 
+    // Acesso e atualização dos dados do endereço.
     public Long getId_endereco() {
         return id_endereco;
     }
