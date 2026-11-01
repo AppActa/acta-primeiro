@@ -1,18 +1,17 @@
 package br.com.acta.model;
 
-
-
 /** Representa o administrador geral e seus dados de perfil. */
 public class AdministradorGeral {
+
     // Dados de identificação, contato e acesso do administrador.
     private Long id_adm_geral;
     private String nome;
     private String senha;
     private String email;
     private String telefone;
+
     // Referência da imagem de perfil armazenada para exibição.
     private String imagem;
-
 
     /** Cria o objeto vazio para preenchimento pelo DAO ou servlet. */
     public AdministradorGeral() {}
@@ -34,7 +33,6 @@ public class AdministradorGeral {
         this.nome = nome;
     }
 
-
     // Acesso e atualização dos dados do modelo.
 
     public Long getAdm_geral_id() {
@@ -45,20 +43,12 @@ public class AdministradorGeral {
         this.id_adm_geral = id_adm_geral;
     }
 
-    public String getTelefone() {
-        return telefone;
+    public String getNome() {
+        return nome;
     }
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getSenha() {
@@ -69,15 +59,27 @@ public class AdministradorGeral {
         this.senha = senha;
     }
 
-    public String getNome() {
-        return nome;
+    public String getEmail() {
+        return email;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getImagem() { return imagem; }
+    public String getTelefone() {
+        return telefone;
+    }
 
-    public void setImagem(String imagem) { this.imagem = imagem; }
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
+    }
 }
