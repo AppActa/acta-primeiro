@@ -1,11 +1,11 @@
 package br.com.acta.dao;
 
-import br.com.acta.model.Colaborador;
 import br.com.acta.enums.Status;
 import br.com.acta.excecoes.DaoException;
 import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
+import br.com.acta.model.Colaborador;
 import br.com.acta.utils.Conexao;
 import br.com.acta.utils.PasswordUtils;
 
@@ -17,6 +17,19 @@ import java.util.Map;
 /** Executa a persistência de Colaborador e converte consultas em objetos do modelo. */
 public class ColaboradorDAO implements MetodosCrud<Colaborador> {
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
+    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
+            "id", "id_colaborador",
+            "nome", "nome",
+            "sobrenome", "sobrenome",
+            "email", "email",
+            "area", "area",
+            "cargo", "cargo",
+            "status", "status",
+            "permissao", "permissao_gestor",
+            "contratacao", "dt_contratacao",
+            "empresa", "nome_empresa");
+
     /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(Colaborador colaborador) {
@@ -26,8 +39,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 """;
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, colaborador.getNome());
             pstmt.setString(2, colaborador.getSobrenome());
             pstmt.setBoolean(3, colaborador.getPermissao_gestor());
@@ -41,11 +53,12 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setString(11, colaborador.getCpf());
             pstmt.setLong(12, colaborador.getId_empresa());
 
-            if (pstmt.executeUpdate() > 0) return 1;
-            else return 0;
-
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            } else {
+                return 0;
+            }
         } catch (SQLException e) {
-
             // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de colaborador com esses dados.", e);
@@ -54,7 +67,6 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 throw new IntegridadeReferencialException("Existe uma referência inválida no cadastro.", e);
             }
             throw new DaoException("Erro ao cadastrar colaborador.", e);
-
         } catch (ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -66,8 +78,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         String sql = "SELECT * FROM vw_colaborador WHERE id_colaborador = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -76,7 +87,6 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 }
                 return null;
             }
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -89,21 +99,21 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         String sql = "SELECT * FROM vw_colaborador;";
 
         try (Connection conn = Conexao.conectar();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 colaboradores.add(mapearColaborador(rs));
             }
             return colaboradores;
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
     /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
-    public List<Colaborador> buscaFiltrada(String busca, Status status, String area, String cargo, Boolean permissaoGestor, Date dataInicial, Date dataFinal, String ordem, String direcao) {
+    public List<Colaborador> buscaFiltrada(
+            String busca, Status status, String area, String cargo, Boolean permissaoGestor, Date dataInicial,
+            Date dataFinal, String ordem, String direcao) {
         List<Colaborador> colaboradores = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_colaborador WHERE 1=1");
 
@@ -120,21 +130,35 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         boolean temOrdem = colunaOrdem != null;
 
         // Acrescenta condições apenas para os filtros presentes.
-        if (temBusca) sql.append(" AND (nome ILIKE ? OR sobrenome ILIKE ? OR CONCAT_WS(' ', nome, sobrenome) ILIKE ? OR email ILIKE ? OR nome_empresa ILIKE ? OR cpf ILIKE ? OR telefone ILIKE ?)");
-        if (temStatus) sql.append(" AND status = ?");
-        if (temArea) sql.append(" AND area = ?");
-        if (temCargo) sql.append(" AND cargo = ?");
-        if (temGestor) sql.append(" AND permissao_gestor = ?");
-        if (temDataInicial) sql.append(" AND dt_contratacao >= ?");
-        if (temDataFinal) sql.append(" AND dt_contratacao <= ?");
+        if (temBusca) {
+            sql.append(" AND (nome ILIKE ? OR sobrenome ILIKE ? OR CONCAT_WS(' ', nome, sobrenome) ILIKE ? OR "
+                    + "email ILIKE ? OR nome_empresa ILIKE ? OR cpf ILIKE ? OR telefone ILIKE ?)");
+        }
+        if (temStatus) {
+            sql.append(" AND status = ?");
+        }
+        if (temArea) {
+            sql.append(" AND area = ?");
+        }
+        if (temCargo) {
+            sql.append(" AND cargo = ?");
+        }
+        if (temGestor) {
+            sql.append(" AND permissao_gestor = ?");
+        }
+        if (temDataInicial) {
+            sql.append(" AND dt_contratacao >= ?");
+        }
+        if (temDataFinal) {
+            sql.append(" AND dt_contratacao <= ?");
+        }
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
             sql.append(" ORDER BY ").append(colunaOrdem).append(direcaoSQL);
         }
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
@@ -142,7 +166,9 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 String documento = busca.trim();
                 if (documento.matches("[0-9.()\\s-]+")) {
                     String limpo = documento.replaceAll("\\D", "");
-                    if (!limpo.isEmpty()) documento = limpo;
+                    if (!limpo.isEmpty()) {
+                        documento = limpo;
+                    }
                 }
                 pstmt.setString(i++, termo);
                 pstmt.setString(i++, termo);
@@ -152,19 +178,31 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 pstmt.setString(i++, "%" + documento + "%");
                 pstmt.setString(i++, "%" + documento + "%");
             }
-            if (temStatus) pstmt.setObject(i++, status.name(), Types.OTHER);
-            if (temArea) pstmt.setString(i++, area);
-            if (temCargo) pstmt.setString(i++, cargo);
-            if (temGestor) pstmt.setBoolean(i++, permissaoGestor);
-            if (temDataInicial) pstmt.setDate(i++, dataInicial);
-            if (temDataFinal) pstmt.setDate(i++, dataFinal);
+            if (temStatus) {
+                pstmt.setObject(i++, status.name(), Types.OTHER);
+            }
+            if (temArea) {
+                pstmt.setString(i++, area);
+            }
+            if (temCargo) {
+                pstmt.setString(i++, cargo);
+            }
+            if (temGestor) {
+                pstmt.setBoolean(i++, permissaoGestor);
+            }
+            if (temDataInicial) {
+                pstmt.setDate(i++, dataInicial);
+            }
+            if (temDataFinal) {
+                pstmt.setDate(i++, dataFinal);
+            }
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     colaboradores.add(mapearColaborador(rs));
                 }
-            } return colaboradores;
-
+            }
+            return colaboradores;
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -176,14 +214,12 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         String sql = "SELECT DISTINCT area FROM colaborador ORDER BY area;";
 
         try (Connection conn = Conexao.conectar();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 areas.add(rs.getString("area"));
             }
             return areas;
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -195,14 +231,12 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         String sql = "SELECT DISTINCT cargo FROM colaborador ORDER BY cargo;";
 
         try (Connection conn = Conexao.conectar();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 cargos.add(rs.getString("cargo"));
             }
             return cargos;
-
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -211,11 +245,12 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
     /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(Colaborador colaborador) {
-        String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, status = ?, area = ?, cargo = ?, dt_contratacao = ?, email = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE id_colaborador = ?;";
+        String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, status = ?, area = "
+                + "?, cargo = ?, dt_contratacao = ?, email = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE "
+                + "id_colaborador = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, colaborador.getNome());
             pstmt.setString(2, colaborador.getSobrenome());
             pstmt.setBoolean(3, colaborador.getPermissao_gestor());
@@ -229,42 +264,34 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setLong(11, colaborador.getId_empresa());
             pstmt.setLong(12, colaborador.getId_colaborador());
 
-            if (pstmt.executeUpdate() > 0) return 1;
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
 
             throw new RegistroNaoEncontradoException("Registro de colaborador não encontrado para atualização.");
-
         } catch (SQLException e) {
-
             if ("23505".equals(e.getSQLState())) {
-                throw new DuplicidadeException(
-                        "Já existe um registro de colaborador com esses dados.", e
-                );
+                throw new DuplicidadeException("Já existe um registro de colaborador com esses dados.", e);
             }
 
             if ("23503".equals(e.getSQLState())) {
-                throw new IntegridadeReferencialException(
-                        "Referência inválida na atualização.", e
-                );
+                throw new IntegridadeReferencialException("Referência inválida na atualização.", e);
             }
 
-            throw new DaoException(
-                    "Erro ao atualizar colaborador.", e
-            );
-
+            throw new DaoException("Erro ao atualizar colaborador.", e);
         } catch (ClassNotFoundException e) {
-            throw new DaoException(
-                    "Erro ao conectar no banco de dados.", e
-            );
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
     /** Localiza pelo CPF atual e salva os dados, incluindo o novo CPF do modelo. */
     public int atualizarPorCpf(Colaborador colaborador, String cpfAtual) {
-        String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, status = ?, area = ?, cargo = ?, dt_contratacao = ?, email = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE cpf = ?;";
+        String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, permissao_gestor = ?, status = ?, area = "
+                + "?, cargo = ?, dt_contratacao = ?, email = ?, telefone = ?, cpf = ?, id_empresa = ? WHERE "
+                + "cpf = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, colaborador.getNome());
             pstmt.setString(2, colaborador.getSobrenome());
             pstmt.setBoolean(3, colaborador.getPermissao_gestor());
@@ -278,24 +305,18 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
             pstmt.setLong(11, colaborador.getId_empresa());
             pstmt.setString(12, cpfAtual);
 
-            if (pstmt.executeUpdate() > 0) return 1;
-            throw new RegistroNaoEncontradoException(
-                    "Colaborador não encontrado para atualização pelo CPF informado."
-            );
-
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
+            throw new RegistroNaoEncontradoException("Colaborador não encontrado para atualização pelo CPF informado.");
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
-                throw new DuplicidadeException(
-                        "Já existe um colaborador com esse e-mail ou CPF.", e
-                );
+                throw new DuplicidadeException("Já existe um colaborador com esse e-mail ou CPF.", e);
             }
             if ("23503".equals(e.getSQLState())) {
-                throw new IntegridadeReferencialException(
-                        "Referência inválida na atualização do colaborador.", e
-                );
+                throw new IntegridadeReferencialException("Referência inválida na atualização do colaborador.", e);
             }
             throw new DaoException("Erro ao atualizar colaborador pelo CPF.", e);
-
         } catch (ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -307,28 +328,23 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         String sql = "DELETE FROM colaborador WHERE id_colaborador = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
 
-            if (pstmt.executeUpdate() > 0) return 1;
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
             throw new RegistroNaoEncontradoException("Registro de colaborador não encontrado para exclusão.");
-
         } catch (SQLException e) {
             if ("23503".equals(e.getSQLState())) {
                 throw new IntegridadeReferencialException(
-                        "Não é possível excluir o registro de colaborador porque existem registros vinculados.", e
-                );
+                        "Não é possível excluir o registro de colaborador porque existem registros vinculados.",
+                        e);
             }
 
-            throw new DaoException(
-                    "Erro ao excluir colaborador.", e
-            );
-
+            throw new DaoException("Erro ao excluir colaborador.", e);
         } catch (ClassNotFoundException e) {
-            throw new DaoException(
-                    "Erro ao conectar no banco de dados.", e
-            );
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
@@ -338,23 +354,19 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         String sql = "DELETE FROM colaborador WHERE email = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, email);
 
-            if (pstmt.executeUpdate() > 0) return 1;
-            throw new RegistroNaoEncontradoException(
-                    "Colaborador não encontrado para exclusão pelo e-mail informado."
-            );
-
+            if (pstmt.executeUpdate() > 0) {
+                return 1;
+            }
+            throw new RegistroNaoEncontradoException("Colaborador não encontrado para exclusão pelo e-mail informado.");
         } catch (SQLException e) {
             if ("23503".equals(e.getSQLState())) {
                 throw new IntegridadeReferencialException(
-                        "Não é possível excluir o colaborador porque existem registros vinculados.", e
-                );
+                        "Não é possível excluir o colaborador porque existem registros vinculados.", e);
             }
             throw new DaoException("Erro ao excluir colaborador pelo e-mail.", e);
-
         } catch (ClassNotFoundException e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -367,9 +379,8 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         String sqlSenha = "SELECT senha FROM colaborador WHERE email = ?;";
 
         try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             PreparedStatement pstmtSenha = conn.prepareStatement(sqlSenha)) {
-
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                PreparedStatement pstmtSenha = conn.prepareStatement(sqlSenha)) {
             pstmt.setString(1, email);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -390,7 +401,6 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 }
                 return null;
             }
-
         } catch (Exception e) {
             throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
@@ -425,36 +435,64 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
                 pstmtAtualizar.setString(1, PasswordUtils.hashSenha(senhaNova));
                 pstmtAtualizar.setString(2, email);
 
-                if (pstmtAtualizar.executeUpdate() > 0) return 1;
-                else return 0;
+                if (pstmtAtualizar.executeUpdate() > 0) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             }
-
         } catch (SQLException e) {
-
             if ("23505".equals(e.getSQLState())) {
-                throw new DuplicidadeException(
-                        "Já existe um registro de colaborador com esses dados.", e
-                );
+                throw new DuplicidadeException("Já existe um registro de colaborador com esses dados.", e);
             }
 
             if ("23503".equals(e.getSQLState())) {
-                throw new IntegridadeReferencialException(
-                        "Referência inválida na atualização.", e
-                );
+                throw new IntegridadeReferencialException("Referência inválida na atualização.", e);
             }
 
-            throw new DaoException(
-                    "Erro ao atualizar a senha do colaborador.", e
-            );
-
+            throw new DaoException("Erro ao atualizar a senha do colaborador.", e);
         } catch (ClassNotFoundException e) {
-            throw new DaoException(
-                    "Erro ao conectar no banco de dados.", e
-            );
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
         }
     }
 
+    /** Recupera a escrita já cadastrada da área, ignorando maiúsculas. */
+    public String buscarAreaExistente(String area) {
+        String sql = "SELECT area FROM colaborador WHERE LOWER(area) = LOWER(?) LIMIT 1;";
 
+        try (Connection conn = Conexao.conectar();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, area);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("area");
+                }
+                return null;
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DaoException("Erro ao conectar no banco de dados.", e);
+        }
+    }
+
+    /** Recupera a escrita já cadastrada do cargo, ignorando maiúsculas. */
+    public String buscarCargoExistente(String cargo) {
+        String sql = "SELECT cargo FROM colaborador WHERE LOWER(cargo) = LOWER(?) LIMIT 1;";
+
+        try (Connection conn = Conexao.conectar();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, cargo);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("cargo");
+                }
+                return null;
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /** Converte a linha atual do resultado em um objeto do modelo. */
     private static Colaborador mapearColaborador(ResultSet rs) throws SQLException {
@@ -473,61 +511,5 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         colaborador.setNome_empresa(rs.getString("nome_empresa"));
         colaborador.setId_empresa(rs.getLong("id_empresa"));
         return colaborador;
-    }
-
-    // Relaciona as opções de ordenação às colunas autorizadas do banco.
-    private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
-            "id", "id_colaborador",
-            "nome", "nome",
-            "sobrenome", "sobrenome",
-            "email", "email",
-            "area", "area",
-            "cargo", "cargo",
-            "status", "status",
-            "permissao", "permissao_gestor",
-            "contratacao", "dt_contratacao",
-            "empresa", "nome_empresa"
-    );
-
-    /** Recupera a escrita já cadastrada da área, ignorando maiúsculas. */
-    public String buscarAreaExistente(String area) {
-        String sql = "SELECT area FROM colaborador WHERE LOWER(area) = LOWER(?) LIMIT 1;";
-
-        try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, area);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("area");
-                }
-                return null;
-            }
-
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new DaoException("Erro ao conectar no banco de dados.", e);
-        }
-    }
-
-    /** Recupera a escrita já cadastrada do cargo, ignorando maiúsculas. */
-    public String buscarCargoExistente(String cargo) {
-        String sql = "SELECT cargo FROM colaborador WHERE LOWER(cargo) = LOWER(?) LIMIT 1;";
-
-        try (Connection conn = Conexao.conectar();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, cargo);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("cargo");
-                }
-                return null;
-            }
-
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
