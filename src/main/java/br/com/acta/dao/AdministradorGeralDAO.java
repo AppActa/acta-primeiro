@@ -17,8 +17,10 @@ import br.com.acta.excecoes.ValidacaoException;
 import br.com.acta.utils.Conexao;
 import br.com.acta.utils.PasswordUtils;
 
+/** Executa a persistência de AdministradorGeral e converte consultas em objetos do modelo. */
 public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
+    /** Lista os nomes das empresas ativas vinculadas ao administrador. */
     public List<String> buscarEmpresasAtivas(Long idAdministrador) {
         List<String> empresas = new ArrayList<>();
         String sql = """
@@ -41,9 +43,8 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         }
     }
 
-    //metodos DAO
 
-    //inserir
+    /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(AdministradorGeral administradorGeral) {
         String sql = """
@@ -64,6 +65,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
         } catch (SQLException e) {
 
+            // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de administrador com esses dados.", e);
             }
@@ -78,7 +80,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
     }
 
-    //buscar com id
+    /** Busca pelo ID; retorna null quando o registro não existe. */
     @Override
     public AdministradorGeral buscar(Long id) {
         String sql = "SELECT id_adm_geral, nome, email, telefone, imagem FROM administrador_geral WHERE id_adm_geral = ?;";
@@ -100,7 +102,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         }
     }
 
-    //listar
+    /** Lista todos os registros disponíveis na consulta. */
     @Override
     public List<AdministradorGeral> buscar() {
         List<AdministradorGeral> administradoresGerais = new ArrayList<>();
@@ -121,15 +123,18 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
 
     }
 
+    /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
     public List<AdministradorGeral> buscaFiltrada(String busca, String ordem, String direcao) {
         List<AdministradorGeral> administradoresGerais = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM administrador_geral WHERE 1=1");
 
         boolean temBusca = busca != null && !busca.isBlank();
 
+        // A coluna vem de uma lista permitida, nunca diretamente do formulário.
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
+        // Acrescenta condições apenas para os filtros presentes.
         if (temBusca) sql.append(" AND (nome ILIKE ? OR email ILIKE ? OR telefone ILIKE ?)");
         if (temOrdem) {
             String direcaoSQL = "DESC".equalsIgnoreCase(direcao) ? " DESC" : " ASC";
@@ -139,6 +144,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
+            // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
@@ -159,7 +165,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         }
     }
 
-    //autenticacao
+    /** Busca pelo e-mail e verifica a senha; devolve null se as credenciais não conferem. */
     public AdministradorGeral autenticar(String email, String senha) {
         String sql = "SELECT * FROM administrador_geral WHERE email = ?;";
 
@@ -185,7 +191,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         }
     }
 
-    //atualizar
+    /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(AdministradorGeral administradorGeral) {
         String sql = "UPDATE administrador_geral SET nome = ?, email = ?, telefone = ?, imagem = ? WHERE id_adm_geral = ?;";
@@ -228,6 +234,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         }
     }
 
+    /** Confere a senha atual antes de gravar o hash da nova senha. */
     public int atualizarSenha(String email, String senhaAntiga, String senhaNova){
         String sqlBuscar = "SELECT senha FROM administrador_geral WHERE email = ?";
         String sqlAtualizar = "UPDATE administrador_geral SET senha = ? WHERE email = ?";
@@ -285,7 +292,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         }
     }
 
-    //excluir
+    /** Exclui pelo ID; informa ausência do registro ou vínculos que impedem a exclusão. */
     @Override
     public int excluir(Long id) {
         String sql = "DELETE FROM administrador_geral WHERE id_adm_geral = ?;";
@@ -317,6 +324,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
     }
 
 
+    /** Converte a linha atual do resultado em um objeto do modelo. */
     private static AdministradorGeral mapearAdministradorGeral(ResultSet rs) throws SQLException {
         AdministradorGeral administradorGeral = new AdministradorGeral();
         administradorGeral.setAdm_geral_id(rs.getLong("id_adm_geral"));
@@ -327,6 +335,7 @@ public class AdministradorGeralDAO implements MetodosCrud<AdministradorGeral> {
         return administradorGeral;
     }
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
             "nome", "nome",
             "email", "email",

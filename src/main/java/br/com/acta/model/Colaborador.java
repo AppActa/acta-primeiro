@@ -4,10 +4,12 @@ import br.com.acta.enums.Status;
 
 import java.sql.Date;
 
+/** Representa o colaborador, seu acesso e seu vínculo com uma empresa. */
 public class Colaborador {
     private Long id_colaborador;
     private String nome;
     private String sobrenome;
+    // Indica se o colaborador possui permissão de gestor.
     private Boolean permissao_gestor;
     private Status status;
     private String area;
@@ -17,11 +19,15 @@ public class Colaborador {
     private String senha;
     private String telefone;
     private String cpf;
+    // Identificador da empresa à qual o colaborador pertence.
     private Long id_empresa;
+    // Nome da empresa retornado pela consulta para exibição.
     private String nome_empresa;
 
+    /** Cria o objeto vazio para preenchimento pelo DAO ou servlet. */
     public Colaborador() {}
 
+    /** Monta os dados de cadastro sem um ID definido. */
     public Colaborador(String nome, String sobrenome, Boolean permissao_gestor, Status status, String area, String cargo, Date dt_contratacao, String email, String senha, String telefone, String cpf, Long id_empresa) {
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -37,6 +43,7 @@ public class Colaborador {
         this.id_empresa = id_empresa;
     }
 
+    /** Monta um colaborador com ID já conhecido. */
     public Colaborador(Long id_colaborador, String nome, String sobrenome, Boolean permissao_gestor, Status status, String area, String cargo, Date dt_contratacao, String email, String senha, String telefone, String cpf, Long id_empresa) {
         this.id_colaborador = id_colaborador;
         this.nome = nome;
@@ -53,6 +60,7 @@ public class Colaborador {
         this.id_empresa = id_empresa;
     }
 
+    // Acesso e atualização dos dados do colaborador.
     public Long getId_empresa() {
         return id_empresa;
     }

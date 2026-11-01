@@ -36,12 +36,13 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** Ataques HTTP reais em Tomcat isolado; nenhum DAO ou banco e executado. */
+/** Exercita o filtro por HTTP em Tomcat isolado, com destinos que dispensam o banco. */
 class LoginFilterTest {
     @TempDir
     static Path temporario;
     static Tomcat tomcat;
     static String base;
+    // Mantém redirecionamentos visíveis para conferir o status e o destino.
     static final HttpClient CLIENT = HttpClient.newBuilder()
             .followRedirects(HttpClient.Redirect.NEVER).build();
     static final List<String> ROTAS = new ArrayList<>();
@@ -50,6 +51,7 @@ class LoginFilterTest {
     static String cookieInvalido;
     static String cookieExpirado;
 
+    /** Sobe o Tomcat em porta livre e prepara rotas e sessões para os cenários. */
     @BeforeAll
     static void iniciar() throws Exception {
         WebFilter configuracao = LoginFilter.class.getAnnotation(WebFilter.class);
@@ -64,6 +66,7 @@ class LoginFilterTest {
 
         tomcat = new Tomcat();
         tomcat.setBaseDir(temporario.toString());
+        // A porta zero deixa o sistema escolher uma porta disponível.
         tomcat.setPort(0);
         tomcat.getConnector().setProperty("address", "127.0.0.1");
         Context contexto = tomcat.addContext("/acta", temporario.toString());
@@ -85,6 +88,7 @@ class LoginFilterTest {
             }
         });
         contexto.addServletMappingDecoded("/", "destino");
+        // Cria identidades de teste sem autenticação ou consulta ao banco.
         Tomcat.addServlet(contexto, "sessao-teste", new HttpServlet() {
             @Override
             protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -102,6 +106,7 @@ class LoginFilterTest {
         contexto.addServletMappingDecoded("/sessao-teste", "sessao-teste");
         Tomcat.addServlet(contexto, "logout", new LogoutServlet());
         contexto.addServletMappingDecoded("/logout-servlet", "logout");
+        // Simula despachos internos para os caminhos protegidos.
         Tomcat.addServlet(contexto, "despacho", new HttpServlet() {
             @Override
             protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -123,6 +128,7 @@ class LoginFilterTest {
         assertEquals(302, enviar("GET", "/logout-servlet", cookieExpirado).statusCode());
     }
 
+    /** Para o servidor e libera os recursos usados pelos testes. */
     @AfterAll
     static void finalizar() throws Exception {
         if (tomcat != null) {
@@ -131,6 +137,7 @@ class LoginFilterTest {
         }
     }
 
+    /** Combina rotas, métodos HTTP e sessões sem um administrador autorizado. */
     @TestFactory
     Stream<DynamicTest> bloquearAtaquesSemAdministrador() {
         return ROTAS.stream().flatMap(url -> Stream.of("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
@@ -150,6 +157,7 @@ class LoginFilterTest {
                 })));
     }
 
+    /** Verifica o acesso esperado para a sessão de administrador. */
     @TestFactory
     Stream<DynamicTest> permitirTodasAsOperacoesDoAdministrador() {
         return ROTAS.stream().flatMap(url -> Stream.of("GET", "POST", "PUT", "DELETE")
@@ -161,6 +169,7 @@ class LoginFilterTest {
                 })));
     }
 
+    /** Exercita variações de URL com um cookie de sessão falso. */
     @Test
     void bloquearVariacoesDeUrlESessaoFalsa() throws Exception {
         for (String url : List.of("/crud/../crud/empresa.jsp", "/%63rud/empresa.jsp",
@@ -172,6 +181,7 @@ class LoginFilterTest {
         }
     }
 
+    /** Verifica a recusa de administradores com ID ausente, zero ou negativo. */
     @Test
     void bloquearObjetoAdministradorSemIdentidadePersistida() throws Exception {
         for (String tipo : List.of("sem-id", "id-zero", "id-negativo")) {
@@ -179,6 +189,7 @@ class LoginFilterTest {
         }
     }
 
+    /** Compara encaminhamentos e inclusões com e sem sessão autenticada. */
     @Test
     void protegerEncaminhamentosEInclusoes() throws Exception {
         for (String tipo : List.of("forward", "include")) {
@@ -188,6 +199,7 @@ class LoginFilterTest {
         }
     }
 
+    /** Verifica se páginas e arquivos públicos continuam acessíveis. */
     @Test
     void manterLandingPageELoginPublicos() throws Exception {
         for (String url : List.of("/", "/index.jsp", "/index.html", "/login.jsp", "/login.html",
@@ -196,6 +208,7 @@ class LoginFilterTest {
         }
     }
 
+    /** Confere se as rotas dos servlets constam na cobertura do filtro. */
     @Test
     void cobrirTodosOsServletsQueAcessamOCrud() {
         for (Class<?> servlet : List.of(EmpresaServlet.class, EnderecoServlet.class, ColaboradorServlet.class,
@@ -206,17 +219,20 @@ class LoginFilterTest {
         }
     }
 
+    /** Monta a identidade mínima de administrador usada nos cenários. */
     private static AdministradorGeral administrador(Long id) {
         AdministradorGeral administrador = new AdministradorGeral();
         administrador.setAdm_geral_id(id);
         return administrador;
     }
 
+    /** Obtém o cookie criado pela rota de sessão exclusiva do teste. */
     private static String criarSessao(String tipo) throws Exception {
         return enviar("GET", "/sessao-teste?tipo=" + tipo, null).headers()
                 .firstValue("Set-Cookie").orElseThrow().split(";", 2)[0];
     }
 
+    /** Envia a requisição HTTP com o método, o corpo e o cookie do cenário. */
     private static HttpResponse<String> enviar(String metodo, String url, String cookie) throws Exception {
         HttpRequest.Builder requisicao = HttpRequest.newBuilder(URI.create(base + url))
                 .method(metodo, metodo.equals("POST")

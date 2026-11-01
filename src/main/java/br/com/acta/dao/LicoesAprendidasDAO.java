@@ -14,9 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/** Executa a persistência de LicoesAprendidas e converte consultas em objetos do modelo. */
 public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
 
-    // INSERT
+    /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(LicoesAprendidas licoesAprendidas) {
         String sql = """
@@ -41,6 +42,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
 
         } catch (SQLException e) {
 
+            // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de lição aprendida com esses dados.", e);
             }
@@ -54,7 +56,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         }
     }
 
-    // READ
+    /** Busca pelo ID; retorna null quando o registro não existe. */
     @Override
     public LicoesAprendidas buscar(Long id) {
         String sql = "SELECT * FROM vw_licoes_aprendidas WHERE id_licao = ?;";
@@ -76,6 +78,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         }
     }
 
+    /** Lista todos os registros disponíveis na consulta. */
     @Override
     public List<LicoesAprendidas> buscar() {
         List<LicoesAprendidas> licoesAprendidas = new ArrayList<>();
@@ -95,6 +98,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         }
     }
 
+    /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
     public List<LicoesAprendidas> buscaFiltrada(String busca, EtapaCiclo fase, Intensidade severidade, String area, String categoria, String ordem, String direcao) {
         List<LicoesAprendidas> licoesAprendidas = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_licoes_aprendidas WHERE 1=1");
@@ -105,9 +109,11 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         boolean temArea = area != null && !area.isBlank();
         boolean temCategoria = categoria != null && !categoria.isBlank();
 
+        // A coluna vem de uma lista permitida, nunca diretamente do formulário.
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
+        // Acrescenta condições apenas para os filtros presentes.
         if (temBusca) sql.append(" AND (titulo ILIKE ? OR aprendizado ILIKE ? OR nome_ciclo ILIKE ?)");
         if (temFase) sql.append(" AND fase_origem = ?");
         if (temSeveridade) sql.append(" AND severidade = ?");
@@ -121,6 +127,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
+            // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
@@ -145,6 +152,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         }
     }
 
+    /** Lista as áreas cadastradas, sem repetição e em ordem alfabética. */
     public List<String> buscarArea() {
         List<String> areas = new ArrayList<>();
         String sql = "SELECT DISTINCT area FROM licoes_aprendidas ORDER BY area;";
@@ -163,6 +171,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         }
     }
 
+    /** Lista as categorias cadastradas, sem repetição e em ordem alfabética. */
     public List<String> buscarCategoria() {
         List<String> categorias = new ArrayList<>();
         String sql = "SELECT DISTINCT categoria FROM licoes_aprendidas ORDER BY categoria;";
@@ -181,7 +190,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         }
     }
 
-    // UPDATE
+    /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(LicoesAprendidas licoesAprendidas) {
         String sql = "UPDATE licoes_aprendidas SET titulo = ?, area = ?, aprendizado = ?, categoria = ?, descricao = ?, fase_origem = ?, severidade = ?, id_ciclo = ? WHERE id_licao = ?;";
@@ -228,7 +237,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         }
     }
 
-    // DELETE
+    /** Exclui pelo ID; informa ausência do registro ou vínculos que impedem a exclusão. */
     @Override
     public int excluir(Long id) {
         String sql = "DELETE FROM licoes_aprendidas WHERE id_licao = ?;";
@@ -259,9 +268,8 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         }
     }
 
-    // SQLState "23xxx" = violação de integridade (e-mail/CPF duplicado, FK, NOT NULL).
 
-    // Mapear licoesAprendidas para simplificar a busca
+    /** Converte a linha atual do resultado em um objeto do modelo. */
     private static LicoesAprendidas mapearLicoesAprendidas(ResultSet rs) throws SQLException {
         LicoesAprendidas licoesAprendidas = new LicoesAprendidas();
         licoesAprendidas.setId_licao(rs.getLong("id_licao"));
@@ -277,6 +285,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         return licoesAprendidas;
     }
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
             "id", "id_licao",
             "titulo", "titulo",
@@ -287,6 +296,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
             "ciclo", "nome_ciclo"
     );
 
+    /** Recupera a escrita já cadastrada da área, ignorando maiúsculas. */
     public String buscarAreaExistente(String area) {
         String sql = "SELECT area FROM licoes_aprendidas WHERE LOWER(area) = LOWER(?) LIMIT 1;";
 
@@ -307,6 +317,7 @@ public class LicoesAprendidasDAO implements MetodosCrud<LicoesAprendidas> {
         }
     }
 
+    /** Recupera a escrita já cadastrada da categoria, ignorando maiúsculas. */
     public String buscarCategoriaExistente(String categoria) {
         String sql = "SELECT categoria FROM licoes_aprendidas WHERE LOWER(categoria) = LOWER(?) LIMIT 1;";
 

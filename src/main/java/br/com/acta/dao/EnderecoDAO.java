@@ -12,9 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/** Executa a persistência de Endereco e converte consultas em objetos do modelo. */
 public class EnderecoDAO implements MetodosCrud<Endereco> {
 
-    // INSERT
+    /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(Endereco endereco) {
         String sql = """
@@ -40,6 +41,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
 
         } catch (SQLException e) {
 
+            // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicidadeException("Já existe um registro de endereço com esses dados.", e);
             }
@@ -53,7 +55,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         }
     }
 
-    // READ
+    /** Busca pelo ID; retorna null quando o registro não existe. */
     @Override
     public Endereco buscar(Long id) {
         String sql = "SELECT * FROM vw_endereco WHERE id_endereco = ?;";
@@ -75,6 +77,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         }
     }
 
+    /** Lista todos os registros disponíveis na consulta. */
     @Override
     public List<Endereco> buscar() {
         List<Endereco> enderecos = new ArrayList<>();
@@ -94,6 +97,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         }
     }
 
+    /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
     public List<Endereco> buscaFiltrada(String busca, String estado, String cidade, String ordem, String direcao) {
         List<Endereco> enderecos = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM vw_endereco WHERE 1=1");
@@ -102,9 +106,11 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         boolean temEstado = estado != null && !estado.isBlank();
         boolean temCidade = cidade != null && !cidade.isBlank();
 
+        // A coluna vem de uma lista permitida, nunca diretamente do formulário.
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
+        // Acrescenta condições apenas para os filtros presentes.
         if (temBusca) sql.append(" AND (rua ILIKE ? OR bairro ILIKE ? OR cep ILIKE ? OR nome_empresa ILIKE ?)");
         if (temEstado) sql.append(" AND estado = ?");
         if (temCidade) sql.append(" AND cidade = ?");
@@ -116,6 +122,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
+            // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
@@ -144,6 +151,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         }
     }
 
+    /** Lista as cidades cadastradas, sem repetição e em ordem alfabética. */
     public List<String> buscarCidade() {
         List<String> cidades = new ArrayList<>();
         String sql = "SELECT DISTINCT cidade FROM endereco ORDER BY cidade;";
@@ -162,7 +170,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         }
     }
 
-    // UPDATE
+    /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(Endereco endereco) {
         String sql = "UPDATE endereco SET rua = ?, bairro = ?, cidade = ?, estado = ?, cep = ?, numero = ?, complemento = ?, unidade = ?, id_empresa = ? WHERE id_endereco = ?;";
@@ -210,7 +218,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         }
     }
 
-    // DELETE
+    /** Exclui pelo ID; informa ausência do registro ou vínculos que impedem a exclusão. */
     @Override
     public int excluir(Long id) {
         String sql = "DELETE FROM endereco WHERE id_endereco = ?;";
@@ -241,9 +249,8 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         }
     }
 
-    // SQLState "23xxx" = violação de integridade (FK, NOT NULL, duplicidade).
 
-    // Mapear endereco para simplificar a busca
+    /** Converte a linha atual do resultado em um objeto do modelo. */
     private static Endereco mapearEndereco(ResultSet rs) throws SQLException {
         Endereco endereco = new Endereco();
         endereco.setId_endereco(rs.getLong("id_endereco"));
@@ -260,6 +267,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
         return endereco;
     }
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
             "id", "id_endereco",
             "rua", "rua",
@@ -270,6 +278,7 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
             "empresa", "nome_empresa"
     );
 
+    /** Recupera a escrita já cadastrada da cidade, ignorando maiúsculas. */
     public String buscarCidadeExistente(String cidade) {
         String sql = "SELECT cidade FROM endereco WHERE LOWER(cidade) = LOWER(?) LIMIT 1;";
 

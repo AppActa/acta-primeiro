@@ -20,9 +20,10 @@ import br.com.acta.excecoes.DaoException;
 import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 
+/** Executa a persistência de Empresa e converte consultas em objetos do modelo. */
 public class EmpresaDAO implements MetodosCrud<Empresa> {
 
-    //INSERT
+    /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(Empresa empresa) {
 
@@ -45,6 +46,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
 
         } catch (SQLException e) {
 
+            // SQLState 23505 indica duplicidade; 23503 indica uma referência inválida.
             if ("23505".equals(e.getSQLState())){
                 throw new DuplicidadeException("Já existe um registro com esse dados.",e);
             }
@@ -58,6 +60,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         }
     }
 
+    /** Busca pelo ID; retorna null quando o registro não existe. */
     @Override
     public Empresa buscar(Long id) {
         String sql = "SELECT * FROM empresa WHERE id_empresa = ?;";
@@ -79,6 +82,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         }
     }
 
+    /** Lista todos os registros disponíveis na consulta. */
     @Override
     public List<Empresa> buscar() {
         List<Empresa> empresas = new ArrayList<>();
@@ -98,6 +102,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         }
     }
 
+    /** Aplica apenas os filtros preenchidos e a ordenação permitida. */
     public List<Empresa> buscaFiltrada(String busca, String setor, Status status, TamanhoEmpresa tamanho, String ordem, String direcao) {
         List<Empresa> empresas = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM empresa WHERE 1=1");
@@ -106,9 +111,11 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         boolean temSetor = setor != null && !setor.isBlank();
         boolean temStatus = status != null;
         boolean temTamanho = tamanho != null;
+        // A coluna vem de uma lista permitida, nunca diretamente do formulário.
         String colunaOrdem = ordem == null ? null : COLUNAS_ORDENACAO.get(ordem);
         boolean temOrdem = colunaOrdem != null;
 
+        // Acrescenta condições apenas para os filtros presentes.
         if (temBusca) sql.append(" AND (nome ILIKE ? OR cnpj ILIKE ?)");
         if (temSetor) sql.append(" AND setor ILIKE ?");
         if (temStatus) sql.append(" AND status = ?");
@@ -121,6 +128,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         try (Connection conn = Conexao.conectar();
              PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
+            // Os parâmetros seguem a mesma ordem das condições adicionadas ao SQL.
             int i = 1;
             if (temBusca) {
                 String termo = "%" + busca.trim() + "%";
@@ -147,6 +155,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         }
     }
 
+    /** Lista os setores cadastrados, sem repetição e em ordem alfabética. */
     public List<String> buscarSetor() {
         List<String> setores = new ArrayList<>();
         String sql = "SELECT DISTINCT setor FROM empresa ORDER BY setor;";
@@ -165,6 +174,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         }
     }
 
+    /** Atualiza pelo ID; informa quando nenhum registro foi encontrado. */
     @Override
     public int atualizar(Empresa empresa) {
         String sql = "UPDATE empresa SET nome = ?, setor = ?, cnpj = ?, status = ?, tamanho = ? WHERE id_empresa = ?;";
@@ -208,10 +218,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         }
     }
 
-    /**
-     * Atualiza uma empresa localizando-a pelo CNPJ atual.
-     * O CNPJ que será salvo é o de empresa.getCnpj().
-     */
+    /** Localiza pelo CNPJ atual e salva os dados, incluindo o novo CNPJ do modelo. */
     public int atualizarPorCnpj(Empresa empresa, String cnpjAtual) {
         String sql = "UPDATE empresa SET nome = ?, setor = ?, cnpj = ?, status = ?, tamanho = ? WHERE cnpj = ?;";
 
@@ -246,6 +253,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         }
     }
 
+    /** Exclui pelo ID; informa ausência do registro ou vínculos que impedem a exclusão. */
     @Override
     public int excluir(Long id) {
         String sql = "DELETE FROM empresa WHERE id_empresa = ?;";
@@ -305,6 +313,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         }
     }
 
+    /** Converte a linha atual do resultado em um objeto do modelo. */
     private static Empresa mapearEmpresa(ResultSet rs) throws SQLException {
         Empresa empresa = new Empresa();
         empresa.setId_empresa(rs.getLong("id_empresa"));
@@ -317,6 +326,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
         return empresa;
     }
 
+    // Relaciona as opções de ordenação às colunas autorizadas do banco.
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
             "id", "id_empresa",
             "nome", "nome",
@@ -325,6 +335,7 @@ public class EmpresaDAO implements MetodosCrud<Empresa> {
             "tamanho", "tamanho"
     );
 
+    /** Recupera a escrita já cadastrada do setor, ignorando maiúsculas. */
     public String buscarSetorExistente(String setor) {
         String sql = "SELECT setor FROM empresa WHERE LOWER(setor) = LOWER(?) LIMIT 1;";
 
