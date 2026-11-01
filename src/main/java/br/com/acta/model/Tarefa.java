@@ -17,9 +17,11 @@ public class Tarefa {
     private Date dt_entrega;
     private Situacao status;
     private Date dt_inicio;
+
     // IDs do responsável e do plano ao qual a tarefa pertence.
     private Long id_colaborador;
     private Long id_plano_acao;
+
     // Nomes trazidos pelas consultas para exibir os vínculos.
     private String nome_colaborador;
     private String nome_plano_acao;
@@ -28,7 +30,9 @@ public class Tarefa {
     public Tarefa() {}
 
     /** Monta os dados da tarefa sem um ID definido. */
-    public Tarefa(String titulo, String descricao, Intensidade prioridade, Date dt_entrega, Situacao status, Date dt_inicio, Long id_colaborador, Long id_plano_acao) {
+    public Tarefa(
+            String titulo, String descricao, Intensidade prioridade, Date dt_entrega, Situacao status,
+            Date dt_inicio, Long id_colaborador, Long id_plano_acao) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.prioridade = prioridade;
@@ -40,7 +44,9 @@ public class Tarefa {
     }
 
     /** Monta uma tarefa com ID já conhecido. */
-    public Tarefa(Long id_tarefa, String titulo, String descricao, Intensidade prioridade, Date dt_entrega, Situacao status, Date dt_inicio, Long id_colaborador, Long id_plano_acao) {
+    public Tarefa(
+            Long id_tarefa, String titulo, String descricao, Intensidade prioridade, Date dt_entrega,
+            Situacao status, Date dt_inicio, Long id_colaborador, Long id_plano_acao) {
         this.id_tarefa = id_tarefa;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -52,7 +58,8 @@ public class Tarefa {
         this.id_plano_acao = id_plano_acao;
     }
 
-    // Acesso e atualização dos dados da tarefa.
+    // Acesso e atualização dos dados do modelo.
+
     public Long getId_tarefa() {
         return id_tarefa;
     }
