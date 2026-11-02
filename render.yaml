@@ -2,7 +2,7 @@ services:
   - type: web
     name: acta-web
     runtime: docker
-    branch: refactor/crud
+    branch: feat/publicacao
     plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
