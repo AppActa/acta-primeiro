@@ -2,7 +2,7 @@ services:
   - type: web
     name: acta-web
     runtime: docker
-    branch: feat/publicacao
+    branch: main
     plan: free
     dockerfilePath: ./Dockerfile
     dockerContext: .
