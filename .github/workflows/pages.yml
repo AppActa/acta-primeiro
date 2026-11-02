@@ -54,7 +54,8 @@ jobs:
           render_url = os.environ["ACTA_RENDER_URL"].rstrip("/")
           index = Path("dist/index.html")
           html = index.read_text(encoding="utf-8")
-          html = html.replace('href="login.jsp"', f'href="{render_url}/login.jsp"')
+          html = html.replace('href="autenticacao/login.jsp"', f'href="{render_url}/autenticacao/login.jsp"')
+          html = html.replace('href="cadastro-servlet"', f'href="{render_url}/cadastro-servlet"')
           index.write_text(html, encoding="utf-8")
           PY
 

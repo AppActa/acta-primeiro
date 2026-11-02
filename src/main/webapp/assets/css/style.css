@@ -1387,3 +1387,9 @@ body:not(:has(:target)) #inicio {
     scroll-behavior: auto !important; 
   }
 }
+/* Ações de acesso da landing; preserva os componentes existentes. */
+.header__acoes { display: flex; align-items: center; gap: 10px; }
+.header__acoes form { margin: 0; }
+.header__acoes button { font: inherit; cursor: pointer; }
+.header__cadeado { display: inline-flex; align-items: center; padding: 8px; color: var(--cor-verde-escuro); }
+@media (max-width: 480px) { .header__acoes { gap: 6px; } .header__acoes .btn { padding: 8px 10px; } }
