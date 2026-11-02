@@ -25,6 +25,21 @@ public class EnderecoDAO implements MetodosCrud<Endereco> {
             "cep", "cep",
             "empresa", "nome_empresa");
 
+    /** Consulta somente os endereços da empresa vinculada à conta autenticada. */
+    public List<Endereco> buscarPorEmpresa(Long idEmpresa) {
+        List<Endereco> enderecos = new ArrayList<>();
+        String sql = "SELECT * FROM vw_endereco WHERE id_empresa = ? ORDER BY id_endereco";
+        try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, idEmpresa);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) enderecos.add(mapearEndereco(rs));
+            }
+            return enderecos;
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DaoException("Erro ao consultar os endereços da empresa.", e);
+        }
+    }
+
     /** Insere o registro; retorna 1 se houve inclusão ou 0 se nenhuma linha foi afetada. */
     @Override
     public int inserir(Endereco endereco) {

@@ -116,6 +116,8 @@ class LoginFilterTest {
                             case "id-zero" -> administrador(0L);
                             case "id-negativo" -> administrador(-1L);
                             case "colaborador" -> new Colaborador();
+                            case "colaborador-valido" -> colaborador(br.com.acta.enums.Status.ATIVA);
+                            case "colaborador-inativo" -> colaborador(br.com.acta.enums.Status.INATIVA);
                             default -> "administrador_geral";
                         };
                         var sessao = req.getSession(true);
@@ -181,7 +183,7 @@ class LoginFilterTest {
                         assertEquals("no-store", resposta.headers().firstValue("Cache-Control").orElseThrow());
                         if (esperado == 302) {
                             assertTrue(resposta.headers().firstValue("Location").orElseThrow()
-                                    .endsWith("/acta/login.jsp"));
+                                    .endsWith("/acta/autenticacao/login.jsp"));
                         }
                     }
                 })));
@@ -246,7 +248,7 @@ class LoginFilterTest {
     @Test
     void manterLandingPageELoginPublicos() throws Exception {
         for (String url :
-                List.of("/", "/index.jsp", "/index.html", "/login.jsp", "/login.html", "/login-servlet",
+                List.of("/", "/index.jsp", "/index.html", "/autenticacao/login.jsp", "/autenticacao/cadastro.html", "/autenticacao/cadastro-empresa.html", "/login-servlet",
                         "/assets/css/style.css")) {
             assertEquals(200, enviar("GET", url, null).statusCode(), url);
         }
@@ -297,6 +299,41 @@ class LoginFilterTest {
     private static String sha1(String valor) throws NoSuchAlgorithmException {
         byte[] bytes = MessageDigest.getInstance("SHA-1").digest(valor.getBytes(StandardCharsets.UTF_8));
         return java.util.HexFormat.of().formatHex(bytes);
+    }
+
+    @Test
+    void colaboradorTemPerfilELogoutSemAcessoAdministrativo() throws Exception {
+        String cookie = criarSessao("colaborador-valido");
+        assertEquals(200, enviar("GET", "/perfil-servlet", cookie).statusCode());
+        assertEquals(200, enviar("GET", "/perfil-colaborador.jsp", cookie).statusCode());
+        assertEquals(403, enviar("GET", "/perfil-administrador.jsp", cookie).statusCode());
+        for (String rota : ROTAS) {
+            if (rota.startsWith("/perfil-") || rota.equals("/logout-servlet") || rota.equals("/cloudinary-signature")
+                    || rota.equals("/minha-empresa-servlet") || rota.equals("/ver-empresa.jsp")) continue;
+            assertEquals(403, enviar("GET", rota, cookie).statusCode(), rota);
+        }
+        assertEquals(200, enviar("GET", "/minha-empresa-servlet", cookie).statusCode());
+        assertEquals(200, enviar("GET", "/ver-empresa.jsp", cookie).statusCode());
+        assertEquals(403, enviarPost("/cloudinary-signature", cookie, "csrfToken=incorreto").statusCode());
+        HttpResponse<String> assinatura = enviarPost("/cloudinary-signature", cookie, "csrfToken=token-teste");
+        assertTrue(List.of(200, 503).contains(assinatura.statusCode()));
+        if (assinatura.statusCode() == 200) assertTrue(assinatura.body().contains("acta/colaborador-profiles"));
+        assertEquals(403, enviarPost("/logout-servlet", cookie, "csrfToken=incorreto").statusCode());
+        assertEquals(302, enviarPost("/logout-servlet", cookie, "csrfToken=token-teste").statusCode());
+        assertEquals(302, enviar("GET", "/perfil-servlet", cookie).statusCode());
+    }
+
+    @Test
+    void colaboradorInativoNaoAcessaPerfil() throws Exception {
+        assertEquals(403, enviar("GET", "/perfil-servlet", criarSessao("colaborador-inativo")).statusCode());
+    }
+
+    private static Colaborador colaborador(br.com.acta.enums.Status status) {
+        Colaborador colaborador = new Colaborador();
+        colaborador.setId_colaborador(1L);
+        colaborador.setStatus(status);
+        colaborador.setPermissao_gestor(true);
+        return colaborador;
     }
 
     /** Monta a identidade mínima de administrador usada nos cenários. */

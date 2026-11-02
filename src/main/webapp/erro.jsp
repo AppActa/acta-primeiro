@@ -109,7 +109,7 @@
 
     <main class="erro-pagina">
 
-        <img src="<%= request.getContextPath() %>/assets/images/logo_oficial.svg" alt="ACTA" class="erro-logo">
+        <a href="<%= request.getContextPath() %>/index.jsp" class="erro-logo" aria-label="ACTA - Página inicial"><img src="<%= request.getContextPath() %>/assets/images/logo_oficial.svg" alt="ACTA"></a>
 
         <section class="erro-conteudo">
             <h1>Oops!</h1>

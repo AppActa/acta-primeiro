@@ -84,6 +84,7 @@ CREATE TABLE colaborador (
                              dt_contratacao DATE NOT NULL,
                              email VARCHAR(80) UNIQUE NOT NULL,
                              senha VARCHAR NOT NULL,
+                             imagem TEXT,
                              telefone CHAR(11) NOT NULL,
                              cpf CHAR(11) UNIQUE NOT NULL,
                              id_empresa INT NOT NULL REFERENCES empresa(id_empresa) ON DELETE CASCADE,

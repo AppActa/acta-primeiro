@@ -1,4 +1,4 @@
-@import url('https://googleapis.com');
+@import url('tema-acta.css');
 
 :root {
     --cor-fundo: #EDF0F0;
@@ -15,16 +15,16 @@
 }
 
 body {
-    height: 100vh;
-    height: 100dvh;
-    overflow: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
     background-color: var(--cor-fundo);
     color: var(--cor-texto);
 }
 
 .erro-pagina {
     position: relative;
-    height: 100%;
+    min-height: 100dvh;
+    padding: 96px 20px 24px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -40,6 +40,10 @@ body {
 
 /* Bloco central: título, imagem e mensagem */
 .erro-conteudo {
+    width: 100%;
+    max-width: 900px;
+    min-width: 0;
+    overflow-wrap: anywhere;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -80,10 +84,14 @@ body {
 .gato-wrapper{
     position: relative;
     display: inline-block;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .erro-imagem {
-    height: clamp(170px, 50vh, 400px);
+    max-height: clamp(170px, 50vh, 400px);
+    max-width: 100%;
+    height: auto;
     width: auto;
     display: block;
     position: relative;
@@ -102,3 +110,5 @@ body {
     filter: blur(5px);
     z-index: 1;
 }
+
+.erro-logo img { display: block; height: 100%; width: auto; }

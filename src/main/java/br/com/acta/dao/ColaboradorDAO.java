@@ -17,6 +17,38 @@ import java.util.Map;
 /** Executa a persistência de Colaborador e converte consultas em objetos do modelo. */
 public class ColaboradorDAO implements MetodosCrud<Colaborador> {
 
+    /** Grava a foto apenas na conta identificada pela sessão. */
+    public int atualizarImagem(Long idColaborador, String imagem) {
+        String sql = "UPDATE colaborador SET imagem = ? WHERE id_colaborador = ?";
+        try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, imagem);
+            stmt.setLong(2, idColaborador);
+            if (stmt.executeUpdate() == 1) return 1;
+            throw new RegistroNaoEncontradoException("Colaborador não encontrado.");
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DaoException("Erro ao salvar a foto do colaborador.", e);
+        }
+    }
+
+    /** Atualiza apenas os dados pessoais; vínculos e permissões ficam fora desta operação. */
+    public int atualizarPerfil(Colaborador colaborador) {
+        String sql = "UPDATE colaborador SET nome = ?, sobrenome = ?, email = ?, telefone = ? WHERE id_colaborador = ?";
+        try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, colaborador.getNome());
+            stmt.setString(2, colaborador.getSobrenome());
+            stmt.setString(3, colaborador.getEmail());
+            stmt.setString(4, colaborador.getTelefone());
+            stmt.setLong(5, colaborador.getId_colaborador());
+            if (stmt.executeUpdate() == 1) return 1;
+            throw new RegistroNaoEncontradoException("Colaborador não encontrado.");
+        } catch (SQLException e) {
+            if ("23505".equals(e.getSQLState())) throw new DuplicidadeException("Esse e-mail já está cadastrado.", e);
+            throw new DaoException("Erro ao atualizar o perfil.", e);
+        } catch (ClassNotFoundException e) {
+            throw new DaoException("Driver do banco de dados não encontrado.", e);
+        }
+    }
+
     // Relaciona as opções de ordenação às colunas autorizadas do banco.
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
             "id", "id_colaborador",
@@ -506,6 +538,7 @@ public class ColaboradorDAO implements MetodosCrud<Colaborador> {
         colaborador.setCargo(rs.getString("cargo"));
         colaborador.setDt_contratacao(rs.getDate("dt_contratacao"));
         colaborador.setEmail(rs.getString("email"));
+        colaborador.setImagem(rs.getString("imagem"));
         colaborador.setTelefone(rs.getString("telefone"));
         colaborador.setCpf(rs.getString("cpf"));
         colaborador.setNome_empresa(rs.getString("nome_empresa"));

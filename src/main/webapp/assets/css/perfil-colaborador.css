@@ -1,0 +1,73 @@
+/* Complementos exclusivos do perfil; componentes e cores vêm de crud.css. */
+.perfil-conteudo { min-width: 0; width: 100%; max-width: 1400px; }
+.perfil-aviso { padding: 14px; margin-bottom: 24px; border: 1px solid var(--cor-borda); border-radius: 8px; line-height: 1.5; }
+.perfil-conteudo .top, .perfil-conteudo .profile-banner, .perfil-conteudo .card-title { display: flex; align-items: center; gap: 18px; }
+.perfil-conteudo .top { justify-content: space-between; flex-wrap: wrap; margin-bottom: 24px; }
+.perfil-conteudo .top h1 { font-size: clamp(26px, 3vw, 36px); margin-bottom: 8px; }
+.perfil-conteudo .profile-banner { padding: 24px; border-radius: 16px; background: var(--cor-card); margin-bottom: 24px; flex-wrap: wrap; }
+.perfil-conteudo .avatar { width: 120px; height: 120px; border: 2px solid var(--cor-borda); border-radius: 50%; overflow: hidden; display: grid; place-items: center; flex-shrink: 0; }
+.perfil-conteudo .avatar img { width: 100%; height: 100%; object-fit: cover; }
+.perfil-conteudo .avatar .ico { width: 90px; height: 90px; }
+.perfil-conteudo .banner-text { flex: 1; min-width: 160px; overflow-wrap: anywhere; }
+.perfil-conteudo .banner-text h2, .perfil-conteudo .banner-text p { margin-bottom: 8px; }
+.ico { width: 24px; height: 24px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.perfil-conteudo .perfil-card { background: var(--cor-card); color: var(--cor-texto); margin-bottom: 24px; padding: clamp(18px, 3vw, 32px); }
+.perfil-card .config-dados-topo { margin-bottom: 24px; flex-wrap: wrap; }
+.perfil-card .card-title h3 { font-size: clamp(18px, 2vw, 24px); }
+.perfil-card .config-rotulo { font-size: 14px; line-height: 1.5; }
+.perfil-card .config-valor { height: auto; font-size: 17px; word-break: normal; overflow-wrap: anywhere; }
+.perfil-conteudo .botao, .perfil-dialog .botao { gap: 8px; white-space: normal; }
+.perfil-conteudo .pill, .perfil-conteudo .status-tag, .perfil-conteudo .company-tag { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 24px; background: var(--cor-fundo); color: var(--cor-primaria); }
+.perfil-conteudo .company-tag { margin-top: 8px; text-decoration: none; }
+.perfil-conteudo .security-text { font-size: 14px; margin-top: 8px; line-height: 1.5; }
+.perfil-dialog { margin: auto; width: min(480px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; border: 1px solid var(--cor-borda); border-radius: 16px; padding: 24px; color: var(--cor-texto); }
+.perfil-dialog::backdrop { background: rgba(0, 0, 0, .4); }
+.perfil-dialog h3 { margin-bottom: 12px; }
+.perfil-dialog .botoes-modal { flex-wrap: wrap; }
+.perfil-retorno { position: fixed; bottom: 16px; right: 16px; max-width: min(440px, calc(100% - 32px)); padding: 16px; border-radius: 8px; background: var(--cor-primaria); color: var(--cor-card); z-index: 20; }
+.sistema:has(.perfil-conteudo) .menu-item[aria-current="page"] { background: var(--cor-fundo); border-left-color: var(--cor-primaria); font-weight: 600; }
+.sistema:has(.perfil-conteudo) .perfil-info { min-width: 0; overflow-wrap: anywhere; padding: 0; }
+@media (max-width: 760px) {
+    .perfil-conteudo { padding: 20px 16px; }
+    .perfil-card .config-campos { grid-template-columns: 1fr; gap: 20px; }
+}
+
+.perfil-simbolos { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.perfil-seguranca .config-dados-topo { margin-bottom: 0; align-items: center; }
+.perfil-seguranca .card-title { align-items: center; }
+.perfil-seguranca h3, .perfil-seguranca .security-text { margin-bottom: 0; }
+.perfil-seguranca .card-title > div { display: flex; flex-direction: column; justify-content: center; }
+
+.perfil-sair-final { display: flex; justify-content: flex-start; margin-top: 24px; padding-bottom: 24px; }
+.perfil-sair-final form, .perfil-barra form { margin: 0; }
+.perfil-sair-final button { min-width: 180px; min-height: 52px; padding: 14px 32px; border: 2px solid #CA1D1D; border-radius: 8px; color: #CA1D1D; background: transparent; font-size: 1rem; font-weight: 600; cursor: pointer; }
+.perfil-sair-final button:hover { background: #fff0f0; color: #a51616; }
+
+.perfil-foto-form { min-width: 0; max-width: min(300px, 100%); }
+.perfil-foto-botoes { display: flex; flex-wrap: wrap; gap: 10px; }
+.perfil-foto-form [role="status"] { margin-top: 10px; font-size: .85rem; line-height: 1.5; }
+.perfil-foto-form button:disabled { opacity: .55; cursor: default; }
+.config-alterar-foto { margin-top: 12px; }
+
+/* Componentes comuns aos dois perfis e à visualização de empresa. */
+.perfil-conteudo { color: var(--acta-texto); }
+.perfil-conteudo h1, .perfil-conteudo h2, .perfil-conteudo h3 { color: var(--acta-texto); font-weight: 700; }
+.perfil-conteudo .profile-banner, .perfil-conteudo .perfil-card { background: var(--acta-cartao); border: 1px solid var(--acta-borda); border-radius: var(--acta-raio); box-shadow: var(--acta-sombra); }
+.perfil-conteudo .perfil-card { color: var(--acta-texto); }
+.perfil-conteudo .banner-text p, .perfil-conteudo .subtitle, .perfil-conteudo .security-text { color: var(--acta-texto-suave); }
+.perfil-card .config-rotulo { color: var(--acta-primaria); font-weight: 600; }
+.perfil-card .config-valor { font-size: 16px; font-weight: 400; line-height: 1.5; }
+.perfil-conteudo .company-tag, .perfil-conteudo .pill { background: #e7f3f2; color: var(--acta-primaria); }
+.perfil-conteudo .botao, .perfil-dialog .botao { border-radius: 6px; font-weight: 600; }
+.perfil-conteudo .rule { border-top: 1px solid var(--acta-borda); margin-block: 18px; }
+.perfil-dialog { background: var(--acta-cartao); color: var(--acta-texto); border-color: var(--acta-borda); box-shadow: var(--acta-sombra); }
+@media (max-width: 760px) { .perfil-seguranca .config-dados-topo { flex-direction: column; align-items: flex-start; gap: 18px; } .perfil-seguranca .config-dados-topo > .botao { align-self: center; } }
+
+@media (max-width: 600px) {
+    .perfil-conteudo .banner-text { min-width: 0; flex-basis: 100%; }
+    .perfil-foto-form { flex-shrink: 1; width: 100%; }
+    .perfil-foto-botoes .botao { flex: 1 1 120px; min-width: 0; }
+    .perfil-conteudo .avatar { width: clamp(84px, 25vw, 120px); height: clamp(84px, 25vw, 120px); }
+    .perfil-conteudo .card-title { min-width: 0; }
+}

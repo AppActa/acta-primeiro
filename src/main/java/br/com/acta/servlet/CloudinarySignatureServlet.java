@@ -1,6 +1,8 @@
 package br.com.acta.servlet;
 
 import br.com.acta.model.AdministradorGeral;
+import br.com.acta.model.Colaborador;
+import br.com.acta.enums.Status;
 import br.com.acta.utils.Configuracao;
 import br.com.acta.utils.CsrfToken;
 
@@ -21,7 +23,7 @@ import java.util.TreeMap;
 @WebServlet(name = "CloudinarySignatureServlet", value = "/cloudinary-signature")
 public class CloudinarySignatureServlet extends HttpServlet {
 
-    // Restringe o destino assinado à pasta de fotos de administradores.
+    // Administradores e colaboradores usam pastas distintas de fotos.
     private static final String FOLDER = "acta/admin-profiles";
 
     /** Exige autenticação e CSRF antes de retornar os parâmetros assinados. */
@@ -30,7 +32,9 @@ public class CloudinarySignatureServlet extends HttpServlet {
         Object usuario = req.getSession(false) == null
                 ? null
                 : req.getSession(false).getAttribute("usuarioLogado");
-        if (!(usuario instanceof AdministradorGeral)) {
+        boolean administrador = usuario instanceof AdministradorGeral adm && adm.getAdm_geral_id() != null && adm.getAdm_geral_id() > 0;
+        boolean colaborador = usuario instanceof Colaborador col && col.getId_colaborador() != null && col.getId_colaborador() > 0 && col.getStatus() == Status.ATIVA;
+        if (!administrador && !colaborador) {
             responderErro(resp, HttpServletResponse.SC_UNAUTHORIZED, "Entre novamente para enviar uma foto.");
             return;
         }
@@ -49,10 +53,11 @@ public class CloudinarySignatureServlet extends HttpServlet {
                 return;
             }
 
+            String pasta = administrador ? FOLDER : "acta/colaborador-profiles";
             long timestamp = Instant.now().getEpochSecond();
             // TreeMap mantém os parâmetros em ordem alfabética para a assinatura.
             Map<String, String> parametros = new TreeMap<>();
-            parametros.put("folder", FOLDER);
+            parametros.put("folder", pasta);
             parametros.put("timestamp", String.valueOf(timestamp));
             String assinatura = assinar(parametros, apiSecret);
 
@@ -60,7 +65,7 @@ public class CloudinarySignatureServlet extends HttpServlet {
             resp.setCharacterEncoding("UTF-8");
             resp.setContentType("application/json");
             resp.getWriter().write("{\"cloudName\":\"" + json(cloudName) + "\",\"apiKey\":\"" + json(apiKey)
-                    + "\",\"timestamp\":" + timestamp + ",\"folder\":\"" + FOLDER + "\",\"signature\":\"" + assinatura
+                    + "\",\"timestamp\":" + timestamp + ",\"folder\":\"" + pasta + "\",\"signature\":\"" + assinatura
                     + "\"}");
         } catch (Exception e) {
             getServletContext().log("Falha ao gerar assinatura para upload de perfil no Cloudinary.", e);

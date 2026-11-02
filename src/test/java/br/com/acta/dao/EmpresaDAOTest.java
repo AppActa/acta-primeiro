@@ -6,6 +6,9 @@ import br.com.acta.excecoes.DaoException;
 import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.model.Empresa;
+import br.com.acta.model.Endereco;
+import java.sql.ResultSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,6 +32,9 @@ class EmpresaDAOTest {
     private static Driver driverFalso;
     private static SQLException falhaConfigurada;
     private static int resultadoConfigurado;
+    private static int commits;
+    private static int rollbacks;
+    private static Long empresaEndereco;
 
     @BeforeAll
     static void instalarDriverFalso() throws Exception {
@@ -50,6 +56,16 @@ class EmpresaDAOTest {
                 PreparedStatement statement = (PreparedStatement) Proxy.newProxyInstance(
                         getClass().getClassLoader(), new Class<?>[]{PreparedStatement.class},
                         (proxy, method, args) -> {
+                            if (method.getName().equals("setLong") && Integer.valueOf(9).equals(args[0])) empresaEndereco = (Long) args[1];
+                            if (method.getName().equals("executeQuery")) {
+                                AtomicBoolean primeira = new AtomicBoolean(true);
+                                return Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[]{ResultSet.class},
+                                        (p, m, a) -> switch (m.getName()) {
+                                            case "next" -> primeira.getAndSet(false);
+                                            case "getLong" -> 7L;
+                                            default -> null;
+                                        });
+                            }
                             if (method.getName().equals("executeUpdate")) {
                                 if (falhaConfigurada != null) throw falhaConfigurada;
                                 return resultadoConfigurado;
@@ -60,6 +76,8 @@ class EmpresaDAOTest {
                 return (Connection) Proxy.newProxyInstance(
                         getClass().getClassLoader(), new Class<?>[]{Connection.class},
                         (proxy, method, args) -> {
+                            if (method.getName().equals("commit")) commits++;
+                            if (method.getName().equals("rollback")) rollbacks++;
                             if (method.getName().equals("prepareStatement")) return statement;
                             if (method.getName().equals("isClosed")) return false;
                             return null;
@@ -112,6 +130,27 @@ class EmpresaDAOTest {
     void converteFalhaSqlGenerica() {
         falhaConfigurada = new SQLException("falha simulada", "08006");
         assertThrows(DaoException.class, () -> new EmpresaDAO().inserir(empresa()));
+    }
+
+    @Test
+    void confirmaEmpresaEEnderecoNaMesmaTransacao() {
+        falhaConfigurada = null;
+        resultadoConfigurado = 1;
+        commits = rollbacks = 0;
+        assertEquals(7L, new EmpresaDAO().inserirComEndereco(empresa(), new Endereco()));
+        assertEquals(7L, empresaEndereco);
+        assertEquals(1, commits);
+        assertEquals(0, rollbacks);
+    }
+
+    @Test
+    void desfazEmpresaQuandoEnderecoFalha() {
+        falhaConfigurada = new SQLException("falha no endereço", "23503");
+        commits = rollbacks = 0;
+        assertThrows(IntegridadeReferencialException.class,
+                () -> new EmpresaDAO().inserirComEndereco(empresa(), new Endereco()));
+        assertEquals(0, commits);
+        assertEquals(1, rollbacks);
     }
 
     private static Empresa empresa() {

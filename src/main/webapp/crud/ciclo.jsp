@@ -60,14 +60,15 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
         <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/crud.css?v=07443b8c11">
         <title>ACTA — Ciclos</title>
         <script src="<%= request.getContextPath() %>/assets/js/crud.js?v=ordenacao-local-2" defer></script>
-    </head>
+        <script src="<%= request.getContextPath() %>/assets/js/menu.js" defer></script>
+</head>
     <body class="crud-admin" data-reabrir="<%= h(modalErro) %>">
         <div class="sistema">
             <aside class="sidebar">
                 <div class="sidebar-logo">
-                    <img src="<%= request.getContextPath() %>/assets/images/logo_oficial.svg" alt="ACTA">
-                </div>
-                <nav class="menu">
+                    <a class="logo-link" href="<%= request.getContextPath() %>/index.jsp" aria-label="ACTA - Página inicial"><img src="<%= request.getContextPath() %>/assets/images/logo_oficial.svg" alt="ACTA"></a>
+                <button type="button" class="mobile-menu" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="nav"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button></div>
+                <nav class="menu" id="nav">
                     <a href="<%= request.getContextPath() %>/empresa-servlet" class="menu-item">
                         <img src="<%= request.getContextPath() %>/assets/images/icone_empresas.svg" alt="">
                         <span>Empresas</span>
@@ -116,7 +117,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                             <span class="perfil-email"><%= adm != null ? adm.getEmail() : "" %></span>
                         </div>
                     </a>
-                    <form method="post" action="<%= request.getContextPath() %>/logout-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>"><button type="submit" class="botao botao-sair">Sair</button></form>
+                    <a href="<%= request.getContextPath() %>/index.jsp" class="botao botao-sair">Voltar</a>
                 </div>
             </aside>
             <main class="conteudo">
@@ -132,7 +133,7 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
 <% } %>
                     <div class="barra-acoes">
                         <div class="pesquisa">
-                            <input type="search" name="busca" id="pesquisa-ciclos" form="filtros-ciclos-form" placeholder="Pesquisar" aria-label="Pesquisar registros" value="<%= h(filtroBusca) %>">
+                            <input type="search" name="busca" id="pesquisa-ciclos" form="filtros-ciclos-form" placeholder="Pesquisar por ciclo, empresa ou responsável" aria-label="Pesquisar registros" value="<%= h(filtroBusca) %>">
                         </div>
                         <div class="filtro-container">
                             <button type="button" class="botao botao-filtro" data-abrir-filtros aria-controls="filtros-ciclos" aria-expanded="false">Filtros</button>

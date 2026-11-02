@@ -1,20 +1,22 @@
+@import url('tema-acta.css');
+
 :root {
-    --cor-primaria: #027373;
-    --cor-fundo: #EDF0F0;
+    --cor-primaria: var(--acta-primaria);
+    --cor-fundo: var(--acta-fundo);
     --cor-card: #FFFFFF;
     --cor-texto: #027373;
     --cor-texto-suave: #015454;
     --cor-texto-tabela: #EDF0F0;
     --cor-borda: #04BFAD;
     --cor-perigo: #CA1D1D;
-    --cor-primaria-hover: #025A8A;
+    --cor-primaria-hover: var(--acta-primaria-hover);
 }
  
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: Montserrat, sans-serif;
+    font-family: var(--fonte-acta);
 }
  
 body {
@@ -30,6 +32,7 @@ body {
 /* Sidebar */
 .sidebar {
     width: 250px;
+    flex-shrink: 0;
     background-color: var(--cor-card);
     border-right: 1px solid var(--cor-borda);
     display: flex;
@@ -322,6 +325,7 @@ body:has(#alterar-senha:target) #empresas {
     background-color: var(--cor-card);
     border-radius: 8px;
     border: 1px solid var(--cor-borda);
+    max-width: 100%;
     overflow-x: auto; /* responsivo: a tabela rola na horizontal em telas pequenas */
     -webkit-overflow-scrolling: touch;
 }
@@ -1459,4 +1463,26 @@ td.coluna-acao {
         opacity: 0;
         transform: translateY(8px);
     }
+}
+
+/* Navegação recolhível e ações de CRUD, sem alterar as tabelas no desktop. */
+.mobile-menu { display: none; }
+@media (max-width: 760px) {
+    .sistema { display: block; }
+    .sidebar { width: 100%; height: auto; position: relative; overflow: visible; border-right: 0; border-bottom: 1px solid var(--cor-borda); }
+    .sidebar-logo { min-height: 84px; padding-right: 80px; }
+    .sidebar .mobile-menu { display: inline-flex; align-items: center; justify-content: center; position: absolute; top: 20px; right: 20px; min-width: 44px; min-height: 44px; padding: 8px; border: 1px solid var(--cor-borda); border-radius: 6px; background: var(--cor-card); color: var(--cor-primaria); cursor: pointer; }
+    .sidebar .menu { display: none; }
+    .sidebar .menu.open { display: flex; }
+    .sidebar .perfil-barra { display: none; }
+    .sidebar:has(.menu.open) .perfil-barra { display: flex; }
+    .conteudo { width: 100%; padding: 20px 16px; }
+    .barra-acoes { gap: 12px; }
+    .barra-acoes .pesquisa { flex-basis: 100%; min-width: 0; }
+    .barra-acoes > *, .campo { min-width: 0; max-width: 100%; }
+    .botao, .menu-item, .pesquisa input, .lista-escolhas button, .modal-fechar { min-height: 44px; }
+    .campo input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]), .campo select { min-height: 44px; min-width: 0; max-width: 100%; }
+    .icone-acao { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; }
+    .botoes-modal { flex-wrap: wrap; }
+    .modal-fechar { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; flex-shrink: 0; }
 }
