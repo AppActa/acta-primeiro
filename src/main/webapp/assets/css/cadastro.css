@@ -1,25 +1,19 @@
+@import url('tema-acta.css');
+
 :root {
     --cor-pagina: #5A5A5A;
-    --cor-cartao: #EDF0F0;
-    --cor-primaria: #027373;
-    --cor-botao: #5BCFC5;
+    --cor-cartao: var(--acta-fundo);
+    --cor-primaria: var(--acta-primaria);
+    --cor-botao: var(--acta-primaria);
     --cor-perigo: #CA1D1D;
     --cor-texto-suave: #8A8F8F;
-}
-
-@font-face {
-    font-family: 'SF Pro Web';
-    src: url('../fonts/SF-Pro.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Web", "Segoe UI", Roboto, sans-serif;
+    font-family: var(--fonte-acta);
 }
 
 body {
@@ -197,11 +191,11 @@ body {
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(91, 207, 197, 0.45);
+    box-shadow: var(--acta-sombra);
 }
 
 .login-botao:hover {
-    background-color: #49BDB3;
+    background-color: var(--acta-primaria-hover);
 }
 
 /* Linha com "ou" no meio */
@@ -285,3 +279,8 @@ body {
 @media (max-width: 400px) { .login-cartao { padding: 12px; } .login-area h1 { overflow-wrap: anywhere; } }
 
 button.login-esqueceu { background: none; border: 0; cursor: pointer; font: inherit; padding: 0; }
+
+@media (max-width: 600px), (max-height: 500px) {
+    .login-campo input, .login-campo select, .login-botao { min-height: 44px; }
+    .login-area { min-width: 0; }
+}

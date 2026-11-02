@@ -70,23 +70,35 @@ public class CadastroServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/cadastro-empresa-servlet");
             return;
         }
+        String campoErro = null;
         try {
             if (!"inserir".equals(req.getParameter("acao"))) throw new ValidacaoException("Ação inválida.");
             Colaborador col = new Colaborador();
+            campoErro = "nome";
             col.setNome(Validador.nomePessoa(req.getParameter("nome"), "Nome", 50));
+            campoErro = "sobrenome";
             col.setSobrenome(Validador.nomePessoa(req.getParameter("sobrenome"), "Sobrenome", 50));
+            campoErro = "email";
             col.setEmail(Validador.email(req.getParameter("email")));
+            campoErro = "senha";
             col.setSenha(Validador.senha(req.getParameter("senha")));
+            campoErro = "telefone";
             col.setTelefone(Validador.telefone(req.getParameter("telefone")));
+            campoErro = "cpf";
             col.setCpf(Validador.cpf(req.getParameter("cpf")));
+            campoErro = "area";
             col.setArea(Validador.texto(req.getParameter("area"), "Área", 30));
+            campoErro = "cargo";
             col.setCargo(Validador.texto(req.getParameter("cargo"), "Cargo", 100));
+            campoErro = "dt_contratacao";
             col.setDt_contratacao(Validador.dataNaoFutura(req.getParameter("dt_contratacao"), "Data de contratação"));
+            campoErro = "id_empresa";
             col.setId_empresa(Validador.id(req.getParameter("id_empresa"), "Empresa"));
             col.setStatus(Status.ATIVA);
             col.setPermissao_gestor(false);
             Empresa empresa = EMPRESAS.buscar(col.getId_empresa());
             if (empresa == null || empresa.getStatus() != Status.ATIVA) throw new ValidacaoException("Selecione uma empresa ativa.");
+            campoErro = null;
             if (DAO.inserir(col) != 1) throw new DaoException("Cadastro não concluído.", new IllegalStateException());
             Colaborador autenticado = null;
             try {
@@ -105,12 +117,15 @@ public class CadastroServlet extends HttpServlet {
             req.getSession().setAttribute("usuarioLogado", autenticado);
             req.getSession().removeAttribute(CsrfToken.SESSION_KEY);
             CsrfToken.getOrCreate(req.getSession());
+            req.getSession().setAttribute("cadastroSucesso", "Cadastro concluído com sucesso.");
             resp.sendRedirect(req.getContextPath() + "/index.jsp");
         } catch (ValidacaoException | IllegalArgumentException e) {
+            req.setAttribute("campoErro", campoErro);
             resp.setStatus(400);
             req.setAttribute("mensagemErro", e.getMessage());
             mostrar(req, resp);
         } catch (DuplicidadeException | IntegridadeReferencialException e) {
+            req.setAttribute("campoErro", e instanceof DuplicidadeException ? "email,cpf" : "id_empresa");
             resp.setStatus(409);
             req.setAttribute("mensagemErro", e.getMessage());
             mostrar(req, resp);

@@ -1,0 +1,17 @@
+/* Identidade visual compartilhada pelas páginas do ACTA. */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+:root {
+    --fonte-acta: "Montserrat", Arial, sans-serif;
+    --acta-primaria: #007a7a;
+    --acta-primaria-hover: #025a5a;
+    --acta-fundo: #ececec;
+    --acta-cartao: #ffffff;
+    --acta-texto: #0b1b2b;
+    --acta-texto-suave: #53616a;
+    --acta-borda: #d8e3e3;
+    --acta-raio: 16px;
+    --acta-sombra: 0 3px 12px rgba(15, 37, 51, .08);
+}
+button, input, select, textarea { font-family: inherit; }
+
+.logo-link { display: inline-flex; align-items: center; width: fit-content; max-width: 100%; }

@@ -50,5 +50,7 @@ document.querySelectorAll('[data-cadastro]').forEach(function (formulario) {
             + String(hoje.getDate()).padStart(2, '0');
     }
     // Reabre os dados profissionais quando o usuário retorna da tela de empresa.
-    mostrarEtapa(location.hash === '#etapa-2' ? 2 : 1, false);
+    const erroServidor = formulario.querySelector('.campo-erro');
+    const etapaComErro = erroServidor && erroServidor.closest('fieldset');
+    mostrarEtapa(etapaComErro ? etapaComErro.dataset.etapa : location.hash === '#etapa-2' ? 2 : 1, false);
 });

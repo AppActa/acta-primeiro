@@ -13,6 +13,14 @@
                 .replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;");
     }
 %>
+<%!
+private String erroCampo(jakarta.servlet.http.HttpServletRequest req, String campo) {
+    Object campos = req.getAttribute("campoErro");
+    Object mensagem = req.getAttribute("mensagemErro");
+    if (campos == null || mensagem == null || !java.util.Arrays.asList(campos.toString().split(",")).contains(campo)) return "";
+    return "<small class=\"campo-erro\" id=\"erro-" + campo + "\" role=\"alert\">" + h(mensagem) + "</small>";
+}
+%>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -21,6 +29,7 @@
     <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/login.css">
     <title>Login</title>
+<link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/mensagens.css">
 </head>
 <body>
     <main class="login-pagina">
@@ -32,7 +41,7 @@
         <div class="login-cartao">
             <!-- Coluna da esquerda -->
             <aside class="login-visual">
-                <img src="<%= request.getContextPath() %>/assets/images/logo_compacta_escura.svg" alt="" class="login-logo">
+                <a class="logo-link" href="<%= request.getContextPath() %>/index.jsp" aria-label="ACTA - Página inicial"><img src="<%= request.getContextPath() %>/assets/images/logo_compacta_escura.svg" alt="ACTA" class="login-logo"></a>
                 <p class="login-slogan">
                     ACTA, seu app de PDCA
                     <strong>
@@ -48,7 +57,7 @@
                     Junte-se ao ACTA e dê início a um novo ciclo em sua carreira por meio da metodologia PDCA
                 </p>
 
-                <% if (mensagemErro != null && !mensagemErro.isBlank()) { %>
+                <% if (mensagemErro != null && !mensagemErro.isBlank() && request.getAttribute("campoErro") == null) { %>
                 <p class="login-erro" role="alert"><%= h(mensagemErro) %></p>
                 <% } %>
 
@@ -56,12 +65,12 @@
                     <input type="hidden" name="acao" value="login">
                     <div class="login-campo">
                         <label for="login-email">Email</label>
-                        <input type="email" id="login-email" name="email" maxlength="80" autocomplete="email" required>
+                        <input type="email" id="login-email" name="email" maxlength="80" autocomplete="email" required><%= erroCampo(request, "email") %>
                     </div>
 
                     <div class="login-campo">
                         <label for="login-senha">Senha</label>
-                        <input type="password" id="login-senha" class="senha" name="senha" maxlength="100" autocomplete="current-password" required>
+                        <input type="password" id="login-senha" class="senha" name="senha" maxlength="100" autocomplete="current-password" required><%= erroCampo(request, "senha") %>
                     </div>
 
                     <button type="submit" class="login-botao">Concluído</button>
@@ -70,5 +79,6 @@
             </section>
         </div>
     </main>
+<script src="<%= request.getContextPath() %>/assets/js/mensagens.js"></script>
 </body>
 </html>

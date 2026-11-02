@@ -41,30 +41,46 @@ public class CadastroEmpresaServlet extends HttpServlet {
             if (valor != null) dados.put(nome, valor.substring(0, Math.min(valor.length(), 2000)));
         }
         req.setAttribute("empresaDados", dados);
+        String campoErro = null;
         try {
             Empresa empresa = new Empresa();
+            campoErro = "nome";
             empresa.setNome(Validador.texto(req.getParameter("nome"), "Nome da empresa", 50));
+            campoErro = "setor";
             empresa.setSetor(Validador.texto(req.getParameter("setor"), "Setor", 30));
+            campoErro = "cnpj";
             empresa.setCnpj(Validador.cnpj(req.getParameter("cnpj")));
+            campoErro = "tamanho";
             empresa.setTamanho(Validador.opcao(TamanhoEmpresa.class, req.getParameter("tamanho"), "Porte"));
             empresa.setStatus(Status.ATIVA);
             Endereco endereco = new Endereco();
+            campoErro = "cep";
             endereco.setCep(Validador.cep(req.getParameter("cep")));
+            campoErro = "estado";
             endereco.setEstado(Validador.uf(req.getParameter("estado")));
+            campoErro = "rua";
             endereco.setRua(Validador.texto(req.getParameter("rua"), "Rua", 50));
+            campoErro = "numero";
             endereco.setNumero(Validador.numeroEndereco(req.getParameter("numero")));
+            campoErro = "bairro";
             endereco.setBairro(Validador.texto(req.getParameter("bairro"), "Bairro", 30));
+            campoErro = "cidade";
             endereco.setCidade(Validador.nomePessoa(req.getParameter("cidade"), "Cidade", 30));
+            campoErro = "complemento";
             endereco.setComplemento(Validador.textoLongoOpcional(req.getParameter("complemento"), "Complemento"));
+            campoErro = "unidade";
             endereco.setUnidade(Validador.texto(req.getParameter("unidade"), "Unidade", 30));
+            campoErro = null;
             Long id = DAO.inserirComEndereco(empresa, endereco);
             req.getSession().setAttribute("empresaCadastrada", "Empresa cadastrada. Confira seus dados e informe a senha para concluir o cadastro de colaborador.");
             resp.sendRedirect(req.getContextPath() + "/cadastro-servlet?empresa=" + id);
             return;
         } catch (ValidacaoException | IllegalArgumentException e) {
+            req.setAttribute("campoErro", campoErro);
             resp.setStatus(400);
             req.setAttribute("mensagemErro", e.getMessage());
         } catch (DuplicidadeException | IntegridadeReferencialException e) {
+            if (e instanceof DuplicidadeException) req.setAttribute("campoErro", "cnpj");
             resp.setStatus(409);
             req.setAttribute("mensagemErro", e.getMessage());
         } catch (RuntimeException e) {

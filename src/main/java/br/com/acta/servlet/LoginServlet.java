@@ -83,18 +83,22 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
         }
+        req.setAttribute("campoErro", "email");
         String email = Validador.email(req.getParameter("email"));
+        req.setAttribute("campoErro", "senha");
         String senha = req.getParameter("senha");
         if (senha == null || senha.isEmpty() || senha.length() > 100) {
             throw new ValidacaoException("Informe o e-mail e a senha.");
         }
 
+        req.removeAttribute("campoErro");
         AdministradorGeral adm = ADMINISTRADOR_DAO.autenticar(email, senha);
         Colaborador colaborador = adm == null ? COLABORADOR_DAO.autenticar(email, senha) : null;
         if (adm == null && (colaborador == null || colaborador.getStatus() != Status.ATIVA)) {
             synchronized (tentativas) {
                 tentativas.registrarFalha();
             }
+            req.setAttribute("campoErro", "senha");
             enviarErroLogin(req, resp, "Email ou senha inválidos");
             return;
         }
