@@ -118,7 +118,7 @@
                 <div class="sombra"></div>
             </div>
             <p role="alert"><%= h(request.getAttribute(jakarta.servlet.RequestDispatcher.ERROR_MESSAGE) == null ? "Não foi possível concluir a operação." : request.getAttribute(jakarta.servlet.RequestDispatcher.ERROR_MESSAGE)) %></p>
-            <a class="erro-voltar" href="<%= request.getContextPath() %>/empresa-servlet">Voltar</a>
+            <a class="erro-voltar" href="<%= request.getContextPath() %>/index.jsp">Voltar ao início</a>
         </section>
 
     </main>

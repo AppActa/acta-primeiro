@@ -19,11 +19,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ACTA</title>
   <meta name="description" content="ACTA: a plataforma PDCA que transforma planejamento em ação, acompanhamento em aprendizado e resultados em crescimento.">
-  <link rel="shortcut icon" href="assets/images/logo_compacta.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="<%= request.getContextPath() %>/assets/images/logo_compacta.svg" type="image/x-icon">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/style.css">
 <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/mensagens.css">
 </head>
 <body>
@@ -31,7 +31,7 @@
   <!-- HEADER / MENU SUPERIOR -->
   <header class="header">
     <a href="<%= request.getContextPath() %>/index.jsp#inicio" class="header__logo" aria-label="ACTA - Início">
-      <img src="assets/images/logo_oficial.svg" alt="Logo oficial do ACTA">
+      <img src="<%= request.getContextPath() %>/assets/images/logo_oficial.svg" alt="Logo oficial do ACTA">
     </a>
 
     <nav class="header__nav" aria-label="Navegação principal">
@@ -72,7 +72,7 @@
 
         <div class="hero__mockups">
           <!-- Imagem única com os dois celulares inclinados -->
-          <img class="hero__celulares" src="assets/images/mockup_celulares.png" alt="Telas do app ACTA: abertura 'O ciclo da melhoria começa aqui!' e tela de login">
+          <img class="hero__celulares" src="<%= request.getContextPath() %>/assets/images/mockup_celulares.png" alt="Telas do app ACTA: abertura 'O ciclo da melhoria começa aqui!' e tela de login">
         </div>
       </section>
 
@@ -85,25 +85,25 @@
         <!-- Cada SVG já é o card completo -->
         <ol class="pdca__lista">
           <li class="pdca__card">
-            <img src="assets/images/icone_pdca_planeje.svg" alt="1. Planeje: defina objetivos, metas e planos de ação alinhados à estratégia.">
+            <img src="<%= request.getContextPath() %>/assets/images/icone_pdca_planeje.svg" alt="1. Planeje: defina objetivos, metas e planos de ação alinhados à estratégia.">
           </li>
 
           <li class="pdca__linha" aria-hidden="true"></li>
 
           <li class="pdca__card">
-            <img src="assets/images/icone_pdca_execute.svg" alt="2. Execute: coloque os planos em ação e acompanhe o progresso das atividades.">
+            <img src="<%= request.getContextPath() %>/assets/images/icone_pdca_execute.svg" alt="2. Execute: coloque os planos em ação e acompanhe o progresso das atividades.">
           </li>
 
           <li class="pdca__linha" aria-hidden="true"></li>
 
           <li class="pdca__card">
-            <img src="assets/images/icone_pdca_verifique.svg" alt="3. Verifique: analise resultados, identifique desvios e oportunidades.">
+            <img src="<%= request.getContextPath() %>/assets/images/icone_pdca_verifique.svg" alt="3. Verifique: analise resultados, identifique desvios e oportunidades.">
           </li>
 
           <li class="pdca__linha" aria-hidden="true"></li>
 
           <li class="pdca__card">
-            <img src="assets/images/icone_pdca_aprenda.svg" alt="4. Aprenda: padronize o que deu certo e registre aprendizados para o próximo ciclo.">
+            <img src="<%= request.getContextPath() %>/assets/images/icone_pdca_aprenda.svg" alt="4. Aprenda: padronize o que deu certo e registre aprendizados para o próximo ciclo.">
           </li>
         </ol>
       </section>
@@ -118,7 +118,7 @@
 
           <!-- Card 1: Entenda e planeje -->
           <article class="card-resultado card-resultado--entenda">
-            <img src="assets/images/card_celular_entenda.png" alt="Celular mostrando a tela de planejamento do ciclo">
+            <img src="<%= request.getContextPath() %>/assets/images/card_celular_entenda.png" alt="Celular mostrando a tela de planejamento do ciclo">
             <div class="card-resultado__texto">
               <h3>Entenda e planeje</h3>
               <p>O problema é analisado e o planejamento é estruturado, definindo causas, objetivos e ações para solucioná-lo.</p>
@@ -128,13 +128,13 @@
           <!-- Card 2: Coloque em prática -->
           <article class="card-resultado card-resultado--pratica">
             <h3>Coloque em prática</h3>
-            <img src="assets/images/card_celular_pratica.png" alt="Celular mostrando a tela de execução das ações">
+            <img src="<%= request.getContextPath() %>/assets/images/card_celular_pratica.png" alt="Celular mostrando a tela de execução das ações">
           </article>
 
           <!-- Card 3: Acompanhe os resultados -->
           <article class="card-resultado card-resultado--acompanhe">
             <h3>Acompanhe os resultados</h3>
-            <img src="assets/images/card_celular_acompanhe.png" alt="Celular mostrando a visão geral do ciclo">
+            <img src="<%= request.getContextPath() %>/assets/images/card_celular_acompanhe.png" alt="Celular mostrando a visão geral do ciclo">
           </article>
 
           <!-- Card 4: Transforme e evolua -->
@@ -143,7 +143,7 @@
               <h3>Transforme e evolua</h3>
               <p>Os aprendizados são registrados e as soluções que funcionaram são transformadas em um novo padrão de trabalho.</p>
             </div>
-            <img src="assets/images/card_celular_transforme.png" alt="Celular mostrando a tela de aprendizados e padrões publicados">
+            <img src="<%= request.getContextPath() %>/assets/images/card_celular_transforme.png" alt="Celular mostrando a tela de aprendizados e padrões publicados">
           </article>
 
         </div>
@@ -156,7 +156,7 @@
         <p class="subtitulo-secao subtitulo-secao--claro">Ferramentas inteligentes, com colaboração, organização para cada etapa.</p>
 
         <div class="recursos__conteudo">
-          <img class="recursos__imagem" src="assets/images/recursos_mao_celular.png" alt="Mão segurando um smartphone com a tela de análise de causas">
+          <img class="recursos__imagem" src="<%= request.getContextPath() %>/assets/images/recursos_mao_celular.png" alt="Mão segurando um smartphone com a tela de análise de causas">
 
           <div class="recursos__grid">
             <article class="recurso">
@@ -224,7 +224,6 @@
                 <span>A PARTIR DE</span>
                 <strong>R$ 9.000</strong>
               </div>
-              <a href="#planos" class="btn btn--plano">ASSINE JÁ</a>
             </article>
 
             <!-- Plano Trimestral (recomendado / destacado) -->
@@ -242,7 +241,6 @@
                 <span>A PARTIR DE</span>
                 <strong>R$ 25.000</strong>
               </div>
-              <a href="#planos" class="btn btn--plano">ASSINE JÁ</a>
             </article>
 
             <!-- Plano Semestral -->
@@ -260,7 +258,6 @@
                 <span>A PARTIR DE</span>
                 <strong>R$ 48.000</strong>
               </div>
-              <a href="#planos" class="btn btn--plano">ASSINE JÁ</a>
             </article>
 
           </div>
@@ -309,8 +306,8 @@
         </div>
 
         <div class="hero__mockups hero__mockups--sobre">
-          <img class="sobre__celular sobre__celular--fundo" src="assets/images/sobre_celular_home.png" alt="Tela inicial do app com ciclos e próximas tarefas">
-          <img class="sobre__celular sobre__celular--frente" src="assets/images/sobre_celular_ciclos.png" alt="Tela Meus ciclos do app ACTA">
+          <img class="sobre__celular sobre__celular--fundo" src="<%= request.getContextPath() %>/assets/images/sobre_celular_home.png" alt="Tela inicial do app com ciclos e próximas tarefas">
+          <img class="sobre__celular sobre__celular--frente" src="<%= request.getContextPath() %>/assets/images/sobre_celular_ciclos.png" alt="Tela Meus ciclos do app ACTA">
         </div>
       </section>
 
@@ -331,23 +328,23 @@
           <h3 class="equipe__ano">1º ano</h3>
           <div class="equipe__galeria" tabindex="0" aria-label="Integrantes do 1º ano (role para o lado)">
             <figure class="membro">
-              <img src="assets/images/foto_equipe_1ano_01.jpg" alt="Foto do integrante 1 do 1º ano" draggable="false">
+              <img src="<%= request.getContextPath() %>/assets/images/foto_equipe_1ano_01.jpg" alt="Foto do integrante 1 do 1º ano" draggable="false">
               <figcaption class="membro__legenda">Ana Luísa Melo (UX | UI Design )</figcaption>
             </figure>
             <figure class="membro">
-              <img src="assets/images/foto_equipe_1ano_02.jpg" alt="Foto de Arthur Amorim" draggable="false">
+              <img src="<%= request.getContextPath() %>/assets/images/foto_equipe_1ano_02.jpg" alt="Foto de Arthur Amorim" draggable="false">
               <figcaption class="membro__legenda">Arthur Amorim (Backend)</figcaption>
             </figure>
             <figure class="membro">
-              <img src="assets/images/foto_equipe_1ano_03.jpg" alt="Foto de Cauê Minini" draggable="false">
+              <img src="<%= request.getContextPath() %>/assets/images/foto_equipe_1ano_03.jpg" alt="Foto de Cauê Minini" draggable="false">
               <figcaption class="membro__legenda">Cauê Minini (Dados | Frontend)</figcaption>
             </figure>
             <figure class="membro">
-              <img src="assets/images/foto_equipe_1ano_04.jpg" alt="Foto de Mariana Xavier" draggable="false">
+              <img src="<%= request.getContextPath() %>/assets/images/foto_equipe_1ano_04.jpg" alt="Foto de Mariana Xavier" draggable="false">
               <figcaption class="membro__legenda">Mariana Xavier (Frontend)</figcaption>
             </figure>
             <figure class="membro">
-              <img src="assets/images/foto_equipe_1ano_05.jpg" alt="Foto de Raphael Braga" draggable="false">
+              <img src="<%= request.getContextPath() %>/assets/images/foto_equipe_1ano_05.jpg" alt="Foto de Raphael Braga" draggable="false">
               <figcaption class="membro__legenda">Raphael Braga (Backend)</figcaption>
             </figure>
           </div>
@@ -358,27 +355,27 @@
           <h3 class="equipe__ano">2º ano</h3>
           <div class="equipe__galeria" tabindex="0" aria-label="Integrantes do 2º ano (role para o lado)">
             <figure class="membro">
-              <img src="assets/images/foto_equipe_2ano_01.jpg" alt="Foto do integrante 1 do 2º ano" draggable="false">
+              <img src="<%= request.getContextPath() %>/assets/images/foto_equipe_2ano_01.jpg" alt="Foto do integrante 1 do 2º ano" draggable="false">
               <figcaption class="membro__legenda">Amanda Andrade (Dados)</figcaption>
             </figure>
             <figure class="membro">
-              <img src="assets/images/foto_equipe_2ano_02.jpg" alt="Foto do integrante 2 do 2º ano" draggable="false">
+              <img src="<%= request.getContextPath() %>/assets/images/foto_equipe_2ano_02.jpg" alt="Foto do integrante 2 do 2º ano" draggable="false">
               <figcaption class="membro__legenda">Cibelle Goltara (UX | UI Design)</figcaption>
             </figure>
             <figure class="membro">
-              <img src="assets/images/foto_equipe_2ano_03.jpg" alt="Foto de Davi Aliaga" draggable="false">
+              <img src="<%= request.getContextPath() %>/assets/images/foto_equipe_2ano_03.jpg" alt="Foto de Davi Aliaga" draggable="false">
               <figcaption class="membro__legenda">Davi Aliaga (Backend)</figcaption>
             </figure>
             <figure class="membro">
-              <img src="assets/images/foto_equipe_2ano_04.jpg" alt="Foto de Gabriel Bordin" draggable="false">
+              <img src="<%= request.getContextPath() %>/assets/images/foto_equipe_2ano_04.jpg" alt="Foto de Gabriel Bordin" draggable="false">
               <figcaption class="membro__legenda">Gabriel Bordin (TypeScript | BI)</figcaption>
             </figure>
             <figure class="membro">
-              <img src="assets/images/foto_equipe_2ano_05.jpg" alt="Foto de Gabriel Vigna" draggable="false">
+              <img src="<%= request.getContextPath() %>/assets/images/foto_equipe_2ano_05.jpg" alt="Foto de Gabriel Vigna" draggable="false">
               <figcaption class="membro__legenda">Gabriel Vigna (AI Engineer)</figcaption>
             </figure>
             <figure class="membro">
-              <img src="assets/images/foto_equipe_2ano_06.jpg" alt="Foto de Lucas Almeida" draggable="false">
+              <img src="<%= request.getContextPath() %>/assets/images/foto_equipe_2ano_06.jpg" alt="Foto de Lucas Almeida" draggable="false">
               <figcaption class="membro__legenda">Lucas Almeida (Backend)</figcaption>
             </figure>
           </div>
@@ -400,8 +397,8 @@
           </div>
 
           <div class="ia__mockups">
-            <img class="ia__celular ia__celular--inicio" src="assets/images/ia_celular_inicio.png" alt="Tela inicial do Cato: Oi! Eu sou o Cato.">
-            <img class="ia__celular ia__celular--chat" src="assets/images/ia_celular_chat.png" alt="Tela de chat com o Cato">
+            <img class="ia__celular ia__celular--inicio" src="<%= request.getContextPath() %>/assets/images/ia_celular_inicio.png" alt="Tela inicial do Cato: Oi! Eu sou o Cato.">
+            <img class="ia__celular ia__celular--chat" src="<%= request.getContextPath() %>/assets/images/ia_celular_chat.png" alt="Tela de chat com o Cato">
           </div>
         </div>
       </section>
@@ -447,7 +444,7 @@
   <!-- FOOTER / RODAPÉ -->
   <footer class="footer">
     <div class="footer__conteudo">
-      <a class="logo-link" href="<%= request.getContextPath() %>/index.jsp#inicio" aria-label="ACTA - Página inicial"><img class="footer__logo" src="assets/images/logo_rodape.svg" alt="Logo ACTA"></a>
+      <a class="logo-link" href="<%= request.getContextPath() %>/index.jsp#inicio" aria-label="ACTA - Página inicial"><img class="footer__logo" src="<%= request.getContextPath() %>/assets/images/logo_rodape.svg" alt="Logo ACTA"></a>
 
       <div class="footer__coluna">
         <h4>Links Rápidos</h4>

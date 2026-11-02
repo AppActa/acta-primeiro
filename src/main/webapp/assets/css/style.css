@@ -611,7 +611,7 @@ body:not(:has(:target)) #inicio {
 }
 
 .plano__preco { 
-  margin: auto 0 16px; 
+  margin: auto 0 0;
 }
 .plano__preco span { 
   display: block; 
@@ -623,16 +623,6 @@ body:not(:has(:target)) #inicio {
   font-size: 34px; 
   font-weight: 500; 
   line-height: 1.2; 
-}
-
-.btn--plano {
-  display: block;
-  width: 70%;
-  margin: 0 auto;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 12px 0;
 }
 
 /* Plano recomendado */
@@ -1368,7 +1358,6 @@ body:not(:has(:target)) #inicio {
     overflow-wrap: anywhere; 
   }
 
-  .header .btn--pequeno,
   .footer__contatos li:has(.footer__cadeado) { 
     display: none; 
   }
