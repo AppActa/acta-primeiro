@@ -26,8 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll('[data-escolher-foto]').forEach(function (botao) {
         botao.addEventListener('click', function () {
-            const editar = document.getElementById('config-editar-perfil');
-            if (editar) editar.checked = true;
             input.click();
         });
     });
@@ -46,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        const salvarEstavaDesabilitado = salvarFoto ? salvarFoto.disabled : true;
         if (salvarFoto) salvarFoto.disabled = true;
         status.textContent = "Preparando envio…";
         input.disabled = true;
@@ -89,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (salvarFoto) salvarFoto.disabled = false;
             status.textContent = salvarFoto ? "Imagem enviada. Clique em Salvar foto para concluir." : "Imagem enviada. Confirme a edição do perfil para salvar.";
         } catch (erro) {
+            if (salvarFoto) salvarFoto.disabled = salvarEstavaDesabilitado;
             status.textContent = erro.message || "Falha ao enviar a imagem. Tente novamente.";
             input.value = "";
         } finally {

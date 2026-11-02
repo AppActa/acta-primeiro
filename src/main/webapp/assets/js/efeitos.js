@@ -24,46 +24,6 @@
         }
     });
 
-    var chaveEdicao = document.getElementById('config-editar-perfil');
-    var chaveSenha = document.getElementById('config-modal-senha');
-
-    if (chaveEdicao) {
-        chaveEdicao.addEventListener('change', function () {
-            if (chaveEdicao.checked) {
-                var primeiro = document.querySelector('.config-dados input[name="nome"]');
-                if (primeiro) setTimeout(function () { primeiro.focus(); }, 60);
-                return;
-            }
-            document.querySelectorAll('.config-dados [data-original]').forEach(function (campo) {
-                campo.value = campo.dataset.original;
-                campo.dispatchEvent(new Event('input', { bubbles: true }));
-            });
-        });
-    }
-
-    if (chaveSenha) {
-        chaveSenha.addEventListener('change', function () {
-            var formulario = document.querySelector('.config-modal form');
-            if (chaveSenha.checked) {
-                var antiga = document.getElementById('alt-senha-antiga');
-                if (antiga) setTimeout(function () { antiga.focus(); }, 60);
-            } else if (formulario) {
-                formulario.reset();
-            }
-        });
-    }
-
-    document.addEventListener('keydown', function (evento) {
-        if (evento.key !== 'Escape') return;
-        if (chaveSenha && chaveSenha.checked) {
-            chaveSenha.checked = false;
-            chaveSenha.dispatchEvent(new Event('change'));
-        } else if (chaveEdicao && chaveEdicao.checked) {
-            chaveEdicao.checked = false;
-            chaveEdicao.dispatchEvent(new Event('change'));
-        }
-    });
-
     document.querySelectorAll('input[data-confirma]').forEach(function (confirmacao) {
         var original = document.getElementById(confirmacao.dataset.confirma);
         if (!original) return;

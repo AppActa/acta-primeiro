@@ -882,15 +882,7 @@ td.coluna-acao {
 .config-camera-arquivo {
     display: none;
 }
- 
-.config:has(#config-editar-perfil:checked) .config-camera-modo {
-    display: none;
-}
- 
-.config:has(#config-editar-perfil:checked) .config-camera-arquivo {
-    display: flex;
-}
- 
+
 /* ---------- Bloco de dados (mesma cor do antigo cartão de contato) ---------- */
 .config-dados {
     align-self: stretch;
@@ -928,15 +920,7 @@ td.coluna-acao {
     display: none;
     gap: 10px;
 }
- 
-.config:has(#config-editar-perfil:checked) .config-dados-editar {
-    display: none;
-}
- 
-.config:has(#config-editar-perfil:checked) .config-dados-botoes {
-    display: flex;
-}
- 
+
 /* Colunas proporcionais */
 .config-campos {
     display: grid;
@@ -985,24 +969,13 @@ td.coluna-acao {
 .config-campo input:focus {
     outline: 2px solid var(--cor-borda);
 }
- 
-.config:has(#config-editar-perfil:checked) .config-campo input {
-    display: block;
-}
- 
-.config:has(#config-editar-perfil:checked) .config-valor.editavel {
-    display: none;
-}
- 
+
 .config-senha-acao {
     display: none;
     align-items: center;
     height: 48px;
 }
  
-.config:has(#config-editar-perfil:checked) .config-senha-acao {
-    display: flex;
-}
 
 .config-senha-acao .botao-secundario,
 .config-senha-acao .botao-secundario:hover {
@@ -1046,9 +1019,6 @@ td.coluna-acao {
     display: none;
 }
  
-.config:has(#config-modal-senha:checked) .config-modal {
-    display: block;
-}
  
 .config-modal .modal-fundo {
     position: relative;
@@ -1311,36 +1281,6 @@ td.coluna-acao {
 .mensagem-saindo {
     opacity: 0;
     transform: translateY(-6px);
-}
-
-/* Modo edição: rótulos e campos iguais aos dos formulários de cadastrar/editar das tabelas */
-.config:has(#config-editar-perfil:checked) .config-dados-topo {
-    margin-bottom: 24px;
-}
-
-.config:has(#config-editar-perfil:checked) .config-campos {
-    gap: 14px 20px;
-}
-
-.config:has(#config-editar-perfil:checked) .config-rotulo {
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 1.4;
-    margin-bottom: 5px;
-}
-
-.config:has(#config-editar-perfil:checked) .config-campo input {
-    height: auto;
-    padding: 8px 12px;
-    font-size: 14px;
-    color: var(--cor-texto);
-    background-color: var(--cor-card);
-    border: 1px solid var(--cor-borda);
-    border-radius: 4px;
-}
-
-.config:has(#config-editar-perfil:checked) .config-senha-acao {
-    height: auto;
 }
 
 .config .config-campo input:focus {
