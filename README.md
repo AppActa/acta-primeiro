@@ -38,12 +38,6 @@ Novos endpoints administrativos devem ser incluídos no mapeamento do filtro. O 
 
 Execute `.\mvnw.cmd test` para testar os bloqueios por HTTP em um Tomcat local isolado, sem consultar ou modificar o banco. Os testes usam destinos sentinela e sessões preparadas exclusivamente no servidor de teste para verificar acessos anônimos, perfis incorretos, logout, URLs manipuladas e a liberação das operações para administrador geral.
 
-## Limitações conhecidas
-
-- A página de configurações do perfil e alguns formulários de recuperação de senha ainda são telas demonstrativas e usam `action="#"`; não estão conectados a operações do backend.
-- Recursos citados na página institucional — como IA, dashboards, relatórios, alertas e ferramentas de análise — não têm implementação integrada identificada no código atual.
-- O login conectado ao backend autentica apenas o administrador geral; outros perfis não têm acesso ao CRUD.
-
 ## Compilação
 
 Com o Java 21 instalado, o wrapper do Maven pode gerar o WAR:
