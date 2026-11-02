@@ -1,0 +1,68 @@
+name: Publicar página institucional no GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/main/webapp/index.html'
+      - 'src/main/webapp/assets/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    # Só publica depois que a URL do backend no Render estiver configurada.
+    if: ${{ vars.ACTA_RENDER_URL != '' }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v6
+
+      - name: Preparar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Montar apenas a página estática
+        env:
+          ACTA_RENDER_URL: ${{ vars.ACTA_RENDER_URL }}
+        run: |
+          set -eu
+          if [ -z "$ACTA_RENDER_URL" ]; then
+            echo "Configure a variável ACTA_RENDER_URL nas variáveis do repositório com a URL pública do Render."
+            exit 1
+          fi
+          mkdir -p dist
+          cp src/main/webapp/index.html dist/index.html
+          cp -R src/main/webapp/assets dist/assets
+          touch dist/.nojekyll
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          render_url = os.environ["ACTA_RENDER_URL"].rstrip("/")
+          index = Path("dist/index.html")
+          html = index.read_text(encoding="utf-8")
+          html = html.replace('href="login.jsp"', f'href="{render_url}/login.jsp"')
+          index.write_text(html, encoding="utf-8")
+          PY
+
+      - name: Enviar arquivos do site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+      - name: Publicar no GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
