@@ -1,3 +1,5 @@
+@import url('tema-acta.css');
+
 /* =========================================================
    ACTA - Landing Page
    style.css
@@ -6,10 +8,10 @@
 
 /* 1. VARIÁVEIS E RESET  */
 :root {
-  --cor-fundo: #ececec;
+  --cor-fundo: var(--acta-fundo);
   --cor-escuro: #0f2533;
   --cor-texto: #0b1b2b;
-  --cor-verde-escuro: #007a7a;
+  --cor-verde-escuro: var(--acta-primaria);
   --cor-verde: #0a9a8c;
   --cor-ciano: #08c4cf;
   --cor-ciano-claro: #6fe0e6;
@@ -35,7 +37,7 @@ html {
 }
 
 body {
-  font-family: "Montserrat", Arial, sans-serif;
+  font-family: var(--fonte-acta);
   background: var(--cor-fundo);
   color: var(--cor-texto);
   line-height: 1.5;
@@ -1393,3 +1395,28 @@ body:not(:has(:target)) #inicio {
 .header__acoes button { font: inherit; cursor: pointer; }
 .header__cadeado { display: inline-flex; align-items: center; padding: 8px; color: var(--cor-verde-escuro); }
 @media (max-width: 480px) { .header__acoes { gap: 6px; } .header__acoes .btn { padding: 8px 10px; } }
+
+.header__conta { display: inline-flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; min-width: 0; }
+.header__conta img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid #027373; }
+.header__conta span { font-family: var(--fonte-acta); font-size: .9rem; font-weight: 600; letter-spacing: .01em; max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 480px) { .header__conta span { font-family: var(--fonte-acta); font-size: .9rem; font-weight: 600; letter-spacing: .01em; max-width: 120px; font-size: .85rem; } }
+
+/* Confirmações não alteram a posição das seções da landing. */
+.landing-confirmacao { position: fixed; z-index: 110; top: calc(var(--altura-header) + 16px); right: 24px; max-width: min(420px, calc(100% - 32px)); box-shadow: 0 6px 18px #0002; }
+@media (max-width: 720px) { .landing-confirmacao { top: 124px; right: 16px; } }
+
+@media (max-width: 720px) {
+  .header__acoes { max-width: calc(100% - 150px); }
+  .header__conta { min-width: 0; }
+  .header__conta img { flex-shrink: 0; }
+  .header__conta span { min-width: 0; }
+  .header__cadeado { flex-shrink: 0; }
+}
+.hero__texto > .btn { min-width: 180px; text-align: center; }
+
+/* Reserva o centro do header para a navegação quando a conta possui nome longo. */
+@media (min-width: 721px) and (max-width: 1100px) {
+    .header__acoes { max-width: calc((100% - 340px) / 2); }
+    .header__conta img, .header__cadeado { flex-shrink: 0; }
+    .header__conta span { min-width: 0; }
+}

@@ -5,8 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'src/main/webapp/index.html'
-      - 'src/main/webapp/assets/**'
+      - 'src/main/webapp/index.jsp'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -34,7 +33,7 @@ jobs:
       - name: Preparar GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Montar apenas a página estática
+      - name: Redirecionar ao site no servidor
         env:
           ACTA_RENDER_URL: ${{ vars.ACTA_RENDER_URL }}
         run: |
@@ -44,19 +43,25 @@ jobs:
             exit 1
           fi
           mkdir -p dist
-          cp src/main/webapp/index.html dist/index.html
-          cp -R src/main/webapp/assets dist/assets
           touch dist/.nojekyll
           python3 - <<'PY'
+          import html
           import os
           from pathlib import Path
+          from urllib.parse import urlsplit
 
-          render_url = os.environ["ACTA_RENDER_URL"].rstrip("/")
-          index = Path("dist/index.html")
-          html = index.read_text(encoding="utf-8")
-          html = html.replace('href="autenticacao/login.jsp"', f'href="{render_url}/autenticacao/login.jsp"')
-          html = html.replace('href="cadastro-servlet"', f'href="{render_url}/cadastro-servlet"')
-          index.write_text(html, encoding="utf-8")
+          destino = os.environ["ACTA_RENDER_URL"].rstrip("/") + "/"
+          url = urlsplit(destino)
+          if url.scheme not in ("http", "https") or not url.netloc:
+              raise ValueError("ACTA_RENDER_URL deve ser uma URL HTTP ou HTTPS válida.")
+          destino = html.escape(destino, quote=True)
+          pagina = f'''<!DOCTYPE html>
+          <html lang="pt-BR"><head><meta charset="UTF-8">
+          <meta http-equiv="refresh" content="0;url={destino}">
+          <title>ACTA</title></head><body>
+          <p><a href="{destino}">Acessar ACTA</a></p>
+          </body></html>'''
+          Path("dist/index.html").write_text(pagina, encoding="utf-8")
           PY
 
       - name: Enviar arquivos do site

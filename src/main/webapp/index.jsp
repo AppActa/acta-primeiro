@@ -1,9 +1,16 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="br.com.acta.model.AdministradorGeral,br.com.acta.model.Colaborador,br.com.acta.enums.Status" %>
+<%! private String h(Object valor) { return valor == null ? "" : valor.toString().replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;"); } %>
 <%
     response.setHeader("Cache-Control", "no-store");
     Object usuario = session.getAttribute("usuarioLogado");
     boolean administrador = usuario instanceof AdministradorGeral adm && adm.getAdm_geral_id() != null && adm.getAdm_geral_id() > 0;
     boolean colaborador = usuario instanceof Colaborador col && col.getId_colaborador() != null && col.getId_colaborador() > 0 && col.getStatus() == Status.ATIVA;
+    String nomeConta = administrador ? ((AdministradorGeral) usuario).getNome() : colaborador ? ((Colaborador) usuario).getNome() + " " + ((Colaborador) usuario).getSobrenome() : "";
+    String fotoConta = request.getContextPath() + "/assets/images/foto_perfil.svg";
+    if (administrador || colaborador) {
+        String imagem = administrador ? ((AdministradorGeral) usuario).getImagem() : ((Colaborador) usuario).getImagem();
+        if (imagem != null && imagem.startsWith("https://res.cloudinary.com/")) fotoConta = imagem;
+    }
 %>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -17,12 +24,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/mensagens.css">
 </head>
 <body>
 
   <!-- HEADER / MENU SUPERIOR -->
   <header class="header">
-    <a href="#inicio" class="header__logo" aria-label="ACTA - Início">
+    <a href="<%= request.getContextPath() %>/index.jsp#inicio" class="header__logo" aria-label="ACTA - Início">
       <img src="assets/images/logo_oficial.svg" alt="Logo oficial do ACTA">
     </a>
 
@@ -35,15 +43,13 @@
 
     <div class="header__acoes">
       <% if (administrador || colaborador) { %>
-      <a href="<%= request.getContextPath() %>/perfil-servlet" class="btn btn--pequeno">Perfil</a>
+      <a href="<%= request.getContextPath() %>/perfil-servlet" class="header__conta"><img src="<%= h(fotoConta) %>" alt="Foto da conta"><span><%= h(nomeConta) %></span></a>
       <% if (administrador) { %>
       <a href="<%= request.getContextPath() %>/empresa-servlet" class="header__cadeado" aria-label="Acessar CRUD administrativo" title="Área administrativa">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
       </a>
       <% } %>
-      <form method="post" action="<%= request.getContextPath() %>/logout-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>"><button type="submit" class="btn btn--pequeno">Sair</button></form>
       <% } else { %>
-      <a href="<%= request.getContextPath() %>/cadastro-servlet" class="btn btn--pequeno">Cadastrar-se</a>
       <a href="<%= request.getContextPath() %>/autenticacao/login.jsp" class="btn btn--pequeno">Entrar</a>
       <% } %>
     </div>
@@ -51,6 +57,7 @@
 
 
   <main>
+    <% Object avisoCadastro = session.getAttribute("cadastroSucesso"); if (avisoCadastro != null) { session.removeAttribute("cadastroSucesso"); %><p class="operacao-sucesso landing-confirmacao" role="status"><%= h(avisoCadastro) %></p><% } %>
 
     <!-- PÁGINA 1: INÍCIO -->
     <div id="inicio" class="pagina">
@@ -440,7 +447,7 @@
   <!-- FOOTER / RODAPÉ -->
   <footer class="footer">
     <div class="footer__conteudo">
-      <img class="footer__logo" src="assets/images/logo_rodape.svg" alt="Logo ACTA">
+      <a class="logo-link" href="<%= request.getContextPath() %>/index.jsp#inicio" aria-label="ACTA - Página inicial"><img class="footer__logo" src="assets/images/logo_rodape.svg" alt="Logo ACTA"></a>
 
       <div class="footer__coluna">
         <h4>Links Rápidos</h4>
