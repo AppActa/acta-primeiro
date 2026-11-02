@@ -53,3 +53,6 @@ build/
 /PROMPT_INICIAL.txt
 /PROMPT_POR_ENTIDADE.txt
 /fontes/
+
+# Carga de dados mantida somente no ambiente local
+/src/main/resources/sql/dataload.sql
