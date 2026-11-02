@@ -58,18 +58,18 @@ O artefato é gerado em `target/ACTA-1.0-SNAPSHOT.war`. Para executar a aplicaç
 
 A publicação usa dois serviços porque o GitHub Pages serve somente arquivos estáticos, enquanto login, JSP, Servlets e acesso ao PostgreSQL precisam de um servidor Java:
 
-- **Render:** executa o WAR no Tomcat 11. O `Dockerfile` compila o projeto com Java 21 e o `render.yaml` configura o serviço para a branch `refactor/crud`.
+- **Render:** executa o WAR no Tomcat 11. O `Dockerfile` compila o projeto com Java 21 e o `render.yaml` configura o serviço para a branch `feat/publicacao`.
 - **GitHub Pages:** publica somente `index.html` e `assets/`. O workflow `.github/workflows/pages.yml` troca, na cópia publicada, os links `login.jsp` para apontarem ao Render. A página do Pages não executa JSP.
 
 ### Configurar o Render
 
-No Render, crie um Blueprint a partir deste repositório e da branch `refactor/crud`, usando o arquivo `render.yaml`. Informe os valores de `DB_URL`, `DB_USER`, `DB_PASSWORD` e `PASSWORD_PEPPER` no painel do Render; nunca coloque valores reais em `render.yaml` ou no Git. A `DB_URL` precisa usar o formato JDBC PostgreSQL, por exemplo `jdbc:postgresql://servidor:5432/banco?sslmode=require`. Garanta também que o provedor do banco permita conexões vindas do Render. Se o banco usar lista de IPs permitidos, consulte a aba **Connect → Outbound** do serviço no Render e cadastre as faixas da região escolhida no provedor do banco. Se o perfil usar upload de foto, configure no painel `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` e `CLOUDINARY_API_SECRET`.
+No Render, crie um Blueprint a partir deste repositório e da branch `feat/publicacao`, usando o arquivo `render.yaml`. Informe os valores de `DB_URL`, `DB_USER`, `DB_PASSWORD` e `PASSWORD_PEPPER` no painel do Render; nunca coloque valores reais em `render.yaml` ou no Git. A `DB_URL` precisa usar o formato JDBC PostgreSQL, por exemplo `jdbc:postgresql://servidor:5432/banco?sslmode=require`. Garanta também que o provedor do banco permita conexões vindas do Render. Se o banco usar lista de IPs permitidos, consulte a aba **Connect → Outbound** do serviço no Render e cadastre as faixas da região escolhida no provedor do banco. Se o perfil usar upload de foto, configure no painel `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` e `CLOUDINARY_API_SECRET`.
 
 O plano gratuito do Render pode suspender o serviço quando estiver ocioso, levando alguns instantes para responder ao primeiro acesso. Ele é adequado para demonstração, mas tem limitações para uso contínuo.
 
 ### Configurar o GitHub Pages
 
-Depois que o Render concluir o primeiro deploy, copie a URL pública do serviço. No GitHub, abra **Settings → Secrets and variables → Actions → Variables**, crie a variável `ACTA_RENDER_URL` com essa URL e, em **Settings → Pages**, selecione **GitHub Actions** como fonte. O workflow publica a página quando houver alterações no `index.html` ou em `assets/` na branch `refactor/crud` (ou quando executado manualmente pela aba **Actions**). Se o workflow rodar antes de `ACTA_RENDER_URL` ser criada, a publicação fica ignorada; depois de criar a variável, execute-o pela aba **Actions**.
+Depois que o Render concluir o primeiro deploy, copie a URL pública do serviço. No GitHub, abra **Settings → Secrets and variables → Actions → Variables**, crie a variável `ACTA_RENDER_URL` com essa URL e, em **Settings → Pages**, selecione **GitHub Actions** como fonte. O workflow publica a página quando houver alterações no `index.html` ou em `assets/` na branch `feat/publicacao` (ou quando executado manualmente pela aba **Actions**). Se o workflow rodar antes de `ACTA_RENDER_URL` ser criada, a publicação fica ignorada; depois de criar a variável, execute-o pela aba **Actions**.
 
 Antes de usar em público, troque no provedor do banco qualquer senha que já tenha sido exposta em commits anteriores; o `.env` local não deve ser enviado ao GitHub.
 
