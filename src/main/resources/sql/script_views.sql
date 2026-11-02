@@ -176,7 +176,8 @@ SELECT
     col.telefone,
     col.cpf,
     emp.nome AS nome_empresa,
-    col.id_empresa
+    col.id_empresa,
+    col.imagem
 FROM colaborador col
 JOIN empresa emp ON col.id_empresa = emp.id_empresa
 );

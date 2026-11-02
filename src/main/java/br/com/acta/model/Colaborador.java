@@ -19,6 +19,7 @@ public class Colaborador {
     private Date dt_contratacao;
     private String email;
     private String senha;
+    private String imagem;
     private String telefone;
     private String cpf;
 
@@ -70,6 +71,14 @@ public class Colaborador {
     }
 
     // Acesso e atualização dos dados do modelo.
+
+    public String getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
+    }
 
     public Long getId_colaborador() {
         return id_colaborador;
