@@ -6,6 +6,24 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!input || !preview || !imagemUrl || !status) return;
     const salvarFoto = input.closest("form")?.querySelector("[data-salvar-foto]");
 
+    async function lerRespostaJson(resposta, mensagemPadrao, verificarSessao = false) {
+        if (verificarSessao && resposta.status === 401) {
+            throw new Error("Sua sessão expirou. Atualize a página e entre novamente para enviar a foto.");
+        }
+        if (verificarSessao && resposta.status === 403) {
+            throw new Error("Não foi possível autorizar o envio. Atualize a página e tente novamente.");
+        }
+        const tipo = resposta.headers.get("content-type") || "";
+        if (!tipo.toLowerCase().includes("application/json")) {
+            throw new Error(mensagemPadrao);
+        }
+        try {
+            return await resposta.json();
+        } catch {
+            throw new Error(mensagemPadrao);
+        }
+    }
+
     document.querySelectorAll('[data-escolher-foto]').forEach(function (botao) {
         botao.addEventListener('click', function () {
             const editar = document.getElementById('config-editar-perfil');
@@ -40,7 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 method: "POST",
                 headers: { "Accept": "application/json", "X-CSRF-Token": tokenCsrf }
             });
-            const assinatura = await respostaAssinatura.json();
+            const assinatura = await lerRespostaJson(respostaAssinatura,
+                "O serviço de fotos está temporariamente indisponível. Tente novamente em instantes.", true);
             if (!respostaAssinatura.ok) {
                 throw new Error(assinatura.error || "Não foi possível preparar o envio da imagem.");
             }
@@ -57,7 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 method: "POST",
                 body: formData
             });
-            const resultado = await resposta.json();
+            const resultado = await lerRespostaJson(resposta,
+                "O serviço de imagens não respondeu como esperado. Tente novamente em instantes.");
             if (!resposta.ok || !resultado.secure_url) {
                 throw new Error(resultado.error?.message || "Não foi possível enviar a imagem.");
             }

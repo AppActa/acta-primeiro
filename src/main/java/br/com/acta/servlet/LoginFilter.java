@@ -73,7 +73,8 @@ public class LoginFilter implements Filter {
                     && ("GET".equals(req.getMethod()) || "HEAD".equals(req.getMethod()))) {
                 resp.sendRedirect(req.getContextPath() + "/autenticacao/login.jsp");
             } else {
-                resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                negarAcesso(req, resp, HttpServletResponse.SC_UNAUTHORIZED,
+                        "Sua sessão expirou. Entre novamente para enviar uma foto.");
             }
             return;
         }
@@ -91,17 +92,31 @@ public class LoginFilter implements Filter {
         boolean colaborador = usuario instanceof Colaborador col
                 && col.getId_colaborador() != null && col.getId_colaborador() > 0 && col.getStatus() == Status.ATIVA;
         if (!administrador && !(pessoal && colaborador)) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            negarAcesso(req, resp, HttpServletResponse.SC_FORBIDDEN, "Acesso não autorizado.");
             return;
         }
 
         // Alterações exigem o token associado à sessão autenticada.
         if ("POST".equalsIgnoreCase(req.getMethod()) && !CsrfToken.isValid(req)) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Token de segurança inválido ou expirado.");
+            negarAcesso(req, resp, HttpServletResponse.SC_FORBIDDEN,
+                    "Token de segurança inválido ou expirado. Atualize a página e tente novamente.");
             return;
         }
 
         // Encaminha ao destino somente após todas as verificações.
         chain.doFilter(request, response);
+    }
+
+    /** Mantém os erros da rota de upload no formato esperado pelo navegador. */
+    private static void negarAcesso(HttpServletRequest req, HttpServletResponse resp,
+            int status, String mensagem) throws IOException {
+        if ("/cloudinary-signature".equals(req.getServletPath())) {
+            resp.setStatus(status);
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("application/json");
+            resp.getWriter().write("{\"error\":\"" + mensagem + "\"}");
+        } else {
+            resp.sendError(status);
+        }
     }
 }
