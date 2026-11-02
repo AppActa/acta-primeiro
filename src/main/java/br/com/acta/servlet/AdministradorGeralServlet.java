@@ -22,31 +22,18 @@ import java.net.URI;
 import java.util.List;
 
 /** Recebe as requisições de AdministradorGeral e prepara os dados para as páginas JSP. */
-@WebServlet(name = "AdministradorGeralServlet", value = "/administrador-geral-servlet")
+@WebServlet(name = "AdministradorGeralServlet", value = {"/administrador-geral-servlet", "/administrador-geral.jsp"})
 public class AdministradorGeralServlet extends HttpServlet {
 
-    private static final String PAGINA_ADMINISTRADOR_GERAL = "/administrador-geral.jsp";
+    private static final String PAGINA_ADMINISTRADOR_GERAL = "/crud/configuracoes.jsp";
     private static final String PAGINA_CONFIGURACOES = "/crud/configuracoes.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final AdministradorGeralDAO DAO = new AdministradorGeralDAO();
 
-    /** Atende consultas e converte as falhas em respostas HTTP. */
+    /** Abre as configurações da própria conta administrativa. */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            buscar(req, resp);
-        } catch (RegistroNaoEncontradoException e) {
-            enviarErro(req, resp, e.getMessage(), HttpServletResponse.SC_NOT_FOUND);
-        } catch (ValidacaoException | IllegalArgumentException e) {
-            enviarErro(req, resp, "Parâmetro de consulta inválido.", HttpServletResponse.SC_BAD_REQUEST);
-        } catch (DaoException e) {
-            e.printStackTrace();
-            enviarErro(req, resp, "Erro ao consultar o banco de dados.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            e.printStackTrace();
-            enviarErro(req, resp, "Não foi possível encontrar os administradores gerais.",
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+        resp.sendRedirect(req.getContextPath() + PAGINA_CONFIGURACOES);
     }
 
     /** Permite editar o próprio perfil e senha; bloqueia cadastro, exclusão e login nesta rota. */

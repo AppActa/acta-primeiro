@@ -1,0 +1,44 @@
+/* Complementos exclusivos do perfil; componentes e cores vêm de crud.css. */
+.perfil-conteudo { min-width: 0; width: 100%; max-width: 1400px; }
+.perfil-aviso { padding: 14px; margin-bottom: 24px; border: 1px solid var(--cor-borda); border-radius: 8px; line-height: 1.5; }
+.perfil-conteudo .top, .perfil-conteudo .profile-banner, .perfil-conteudo .card-title { display: flex; align-items: center; gap: 18px; }
+.perfil-conteudo .top { justify-content: space-between; flex-wrap: wrap; margin-bottom: 24px; }
+.perfil-conteudo .top h1 { font-size: clamp(26px, 3vw, 36px); margin-bottom: 8px; }
+.perfil-conteudo .profile-banner { padding: 24px; border-radius: 16px; background: var(--cor-card); margin-bottom: 24px; flex-wrap: wrap; }
+.perfil-conteudo .avatar { width: 120px; height: 120px; border: 2px solid var(--cor-borda); border-radius: 50%; overflow: hidden; display: grid; place-items: center; flex-shrink: 0; }
+.perfil-conteudo .avatar img { width: 100%; height: 100%; object-fit: cover; }
+.perfil-conteudo .avatar .ico { width: 90px; height: 90px; }
+.perfil-conteudo .banner-text { flex: 1; min-width: 160px; overflow-wrap: anywhere; }
+.perfil-conteudo .banner-text h2, .perfil-conteudo .banner-text p { margin-bottom: 8px; }
+.ico { width: 24px; height: 24px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.perfil-conteudo .perfil-card { background: var(--cor-card); color: var(--cor-texto); margin-bottom: 24px; padding: clamp(18px, 3vw, 32px); }
+.perfil-card .config-dados-topo { margin-bottom: 24px; flex-wrap: wrap; }
+.perfil-card .card-title h3 { font-size: clamp(18px, 2vw, 24px); }
+.perfil-card .config-rotulo { font-size: 14px; line-height: 1.5; }
+.perfil-card .config-valor { height: auto; font-size: 17px; word-break: normal; overflow-wrap: anywhere; }
+.perfil-conteudo .botao, .perfil-dialog .botao { gap: 8px; white-space: normal; }
+.perfil-conteudo .pill, .perfil-conteudo .status-tag, .perfil-conteudo .company-tag { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 24px; background: var(--cor-fundo); color: var(--cor-primaria); }
+.perfil-conteudo .company-tag { margin-top: 8px; text-decoration: none; }
+.perfil-conteudo .security-text { font-size: 14px; margin-top: 8px; line-height: 1.5; }
+.perfil-dialog { margin: auto; width: min(480px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; border: 1px solid var(--cor-borda); border-radius: 16px; padding: 24px; color: var(--cor-texto); }
+.perfil-dialog::backdrop { background: rgba(0, 0, 0, .4); }
+.perfil-dialog h3 { margin-bottom: 12px; }
+.perfil-dialog .botoes-modal { flex-wrap: wrap; }
+.perfil-retorno { position: fixed; bottom: 16px; right: 16px; max-width: min(440px, calc(100% - 32px)); padding: 16px; border-radius: 8px; background: var(--cor-primaria); color: var(--cor-card); z-index: 20; }
+.sistema:has(.perfil-conteudo) .sidebar { flex-shrink: 0; }
+.sistema:has(.perfil-conteudo) .menu-item[aria-current="page"] { background: var(--cor-fundo); border-left-color: var(--cor-primaria); font-weight: 600; }
+.sistema:has(.perfil-conteudo) .perfil-info { min-width: 0; overflow-wrap: anywhere; padding: 12px; }
+.sistema:has(.perfil-conteudo) .perfil-info strong, .sistema:has(.perfil-conteudo) .perfil-info span { display: block; font-size: 12px; }
+.sistema:has(.perfil-conteudo) .mobile-menu { display: none; }
+@media (max-width: 760px) {
+    .sistema:has(.perfil-conteudo) { display: block; }
+    .sistema:has(.perfil-conteudo) .sidebar { width: 100%; height: auto; position: static; }
+    .sistema:has(.perfil-conteudo) .mobile-menu { display: block; margin: 0 20px 12px; align-self: flex-start; }
+    .sistema:has(.perfil-conteudo) .menu { display: none; }
+    .sistema:has(.perfil-conteudo) .menu.open { display: flex; }
+    .sistema:has(.perfil-conteudo) .perfil-barra { display: none; }
+    .perfil-conteudo { padding: 20px 16px; }
+    .perfil-card .config-campos { grid-template-columns: 1fr; gap: 20px; }
+}
+
+.perfil-simbolos { position: absolute; width: 0; height: 0; overflow: hidden; }
