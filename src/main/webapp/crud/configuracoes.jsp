@@ -13,7 +13,7 @@
 <%
 AdministradorGeral administrador = (AdministradorGeral) session.getAttribute("usuarioLogado");
 if (administrador == null) {
-    response.sendRedirect(request.getContextPath() + "/login.jsp");
+    response.sendRedirect(request.getContextPath() + "/autenticacao/login.jsp");
     return;
 }
 String nome = administrador.getNome() == null ? "" : administrador.getNome();

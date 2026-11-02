@@ -2,10 +2,16 @@
 <%
     // Se já há sessão ativa, redireciona para home
     if (session != null && session.getAttribute("usuarioLogado") != null) {
-        response.sendRedirect(request.getContextPath() + "/empresa-servlet");
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
         return;
     }
     String mensagemErro = (String) request.getAttribute("mensagemErro");
+%>
+<%!
+    private String h(Object valor) {
+        return valor == null ? "" : valor.toString().replace("&", "&amp;").replace("<", "&lt;")
+                .replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;");
+    }
 %>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -43,7 +49,7 @@
                 </p>
 
                 <% if (mensagemErro != null && !mensagemErro.isBlank()) { %>
-                <p class="login-erro" role="alert"><%= mensagemErro %></p>
+                <p class="login-erro" role="alert"><%= h(mensagemErro) %></p>
                 <% } %>
 
                 <form class="login-form" method="post" action="<%= request.getContextPath() %>/login-servlet"><input type="hidden" name="csrfToken" value="<%= br.com.acta.utils.CsrfToken.getOrCreate(session) %>">
@@ -60,6 +66,7 @@
 
                     <button type="submit" class="login-botao">Concluído</button>
                 </form>
+                <a href="<%= request.getContextPath() %>/cadastro-servlet" class="login-esqueceu">Cadastrar-se</a>
             </section>
         </div>
     </main>

@@ -1,9 +1,12 @@
 package br.com.acta.servlet;
 
 import br.com.acta.dao.AdministradorGeralDAO;
+import br.com.acta.dao.ColaboradorDAO;
+import br.com.acta.enums.Status;
 import br.com.acta.excecoes.DaoException;
 import br.com.acta.excecoes.ValidacaoException;
 import br.com.acta.model.AdministradorGeral;
+import br.com.acta.model.Colaborador;
 import br.com.acta.utils.CsrfToken;
 import br.com.acta.utils.Validador;
 
@@ -19,7 +22,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Autentica administradores e limita tentativas por endereço de origem. */
+/** Autentica as contas existentes e limita tentativas por endereço de origem. */
 @WebServlet(name = "LoginServlet", value = "/login-servlet")
 public class LoginServlet extends HttpServlet {
 
@@ -27,9 +30,10 @@ public class LoginServlet extends HttpServlet {
     private static final int MAX_TENTATIVAS = 5;
     private static final long JANELA_MS = 15 * 60 * 1000L;
     private static final ConcurrentHashMap<String, Tentativas> TENTATIVAS = new ConcurrentHashMap<>();
-    private static final String PAGINA_LOGIN = "/login.jsp";
+    private static final String PAGINA_LOGIN = "/autenticacao/login.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
     private final AdministradorGeralDAO ADMINISTRADOR_DAO = new AdministradorGeralDAO();
+    private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
 
     /** Verifica o token CSRF e encaminha a ação de login. */
     @Override
@@ -65,7 +69,7 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    /** Confere credenciais e inicia a sessão do administrador autenticado. */
+    /** Identifica a conta pelas credenciais verificadas, nunca por parâmetros de permissão. */
     private void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String chaveTentativa = req.getRemoteAddr();
         Tentativas tentativas = TENTATIVAS.computeIfAbsent(chaveTentativa, ignorado -> new Tentativas());
@@ -79,11 +83,15 @@ public class LoginServlet extends HttpServlet {
                 return;
             }
         }
-        String email = Validador.obrigatorio(req.getParameter("email"), "E-mail");
-        String senha = Validador.obrigatorio(req.getParameter("senha"), "Senha");
+        String email = Validador.email(req.getParameter("email"));
+        String senha = req.getParameter("senha");
+        if (senha == null || senha.isEmpty() || senha.length() > 100) {
+            throw new ValidacaoException("Informe o e-mail e a senha.");
+        }
 
         AdministradorGeral adm = ADMINISTRADOR_DAO.autenticar(email, senha);
-        if (adm == null) {
+        Colaborador colaborador = adm == null ? COLABORADOR_DAO.autenticar(email, senha) : null;
+        if (adm == null && (colaborador == null || colaborador.getStatus() != Status.ATIVA)) {
             synchronized (tentativas) {
                 tentativas.registrarFalha();
             }
@@ -93,12 +101,15 @@ public class LoginServlet extends HttpServlet {
         TENTATIVAS.remove(chaveTentativa);
 
         // Evita manter o hash da senha no objeto salvo na sessão.
-        adm.setSenha(null);
+        if (adm != null) adm.setSenha(null);
+        else colaborador.setSenha(null);
         req.getSession(true);
         // Renova o identificador após a autenticação.
         req.changeSessionId();
-        req.getSession().setAttribute("usuarioLogado", adm);
-        resp.sendRedirect(req.getContextPath() + "/empresa-servlet");
+        req.getSession().setAttribute("usuarioLogado", adm != null ? adm : colaborador);
+        req.getSession().removeAttribute(CsrfToken.SESSION_KEY);
+        CsrfToken.getOrCreate(req.getSession());
+        resp.sendRedirect(req.getContextPath() + "/index.jsp");
     }
 
     /** Volta à página de login com a mensagem para o usuário. */

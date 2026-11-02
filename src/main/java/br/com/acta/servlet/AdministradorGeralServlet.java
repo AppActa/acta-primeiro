@@ -224,7 +224,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         HttpSession sessao = req.getSession(false);
         AdministradorGeral logado = sessao == null ? null : (AdministradorGeral) sessao.getAttribute("usuarioLogado");
         if (logado == null) {
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+            resp.sendRedirect(req.getContextPath() + "/autenticacao/login.jsp");
             return null;
         }
         return logado;
