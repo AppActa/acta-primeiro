@@ -283,6 +283,25 @@ class LoginFilterTest {
         assertFalse(resposta.body().contains("apiSecret"));
     }
 
+    /** Garante respostas JSON nas recusas de sessão e de CSRF do upload. */
+    @Test
+    void retornarJsonNoUploadComSessaoExpiradaOuCsrfInvalido() throws Exception {
+        for (String cookie : Arrays.asList(null, cookieExpirado)) {
+            HttpResponse<String> resposta = enviarPost("/cloudinary-signature", cookie, "");
+            assertEquals(401, resposta.statusCode());
+            assertTrue(resposta.headers().firstValue("Content-Type").orElse("").contains("application/json"));
+            assertTrue(resposta.body().startsWith("{\"error\":"));
+            assertTrue(resposta.body().contains("Entre novamente"));
+            assertFalse(resposta.body().contains("<!doctype"));
+        }
+        HttpResponse<String> resposta = enviarPost("/cloudinary-signature", cookieCsrfCorreto,
+                "csrfToken=incorreto");
+        assertEquals(403, resposta.statusCode());
+        assertTrue(resposta.headers().firstValue("Content-Type").orElse("").contains("application/json"));
+        assertTrue(resposta.body().startsWith("{\"error\":"));
+        assertTrue(resposta.body().contains("Atualize a página"));
+    }
+
     /** Confere assinatura SHA-1 segundo a ordenação alfabética dos parâmetros. */
     @Test
     void gerarAssinaturaCloudinaryComParametrosOrdenados() throws Exception {
