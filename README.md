@@ -54,6 +54,25 @@ Com o Java 21 instalado, o wrapper do Maven pode gerar o WAR:
 
 O artefato é gerado em `target/ACTA-1.0-SNAPSHOT.war`. Para executar a aplicação, configure as variáveis de banco indicadas em `.env.example` e faça o deploy em um servidor compatível com Jakarta Servlet. O script `src/main/resources/sql/script_banco.sql` recria o esquema, mas primeiro apaga tabelas existentes; execute-o somente em um banco novo ou descartável.
 
+## Publicação de primeira versão
+
+A publicação usa dois serviços porque o GitHub Pages serve somente arquivos estáticos, enquanto login, JSP, Servlets e acesso ao PostgreSQL precisam de um servidor Java:
+
+- **Render:** executa o WAR no Tomcat 11. O `Dockerfile` compila o projeto com Java 21 e o `render.yaml` configura o serviço para a branch `main`.
+- **GitHub Pages:** publica somente `index.html` e `assets/`. O workflow `.github/workflows/pages.yml` troca, na cópia publicada, os links `login.jsp` para apontarem ao Render. A página do Pages não executa JSP.
+
+### Configurar o Render
+
+No Render, crie um Blueprint a partir deste repositório e da branch `main`, usando o arquivo `render.yaml`. Informe os valores de `DB_URL`, `DB_USER`, `DB_PASSWORD` e `PASSWORD_PEPPER` no painel do Render; nunca coloque valores reais em `render.yaml` ou no Git. A `DB_URL` precisa usar o formato JDBC PostgreSQL, por exemplo `jdbc:postgresql://servidor:5432/banco?sslmode=require`. Garanta também que o provedor do banco permita conexões vindas do Render. Se o banco usar lista de IPs permitidos, consulte a aba **Connect → Outbound** do serviço no Render e cadastre as faixas da região escolhida no provedor do banco. Se o perfil usar upload de foto, configure no painel `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` e `CLOUDINARY_API_SECRET`.
+
+O plano gratuito do Render pode suspender o serviço quando estiver ocioso, levando alguns instantes para responder ao primeiro acesso. Ele é adequado para demonstração, mas tem limitações para uso contínuo.
+
+### Configurar o GitHub Pages
+
+Depois que o Render concluir o primeiro deploy, copie a URL pública do serviço. No GitHub, abra **Settings → Secrets and variables → Actions → Variables**, crie a variável `ACTA_RENDER_URL` com essa URL e, em **Settings → Pages**, selecione **GitHub Actions** como fonte. O workflow publica a página quando houver alterações no `index.html` ou em `assets/` na branch `main` (ou quando executado manualmente pela aba **Actions**). Se o workflow rodar antes de `ACTA_RENDER_URL` ser criada, a publicação fica ignorada; depois de criar a variável, execute-o pela aba **Actions**.
+
+Antes de usar em público, troque no provedor do banco qualquer senha que já tenha sido exposta em commits anteriores; o `.env` local não deve ser enviado ao GitHub.
+
 ### Segurança do Tomcat em produção
 
 O WAR apresenta uma página genérica para exceções e erros HTTP 500, sem exibir mensagens ou pilhas Java. O Tomcat da hospedagem também deve estar atualizado (11.0.27 ou versão corrigida mais recente) e configurado para não mostrar relatórios técnicos padrão. Em uma instalação própria, configure o `ErrorReportValve` dentro de `<Host>` em `$CATALINA_BASE/conf/server.xml`:
