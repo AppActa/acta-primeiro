@@ -3,7 +3,7 @@ name: Publicar página institucional no GitHub Pages
 on:
   push:
     branches:
-      - feat/publicacao
+      - main
     paths:
       - 'src/main/webapp/index.html'
       - 'src/main/webapp/assets/**'
