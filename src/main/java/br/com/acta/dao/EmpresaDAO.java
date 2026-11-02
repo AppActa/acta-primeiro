@@ -7,6 +7,7 @@ import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.IntegridadeReferencialException;
 import br.com.acta.excecoes.RegistroNaoEncontradoException;
 import br.com.acta.model.Empresa;
+import br.com.acta.model.Endereco;
 import br.com.acta.utils.Conexao;
 
 import java.sql.Connection;
@@ -21,6 +22,49 @@ import java.util.Map;
 
 /** Executa a persistência de Empresa e converte consultas em objetos do modelo. */
 public class EmpresaDAO implements MetodosCrud<Empresa> {
+
+    /** Cadastra a empresa e seu endereço juntos, sem deixar registros incompletos. */
+    public Long inserirComEndereco(Empresa empresa, Endereco endereco) {
+        String sqlEmpresa = "INSERT INTO empresa (nome, setor, cnpj, status, tamanho) VALUES (?, ?, ?, ?, ?) RETURNING id_empresa";
+        String sqlEndereco = "INSERT INTO endereco (rua, bairro, cidade, estado, cep, numero, complemento, unidade, id_empresa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = Conexao.conectar()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement pe = conn.prepareStatement(sqlEmpresa);
+                    PreparedStatement pend = conn.prepareStatement(sqlEndereco)) {
+                pe.setString(1, empresa.getNome());
+                pe.setString(2, empresa.getSetor());
+                pe.setString(3, empresa.getCnpj());
+                pe.setObject(4, empresa.getStatus().name(), Types.OTHER);
+                pe.setObject(5, empresa.getTamanho().name(), Types.OTHER);
+                Long id;
+                try (ResultSet rs = pe.executeQuery()) {
+                    if (!rs.next()) throw new SQLException("Empresa não cadastrada.");
+                    id = rs.getLong("id_empresa");
+                }
+                pend.setString(1, endereco.getRua());
+                pend.setString(2, endereco.getBairro());
+                pend.setString(3, endereco.getCidade());
+                pend.setString(4, endereco.getEstado());
+                pend.setString(5, endereco.getCep());
+                pend.setString(6, endereco.getNumero());
+                pend.setString(7, endereco.getComplemento());
+                pend.setString(8, endereco.getUnidade());
+                pend.setLong(9, id);
+                if (pend.executeUpdate() != 1) throw new SQLException("Endereço não cadastrado.");
+                conn.commit();
+                return id;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
+        } catch (SQLException e) {
+            if ("23505".equals(e.getSQLState())) throw new DuplicidadeException("Já existe uma empresa com esse CNPJ.", e);
+            if ("23503".equals(e.getSQLState())) throw new IntegridadeReferencialException("Referência inválida no endereço.", e);
+            throw new DaoException("Erro ao cadastrar empresa e endereço.", e);
+        } catch (ClassNotFoundException e) {
+            throw new DaoException("Driver do banco de dados não encontrado.", e);
+        }
+    }
 
     // Relaciona as opções de ordenação às colunas autorizadas do banco.
     private static final Map<String, String> COLUNAS_ORDENACAO = Map.of(
