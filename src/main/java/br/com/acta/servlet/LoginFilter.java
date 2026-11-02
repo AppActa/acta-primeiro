@@ -36,6 +36,9 @@ import java.io.IOException;
             "/administrador-geral-servlet",
             "/cloudinary-signature",
             "/perfil-servlet",
+            "/perfil-administrador.jsp",
+            "/minha-empresa-servlet",
+            "/ver-empresa.jsp",
             "/perfil-colaborador.jsp",
             "/perfil-colaborador.html",
             "/logout-servlet"
@@ -81,7 +84,7 @@ public class LoginFilter implements Filter {
                 && req.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH) instanceof String incluido) {
             caminho = incluido;
         }
-        boolean pessoal = caminho.equals("/perfil-servlet") || caminho.equals("/perfil-colaborador.jsp")
+        boolean pessoal = caminho.equals("/cloudinary-signature") || caminho.equals("/minha-empresa-servlet") || caminho.equals("/ver-empresa.jsp") || caminho.equals("/perfil-servlet") || caminho.equals("/perfil-colaborador.jsp")
                 || caminho.equals("/perfil-colaborador.html") || caminho.equals("/logout-servlet");
         boolean administrador = usuario instanceof AdministradorGeral adm
                 && adm.getAdm_geral_id() != null && adm.getAdm_geral_id() > 0;

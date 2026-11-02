@@ -306,10 +306,18 @@ class LoginFilterTest {
         String cookie = criarSessao("colaborador-valido");
         assertEquals(200, enviar("GET", "/perfil-servlet", cookie).statusCode());
         assertEquals(200, enviar("GET", "/perfil-colaborador.jsp", cookie).statusCode());
+        assertEquals(403, enviar("GET", "/perfil-administrador.jsp", cookie).statusCode());
         for (String rota : ROTAS) {
-            if (rota.startsWith("/perfil-") || rota.equals("/logout-servlet")) continue;
+            if (rota.startsWith("/perfil-") || rota.equals("/logout-servlet") || rota.equals("/cloudinary-signature")
+                    || rota.equals("/minha-empresa-servlet") || rota.equals("/ver-empresa.jsp")) continue;
             assertEquals(403, enviar("GET", rota, cookie).statusCode(), rota);
         }
+        assertEquals(200, enviar("GET", "/minha-empresa-servlet", cookie).statusCode());
+        assertEquals(200, enviar("GET", "/ver-empresa.jsp", cookie).statusCode());
+        assertEquals(403, enviarPost("/cloudinary-signature", cookie, "csrfToken=incorreto").statusCode());
+        HttpResponse<String> assinatura = enviarPost("/cloudinary-signature", cookie, "csrfToken=token-teste");
+        assertTrue(List.of(200, 503).contains(assinatura.statusCode()));
+        if (assinatura.statusCode() == 200) assertTrue(assinatura.body().contains("acta/colaborador-profiles"));
         assertEquals(403, enviarPost("/logout-servlet", cookie, "csrfToken=incorreto").statusCode());
         assertEquals(302, enviarPost("/logout-servlet", cookie, "csrfToken=token-teste").statusCode());
         assertEquals(302, enviar("GET", "/perfil-servlet", cookie).statusCode());

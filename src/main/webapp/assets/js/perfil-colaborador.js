@@ -8,10 +8,10 @@ const confirmacao = document.getElementById('confirmPassword');
 function conferirSenha() {
     confirmacao.setCustomValidity(confirmacao.value === document.getElementById('newPassword').value ? '' : 'As senhas não coincidem.');
 }
-confirmacao.addEventListener('input', conferirSenha);
-document.getElementById('newPassword').addEventListener('input', conferirSenha);
-document.getElementById('menuToggle').addEventListener('click', function () {
-    const aberto = this.getAttribute('aria-expanded') !== 'true';
-    this.setAttribute('aria-expanded', String(aberto));
-    document.getElementById('nav').classList.toggle('open', aberto);
-});
+if (confirmacao) {
+    confirmacao.addEventListener('input', conferirSenha);
+    document.getElementById('newPassword').addEventListener('input', conferirSenha);
+}
+
+
+document.querySelectorAll('dialog[data-reabrir]').forEach(function (modal) { modal.showModal(); });

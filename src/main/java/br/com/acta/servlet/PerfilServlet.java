@@ -1,6 +1,8 @@
 package br.com.acta.servlet;
 
 import br.com.acta.dao.ColaboradorDAO;
+import br.com.acta.dao.EmpresaDAO;
+import br.com.acta.dao.EnderecoDAO;
 import br.com.acta.enums.Status;
 import br.com.acta.excecoes.DuplicidadeException;
 import br.com.acta.excecoes.ValidacaoException;
@@ -14,9 +16,11 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 
 /** Consulta e edição da própria conta, identificada exclusivamente pela sessão. */
-@WebServlet(name = "PerfilServlet", value = {"/perfil-servlet", "/perfil-colaborador.html"})
+@WebServlet(name = "PerfilServlet", value = {"/perfil-servlet", "/perfil-colaborador.html", "/minha-empresa-servlet"})
 public class PerfilServlet extends HttpServlet {
     private final ColaboradorDAO DAO = new ColaboradorDAO();
+    private final EmpresaDAO EMPRESAS = new EmpresaDAO();
+    private final EnderecoDAO ENDERECOS = new EnderecoDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -26,8 +30,24 @@ public class PerfilServlet extends HttpServlet {
             req.setAttribute("mensagemSucesso", aviso);
             req.getSession().removeAttribute("perfilSucesso");
         }
+        if ("/minha-empresa-servlet".equals(req.getServletPath())) {
+            Colaborador col = carregar(req, resp);
+            if (col == null) return;
+            req.setAttribute("colaborador", col);
+            try {
+                req.setAttribute("empresa", EMPRESAS.buscar(col.getId_empresa()));
+                req.setAttribute("enderecos", ENDERECOS.buscarPorEmpresa(col.getId_empresa()));
+            } catch (RuntimeException e) {
+                getServletContext().log("Erro ao consultar a empresa vinculada.", e);
+                resp.setStatus(503);
+                req.setAttribute("empresaErro", "Não foi possível consultar a empresa. Tente novamente.");
+                req.setAttribute("enderecos", java.util.List.of());
+            }
+            req.getRequestDispatcher("/ver-empresa.jsp").forward(req, resp);
+            return;
+        }
         if (req.getSession().getAttribute("usuarioLogado") instanceof AdministradorGeral) {
-            req.getRequestDispatcher("/crud/configuracoes.jsp").forward(req, resp);
+            req.getRequestDispatcher("/perfil-administrador.jsp").forward(req, resp);
             return;
         }
         Colaborador col = carregar(req, resp);
@@ -36,27 +56,51 @@ public class PerfilServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if ("/minha-empresa-servlet".equals(req.getServletPath())) { resp.sendError(405); return; }
         req.setCharacterEncoding("UTF-8");
         resp.setHeader("Cache-Control", "no-store");
         if (!CsrfToken.isValid(req)) { resp.sendError(403); return; }
         Colaborador col = carregar(req, resp);
         if (col == null) return;
+        String campoErro = null;
         try {
             if ("atualizar".equals(req.getParameter("acao"))) {
                 // Valida antes de modificar o objeto que também representa a sessão.
+                campoErro = "nome";
                 String nome = Validador.nomePessoa(req.getParameter("nome"), "Nome", 50);
+                campoErro = "sobrenome";
                 String sobrenome = Validador.nomePessoa(req.getParameter("sobrenome"), "Sobrenome", 50);
+                campoErro = "email";
                 String email = Validador.email(req.getParameter("email"));
+                campoErro = "telefone";
                 String telefone = Validador.telefone(req.getParameter("telefone"));
                 col.setNome(nome);
                 col.setSobrenome(sobrenome);
                 col.setEmail(email);
                 col.setTelefone(telefone);
+                campoErro = null;
                 DAO.atualizarPerfil(col);
+            } else if ("alterarFoto".equals(req.getParameter("acao"))) {
+                campoErro = "imagem";
+                String imagem = req.getParameter("imagem");
+                if (imagem == null || imagem.isBlank() || imagem.length() > 2048) throw new ValidacaoException("Selecione uma foto antes de salvar.");
+                java.net.URI url = java.net.URI.create(imagem);
+                if (!"https".equalsIgnoreCase(url.getScheme()) || !"res.cloudinary.com".equalsIgnoreCase(url.getHost())
+                        || url.getPath() == null || !url.getPath().contains("/image/upload/")
+                        || !url.getPath().contains("/acta/colaborador-profiles/")) {
+                    throw new ValidacaoException("Envie uma imagem pelo botão Alterar foto.");
+                }
+                campoErro = null;
+                DAO.atualizarImagem(col.getId_colaborador(), imagem);
+                col.setImagem(imagem);
             } else if ("alterarSenha".equals(req.getParameter("acao"))) {
+                campoErro = "senhaAtual";
                 String atual = req.getParameter("senhaAtual");
+                campoErro = "senhaNova";
                 String nova = Validador.senha(req.getParameter("senhaNova"));
+                campoErro = "confirmacaoSenha";
                 if (!nova.equals(req.getParameter("confirmacaoSenha"))) throw new ValidacaoException("As senhas não coincidem.");
+                campoErro = "senhaAtual";
                 if (atual == null || atual.isEmpty() || atual.length() > 100
                         || DAO.atualizarSenha(col.getEmail(), atual, nova) != 1) {
                     throw new ValidacaoException("Senha atual incorreta.");
@@ -73,9 +117,11 @@ public class PerfilServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/perfil-servlet");
             return;
         } catch (ValidacaoException | IllegalArgumentException e) {
+            req.setAttribute("campoErro", campoErro);
             resp.setStatus(400);
             req.setAttribute("mensagemErro", e.getMessage());
         } catch (DuplicidadeException e) {
+            req.setAttribute("campoErro", "email");
             resp.setStatus(409);
             req.setAttribute("mensagemErro", "Este e-mail já está cadastrado.");
         } catch (RuntimeException e) {

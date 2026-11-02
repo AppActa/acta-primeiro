@@ -4,7 +4,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const imagemUrl = document.getElementById("config-imagem-url");
     const status = document.getElementById("config-foto-status");
     if (!input || !preview || !imagemUrl || !status) return;
+    const salvarFoto = input.closest("form")?.querySelector("[data-salvar-foto]");
 
+    document.querySelectorAll('[data-escolher-foto]').forEach(function (botao) {
+        botao.addEventListener('click', function () {
+            const editar = document.getElementById('config-editar-perfil');
+            if (editar) editar.checked = true;
+            input.click();
+        });
+    });
     input.addEventListener("change", async () => {
         const arquivo = input.files && input.files[0];
         if (!arquivo) return;
@@ -20,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        if (salvarFoto) salvarFoto.disabled = true;
         status.textContent = "Preparando envio…";
         input.disabled = true;
 
@@ -57,7 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 "/image/upload/",
                 "/image/upload/c_fill,w_256,h_256,q_auto,f_auto/"
             );
-            status.textContent = "Imagem enviada. Confirme a edição do perfil para salvar.";
+            if (salvarFoto) salvarFoto.disabled = false;
+            status.textContent = salvarFoto ? "Imagem enviada. Clique em Salvar foto para concluir." : "Imagem enviada. Confirme a edição do perfil para salvar.";
         } catch (erro) {
             status.textContent = erro.message || "Falha ao enviar a imagem. Tente novamente.";
             input.value = "";

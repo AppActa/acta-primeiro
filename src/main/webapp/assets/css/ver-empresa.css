@@ -1,0 +1,23 @@
+/* A empresa utiliza os mesmos cards, fonte e cores dos perfis. */
+.empresa-conteudo .data-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 48px; }
+.empresa-conteudo .field-label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--acta-primaria); }
+.empresa-conteudo .field-value { font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
+.empresa-conteudo .top { margin-top: 20px; }
+.company-hero { display: flex; align-items: center; gap: 24px; padding: 24px; margin-bottom: 24px; background: var(--acta-cartao); border: 1px solid var(--acta-borda); border-radius: var(--acta-raio); box-shadow: var(--acta-sombra); }
+.company-logo { width: 100px; height: 100px; display: grid; place-items: center; flex-shrink: 0; color: var(--acta-primaria); }
+.company-logo .ico { width: 56px; height: 56px; }
+.company-hero h2 { font-size: 28px; margin-bottom: 8px; }
+.company-hero p { color: var(--acta-texto-suave); }
+.hero-info { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.tag { padding: 8px 14px; border-radius: 24px; background: #e7f3f2; color: var(--acta-primaria); font-size: 13px; font-weight: 600; }
+.back-link { display: inline-flex; gap: 8px; margin-bottom: 12px; color: var(--acta-primaria); text-decoration: none; font-weight: 600; }
+.back-link:hover { text-decoration: underline; }
+.view-only { padding: 8px 12px; border: 1px solid var(--acta-borda); border-radius: 6px; font-size: 13px; color: var(--acta-texto-suave); }
+@media (max-width: 600px) {
+    .empresa-conteudo .data-grid { grid-template-columns: 1fr; }
+    .company-hero { padding: 20px; gap: 16px; align-items: flex-start; }
+    .company-logo { width: 60px; height: 60px; }
+    .company-logo .ico { width: 36px; height: 36px; }
+    .company-hero h2 { font-size: 22px; }
+}
