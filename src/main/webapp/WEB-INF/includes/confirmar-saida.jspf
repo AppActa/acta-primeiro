@@ -1,0 +1,12 @@
+<%@ page pageEncoding="UTF-8" %>
+<dialog class="perfil-dialog" id="logoutModal" aria-labelledby="logoutTitle" aria-describedby="logoutDescription">
+  <form class="formulario" method="post" action="<%= request.getContextPath() %>/logout-servlet">
+    <input type="hidden" name="csrfToken" value="<%= h(br.com.acta.utils.CsrfToken.getOrCreate(session)) %>">
+    <h3 id="logoutTitle">Sair da conta?</h3>
+    <p id="logoutDescription">Tem certeza de que deseja encerrar sua sessão?</p>
+    <div class="botoes-modal">
+      <button type="button" class="botao botao-secundario" data-close autofocus>Cancelar</button>
+      <button type="submit" class="botao botao-principal">Confirmar saída</button>
+    </div>
+  </form>
+</dialog>
