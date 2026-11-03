@@ -12,6 +12,22 @@
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
     <error-page>
+        <error-code>404</error-code>
+        <location>/erro.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>401</error-code>
+        <location>/erro.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/erro.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>405</error-code>
+        <location>/erro.jsp</location>
+    </error-page>
+    <error-page>
         <error-code>500</error-code>
         <location>/erro-servidor.jsp</location>
     </error-page>
