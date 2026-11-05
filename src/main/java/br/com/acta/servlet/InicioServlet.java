@@ -6,10 +6,10 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 
 /** Mantém os links antigos da landing integrados à sessão no servidor. */
-@WebServlet(name = "InicioServlet", value = "/index.html")
+@WebServlet(name = "InicioServlet", value = {"", "/inicio", "/index.html", "/index.jsp"})
 public class InicioServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/index.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/index.jsp").forward(req, resp);
     }
 }

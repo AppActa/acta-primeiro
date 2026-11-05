@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Cadastro público de colaborador comum, separado do CRUD administrativo. */
-@WebServlet(name = "CadastroServlet", value = {"/cadastro-servlet", "/cadastro.html", "/autenticacao/cadastro.html"})
+@WebServlet(name = "CadastroServlet", value = {"/cadastro-servlet", "/cadastro.html", "/autenticacao/cadastro.html", "/autenticacao/cadastro.jsp"})
 public class CadastroServlet extends HttpServlet {
     private final ColaboradorDAO DAO = new ColaboradorDAO();
     private final EmpresaDAO EMPRESAS = new EmpresaDAO();
@@ -25,7 +25,7 @@ public class CadastroServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setHeader("Cache-Control", "no-store");
         if (req.getSession().getAttribute("usuarioLogado") != null) {
-            resp.sendRedirect(req.getContextPath() + "/index.jsp");
+            resp.sendRedirect(req.getContextPath() + "/inicio");
             return;
         }
         Map<String, String> dados = new HashMap<>();
@@ -55,7 +55,7 @@ public class CadastroServlet extends HttpServlet {
             return;
         }
         if (req.getSession().getAttribute("usuarioLogado") != null) {
-            resp.sendRedirect(req.getContextPath() + "/index.jsp");
+            resp.sendRedirect(req.getContextPath() + "/inicio");
             return;
         }
         Map<String, String> dados = new HashMap<>();
@@ -109,7 +109,7 @@ public class CadastroServlet extends HttpServlet {
             }
             req.getSession().removeAttribute("cadastroColaborador");
             if (autenticado == null) {
-                resp.sendRedirect(req.getContextPath() + "/autenticacao/login.jsp");
+                resp.sendRedirect(req.getContextPath() + "/login");
                 return;
             }
             autenticado.setSenha(null);
@@ -118,7 +118,7 @@ public class CadastroServlet extends HttpServlet {
             req.getSession().removeAttribute(CsrfToken.SESSION_KEY);
             CsrfToken.getOrCreate(req.getSession());
             req.getSession().setAttribute("cadastroSucesso", "Cadastro concluído com sucesso.");
-            resp.sendRedirect(req.getContextPath() + "/index.jsp");
+            resp.sendRedirect(req.getContextPath() + "/inicio");
         } catch (ValidacaoException | IllegalArgumentException e) {
             req.setAttribute("campoErro", campoErro);
             resp.setStatus(400);
@@ -146,6 +146,6 @@ public class CadastroServlet extends HttpServlet {
             req.setAttribute("empresaOpcoes", java.util.List.of());
             req.setAttribute("mensagemErro", "Empresas indisponíveis no momento. Tente novamente.");
         }
-        req.getRequestDispatcher("/autenticacao/cadastro.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/autenticacao/cadastro.jsp").forward(req, resp);
     }
 }

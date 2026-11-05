@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Cria a empresa e o endereço sem criar conta ou conceder permissão administrativa. */
-@WebServlet(name = "CadastroEmpresaServlet", value = {"/cadastro-empresa-servlet", "/autenticacao/cadastro-empresa.html"})
+@WebServlet(name = "CadastroEmpresaServlet", value = {"/cadastro-empresa-servlet", "/autenticacao/cadastro-empresa.html", "/autenticacao/cadastro-empresa.jsp"})
 public class CadastroEmpresaServlet extends HttpServlet {
     private final EmpresaDAO DAO = new EmpresaDAO();
 
@@ -24,7 +24,7 @@ public class CadastroEmpresaServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setHeader("Cache-Control", "no-store");
         req.setAttribute("empresaDados", Map.of());
-        req.getRequestDispatcher("/autenticacao/cadastro-empresa.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/autenticacao/cadastro-empresa.jsp").forward(req, resp);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class CadastroEmpresaServlet extends HttpServlet {
             campoErro = null;
             Long id = DAO.inserirComEndereco(empresa, endereco);
             req.getSession().setAttribute("empresaCadastrada", "Empresa cadastrada. Confira seus dados e informe a senha para concluir o cadastro de colaborador.");
-            resp.sendRedirect(req.getContextPath() + "/cadastro-servlet?empresa=" + id);
+            resp.sendRedirect(req.getContextPath() + "/cadastro-servlet?empresa=" + id + "#etapa-2");
             return;
         } catch (ValidacaoException | IllegalArgumentException e) {
             req.setAttribute("campoErro", campoErro);
@@ -88,6 +88,6 @@ public class CadastroEmpresaServlet extends HttpServlet {
             resp.setStatus(500);
             req.setAttribute("mensagemErro", "Não foi possível cadastrar a empresa. Tente novamente.");
         }
-        req.getRequestDispatcher("/autenticacao/cadastro-empresa.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/autenticacao/cadastro-empresa.jsp").forward(req, resp);
     }
 }

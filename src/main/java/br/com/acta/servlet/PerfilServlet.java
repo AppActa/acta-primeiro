@@ -16,7 +16,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 
 /** Consulta e edição da própria conta, identificada exclusivamente pela sessão. */
-@WebServlet(name = "PerfilServlet", value = {"/perfil-servlet", "/perfil-colaborador.html", "/minha-empresa-servlet"})
+@WebServlet(name = "PerfilServlet", value = {"/perfil-servlet", "/perfil-colaborador.html", "/minha-empresa-servlet", "/ver-empresa.jsp", "/perfil-colaborador.jsp", "/perfil-administrador.jsp"})
 public class PerfilServlet extends HttpServlet {
     private final ColaboradorDAO DAO = new ColaboradorDAO();
     private final EmpresaDAO EMPRESAS = new EmpresaDAO();
@@ -30,7 +30,7 @@ public class PerfilServlet extends HttpServlet {
             req.setAttribute("mensagemSucesso", aviso);
             req.getSession().removeAttribute("perfilSucesso");
         }
-        if ("/minha-empresa-servlet".equals(req.getServletPath())) {
+        if ("/minha-empresa-servlet".equals(req.getServletPath()) || "/ver-empresa.jsp".equals(req.getServletPath())) {
             Colaborador col = carregar(req, resp);
             if (col == null) return;
             req.setAttribute("colaborador", col);
@@ -43,11 +43,12 @@ public class PerfilServlet extends HttpServlet {
                 req.setAttribute("empresaErro", "Não foi possível consultar a empresa. Tente novamente.");
                 req.setAttribute("enderecos", java.util.List.of());
             }
-            req.getRequestDispatcher("/ver-empresa.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/empresa/detalhes.jsp").forward(req, resp);
             return;
         }
         if (req.getSession().getAttribute("usuarioLogado") instanceof AdministradorGeral) {
-            req.getRequestDispatcher("/perfil-administrador.jsp").forward(req, resp);
+            if (!AdministradorGeralServlet.prepararPerfil(req, resp)) return;
+            req.getRequestDispatcher("/WEB-INF/views/perfis/administrador.jsp").forward(req, resp);
             return;
         }
         Colaborador col = carregar(req, resp);
@@ -56,7 +57,7 @@ public class PerfilServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if ("/minha-empresa-servlet".equals(req.getServletPath())) { resp.sendError(405); return; }
+        if ("/minha-empresa-servlet".equals(req.getServletPath()) || "/ver-empresa.jsp".equals(req.getServletPath())) { resp.sendError(405); return; }
         req.setCharacterEncoding("UTF-8");
         resp.setHeader("Cache-Control", "no-store");
         if (!CsrfToken.isValid(req)) { resp.sendError(403); return; }
@@ -166,6 +167,6 @@ public class PerfilServlet extends HttpServlet {
 
     private void mostrar(HttpServletRequest req, HttpServletResponse resp, Colaborador col) throws ServletException, IOException {
         req.setAttribute("colaborador", col);
-        req.getRequestDispatcher("/perfil-colaborador.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/perfis/colaborador.jsp").forward(req, resp);
     }
 }

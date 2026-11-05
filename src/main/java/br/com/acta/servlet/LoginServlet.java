@@ -23,7 +23,7 @@ import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 
 /** Autentica as contas existentes e limita tentativas por endereço de origem. */
-@WebServlet(name = "LoginServlet", value = "/login-servlet")
+@WebServlet(name = "LoginServlet", value = {"/login-servlet", "/login", "/autenticacao/login.jsp"})
 public class LoginServlet extends HttpServlet {
 
     // Até cinco falhas por IP em uma janela de quinze minutos.
@@ -33,10 +33,20 @@ public class LoginServlet extends HttpServlet {
     private static final long INTERVALO_LIMPEZA_MS = 60 * 1000L;
     private static long ultimaLimpeza;
     private static final ConcurrentHashMap<String, Tentativas> TENTATIVAS = new ConcurrentHashMap<>();
-    private static final String PAGINA_LOGIN = "/autenticacao/login.jsp";
-    private static final String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_LOGIN = "/WEB-INF/views/autenticacao/login.jsp";
+    private static final String PAGINA_ERRO = "/WEB-INF/views/erros/erro.jsp";
     private final AdministradorGeralDAO ADMINISTRADOR_DAO = new AdministradorGeralDAO();
     private final ColaboradorDAO COLABORADOR_DAO = new ColaboradorDAO();
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setHeader("Cache-Control", "no-store");
+        if (req.getSession(false) != null && req.getSession(false).getAttribute("usuarioLogado") != null) {
+            resp.sendRedirect(req.getContextPath() + "/inicio");
+            return;
+        }
+        req.getRequestDispatcher(PAGINA_LOGIN).forward(req, resp);
+    }
 
     /** Verifica o token CSRF e encaminha a ação de login. */
     @Override
@@ -122,7 +132,7 @@ public class LoginServlet extends HttpServlet {
                 req.getSession().setAttribute("usuarioLogado", adm != null ? adm : colaborador);
                 req.getSession().removeAttribute(CsrfToken.SESSION_KEY);
                 CsrfToken.getOrCreate(req.getSession());
-                resp.sendRedirect(req.getContextPath() + "/index.jsp");
+                resp.sendRedirect(req.getContextPath() + "/inicio");
             }
         } finally {
             liberarTentativas(chaveTentativa, tentativas);

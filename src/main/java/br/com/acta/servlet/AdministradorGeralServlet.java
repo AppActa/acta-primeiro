@@ -22,19 +22,21 @@ import java.net.URI;
 import java.util.List;
 
 /** Recebe as requisições de AdministradorGeral e prepara os dados para as páginas JSP. */
-@WebServlet(name = "AdministradorGeralServlet", value = {"/administrador-geral-servlet", "/administrador-geral.jsp"})
+@WebServlet(name = "AdministradorGeralServlet", value = {"/administrador-geral-servlet", "/administrador-geral.jsp", "/crud/configuracoes.jsp"})
 public class AdministradorGeralServlet extends HttpServlet {
 
-    private static final String PAGINA_ADMINISTRADOR_GERAL = "/crud/configuracoes.jsp";
-    private static final String PAGINA_CONFIGURACOES = "/crud/configuracoes.jsp";
-    private static final String PAGINA_PERFIL = "/perfil-administrador.jsp";
-    private static final String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_ADMINISTRADOR_GERAL = "/WEB-INF/views/crud/configuracoes.jsp";
+    private static final String PAGINA_CONFIGURACOES = "/WEB-INF/views/crud/configuracoes.jsp";
+    private static final String PAGINA_PERFIL = "/WEB-INF/views/perfis/administrador.jsp";
+    private static final String PAGINA_ERRO = "/WEB-INF/views/erros/erro.jsp";
     private final AdministradorGeralDAO DAO = new AdministradorGeralDAO();
 
     /** Abre as configurações da própria conta administrativa. */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.sendRedirect(req.getContextPath() + PAGINA_CONFIGURACOES);
+        if (prepararPerfil(req, resp)) {
+            req.getRequestDispatcher(PAGINA_CONFIGURACOES).forward(req, resp);
+        }
     }
 
     /** Permite editar o próprio perfil e senha; bloqueia cadastro, exclusão e login nesta rota. */
@@ -130,7 +132,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         }
 
         req.setAttribute("administradorGeralList", List.of(administradorGeral));
-        req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
+        if (prepararPerfil(req, resp)) req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
     }
 
     /** Lê os filtros opcionais e prepara os dados exibidos pela página. */
@@ -142,7 +144,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         List<AdministradorGeral> administradoresGerais = DAO.buscaFiltrada(busca, ordem, direcao);
 
         req.setAttribute("administradorGeralList", administradoresGerais);
-        req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
+        if (prepararPerfil(req, resp)) req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
     }
 
     /** Confere se o ID é do administrador logado e sincroniza o perfil da sessão. */
@@ -177,7 +179,7 @@ public class AdministradorGeralServlet extends HttpServlet {
             logado.setImagem(administradorGeral.getImagem());
             req.getSession(false).setAttribute("usuarioLogado", logado);
             req.getSession().setAttribute("perfilSucesso", "Alterações salvas.");
-            resp.sendRedirect(req.getContextPath() + paginaRetorno(req));
+            resp.sendRedirect(req.getContextPath() + ("perfil".equals(req.getParameter("retorno")) ? "/perfil-servlet" : "/administrador-geral-servlet"));
         } else {
             enviarErro(req, resp, "O administrador geral não pode ser atualizado");
         }
@@ -214,7 +216,7 @@ public class AdministradorGeralServlet extends HttpServlet {
 
         if (resultado == 1) {
             req.getSession().setAttribute("perfilSucesso", "Alterações salvas.");
-            resp.sendRedirect(req.getContextPath() + paginaRetorno(req));
+            resp.sendRedirect(req.getContextPath() + ("perfil".equals(req.getParameter("retorno")) ? "/perfil-servlet" : "/administrador-geral-servlet"));
         } else {
             enviarErro(req, resp, "Senha atual incorreta.", HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -226,7 +228,7 @@ public class AdministradorGeralServlet extends HttpServlet {
         HttpSession sessao = req.getSession(false);
         AdministradorGeral logado = sessao == null ? null : (AdministradorGeral) sessao.getAttribute("usuarioLogado");
         if (logado == null) {
-            resp.sendRedirect(req.getContextPath() + "/autenticacao/login.jsp");
+            resp.sendRedirect(req.getContextPath() + "/login");
             return null;
         }
         return logado;
@@ -288,6 +290,26 @@ public class AdministradorGeralServlet extends HttpServlet {
         return "perfil".equals(req.getParameter("retorno")) ? PAGINA_PERFIL : PAGINA_CONFIGURACOES;
     }
 
+    /** Prepara os dados comuns aos perfis administrativos antes da apresentação. */
+    static boolean prepararPerfil(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Object usuario = req.getSession().getAttribute("usuarioLogado");
+        if (!(usuario instanceof AdministradorGeral administrador)) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return false;
+        }
+        try {
+            req.setAttribute("empresasVinculadas", new AdministradorGeralDAO().buscarEmpresasAtivas(administrador.getAdm_geral_id()));
+            return true;
+        } catch (DaoException e) {
+            req.getServletContext().log("Erro ao consultar empresas vinculadas ao administrador.", e);
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            req.setAttribute(RequestDispatcher.ERROR_MESSAGE, "Erro ao consultar as empresas vinculadas.");
+            req.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            req.getRequestDispatcher(PAGINA_ERRO).forward(req, resp);
+            return false;
+        }
+    }
+
     /** Usa HTTP 500 quando o chamador não informa um status. */
     private void enviarErro(
             HttpServletRequest req, HttpServletResponse resp, String mensagem) throws ServletException, IOException {
@@ -313,7 +335,7 @@ public class AdministradorGeralServlet extends HttpServlet {
 
         String acao = req.getParameter("acao");
         if ("atualizar".equals(acao) || "atualizarSenha".equals(acao)) {
-            req.getRequestDispatcher(paginaRetorno(req)).forward(req, resp);
+            if (prepararPerfil(req, resp)) req.getRequestDispatcher(paginaRetorno(req)).forward(req, resp);
             return;
         }
 
@@ -326,7 +348,7 @@ public class AdministradorGeralServlet extends HttpServlet {
             ex.printStackTrace();
             req.setAttribute("administradorGeralList", List.of());
         }
-        req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
+        if (prepararPerfil(req, resp)) req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
     }
 
     /** Recarrega a listagem e as opções da página com uma mensagem de sucesso. */
@@ -335,6 +357,6 @@ public class AdministradorGeralServlet extends HttpServlet {
         List<AdministradorGeral> administradoresGerais = DAO.buscar();
 
         req.setAttribute("administradorGeralList", administradoresGerais);
-        req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
+        if (prepararPerfil(req, resp)) req.getRequestDispatcher(PAGINA_ADMINISTRADOR_GERAL).forward(req, resp);
     }
 }

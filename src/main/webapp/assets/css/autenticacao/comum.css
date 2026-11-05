@@ -1,0 +1,150 @@
+@import url('../base/tema-acta.css');
+
+/* Estrutura compartilhada por login e cadastro. */
+:root {
+    --cor-pagina: #5A5A5A;
+    --cor-cartao: var(--acta-fundo);
+    --cor-primaria: var(--acta-primaria);
+    --cor-botao: var(--acta-primaria);
+    --cor-perigo: #CA1D1D;
+    --cor-texto-suave: #8A8F8F;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--fonte-acta);
+}
+
+.login-pagina {
+    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: clamp(56px, 8vh, 72px) clamp(12px, 3vh, 24px) clamp(12px, 3vh, 24px);
+}
+
+.login-sair {
+    position: absolute;
+    top: clamp(12px, 3vh, 24px);
+    left: clamp(12px, 3vh, 24px);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px 6px 8px;
+    border-radius: 999px;
+    transition: background-color 0.2s ease;
+}
+
+.login-sair:hover {
+    background-color: rgba(2, 115, 115, 0.08);
+}
+
+.login-sair img {
+    width: 22px;
+    height: 22px;
+}
+
+.login-sair a {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--cor-primaria);
+    text-decoration: none;
+}
+
+.login-sair a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.login-visual {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px;
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at 40% 28%, #1F9A9A 0%, transparent 55%),
+        radial-gradient(circle at 85% 68%, #4A9FC4 0%, transparent 50%),
+        radial-gradient(circle at 15% 100%, #E6FCFF 0%, transparent 45%),
+        radial-gradient(circle at 100% 0%, #AEE2E2 0%, transparent 50%),
+        #C9F0F0;
+}
+
+.login-slogan {
+    font-size: 1.5rem;
+    line-height: 1.3;
+    color: #0B2A3A;
+}
+
+.login-slogan strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.login-descricao {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    text-align: center;
+    color: var(--cor-texto-suave);
+}
+
+.login-erro {
+    margin-top: 10px;
+    font-size: 0.75rem;
+    text-align: center;
+    color: var(--cor-perigo);
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(10px, 2.2vh, 18px);
+    margin-top: clamp(12px, 2.6vh, 22px);
+}
+
+.login-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.login-campo label {
+    font-size: 1.05rem;
+    color: #111;
+}
+
+.login-botao {
+    height: 40px;
+    margin-top: 6px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--cor-botao);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--acta-sombra);
+}
+
+.login-botao:hover {
+    background-color: var(--acta-primaria-hover);
+}
+
+.login-esqueceu {
+    margin-top: clamp(12px, 2.6vh, 22px);
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--cor-texto-suave);
+    text-decoration: underline;
+}
+
+.login-esqueceu:hover {
+    color: var(--cor-primaria);
+}

@@ -25,11 +25,11 @@ import java.sql.Date;
 import java.util.List;
 
 /** Recebe as requisições de Tarefa e prepara os dados para as páginas JSP. */
-@WebServlet(name = "TarefaServlet", value = "/tarefa-servlet")
+@WebServlet(name = "TarefaServlet", value = {"/tarefa-servlet", "/crud/tarefa.jsp"})
 public class TarefaServlet extends HttpServlet {
 
-    private static final String PAGINA_TAREFA = "/crud/tarefa.jsp";
-    private static final String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_TAREFA = "/WEB-INF/views/crud/tarefa.jsp";
+    private static final String PAGINA_ERRO = "/WEB-INF/views/erros/erro.jsp";
     private final TarefaDAO DAO = new TarefaDAO();
 
     /** Atende consultas e converte as falhas em respostas HTTP. */

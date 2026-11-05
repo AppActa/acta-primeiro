@@ -23,6 +23,11 @@ import java.io.IOException;
 @WebFilter(filterName = "LoginFilter",
         urlPatterns = {
             "/crud/*",
+            "/perfis/*",
+            "/empresa/*",
+            "/WEB-INF/views/crud/*",
+            "/WEB-INF/views/perfis/*",
+            "/WEB-INF/views/empresa/*",
             "/administrador-geral.jsp",
             "/empresa-servlet",
             "/endereco-servlet",
@@ -71,7 +76,7 @@ public class LoginFilter implements Filter {
         if (usuario == null) {
             if (req.getDispatcherType() == DispatcherType.REQUEST
                     && ("GET".equals(req.getMethod()) || "HEAD".equals(req.getMethod()))) {
-                resp.sendRedirect(req.getContextPath() + "/autenticacao/login.jsp");
+                resp.sendRedirect(req.getContextPath() + "/login");
             } else {
                 negarAcesso(req, resp, HttpServletResponse.SC_UNAUTHORIZED,
                         "Sua sessão expirou. Entre novamente para enviar uma foto.");
@@ -86,6 +91,10 @@ public class LoginFilter implements Filter {
             caminho = incluido;
         }
         boolean pessoal = caminho.equals("/cloudinary-signature") || caminho.equals("/minha-empresa-servlet") || caminho.equals("/ver-empresa.jsp") || caminho.equals("/perfil-servlet") || caminho.equals("/perfil-colaborador.jsp")
+                || caminho.equals("/perfis/colaborador.jsp")
+                || caminho.equals("/empresa/detalhes.jsp")
+                || caminho.equals("/WEB-INF/views/perfis/colaborador.jsp")
+                || caminho.equals("/WEB-INF/views/empresa/detalhes.jsp")
                 || caminho.equals("/perfil-colaborador.html") || caminho.equals("/logout-servlet");
         boolean administrador = usuario instanceof AdministradorGeral adm
                 && adm.getAdm_geral_id() != null && adm.getAdm_geral_id() > 0;

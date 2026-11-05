@@ -26,11 +26,11 @@ import java.sql.Date;
 import java.util.List;
 
 /** Recebe as requisições de Problema e prepara os dados para as páginas JSP. */
-@WebServlet(name = "ProblemaServlet", value = "/problema-servlet")
+@WebServlet(name = "ProblemaServlet", value = {"/problema-servlet", "/crud/problema.jsp"})
 public class ProblemaServlet extends HttpServlet {
 
-    private static final String PAGINA_PROBLEMA = "/crud/problema.jsp";
-    private static final String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_PROBLEMA = "/WEB-INF/views/crud/problema.jsp";
+    private static final String PAGINA_ERRO = "/WEB-INF/views/erros/erro.jsp";
     private final ProblemaDAO DAO = new ProblemaDAO();
     private final CicloDAO CICLO_DAO = new CicloDAO();
 

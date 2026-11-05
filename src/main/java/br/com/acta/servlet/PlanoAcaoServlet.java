@@ -24,11 +24,11 @@ import java.io.IOException;
 import java.util.List;
 
 /** Recebe as requisições de PlanoAcao e prepara os dados para as páginas JSP. */
-@WebServlet(name = "PlanoAcao", value = "/planoAcao-servlet")
+@WebServlet(name = "PlanoAcao", value = {"/planoAcao-servlet", "/crud/planoAcao.jsp"})
 public class PlanoAcaoServlet extends HttpServlet {
 
-    private static final String PAGINA_PLANOACAO = "/crud/planoAcao.jsp";
-    private static final String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_PLANOACAO = "/WEB-INF/views/crud/planoAcao.jsp";
+    private static final String PAGINA_ERRO = "/WEB-INF/views/erros/erro.jsp";
     private final PlanoAcaoDAO DAO = new PlanoAcaoDAO();
 
     /** Atende consultas e converte as falhas em respostas HTTP. */
