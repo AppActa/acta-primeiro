@@ -74,12 +74,19 @@ public class PerfilServlet extends HttpServlet {
                 String email = Validador.email(req.getParameter("email"));
                 campoErro = "telefone";
                 String telefone = Validador.telefone(req.getParameter("telefone"));
+                Colaborador dados = new Colaborador();
+                dados.setId_colaborador(col.getId_colaborador());
+                dados.setNome(nome);
+                dados.setSobrenome(sobrenome);
+                dados.setEmail(email);
+                dados.setTelefone(telefone);
+                campoErro = null;
+                DAO.atualizarPerfil(dados);
+                // Sincroniza a sessão somente depois da gravação confirmada pelo DAO.
                 col.setNome(nome);
                 col.setSobrenome(sobrenome);
                 col.setEmail(email);
                 col.setTelefone(telefone);
-                campoErro = null;
-                DAO.atualizarPerfil(col);
             } else if ("alterarFoto".equals(req.getParameter("acao"))) {
                 campoErro = "imagem";
                 String imagem = req.getParameter("imagem");
