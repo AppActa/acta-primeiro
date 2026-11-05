@@ -108,7 +108,7 @@ O `LoginFilter`, no pacote `br.com.acta.servlet`, protege os CRUDs, perfis, cons
 
 Novos endpoints administrativos devem ser incluídos no mapeamento do filtro. A tela de login é acessada por `/login`, com autenticação em `/login-servlet`. Contas administrativas são pré-cadastradas; `/administrador-geral-servlet` permite alterar a própria conta autenticada, sem cadastro público de administradores.
 
-Novas senhas usam o formato `{acta-v2}`: HMAC-SHA384 com o pepper, codificado em Base64 antes do BCrypt. Isso preserva toda a senha dentro do limite de 100 caracteres da aplicação. Hashes BCrypt antigos continuam aceitos quando `pepper + senha` ocupa menos de 72 bytes UTF-8. Entradas antigas no limite ou acima dele precisam de redefinição por um responsável: o hash truncado não permite recuperar ou confirmar o sufixo original. Não substitua o pepper existente durante a atualização nem regrave hashes antigos sem conhecer a senha.
+Novas senhas usam o formato `{acta-v2}`: HMAC-SHA384 com o pepper, codificado em Base64 antes do BCrypt. Isso preserva toda a senha dentro do limite de 100 caracteres da aplicação. Hashes BCrypt antigos continuam sendo verificados pelo algoritmo original, sem bloquear contas pelo tamanho de `pepper + senha`. Esses hashes mantêm a limitação original de 72 bytes UTF-8 do BCrypt; para eliminá-la em uma conta existente, altere a senha pelo fluxo autenticado, que grava o formato v2. Não substitua o pepper existente durante a atualização nem regrave hashes antigos sem conhecer a senha.
 
 ## ✅ Pré-requisitos e configuração
 

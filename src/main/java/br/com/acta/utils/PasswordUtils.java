@@ -32,10 +32,8 @@ public class PasswordUtils {
         if (hash.startsWith(PREFIXO_V2)) {
             return Password.check(prepararSenha(senha), hash.substring(PREFIXO_V2.length())).withBcrypt();
         }
-        // Os hashes antigos recebiam pepper + senha. Entradas truncadas exigem redefinição.
-        if ((PEPPER + senha).getBytes(StandardCharsets.UTF_8).length >= 72) {
-            return false;
-        }
+        // Preserva a verificação original das contas existentes, inclusive o limite do BCrypt.
+        // O formato v2 passa a valer quando a senha é criada ou alterada.
         return Password.check(senha, hash).addPepper(PEPPER).withBcrypt();
     }
 
