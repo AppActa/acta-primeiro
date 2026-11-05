@@ -18,14 +18,17 @@ public final class CsrfToken {
 
     /** Reutiliza o token da sessão ou cria um valor aleatório de 32 bytes. */
     public static String getOrCreate(HttpSession session) {
-        String token = (String) session.getAttribute(SESSION_KEY);
-        if (token == null) {
-            byte[] bytes = new byte[32];
-            RANDOM.nextBytes(bytes);
-            token = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-            session.setAttribute(SESSION_KEY, token);
+        // Requisições simultâneas da mesma sessão devem receber o mesmo token.
+        synchronized (session) {
+            String token = (String) session.getAttribute(SESSION_KEY);
+            if (token == null) {
+                byte[] bytes = new byte[32];
+                RANDOM.nextBytes(bytes);
+                token = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+                session.setAttribute(SESSION_KEY, token);
+            }
+            return token;
         }
-        return token;
     }
 
     /** Confere o token recebido com o da sessão, sem criar outra sessão. */
