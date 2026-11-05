@@ -9,8 +9,8 @@ O repositório reúne uma página institucional e uma aplicação web administra
 ## O que há neste repositório
 
 - `src/main/java/br/com/acta`: aplicação Java, separada em modelos, DAOs (acesso a dados), Servlets (requisições web), enums, validações, utilitários e exceções.
-- `src/main/webapp/index.html`: página institucional do ACTA, com apresentação do PDCA, recursos, planos, perguntas frequentes e informações sobre o projeto e a equipe.
-- `src/main/webapp/login.jsp` e `src/main/webapp/crud`: login e telas JSP de gerenciamento de empresas, endereços, colaboradores, ciclos, metas, problemas, planos de ação, tarefas e lições aprendidas.
+- `src/main/webapp/WEB-INF/views/index.jsp`: página institucional do ACTA, acessada pelo `InicioServlet` na raiz ou em `/inicio`.
+- `src/main/webapp/WEB-INF/views`: JSPs de autenticação, CRUDs, perfis, empresa e erros, organizadas por assunto e acessadas pelos controladores. O navegador não abre esses arquivos diretamente.
 - `src/main/webapp/assets`: arquivos CSS, JavaScript, imagens, ícones e fontes usados nas páginas.
 - `src/main/resources/sql`: `script_banco.sql` define o esquema, tipos e relacionamentos do banco; `script_views.sql` cria views para consultas.
 - `pom.xml`, `mvnw` e `mvnw.cmd`: configuração e wrapper do Maven. O projeto é empacotado como uma aplicação web WAR.
@@ -28,23 +28,27 @@ O repositório reúne uma página institucional e uma aplicação web administra
 
 ## Área administrativa e funcionalidades implementadas
 
-O login do backend autentica administradores gerais. Após a autenticação, os Servlets e DAOs permitem consultar, cadastrar, editar e excluir registros no PostgreSQL pelas telas de CRUD. As entidades com telas de gerenciamento são empresas, endereços, colaboradores, ciclos PDCA, metas, problemas, planos de ação, tarefas e lições aprendidas. Os registros se relacionam entre si, por exemplo, ciclos com empresas e responsáveis, e tarefas com planos de ação e colaboradores.
+O login do backend autentica administradores gerais e colaboradores ativos. O acesso aos CRUDs exige administrador geral. Após a autenticação administrativa, os Servlets e DAOs permitem consultar, cadastrar, editar e excluir registros no PostgreSQL pelas telas de CRUD. As entidades com telas de gerenciamento são empresas, endereços, colaboradores, ciclos PDCA, metas, problemas, planos de ação, tarefas e lições aprendidas. Os registros se relacionam entre si, por exemplo, ciclos com empresas e responsáveis, e tarefas com planos de ação e colaboradores.
 
 Também estão implementados o acompanhamento da etapa e situação dos ciclos, validações de dados, mensagens de sucesso e erro, filtros e ordenação nas listagens que oferecem esses controles, além de views SQL que apresentam dados relacionados. Senhas são armazenadas com hash bcrypt e pepper configurado por variável de ambiente.
 
-O `LoginFilter`, no pacote `br.com.acta.servlet`, protege `/crud/*` e os endpoints administrativos, incluindo o gerenciamento de administradores e a assinatura de upload. O acesso exige `usuarioLogado` na sessão do servidor, do tipo `AdministradorGeral`, com ID positivo. Parâmetros de URL e formulário não concedem permissões. Sem sessão, navegações GET/HEAD são redirecionadas para `/login.jsp`; outras operações recebem HTTP 401. Sessões de outros perfis recebem HTTP 403. O filtro também protege encaminhamentos e inclusões internos e envia `Cache-Control: no-store`.
+O `LoginFilter`, no pacote `br.com.acta.servlet`, protege os CRUDs, perfis, consulta da própria empresa e assinatura de upload, incluindo encaminhamentos para as views em `WEB-INF`. O acesso administrativo exige `usuarioLogado` na sessão do servidor, do tipo `AdministradorGeral`, com ID positivo. Colaboradores ativos podem acessar suas rotas pessoais, logout e assinatura de upload. Parâmetros de URL e formulário não concedem permissões. Sem sessão, navegações GET/HEAD são redirecionadas para `/login`; outras operações recebem HTTP 401. Perfis sem autorização recebem HTTP 403. O filtro também protege encaminhamentos e inclusões internos e envia `Cache-Control: no-store`.
 
-Novos endpoints administrativos devem ser incluídos no mapeamento do filtro. O login público continua em `/login-servlet`; operações de cadastro e alteração de administradores em `/administrador-geral-servlet` exigem um administrador já autenticado.
+Novos endpoints administrativos devem ser incluídos no mapeamento do filtro. A tela de login é acessada por `/login`, com autenticação em `/login-servlet`. Contas administrativas são pré-cadastradas; `/administrador-geral-servlet` permite alterar a própria conta autenticada, sem cadastro público de administradores.
 
-Execute `.\mvnw.cmd test` para testar os bloqueios por HTTP em um Tomcat local isolado, sem consultar ou modificar o banco. Os testes usam destinos sentinela e sessões preparadas exclusivamente no servidor de teste para verificar acessos anônimos, perfis incorretos, logout, URLs manipuladas e a liberação das operações para administrador geral.
+O diretório `src/test` foi removido por decisão do responsável pelo projeto. O comando de compilação abaixo não comprova a execução de testes automatizados. Validações em banco de produção devem ser somente de leitura.
 
 ## Compilação
 
 Com o Java 21 instalado, o wrapper do Maven pode gerar o WAR:
 
 ```powershell
-.\mvnw.cmd package
+.\mvnw.cmd clean package
 ```
+
+Use `clean package` ao preparar a entrega: ele remove saídas de compilações anteriores para que páginas e recursos excluídos não permaneçam no WAR.
+
+Novas senhas usam o formato `{acta-v2}`: HMAC-SHA384 com o pepper, codificado em Base64 antes do BCrypt. Isso preserva toda a senha dentro do limite de 100 caracteres da aplicação. Hashes BCrypt antigos continuam aceitos quando `pepper + senha` ocupa menos de 72 bytes UTF-8. Entradas antigas no limite ou acima dele precisam de redefinição por um responsável: o hash truncado não permite recuperar ou confirmar o sufixo original. Não substitua o pepper existente durante a atualização nem regrave hashes antigos sem conhecer a senha.
 
 O artefato é gerado em `target/ACTA-1.0-SNAPSHOT.war`. Para executar a aplicação, configure as variáveis de banco indicadas em `.env.example` e faça o deploy em um servidor compatível com Jakarta Servlet. O script `src/main/resources/sql/script_banco.sql` recria o esquema, mas primeiro apaga tabelas existentes; execute-o somente em um banco novo ou descartável.
 
