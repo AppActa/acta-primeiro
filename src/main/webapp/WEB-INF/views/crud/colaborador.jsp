@@ -164,12 +164,9 @@ if (request.getAttribute("mensagemErro") != null && "atualizar".equals(request.g
                                                 <input type="text" id="filtros-colaborador-cargo" name="cargo" data-lista="sugestoes-colaborador-cargo-lista" autocomplete="off" placeholder="Todos" value="<%= h(filtroCargo) %>">
                                             </div>
                                             <div class="campo">
-                                                <span class="rotulo-campo">Permissão de gestor</span>
-<div class="permissao-opcoes" role="group" aria-label="Permissão de gestor">
-<label class="permissao-opcao"><input type="radio" name="gestor" value="" <%= !"true".equals(filtroGestor) && !"false".equals(filtroGestor) ? "checked" : "" %>><span>Todos</span></label>
-<label class="permissao-opcao"><input type="radio" name="gestor" value="true" <%= "true".equals(filtroGestor) ? "checked" : "" %>><span>Sim</span></label>
-<label class="permissao-opcao"><input type="radio" name="gestor" value="false" <%= "false".equals(filtroGestor) ? "checked" : "" %>><span>Não</span></label>
-</div>
+                                                <label for="filtros-colaborador-gestor">Permissão de gestor</label>
+                                                <input type="text" id="filtros-colaborador-gestor" data-lista="sugestoes-permissao-gestor-lista" data-validar-lista data-campo-valor="filtros-colaborador-gestor-valor" autocomplete="off" placeholder="Todos">
+<input type="hidden" id="filtros-colaborador-gestor-valor" name="gestor" value="<%= h(filtroGestor) %>">
                                             </div>
                                             <div class="campo periodo-datas">
                                                 <span class="rotulo-campo">Contratação</span>
@@ -484,11 +481,9 @@ if (recuperarCadastro) {
                                         </select>
                                     </div>
                                     <div class="campo">
-                                        <span class="rotulo-campo">Permissão de gestor</span>
-<div class="permissao-opcoes" role="group" aria-label="Permissão de gestor">
-<label class="permissao-opcao"><input type="radio" name="permissao_gestor" value="true" <%= "true".equals(valorPermissaoGestorCadastro) ? "checked" : "" %>><span>Sim</span></label>
-<label class="permissao-opcao"><input type="radio" name="permissao_gestor" value="false" <%= !"true".equals(valorPermissaoGestorCadastro) ? "checked" : "" %>><span>Não</span></label>
-</div>
+                                        <label for="cad-colaborador-permissao_gestor">Permissão de gestor</label>
+                                        <input type="text" id="cad-colaborador-permissao_gestor" data-lista="sugestoes-permissao-gestor-lista" data-validar-lista data-campo-valor="cad-colaborador-permissao_gestor-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="cad-colaborador-permissao_gestor-valor" name="permissao_gestor" value="<%= h(valorPermissaoGestorCadastro == null || valorPermissaoGestorCadastro.isBlank() ? "false" : valorPermissaoGestorCadastro) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="cad-colaborador-id_empresa">Empresa</label>
@@ -575,11 +570,9 @@ if (recuperarEdicao) {
                                         </select>
                                     </div>
                                     <div class="campo">
-                                        <span class="rotulo-campo">Permissão de gestor</span>
-<div class="permissao-opcoes" role="group" aria-label="Permissão de gestor">
-<label class="permissao-opcao"><input type="radio" name="permissao_gestor" value="true" <%= "true".equals(valorPermissaoGestorEdicao) ? "checked" : "" %>><span>Sim</span></label>
-<label class="permissao-opcao"><input type="radio" name="permissao_gestor" value="false" <%= !"true".equals(valorPermissaoGestorEdicao) ? "checked" : "" %>><span>Não</span></label>
-</div>
+                                        <label for="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>">Permissão de gestor</label>
+                                        <input type="text" id="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>" data-lista="sugestoes-permissao-gestor-lista" data-validar-lista data-campo-valor="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>-valor" autocomplete="off" placeholder="Selecione" required>
+<input type="hidden" id="edi-colaborador-permissao_gestor-<%= colaborador.getId_colaborador() %>-valor" name="permissao_gestor" value="<%= h(valorPermissaoGestorEdicao == null || valorPermissaoGestorEdicao.isBlank() ? "false" : valorPermissaoGestorEdicao) %>">
                                     </div>
                                     <div class="campo">
                                         <label for="edi-colaborador-id_empresa-<%= colaborador.getId_colaborador() %>">Empresa</label>
@@ -652,6 +645,13 @@ if (recuperarEdicao) {
 <button type="button" role="option" data-valor="<%= opcao.getId_empresa() %>"><%= h(nomeOpcao) %></button>
 <% }
 } %>
+                <button type="button" role="option" data-limpar>Limpar seleção</button>
+<p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
+</div>
+                <div id="sugestoes-permissao-gestor-lista" class="lista-escolhas" role="listbox" hidden>
+<% for (boolean opcao : new boolean[]{false, true}) { %>
+<button type="button" role="option" data-valor="<%= opcao %>"><%= opcao ? "Sim" : "Não" %></button>
+<% } %>
                 <button type="button" role="option" data-limpar>Limpar seleção</button>
 <p class="lista-vazia" role="status" hidden>Nenhuma opção encontrada.</p>
 </div>

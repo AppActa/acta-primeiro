@@ -1,6 +1,6 @@
 @import url('../base/tema-acta.css');
 
-/* Estrutura compartilhada por login e cadastro. */
+/* Regras idênticas ao visual anterior, compartilhadas por login e cadastro. */
 :root {
     --cor-pagina: #5A5A5A;
     --cor-cartao: var(--acta-fundo);
@@ -73,19 +73,6 @@
         radial-gradient(circle at 15% 100%, #E6FCFF 0%, transparent 45%),
         radial-gradient(circle at 100% 0%, #AEE2E2 0%, transparent 50%),
         #C9F0F0;
-}
-
-.login-slogan {
-    font-size: 1.5rem;
-    line-height: 1.3;
-    color: #0B2A3A;
-}
-
-.login-slogan strong {
-    display: block;
-    margin-top: 4px;
-    font-size: 1.6rem;
-    font-weight: 700;
 }
 
 .login-descricao {

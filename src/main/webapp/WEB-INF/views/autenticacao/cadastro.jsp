@@ -87,13 +87,11 @@ private String erroCampo(jakarta.servlet.http.HttpServletRequest req, String cam
                     </div>
                     <div class="login-campo">
                         <label for="cadastro-id_empresa">Empresa</label>
-                        <input type="text" id="cadastro-id_empresa" list="cadastro-empresas" autocomplete="off" placeholder="Digite o nome da empresa" required data-empresa-nome>
-                        <input type="hidden" name="id_empresa" value="<%= h(dados.get("id_empresa")) %>" data-empresa-id>
-                        <datalist id="cadastro-empresas">
+                        <select id="cadastro-id_empresa" name="id_empresa" required>
+                            <option value="">Selecione</option>
 <% for (Empresa empresa : (List<Empresa>) request.getAttribute("empresaOpcoes")) { %>
-                            <option value="<%= h(empresa.getNome() + " (#" + empresa.getId_empresa() + ")") %>" data-id="<%= empresa.getId_empresa() %>"></option>
-<% } %>
-                        </datalist><%= erroCampo(request, "id_empresa") %>
+<option value="<%= empresa.getId_empresa() %>" <%= String.valueOf(empresa.getId_empresa()).equals(dados.get("id_empresa")) ? "selected" : "" %>><%= h(empresa.getNome()) %></option><% } %>
+                        </select><%= erroCampo(request, "id_empresa") %>
                     </div>
                     <button type="submit" class="login-esqueceu" data-cadastrar-empresa>Minha empresa não está cadastrada</button><div class="cadastro-acoes"><button type="button" class="login-botao cadastro-voltar" data-voltar>Voltar</button><button type="submit" class="login-botao">Concluir cadastro</button></div></fieldset>
  </form>

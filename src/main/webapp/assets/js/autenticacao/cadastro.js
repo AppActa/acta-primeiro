@@ -2,21 +2,6 @@
 document.querySelectorAll('[data-cadastro]').forEach(function (formulario) {
     const etapas = formulario.querySelectorAll('[data-etapa]');
     const indicador = document.querySelector('[data-etapa-atual]');
-    const empresaNome = formulario.querySelector('[data-empresa-nome]');
-    const empresaId = formulario.querySelector('[data-empresa-id]');
-    if (empresaNome && empresaId) {
-        const opcoes = Array.from(empresaNome.list.options);
-        const selecionada = opcoes.find(opcao => opcao.dataset.id === empresaId.value);
-        empresaNome.value = selecionada ? selecionada.value : '';
-        function atualizarEmpresa() {
-            const opcao = opcoes.find(item => item.value === empresaNome.value);
-            empresaId.value = opcao ? opcao.dataset.id : '';
-            empresaNome.setCustomValidity(empresaNome.value && !opcao ? 'Selecione uma empresa da lista.' : '');
-        }
-        empresaNome.addEventListener('input', atualizarEmpresa);
-        empresaNome.addEventListener('change', atualizarEmpresa);
-        atualizarEmpresa();
-    }
 
     function mostrarEtapa(numero, focar) {
         etapas.forEach(function (etapa) {
