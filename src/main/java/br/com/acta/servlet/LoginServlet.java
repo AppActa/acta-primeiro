@@ -29,6 +29,9 @@ public class LoginServlet extends HttpServlet {
     // Até cinco falhas por IP em uma janela de quinze minutos.
     private static final int MAX_TENTATIVAS = 5;
     private static final long JANELA_MS = 15 * 60 * 1000L;
+    private static final int MAX_IPS = 10000;
+    private static final long INTERVALO_LIMPEZA_MS = 60 * 1000L;
+    private static long ultimaLimpeza;
     private static final ConcurrentHashMap<String, Tentativas> TENTATIVAS = new ConcurrentHashMap<>();
     private static final String PAGINA_LOGIN = "/autenticacao/login.jsp";
     private static final String PAGINA_ERRO = "/erro.jsp";
@@ -72,48 +75,92 @@ public class LoginServlet extends HttpServlet {
     /** Identifica a conta pelas credenciais verificadas, nunca por parâmetros de permissão. */
     private void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String chaveTentativa = req.getRemoteAddr();
-        Tentativas tentativas = TENTATIVAS.computeIfAbsent(chaveTentativa, ignorado -> new Tentativas());
-        // Protege a consulta ao contador contra requisições simultâneas.
-        synchronized (tentativas) {
-            tentativas.resetarSeExpirou();
-            if (tentativas.quantidade >= MAX_TENTATIVAS) {
-                resp.setStatus(429);
-                req.setAttribute("mensagemErro", "Muitas tentativas. Aguarde 15 minutos e tente novamente.");
-                req.getRequestDispatcher(PAGINA_LOGIN).forward(req, resp);
-                return;
-            }
-        }
-        req.setAttribute("campoErro", "email");
-        String email = Validador.email(req.getParameter("email"));
-        req.setAttribute("campoErro", "senha");
-        String senha = req.getParameter("senha");
-        if (senha == null || senha.isEmpty() || senha.length() > 100) {
-            throw new ValidacaoException("Informe o e-mail e a senha.");
-        }
-
-        req.removeAttribute("campoErro");
-        AdministradorGeral adm = ADMINISTRADOR_DAO.autenticar(email, senha);
-        Colaborador colaborador = adm == null ? COLABORADOR_DAO.autenticar(email, senha) : null;
-        if (adm == null && (colaborador == null || colaborador.getStatus() != Status.ATIVA)) {
-            synchronized (tentativas) {
-                tentativas.registrarFalha();
-            }
-            req.setAttribute("campoErro", "senha");
-            enviarErroLogin(req, resp, "Email ou senha inválidos");
+        Tentativas tentativas = obterTentativas(chaveTentativa);
+        if (tentativas == null) {
+            resp.setStatus(429);
+            req.setAttribute("mensagemErro", "Muitas tentativas no momento. Aguarde e tente novamente.");
+            req.getRequestDispatcher(PAGINA_LOGIN).forward(req, resp);
             return;
         }
-        TENTATIVAS.remove(chaveTentativa);
+        try {
+            // Mantém a conferência e o resultado da autenticação no mesmo bloqueio por IP.
+            synchronized (tentativas) {
+                tentativas.resetarSeExpirou();
+                if (tentativas.quantidade >= MAX_TENTATIVAS) {
+                    resp.setStatus(429);
+                    req.setAttribute("mensagemErro", "Muitas tentativas. Aguarde 15 minutos e tente novamente.");
+                    req.getRequestDispatcher(PAGINA_LOGIN).forward(req, resp);
+                    return;
+                }
+                req.setAttribute("campoErro", "email");
+                String email = Validador.email(req.getParameter("email"));
+                req.setAttribute("campoErro", "senha");
+                String senha = req.getParameter("senha");
+                if (senha == null || senha.isEmpty() || senha.length() > 100) {
+                    throw new ValidacaoException("Informe o e-mail e a senha.");
+                }
 
-        // Evita manter o hash da senha no objeto salvo na sessão.
-        if (adm != null) adm.setSenha(null);
-        else colaborador.setSenha(null);
-        req.getSession(true);
-        // Renova o identificador após a autenticação.
-        req.changeSessionId();
-        req.getSession().setAttribute("usuarioLogado", adm != null ? adm : colaborador);
-        req.getSession().removeAttribute(CsrfToken.SESSION_KEY);
-        CsrfToken.getOrCreate(req.getSession());
-        resp.sendRedirect(req.getContextPath() + "/index.jsp");
+                req.removeAttribute("campoErro");
+                AdministradorGeral adm = ADMINISTRADOR_DAO.autenticar(email, senha);
+                Colaborador colaborador = adm == null ? COLABORADOR_DAO.autenticar(email, senha) : null;
+                if (adm == null && (colaborador == null || colaborador.getStatus() != Status.ATIVA)) {
+                    tentativas.registrarFalha();
+                    req.setAttribute("campoErro", "senha");
+                    enviarErroLogin(req, resp, "Email ou senha inválidos");
+                    return;
+                }
+                // Mantém o mesmo contador para requisições que já aguardam este bloqueio.
+                tentativas.quantidade = 0;
+                tentativas.inicio = Instant.now().toEpochMilli();
+
+                // Evita manter o hash da senha no objeto salvo na sessão.
+                if (adm != null) adm.setSenha(null);
+                else colaborador.setSenha(null);
+                req.getSession(true);
+                // Renova o identificador após a autenticação.
+                req.changeSessionId();
+                req.getSession().setAttribute("usuarioLogado", adm != null ? adm : colaborador);
+                req.getSession().removeAttribute(CsrfToken.SESSION_KEY);
+                CsrfToken.getOrCreate(req.getSession());
+                resp.sendRedirect(req.getContextPath() + "/index.jsp");
+            }
+        } finally {
+            liberarTentativas(chaveTentativa, tentativas);
+        }
+    }
+
+    /** Reserva o contador e remove entradas expiradas que não estão em uso. */
+    private static Tentativas obterTentativas(String ip) {
+        synchronized (TENTATIVAS) {
+            long agora = Instant.now().toEpochMilli();
+            if (agora - ultimaLimpeza >= INTERVALO_LIMPEZA_MS || TENTATIVAS.size() >= MAX_IPS) {
+                for (var entrada : TENTATIVAS.entrySet()) {
+                    Tentativas contador = entrada.getValue();
+                    if (contador.emUso == 0 && agora - contador.inicio >= JANELA_MS) {
+                        TENTATIVAS.remove(entrada.getKey(), contador);
+                    }
+                }
+                ultimaLimpeza = agora;
+            }
+            Tentativas contador = TENTATIVAS.get(ip);
+            if (contador == null) {
+                if (TENTATIVAS.size() >= MAX_IPS) return null;
+                contador = new Tentativas();
+                TENTATIVAS.put(ip, contador);
+            }
+            contador.emUso++;
+            return contador;
+        }
+    }
+
+    /** Não descarta um contador enquanto houver requisições aguardando seu bloqueio. */
+    private static void liberarTentativas(String ip, Tentativas contador) {
+        synchronized (TENTATIVAS) {
+            contador.emUso--;
+            if (contador.emUso == 0 && contador.quantidade == 0) {
+                TENTATIVAS.remove(ip, contador);
+            }
+        }
     }
 
     /** Volta à página de login com a mensagem para o usuário. */
@@ -135,6 +182,7 @@ public class LoginServlet extends HttpServlet {
     /** Mantém a contagem de falhas e o início da janela de quinze minutos. */
     private static final class Tentativas {
         private int quantidade;
+        private int emUso;
         private long inicio = Instant.now().toEpochMilli();
 
         /** Zera a contagem quando a janela de tentativas expira. */
