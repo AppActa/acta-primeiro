@@ -87,21 +87,11 @@ private String erroCampo(jakarta.servlet.http.HttpServletRequest req, String cam
                     </div>
                     <div class="login-campo">
                         <label for="cadastro-id_empresa">Empresa</label>
-                        <div class="cadastro-empresa" data-empresa-seletor>
-                            <input type="text" id="cadastro-id_empresa" autocomplete="off" placeholder="Digite o nome da empresa" required data-empresa-nome role="combobox" aria-autocomplete="list" aria-controls="cadastro-empresas" aria-expanded="false">
-                            <input type="hidden" name="id_empresa" value="<%= h(dados.get("id_empresa")) %>" data-empresa-id>
-                            <div id="cadastro-empresas" class="cadastro-empresas" role="listbox" aria-label="Empresas" hidden>
-<% List<Empresa> empresasCadastro = (List<Empresa>) request.getAttribute("empresaOpcoes");
-   Map<String, Integer> nomesEmpresas = new java.util.HashMap<>();
-   for (Empresa empresa : empresasCadastro) {
-       nomesEmpresas.merge(empresa.getNome().trim(), 1, Integer::sum);
-   }
-   for (Empresa empresa : empresasCadastro) { %>
-                                <button type="button" role="option" tabindex="-1" id="cadastro-empresa-opcao-<%= empresa.getId_empresa() %>" data-id="<%= empresa.getId_empresa() %>" data-nome="<%= h(empresa.getNome().trim()) %>" aria-selected="false"><span><%= h(empresa.getNome().trim()) %></span><% if (nomesEmpresas.get(empresa.getNome().trim()) > 1) { %><small>CNPJ: <%= h(empresa.getCnpj()) %></small><% } %></button>
-<% } %>
-                                <p data-empresa-vazia role="status" hidden>Nenhuma empresa encontrada.</p>
-                            </div>
-                        </div><%= erroCampo(request, "id_empresa") %>
+                        <select id="cadastro-id_empresa" name="id_empresa" required>
+                            <option value="">Selecione</option>
+<% for (Empresa empresa : (List<Empresa>) request.getAttribute("empresaOpcoes")) { %>
+<option value="<%= empresa.getId_empresa() %>" <%= String.valueOf(empresa.getId_empresa()).equals(dados.get("id_empresa")) ? "selected" : "" %>><%= h(empresa.getNome()) %></option><% } %>
+                        </select><%= erroCampo(request, "id_empresa") %>
                     </div>
                     <button type="submit" class="login-esqueceu" data-cadastrar-empresa>Minha empresa não está cadastrada</button><div class="cadastro-acoes"><button type="button" class="login-botao cadastro-voltar" data-voltar>Voltar</button><button type="submit" class="login-botao">Concluir cadastro</button></div></fieldset>
  </form>

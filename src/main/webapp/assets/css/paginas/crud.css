@@ -592,44 +592,6 @@ td.coluna-acao {
     gap: 10px;
 }
 
-.permissao-opcoes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.campo .permissao-opcao {
-    position: relative;
-    margin: 0;
-    cursor: pointer;
-}
-
-.campo .permissao-opcao input {
-    position: absolute;
-    opacity: 0;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-}
-
-.permissao-opcao span {
-    display: block;
-    padding: 8px 16px;
-    border: 1px solid var(--cor-borda);
-    border-radius: 999px;
-}
-
-.permissao-opcao input:checked + span {
-    background-color: var(--cor-primaria);
-    border-color: var(--cor-primaria);
-    color: #fff;
-}
-
-.permissao-opcao input:focus-visible + span {
-    outline: 2px solid var(--cor-primaria);
-    outline-offset: 3px;
-}
-
 .opcao-radio {
     flex: 1;
     display: flex;
