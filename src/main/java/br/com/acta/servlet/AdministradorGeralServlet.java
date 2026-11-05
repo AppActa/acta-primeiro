@@ -196,11 +196,14 @@ public class AdministradorGeralServlet extends HttpServlet {
             return;
         }
         req.setAttribute("campoErro", "senha_antiga");
-        String senhaAntiga = Validador.obrigatorio(req.getParameter("senha_antiga"), "Senha atual");
+        String senhaAntiga = req.getParameter("senha_antiga");
+        if (senhaAntiga == null || senhaAntiga.isEmpty() || senhaAntiga.length() > 100) {
+            throw new ValidacaoException("Informe a senha atual.");
+        }
         req.setAttribute("campoErro", "senha_nova");
         String senhaNova = Validador.senha(req.getParameter("senha_nova"));
         req.setAttribute("campoErro", "senha_confirmar");
-        String senhaConfirmar = Validador.obrigatorio(req.getParameter("senha_confirmar"), "Confirmação da senha");
+        String senhaConfirmar = req.getParameter("senha_confirmar");
         if (!senhaNova.equals(senhaConfirmar)) {
             enviarErro(req, resp, "A confirmação da nova senha não confere.", HttpServletResponse.SC_BAD_REQUEST);
             return;
