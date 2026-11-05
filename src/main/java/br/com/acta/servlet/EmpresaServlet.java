@@ -22,11 +22,11 @@ import java.io.IOException;
 import java.util.List;
 
 /** Recebe as requisições de Empresa e prepara os dados para as páginas JSP. */
-@WebServlet(name = "EmpresaServlet", value = "/empresa-servlet")
+@WebServlet(name = "EmpresaServlet", value = {"/empresa-servlet", "/crud/empresa.jsp"})
 public class EmpresaServlet extends HttpServlet {
 
-    private static final String PAGINA_EMPRESA = "/crud/empresa.jsp";
-    private static final String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_EMPRESA = "/WEB-INF/views/crud/empresa.jsp";
+    private static final String PAGINA_ERRO = "/WEB-INF/views/erros/erro.jsp";
     private static final EmpresaDAO DAO = new EmpresaDAO();
 
     /** Atende consultas e converte as falhas em respostas HTTP. */

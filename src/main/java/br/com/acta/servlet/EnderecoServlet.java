@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.util.List;
 
 /** Recebe as requisições de Endereco e prepara os dados para as páginas JSP. */
-@WebServlet(name = "EnderecoServlet", value = "/endereco-servlet")
+@WebServlet(name = "EnderecoServlet", value = {"/endereco-servlet", "/crud/endereco.jsp"})
 public class EnderecoServlet extends HttpServlet {
 
-    private static final String PAGINA_ENDERECO = "/crud/endereco.jsp";
-    private static final String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_ENDERECO = "/WEB-INF/views/crud/endereco.jsp";
+    private static final String PAGINA_ERRO = "/WEB-INF/views/erros/erro.jsp";
     private final EnderecoDAO DAO = new EnderecoDAO();
 
     /** Atende consultas e converte as falhas em respostas HTTP. */

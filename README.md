@@ -102,6 +102,14 @@ No perfil, clique em **Sair**. Na janela de confirmação, escolha **Confirmar s
 
 As dependências e versões estão declaradas em [`pom.xml`](pom.xml).
 
+## Segurança e senhas
+
+O `LoginFilter`, no pacote `br.com.acta.servlet`, protege os CRUDs, perfis, consulta da própria empresa e assinatura de upload, incluindo encaminhamentos para as views em `WEB-INF`. O acesso administrativo exige `usuarioLogado` na sessão do servidor, do tipo `AdministradorGeral`, com ID positivo. Colaboradores ativos podem acessar suas rotas pessoais, logout e assinatura de upload. Parâmetros de URL e formulário não concedem permissões. Sem sessão, navegações GET/HEAD são redirecionadas para `/login`; outras operações recebem HTTP 401. Perfis sem autorização recebem HTTP 403. O filtro também protege encaminhamentos e inclusões internos e envia `Cache-Control: no-store`.
+
+Novos endpoints administrativos devem ser incluídos no mapeamento do filtro. A tela de login é acessada por `/login`, com autenticação em `/login-servlet`. Contas administrativas são pré-cadastradas; `/administrador-geral-servlet` permite alterar a própria conta autenticada, sem cadastro público de administradores.
+
+Novas senhas usam o formato `{acta-v2}`: HMAC-SHA384 com o pepper, codificado em Base64 antes do BCrypt. Isso preserva toda a senha dentro do limite de 100 caracteres da aplicação. Hashes BCrypt antigos continuam aceitos quando `pepper + senha` ocupa menos de 72 bytes UTF-8. Entradas antigas no limite ou acima dele precisam de redefinição por um responsável: o hash truncado não permite recuperar ou confirmar o sufixo original. Não substitua o pepper existente durante a atualização nem regrave hashes antigos sem conhecer a senha.
+
 ## ✅ Pré-requisitos e configuração
 
 Para executar uma instalação própria, prepare JDK 21, PostgreSQL e um servidor compatível com Jakarta Servlet 6.1, como o Tomcat 11. O projeto também inclui um [`Dockerfile`](Dockerfile) para publicação em contêiner.
@@ -126,9 +134,8 @@ Os scripts estão em [`src/main/resources/sql`](src/main/resources/sql):
 
 - [`script_banco.sql`](src/main/resources/sql/script_banco.sql): estrutura das tabelas, tipos e restrições.
 - [`script_views.sql`](src/main/resources/sql/script_views.sql): consultas que relacionam os dados utilizados nas telas.
-- [`migrations/v2_perfil_colaborador.sql`](src/main/resources/sql/migrations/v2_perfil_colaborador.sql): atualização de um banco existente para incluir a imagem do colaborador e atualizar a view correspondente, preservando os registros.
 
-**O `script_banco.sql` remove tabelas existentes antes de recriá-las. Execute-o apenas em um banco novo ou com backup adequado.** Em instalações existentes, utilize as migrações necessárias à versão instalada.
+**O `script_banco.sql` remove tabelas existentes antes de recriá-las. Execute-o apenas em um banco novo ou com backup adequado.** Em instalações existentes, confira a compatibilidade do esquema e das views antes da atualização; a migração antiga de perfil foi removida deste repositório.
 
 ## 🚀 Compilação e execução
 
@@ -144,14 +151,16 @@ Com o JDK 21 instalado, gere o pacote pelo Maven Wrapper.
 **Windows:**
 
 ```powershell
-.\mvnw.cmd package
+.\mvnw.cmd clean package
 ```
 
 **Linux ou macOS:**
 
 ```bash
-./mvnw package
+./mvnw clean package
 ```
+
+Use `clean package` para remover saídas anteriores e impedir que páginas e recursos excluídos permaneçam no WAR. A carga local `sql/dataload.sql` e o `.env` são excluídos do empacotamento.
 
 O arquivo será gerado em `target/ACTA-1.0-SNAPSHOT.war`. Publique-o no Tomcat com as variáveis do ambiente configuradas. O caminho de acesso dependerá do contexto atribuído ao WAR.
 
@@ -159,19 +168,11 @@ Use HTTPS ao testar os fluxos autenticados: a configuração da aplicação util
 
 ## 🧪 Validação
 
-Para executar os testes automatizados:
-
-```powershell
-.\mvnw.cmd test
-```
-
-No Linux ou macOS, utilize `./mvnw test`.
-
-Os testes cobrem validações, operações simuladas de acesso a dados, proteção de rotas, sessões, CSRF e preparação do upload de fotos. Os cenários de acesso HTTP utilizam um Tomcat isolado e não modificam o banco real. Uploads reais e fluxos completos de navegação também devem ser conferidos no ambiente publicado.
+O diretório `src/test` foi removido por decisão do responsável pelo projeto. O comando de compilação acima não comprova a execução de testes automatizados. Validações em banco de produção devem ser somente de leitura.
 
 ## 🏗️ Arquitetura e estrutura
 
-As requisições são processadas pelos Servlets, os DAOs executam as operações no PostgreSQL e os modelos representam as entidades do sistema. As páginas JSP apresentam os dados e os formulários no navegador.
+As requisições são processadas pelos Servlets, os DAOs executam as operações no PostgreSQL e os modelos representam as entidades do sistema. As páginas JSP apresentam os dados e os formulários no navegador. As views ficam em `WEB-INF/views` e não são abertas diretamente pelo navegador; o `InicioServlet` atende a raiz e `/inicio`.
 
 ```text
 src/main/
@@ -182,15 +183,19 @@ src/main/
 │   ├── model/        # Entidades e relacionamentos
 │   ├── servlet/      # Requisições, autenticação e perfis
 │   └── utils/        # Configuração, validações e segurança
-├── resources/sql/    # Estrutura, views e migrações do banco
+├── resources/sql/    # Estrutura e views do banco
 └── webapp/
-    ├── autenticacao/ # Páginas de login e cadastro
-    ├── assets/       # Estilos, scripts e imagens
-    ├── crud/         # Páginas administrativas
-    ├── WEB-INF/      # Configuração e trechos compartilhados
-    ├── index.jsp     # Página institucional com sessão
-    ├── perfil-administrador.jsp
-    └── perfil-colaborador.jsp
+    ├── assets/       # CSS e JavaScript organizados por funcionalidade
+    └── WEB-INF/
+        ├── web.xml   # Configuração e páginas de erro HTTP
+        ├── includes/ # Trechos compartilhados
+        └── views/    # JSPs acessadas pelos controladores
+            ├── autenticacao/
+            ├── crud/
+            ├── empresa/
+            ├── erros/
+            ├── perfis/
+            └── index.jsp
 ```
 
 ## ☁️ Publicação

@@ -25,11 +25,11 @@ import java.sql.Date;
 import java.util.List;
 
 /** Recebe as requisições de Ciclo e prepara os dados para as páginas JSP. */
-@WebServlet(name = "CicloServlet", value = "/ciclo-servlet")
+@WebServlet(name = "CicloServlet", value = {"/ciclo-servlet", "/crud/ciclo.jsp"})
 public class CicloServlet extends HttpServlet {
 
-    private static final String PAGINA_CICLO = "/crud/ciclo.jsp";
-    private static final String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_CICLO = "/WEB-INF/views/crud/ciclo.jsp";
+    private static final String PAGINA_ERRO = "/WEB-INF/views/erros/erro.jsp";
     private final CicloDAO cicloDAO = new CicloDAO();
 
     /** Atende consultas e converte as falhas em respostas HTTP. */

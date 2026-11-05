@@ -1,5 +1,0 @@
-/* Detalhes do perfil administrativo; o visual vem de crud.css e perfil-colaborador.css. */
-.perfil-administrador .banner-divider { display: none; }
-.perfil-administrador .company-tag { margin-right: 8px; }
-.perfil-administrador .empresa-vazia { margin-top: 16px; color: var(--acta-texto-suave); }
-.perfil-administrador .perfil-foto-form { flex-shrink: 0; }

@@ -23,11 +23,11 @@ import java.sql.Date;
 import java.util.List;
 
 /** Recebe as requisições de Colaborador e prepara os dados para as páginas JSP. */
-@WebServlet(name = "ColaboradorServlet", value = "/colaborador-servlet")
+@WebServlet(name = "ColaboradorServlet", value = {"/colaborador-servlet", "/crud/colaborador.jsp"})
 public class ColaboradorServlet extends HttpServlet {
 
-    private static final String PAGINA_COLABORADORES = "/crud/colaborador.jsp";
-    private static final String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_COLABORADORES = "/WEB-INF/views/crud/colaborador.jsp";
+    private static final String PAGINA_ERRO = "/WEB-INF/views/erros/erro.jsp";
     private final ColaboradorDAO DAO = new ColaboradorDAO();
 
     /** Atende consultas e converte as falhas em respostas HTTP. */

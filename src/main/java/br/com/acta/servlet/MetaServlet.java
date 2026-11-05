@@ -25,11 +25,11 @@ import java.sql.Date;
 import java.util.List;
 
 /** Recebe as requisições de Meta e prepara os dados para as páginas JSP. */
-@WebServlet(name = "MetaServlet", value = "/meta-servlet")
+@WebServlet(name = "MetaServlet", value = {"/meta-servlet", "/crud/meta.jsp"})
 public class MetaServlet extends HttpServlet {
 
-    private static final String PAGINA_META = "/crud/meta.jsp";
-    private static final String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_META = "/WEB-INF/views/crud/meta.jsp";
+    private static final String PAGINA_ERRO = "/WEB-INF/views/erros/erro.jsp";
     private final MetaDAO DAO = new MetaDAO();
 
     /** Atende consultas e converte as falhas em respostas HTTP. */

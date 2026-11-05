@@ -23,11 +23,11 @@ import java.io.IOException;
 import java.util.List;
 
 /** Recebe as requisições de LicoesAprendidas e prepara os dados para as páginas JSP. */
-@WebServlet(name = "LicoesAprendidasServlet", value = "/licoes-aprendidas-servlet")
+@WebServlet(name = "LicoesAprendidasServlet", value = {"/licoes-aprendidas-servlet", "/crud/licoes-aprendidas.jsp"})
 public class LicoesAprendidasServlet extends HttpServlet {
 
-    private static final String PAGINA_LICOES_APRENDIDAS = "/crud/licoes-aprendidas.jsp";
-    private static final String PAGINA_ERRO = "/erro.jsp";
+    private static final String PAGINA_LICOES_APRENDIDAS = "/WEB-INF/views/crud/licoes-aprendidas.jsp";
+    private static final String PAGINA_ERRO = "/WEB-INF/views/erros/erro.jsp";
     private final LicoesAprendidasDAO DAO = new LicoesAprendidasDAO();
 
     /** Atende consultas e converte as falhas em respostas HTTP. */
