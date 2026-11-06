@@ -67,7 +67,7 @@
         <div class="hero__texto">
           <h1>Gestão contínua<br>que gera <span>resultados</span></h1>
           <p>A plataforma PDCA que transforma planejamento em ação, acompanhamento em aprendizado e resultados em crescimento.</p>
-          <a href="<%= request.getContextPath() %>/<%= administrador || colaborador ? "perfil-servlet" : "cadastro-servlet" %>" class="btn"><%= administrador || colaborador ? "Meu perfil" : "Cadastrar-se" %></a>
+          <a href="<%= administrador || colaborador ? request.getContextPath() + "/perfil-servlet" : "https://app-acta.vercel.app/login" %>" class="btn"><%= administrador || colaborador ? "Meu perfil" : "Junte-se ao ACTA" %></a>
         </div>
 
         <div class="hero__mockups">
